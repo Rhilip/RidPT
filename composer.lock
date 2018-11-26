@@ -1,0 +1,61 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "de75a21f73617d80ee3c93ccc879c814",
+    "packages": [
+        {
+            "name": "RidPT/framework",
+            "version": "dev-ridpt",
+            "source": {
+                "type": "git",
+                "url": "https://git.rhilip.info/RidPT/framework.git",
+                "reference": "229efe468c6ef51db41acef3b9398b079ba0979c"
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "type": "framework",
+            "autoload": {
+                "psr-4": {
+                    "mix\\": "src/"
+                },
+                "files": [
+                    "src/Mix.php",
+                    "src/helpers/functions.php"
+                ]
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jian Liu",
+                    "email": "coder.liu@qq.com"
+                }
+            ],
+            "description": "MixPHP 框架核心 http://www.mixphp.cn",
+            "homepage": "http://www.mixphp.cn/",
+            "keywords": [
+                "framework",
+                "mixphp",
+                "swoole"
+            ],
+            "time": "2018-11-26T09:47:45+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "ridpt/framework": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.0.0"
+    },
+    "platform-dev": []
+}
