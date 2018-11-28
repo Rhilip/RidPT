@@ -1,35 +1,40 @@
 {
-  "name": "Rhilip/RidPT",
-  "description": "基于 MixPHP 的Private Torrent源码",
-  "type": "project",
-  "keywords": [
-    "mixphp",
-    "swoole",
-    "private torrent"
-  ],
-  "minimum-stability": "stable",
-  "license": "MIT",
-  "authors": [
-    {
-      "name": "Rhilip",
-      "email": "email@example.com"
+    "name": "Rhilip/RidPT",
+    "description": "基于 MixPHP 的Private Torrent源码",
+    "type": "project",
+    "keywords": [
+        "mixphp",
+        "swoole",
+        "private torrent"
+    ],
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rhilip",
+            "email": "email@example.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "RidPT/framework": "dev-ridpt",
+        "ext-pdo": "*",
+        "ext-redis": "*",
+        "sandfoxme/bencode": "^1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "apps\\": "apps/"
+        }
+    },
+    "repositories": {
+        "0": {
+            "type": "vcs",
+            "url": "https://git.rhilip.info/RidPT/framework.git"
+        },
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.laravel-china.org"
+        }
     }
-  ],
-  "require": {
-    "php": ">=7.0.0",
-    "RidPT/framework": "dev-ridpt",
-    "ext-pdo": "*",
-    "ext-redis": "*"
-  },
-  "autoload": {
-    "psr-4": {
-      "apps\\": "apps/"
-    }
-  },
-  "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://git.rhilip.info/RidPT/framework.git"
-    }
-  ]
 }

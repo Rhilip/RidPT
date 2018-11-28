@@ -30,11 +30,11 @@ return [
             'defaultPattern' => '[\w-]+',
             // 路由变量规则
             'patterns'       => [
-                'id' => '\d+',
+                'id' => '\d+'
             ],
             // 路由规则
             'rules'          => [
-                'GET tracker/{extension}' => ['tracker','index'],
+                'GET tracker/{tracker_action}' => ['tracker','index'],
                 '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => ['Before']],
             ],
         ],

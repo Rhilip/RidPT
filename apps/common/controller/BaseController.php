@@ -12,13 +12,13 @@ use mix\http\Controller;
 
 class BaseController extends Controller
 {
-    /** @var \mix\http\compatible\Request */
+    /** @var \mix\http\Request */
     public $Request;
 
-    /** @var \mix\http\compatible\Response */
+    /** @var \mix\http\Response */
     public $Response;
 
-    /** @var \apps\common\components\RedisComponent */
+    /** @var \mix\client\Redis */
     public $Redis;
 
     /** @var \mix\client\PDO */
@@ -39,6 +39,6 @@ class BaseController extends Controller
         $this->Response = app()->response;
         $this->Redis = app()->redis;
         $this->Database = app()->pdo;
-        $this->Config = app()->Config;
+        $this->Config = app()->config;
     }
 }
