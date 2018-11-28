@@ -93,12 +93,12 @@ class TrackerController extends BaseController
                          * In a P2P network , a peer's role can be describe as `seeder` or `leecher`,
                          * Which We can judge from the `$left=` params.
                          *
-                         * However BEP 0021 `Extension for partial seeds` and a new role `partial seed`.
+                         * However BEP 0021 `Extension for partial seeds` add a new role `partial seed`.
                          * A partial seed is a peer that is incomplete without downloading anything more.
                          * This happens for multi file torrents where users only download some of the files.
                          *
                          * So another `&event=paused` is need to judge if peer is `paused` or `partial seed`.
-                         * However we still calculate it's duration as leech time.
+                         * However we still calculate it's duration as leech time, but only seed leecher info to him
                          *
                          * See more: http://www.bittorrent.org/beps/bep_0021.html
                          *
@@ -117,9 +117,8 @@ class TrackerController extends BaseController
                             throw new TrackerException(999, [":test" => $e->getMessage()]);
                         }
 
-                        $this->generateAnnounceResponse($queries, $role,$torrentInfo, $rep_dict);
+                        $this->generateAnnounceResponse($queries, $role, $torrentInfo, $rep_dict);
                         return Bencode::encode($rep_dict);
-
                     }
 
                 default:
@@ -647,6 +646,8 @@ class TrackerController extends BaseController
             }
         }
 
+        // TODO Update `torrents`
+
         // Deal with completed event
         if ($queries["event"] === "completed") {
             $this->Database->createCommand("UPDATE `snatched` SET `finished` = 'yes' , finish_ip = INET6_ATON(:ip) , finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
@@ -732,24 +733,25 @@ class TrackerController extends BaseController
         $thisDownloaded = $trueDownloaded * ($buff["dl_ratio"] ?: 1);
     }
 
-    private function generateAnnounceResponse($queries, $role,$torrentInfo, &$rep_dict)
+    private function generateAnnounceResponse($queries, $role, $torrentInfo, &$rep_dict)
     {
         // TODO support `no_peer_id` and `compact` params
         $peerList = [];
         $rep_dict = [
             "interval" => $this->Config->get("tracker.interval") + rand(5, 20),   // random interval to avoid BOOM
             "min interval" => $this->Config->get("tracker.min_interval") + rand(1, 5),
-            "complete" => 0,
+            "complete" => 0, // FIXME get real announce data
             "incomplete" => 0,
             "peers" => &$peerList
         ];
 
         $limit = ($queries["numwant"] <= 50) ? $queries["numwant"] : 50;
 
-        $peers = $this->Database->createCommand("SELECT `ip`,`port`,`peer_id` from `peers` WHERE torrent_id = :tid AND peer_id != :pid" .
-            ($role != "no" ? "AND `seeder`='no'" : " ") .  // Don't report seeds to other seeders
+        $peers = $this->Database->createCommand("SELECT INET6_NTOA(`ip`) as `ip`,`port`,`peer_id` from `peers` WHERE torrent_id = :tid " .
+            "AND peer_id != :pid " .    // Don't select user himself
+            ($role != "no" ? "AND `seeder`='no' " : " ") .  // Don't report seeds to other seeders
             "ORDER BY RAND() LIMIT $limit")->bindParams([
-                "tid" => $torrentInfo["id"] , "pid" => $queries["peer_id"]
+            "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
         ])->queryAll();
 
         foreach ($peers as $peer) {
