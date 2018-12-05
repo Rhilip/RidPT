@@ -157,8 +157,6 @@ class TrackerController
                 "failure reason" => $e->getMessage(),
             ]);
         }
-
-
     }
 
     /** Check Client's User-Agent, (If not pass this Check , A TrackerException will throw)

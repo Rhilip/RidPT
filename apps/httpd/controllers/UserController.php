@@ -18,7 +18,6 @@ class UserController extends Controller
     {
 
 
-        app()->redis;
         app()->response->format = \mix\http\Response::FORMAT_JSON;
 
         // 使用模型

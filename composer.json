@@ -12,15 +12,18 @@
     "authors": [
         {
             "name": "Rhilip",
-            "email": "email@example.com"
+            "email": "rhilipruan@gmail.com"
         }
     ],
+    "version": "0.0.1",
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.2.0",
         "RidPT/framework": "dev-ridpt",
         "ext-pdo": "*",
         "ext-redis": "*",
-        "sandfoxme/bencode": "^1.2"
+        "ext-curl": "*",
+        "sandfoxme/bencode": "^1.2",
+        "robthree/twofactorauth": "^1.6"
     },
     "autoload": {
         "psr-4": {
@@ -30,7 +33,7 @@
     "repositories": {
         "0": {
             "type": "vcs",
-            "url": "https://git.rhilip.info/RidPT/framework.git"
+            "url": "https://github.com/RidPT/framework"
         },
         "packagist": {
             "type": "composer",
