@@ -8,6 +8,9 @@
 
 namespace apps\common\components;
 
+use mix\facades\PDO;
+use mix\facades\Redis;
+
 use mix\base\Component;
 
 class ConfigLoadComponent extends Component
@@ -23,53 +26,35 @@ class ConfigLoadComponent extends Component
      */
     public $table = "site_config";
 
-    /** @var \mix\client\Redis */
-    protected $Cache;
-
-    /** @var \mix\client\PDO */
-    protected $Database;
-
-    public function __construct(array $config = [])
-    {
-        $this->setProvider();
-        parent::__construct($config);
-    }
-
-    private function setProvider()
-    {
-        $this->Cache = app()->redis;
-        $this->Database = app()->pdo;
-    }
-
     public function get(string $name)
     {
         $cache_key = $this->buildCacheKey($name);
 
         // First Check config stored in Redis Cache, If it exist , then just return the cached key
-        $setting = $this->Cache->get($cache_key);
+        $setting = Redis::get($cache_key);
         if ($setting !== false) return $setting;
 
         // Get config From Database
-        $setting = $this->Database->createCommand("SELECT `value` from `{$this->table}` WHERE `name` = :name")
+        $setting = PDO::createCommand("SELECT `value` from `{$this->table}` WHERE `name` = :name")
             ->bindParams(["name" => $name])->queryScalar();
 
         // In this case (Load config From Database Failed) , A Exception should throw
         if ($setting === false) throw $this->createNotFoundException($name);
 
         // Cache it in Redis and return
-        $this->Cache->setex($cache_key, 86400, $setting);
+        Redis::setex($cache_key, 86400, $setting);
         return $setting;
     }
 
     public function set(string $name, $value)
     {
-        $this->Database->update($this->table, ['value' => $value], [['name', '=', $name]])->execute();
+        PDO::update($this->table, ['value' => $value], [['name', '=', $name]])->execute();
         $this->flush($name);
     }
 
     public function flush($name)
     {
-        $this->Cache->del($this->buildCacheKey($name));
+        Redis::del($this->buildCacheKey($name));
     }
 
     public function setMultiple(array $config_array)
@@ -89,7 +74,7 @@ class ConfigLoadComponent extends Component
      */
     protected function createNotFoundException($name)
     {
-        return new \RuntimeException(sprintf('Setting "%s" couldn\'t be found.', $name));
+        return new \RuntimeException(sprintf("Setting \"%s\" couldn't be found.", $name));
     }
 
 }
