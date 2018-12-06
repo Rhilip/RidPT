@@ -660,12 +660,10 @@ class TrackerController
         // Update Table `users` , record his upload and download data and connect time information
         PDO::createCommand("UPDATE `users` SET uploaded = uploaded + :upload, downloaded = downloaded + :download, "
             . ($trueUploaded > 0 ? "last_upload_at=NOW()," : "") . ($trueDownloaded > 0 ? "last_download_at=NOW()," : "") .
-            "last_connect_at=NOW() WHERE id = :uid")->bindParams([
-            "upload" => $thisUploaded,
-            "download" => $thisDownloaded,
-            "uid" => $userInfo["id"],
+            "`last_connect_at`=NOW() , `last_tracker_ip`= INET6_ATON(:ip) WHERE id = :uid")->bindParams([
+            "upload" => $thisUploaded, "download" => $thisDownloaded,
+            "uid" => $userInfo["id"], "ip" => Request::getClientIp()
         ])->execute();
-
     }
 
     /** Cheater check function from NexusPHP based on user upload speed check
