@@ -128,7 +128,7 @@ class AuthController
         ]);
         Token::setUniqueIndex($self["id"]);
 
-        PDO::createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->createCommand([
+        PDO::createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
             "ip" => Request::getClientIp() , "id" => $self["id"]
         ]);
 
