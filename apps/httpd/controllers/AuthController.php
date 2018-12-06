@@ -121,12 +121,16 @@ class AuthController
         }
 
         Token::createTokenId();
-        Token::set('userinfo', [
+        Token::set('userInfo', [
             'uid' => $self["id"],
             'username' => $self["username"],
             'status' => $self["status"]
         ]);
         Token::setUniqueIndex($self["id"]);
+
+        PDO::createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->createCommand([
+            "ip" => Request::getClientIp() , "id" => $self["id"]
+        ]);
 
         // FIXME Unified interface specification
         return [
@@ -134,7 +138,12 @@ class AuthController
             'access_token' => Token::getTokenId(),
             'expires_in' => app()->token->expiresIn,
         ];
+    }
 
+    public function actionLogout() {
+        // TODO add CSRF  protect
+        Token::delete("userInfo");
+        return ["errcode" => 0, "msg" => "success"];  // FIXME Unified interface specification
     }
 
     private function fetchUserCount()
