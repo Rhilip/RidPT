@@ -1,0 +1,194 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "1a30bdadab71ba17750c6ab493e61c81",
+    "packages": [
+        {
+            "name": "RidPT/framework",
+            "version": "dev-ridpt",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RidPT/framework.git",
+                "reference": "d52fd89fd2dd93664425e0c6fd0140134e4e8f89"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RidPT/framework/zipball/d52fd89fd2dd93664425e0c6fd0140134e4e8f89",
+                "reference": "d52fd89fd2dd93664425e0c6fd0140134e4e8f89",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-libxml": "*",
+                "ext-mbstring": "*",
+                "ext-simplexml": "*",
+                "php": ">=7.0.0"
+            },
+            "type": "framework",
+            "autoload": {
+                "psr-4": {
+                    "mix\\": "src/"
+                },
+                "files": [
+                    "src/Mix.php",
+                    "src/helpers/functions.php"
+                ]
+            },
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jian Liu",
+                    "email": "coder.liu@qq.com"
+                },
+                {
+                    "name": "Rhilip",
+                    "email": "rhilipruan@gmail.com"
+                }
+            ],
+            "description": "基于 MixPHP",
+            "homepage": "http://www.mixphp.cn/",
+            "keywords": [
+                "framework",
+                "mixphp",
+                "swoole"
+            ],
+            "support": {
+                "source": "https://github.com/RidPT/framework/tree/ridpt"
+            },
+            "time": "2018-12-05T16:01:23+00:00"
+        },
+        {
+            "name": "robthree/twofactorauth",
+            "version": "1.6.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RobThree/TwoFactorAuth.git",
+                "reference": "f5f58a4c62d0336a0e6175856894a51f3565dad2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RobThree/TwoFactorAuth/zipball/f5f58a4c62d0336a0e6175856894a51f3565dad2",
+                "reference": "f5f58a4c62d0336a0e6175856894a51f3565dad2",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "@stable"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "RobThree\\Auth\\": "lib"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rob Janssen",
+                    "homepage": "http://robiii.me",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Two Factor Authentication",
+            "homepage": "https://github.com/RobThree/TwoFactorAuth",
+            "keywords": [
+                "Authentication",
+                "MFA",
+                "Multi Factor Authentication",
+                "Two Factor Authentication",
+                "authenticator",
+                "authy",
+                "php",
+                "tfa"
+            ],
+            "time": "2018-06-09T10:09:59+00:00"
+        },
+        {
+            "name": "sandfoxme/bencode",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sandfoxme/bencode.git",
+                "reference": "e827c34253024d84917f0f35935b2e1916311ecd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sandfoxme/bencode/zipball/e827c34253024d84917f0f35935b2e1916311ecd",
+                "reference": "e827c34253024d84917f0f35935b2e1916311ecd",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">= 7.0"
+            },
+            "require-dev": {
+                "codeclimate/php-test-reporter": "*",
+                "phpunit/phpunit": "^6.0.0",
+                "psy/psysh": "^0.8.3"
+            },
+            "suggest": {
+                "php-64bit": "Running 64 bit is recommended to prevent integer overflow"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SandFoxMe\\Bencode\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anton Smirnov",
+                    "email": "sandfox@sandfox.me"
+                }
+            ],
+            "description": "BitTorrent's Bencode encoder/decoder",
+            "keywords": [
+                "bencode",
+                "bittorrent",
+                "serialize",
+                "torrent"
+            ],
+            "time": "2018-02-14T19:16:21+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "ridpt/framework": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.2.0",
+        "ext-pdo": "*",
+        "ext-redis": "*",
+        "ext-curl": "*"
+    },
+    "platform-dev": []
+}
