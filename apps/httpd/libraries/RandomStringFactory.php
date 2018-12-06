@@ -16,7 +16,7 @@ class RandomStringFactory
      * @param int $random_suffix_string_len
      * @return null|string
      */
-    public function md5($string, $random_suffix_string_len = 0): ?string
+    public static function md5($string, $random_suffix_string_len = 0): ?string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);

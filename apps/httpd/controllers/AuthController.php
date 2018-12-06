@@ -36,8 +36,7 @@ class AuthController
         }
 
         // If pass the validate, then Create this user
-        $gen = new RandomStringFactory();
-        $passkey = $gen->md5($model->username . date("Y-m-d H:i:s"), 10);
+        $passkey = RandomStringFactory::md5($model->username . date("Y-m-d H:i:s"), 10);
 
         // Set default value
         $status = Config::get("register.user_default_status") ?: "pending";
@@ -78,7 +77,6 @@ class AuthController
         // FIXME Unified interface specification
         return ['code' => 1, 'message' => 'Success'];
     }
-
 
     public function actionConfirm()
     {
