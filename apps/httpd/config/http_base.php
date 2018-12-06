@@ -203,7 +203,18 @@ return [
 
         'config' => [
             'class'   => 'apps\common\components\ConfigLoadComponent',
-        ]
+        ],
+
+        'swiftmailer' => [
+            'class'   => 'apps\common\components\MailerComponent',
+            'host'    => env('MAILER_HOST'),
+            'port'    => env('MAILER_PORT'),
+            'encryption' => env('MAILER_ENCRYPTION'),
+            'username'=> env('MAILER_USERNAME'),
+            'password'=> env('MAILER_PASSWORD'),
+            'from'    => env('MAILER_FROM'),
+            'nikename'=> env('MAILER_FROM_NICKNAME'),
+        ],
     ],
 
     // 类库配置

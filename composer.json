@@ -23,7 +23,8 @@
         "ext-redis": "*",
         "ext-curl": "*",
         "sandfoxme/bencode": "^1.2",
-        "robthree/twofactorauth": "^1.6"
+        "robthree/twofactorauth": "^1.6",
+        "swiftmailer/swiftmailer": "^6.1"
     },
     "autoload": {
         "psr-4": {
