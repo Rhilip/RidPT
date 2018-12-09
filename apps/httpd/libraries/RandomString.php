@@ -9,7 +9,7 @@
 namespace apps\httpd\libraries;
 
 
-class RandomStringFactory
+class RandomString
 {
     /**
      * @param $string
