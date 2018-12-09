@@ -543,6 +543,7 @@ class TrackerController
     private function processAnnounceRequest($queries, $seeder, $userInfo, $torrentInfo)
     {
         $timeKey = ($seeder == 'yes') ? 'seed_time' : 'leech_time';
+        $torrentUpdateKey = ($seeder == 'yes') ? "complete" : "incomplete";
 
         // Try to fetch session from Table `peers`
         $self = PDO::createCommand("SELECT `uploaded`,`downloaded`,(NOW() - `last_action_at`) as `duration` 
@@ -588,6 +589,11 @@ class TrackerController
         // Notice : there MUST have history record in Table `snatched` if session is exist !!!!!!!!
         if (isset($self)) {
             if ($queries["event"] === "stopped") {
+                // Update `torrents`, if peer's role is a seeder ,so complete -1 , elseif  he is a leecher , so incomplete -1
+                PDO::createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` -1 WHERE id=:tid")->bindParams([
+                    "tid" => $torrentInfo["id"]
+                ])->execute();
+
                 // Peer stop seeding or leeching and should remove this peer from our peer list and update his data.
                 PDO::createCommand("DELETE FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id` = :pid")->bindParams([
                     "uid" => $userInfo["id"],
@@ -617,7 +623,12 @@ class TrackerController
                 ])->execute();
             }
         } elseif ($queries['event'] != 'stopped') {
-            // if session is not exist , and the session is not exist a new session should start
+            // if session is not exist , a new session should start
+
+            // Update `torrents`, if peer's role is a seeder ,so complete +1 , elseif  he is a leecher , so incomplete +1
+            PDO::createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
+                "tid" => $torrentInfo["id"]
+            ])->execute();
 
             // First we create this NEW session in database
             PDO::createCommand("INSERT INTO `peers`(`user_id`, `torrent_id`, `peer_id`, `agent`, ip, `port`, `seeder`, `uploaded`, `downloaded`, `to_go`, `finished`, `started_at`, `last_action_at`, `corrupt`, `key`)
@@ -636,7 +647,7 @@ class TrackerController
             ])->queryScalar();
 
             if ($selfRecordCount == 0) {
-                PDO::createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`$timeKey`,`create_at`,`last_action_at`) 
+                PDO::createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`) 
                 VALUES (:uid,:tid,:agent,:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,NOW(),NOW())")->bindParams([
                     "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
                     "agent" => Request::header("user-agent"), "port" => $queries["port"],
@@ -647,14 +658,16 @@ class TrackerController
             }
         }
 
-        // TODO Update `torrents`
-
         // Deal with completed event
         if ($queries["event"] === "completed") {
             PDO::createCommand("UPDATE `snatched` SET `finished` = 'yes' , finish_ip = INET6_ATON(:ip) , finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
                 "ip" => $queries["ip"],
                 "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
             ]);
+            // Update `torrents`, with complete +1  incomplete -1 downloaded +1
+            PDO::createCommand("UPDATE `torrents` SET `complete` = `complete` + 1, `incomplete` = `incomplete` -1 , `downloaded` = `downloaded` + 1 WHERE `id`=:tid")->bindParams([
+                "tid" => $torrentInfo["id"]
+            ])->execute();
         }
 
         // Update Table `users` , record his upload and download data and connect time information
@@ -739,7 +752,7 @@ class TrackerController
         $peerList = [];
         $rep_dict = [
             "interval" => Config::get("tracker.interval") + rand(5, 20),   // random interval to avoid BOOM
-            "min interval" => Config::get("tracker.min_interval") + rand(1, 5),
+            "min interval" => Config::get("tracker.min_interval") + rand(1, 10),
             "complete" => 0, // FIXME get real announce data
             "incomplete" => 0,
             "peers" => &$peerList
