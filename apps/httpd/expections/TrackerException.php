@@ -23,13 +23,14 @@ class TrackerException extends \Exception
         111 => 'Invalid Action type `:action`.',
 
         // Error message about User Agent ( Bittorrent Client )
-        120 => 'Browser, Crawler or Cheater is not Allowed.',
-        121 => 'Abnormal access blocked !',
-        122 => 'The User-Agent of this client is too long!',
-        123 => ':pattern REGEX error for :start, please ask sysop to fix this.',
-        124 => 'Your client is too old. please update it after :start .',
-        125 => 'Client :ua is not acceptable! Please check our FAQ.',
-        126 => 'Client :ua banned due to: :comment .',
+        120 => 'Invalid user-agent !',
+        121 => 'Browser, Crawler or Cheater is not Allowed.',
+        122 => 'Abnormal access blocked !',
+        123 => 'The User-Agent of this client is too long!',
+        124 => ':pattern REGEX error for :start, please ask sysop to fix this.',
+        125 => 'Your client is too old. please update it after :start .',
+        126 => 'Client :ua is not acceptable! Please check our FAQ.',
+        127 => 'Client :ua banned due to: :comment .',
 
         // Error message about Requests ( Part.2 request params )
         130 => 'key: :attribute is Missing !',

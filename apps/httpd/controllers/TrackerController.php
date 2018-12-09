@@ -57,7 +57,6 @@ class TrackerController
 
         try {
             // Block NON-GET requests (Though non-GET request will not match this Route )
-
             if (!Request::isGet())
                 throw new TrackerException(110, [":method" => Request::method()]);
 
@@ -66,7 +65,7 @@ class TrackerController
 
             $this->blockClient();
 
-            $action = Request::route("{tracker_action}");
+            $action = strtolower(Request::route("{tracker_action}"));
             $this->checkUserAgent($action == 'scrape');
 
             $this->checkPasskey($userInfo);
@@ -166,9 +165,13 @@ class TrackerController
      */
     private function blockClient()
     {
+        // Miss Header User-Agent is not allowed.
+        if (!Request::header("user-agent"))
+            throw new TrackerException(120);
+
         // Block Browser by check it's User-Agent
         if (preg_match('/(^Mozilla|Browser|AppleWebKit|^Opera|^Links|^Lynx|[Bb]ot)/', Request::header("user-agent"))) {
-            throw new TrackerException(120);
+            throw new TrackerException(121);
         }
 
         // Block Other Browser, Crawler (, May Cheater or Faker Client) by check Requests headers
@@ -197,11 +200,11 @@ class TrackerController
              */
             //|| Request::header("cookie")
         )
-            throw new TrackerException(121);
+            throw new TrackerException(122);
 
         // Should also Block those too long User-Agent. ( For Database reason
         if (strlen(Request::header("user-agent")) > 64)
-            throw new TrackerException(122);
+            throw new TrackerException(123);
     }
 
     /** Check Passkey Exist and Valid First, And We Get This Account Info
@@ -287,13 +290,13 @@ class TrackerController
         $allowedFamily = Redis::get("allowed_client_list");
         if ($allowedFamily === false) {
             $allowedFamily = PDO::createCommand("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();
-            Redis::setex("allowed_client_list", 86400, $allowedFamily);
+            Redis::set("allowed_client_list", $allowedFamily);
         }
 
         $allowedFamilyException = Redis::get("allowed_client_exception_list");
         if ($allowedFamilyException === false) {
             $allowedFamilyException = PDO::createCommand("SELECT * FROM `agent_allowed_exception`")->queryAll();
-            Redis::setex("allowed_client_exception_list", 86400, $allowedFamilyException);
+            Redis::set("allowed_client_exception_list", $allowedFamilyException);
         }
 
         // Start Check Client by `User-Agent` and `peer_id`
@@ -315,7 +318,7 @@ class TrackerController
             // Check User-Agent
             if ($allowedItem['agent_pattern'] != '') {
                 if (!preg_match($allowedItem['agent_pattern'], $allowedItem['agent_start'], $agentShould))
-                    throw new TrackerException(123, [":pattern" => "User-Agent", ":start" => $allowedItem['start_name']]);
+                    throw new TrackerException(124, [":pattern" => "User-Agent", ":start" => $allowedItem['start_name']]);
 
                 if (preg_match($allowedItem['agent_pattern'], $userAgent, $agentMatched)) {
                     if ($allowedItem['agent_match_num'] > 0) {
@@ -336,7 +339,7 @@ class TrackerController
                             }
                             // Below requirement
                             if ($agentMatched[$i + 1] < $agentShould[$i + 1])
-                                throw new TrackerException(124, [":start" => $allowedItem['start_name']]);
+                                throw new TrackerException(125, [":start" => $allowedItem['start_name']]);
                             // Continue to loop. Unless the last bit is equal.
                             if ($agentMatched[$i + 1] == $agentShould[$i + 1] && $i + 1 == $allowedItem['agent_match_num']) {
                                 $agentAccepted = true;
@@ -357,7 +360,7 @@ class TrackerController
             // Check Peer_id
             if ($allowedItem['peer_id_pattern'] != '') {
                 if (!preg_match($allowedItem['peer_id_pattern'], $allowedItem['peer_id_start'], $peerIdShould))
-                    throw new TrackerException(123, [":pattern" => "peer_id", ":start" => $allowedItem['start_name']]);
+                    throw new TrackerException(124, [":pattern" => "peer_id", ":start" => $allowedItem['start_name']]);
 
                 if (preg_match($allowedItem['peer_id_pattern'], $peer_id, $peerIdMatched)) {
                     if ($allowedItem['peer_id_match_num'] > 0) {
@@ -400,7 +403,7 @@ class TrackerController
         }
 
         if ($onlyCheckUA) {
-            if (!$agentAccepted) throw new TrackerException(125, [":ua" => $userAgent]);
+            if (!$agentAccepted) throw new TrackerException(126, [":ua" => $userAgent]);
             return;
         }
 
@@ -412,11 +415,11 @@ class TrackerController
                         && preg_match($exceptionItem['peer_id'], $peer_id)
                         && ($userAgent == $exceptionItem['agent'] || !$exceptionItem['agent'])
                     )
-                        throw new TrackerException(126, [":ua" => $userAgent, ":comment" => $exceptionItem['comment']]);
+                        throw new TrackerException(127, [":ua" => $userAgent, ":comment" => $exceptionItem['comment']]);
                 }
             }
         } else {
-            throw new TrackerException(125, [":ua" => $userAgent]);
+            throw new TrackerException(126, [":ua" => $userAgent]);
         }
     }
 
