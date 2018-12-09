@@ -54,6 +54,11 @@ class TrackerException extends \Exception
         160 => 'You cannot seed the same torrent from more than :count locations.',
         161 => 'You are already downloading the same torrent. You can only leech from :count location at a time!',
         162 => 'There is a minimum announce time of :min seconds',
+        163 => 'Your ratio is too low! You need to wait :sec seconds to start.',
+        164 => "Your slot limit is reached! You may at most download :max torrents at the same time",
+
+        // Error message from Anti-Cheater System
+        170 => "We believe you're trying to cheat. And your account is disabled.",
 
         // Test Message
         999 => ':test',

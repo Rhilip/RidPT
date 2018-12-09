@@ -12,10 +12,12 @@ use mix\facades\PDO;
 use mix\facades\Redis;
 use mix\facades\Request;
 use mix\facades\Response;
+
 use apps\common\facades\Config;
 
 use SandFoxMe\Bencode\Bencode;
 
+use apps\httpd\models\User;
 use apps\httpd\expections\TrackerException;
 
 class TrackerController
@@ -223,7 +225,7 @@ class TrackerController
         if ($userInfo === false) {
             // If Cache breakdown , We will get User info from Database and then cache it
             // Notice: if this passkey is not find in Database , a null will be cached.
-            $userInfo = PDO::createCommand("SELECT `id`,`status`,`passkey`,`downloadpos`,`class` FROM `users` WHERE `passkey` = :passkey LIMIT 1")
+            $userInfo = PDO::createCommand("SELECT `id`,`status`,`passkey`,`downloadpos`,`class`,`uploaded`,`downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1")
                 ->bindParams(["passkey" => $passkey])->queryOne() ?: null;
             Redis::setex("user_passkey_" . $passkey . "_content", 3600, $userInfo);
         }
@@ -469,10 +471,7 @@ class TrackerController
             throw new TrackerException(137, [":event" => strtolower($queries['event'])]);
 
         // TODO Part.3 check Announce *IP* Fields
-        $queries["ip"] = filter_var(Request::header("x-forwarded-for"), FILTER_VALIDATE_IP) ?:
-            filter_var(Request::header("client-ip"), FILTER_VALIDATE_IP) ?:
-                Request::server("remote_addr");
-
+        $queries["ip"] = filter_var(Request::getClientIp(), FILTER_VALIDATE_IP);
     }
 
     /** Check Port
@@ -500,7 +499,7 @@ class TrackerController
 
         $torrentInfo = Redis::get('torrent_hash_' . $info_hash . '_content');
         if ($torrentInfo === false) {
-            $torrentInfo = PDO::createCommand("SELECT id , info_hash , owner_id , status , incomplete , complete FROM torrents WHERE info_hash = :info LIMIT 1")
+            $torrentInfo = PDO::createCommand("SELECT id , info_hash , owner_id , status , incomplete , complete , added_at FROM torrents WHERE info_hash = :info LIMIT 1")
                 ->bindParams(["info" => $info_hash])->queryOne() ?: null;
             Redis::setex('torrent_hash_' . $info_hash . '_content', 350, $torrentInfo);
         }
@@ -569,8 +568,43 @@ class TrackerController
                     throw new TrackerException(161, [":count" => Config::get('tracker.user_max_leech')]);
             }
 
-            // TODO Wait System
-            // TODO Max SLots System
+            if ($userInfo["class"] < User::ROLE_VIP) {
+                $ratio = (($userInfo["downloaded"] > 0) ? ($userInfo["uploaded"] / $userInfo["downloaded"]) : 1);
+                $gigs = $userInfo["downloaded"] / (1024 * 1024 * 1024);
+
+                // Wait System
+                if (Config::get("tracker.enable_waitsystem")) {
+                    if ($gigs > 10) {
+                        if ($ratio < 0.4) $wait = 24;
+                        elseif ($ratio < 0.5) $wait = 12;
+                        elseif ($ratio < 0.6) $wait = 6;
+                        elseif ($ratio < 0.8) $wait = 3;
+                        else $wait = 0;
+
+                        $elapsed = time() - $torrentInfo["added_at"];
+                        if ($elapsed < $wait)
+                            throw new TrackerException(163, [":sec" => $wait * 3600 - $elapsed]);
+                    }
+                }
+
+                // Max SLots System
+                if (Config::get("tracker.enable_maxdlsystem")) {
+                    $max = 0;
+                    if ($gigs > 10) {
+                        if ($ratio < 0.5) $max = 1;
+                        elseif ($ratio < 0.65) $max = 2;
+                        elseif ($ratio < 0.8) $max = 3;
+                        elseif ($ratio < 0.95) $max = 4;
+                    }
+                    if ($max > 0) {
+                        $count = PDO::createCommand("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
+                            "uid" => $userInfo["id"]
+                        ])->queryScalar();
+                        if ($count >= $max)
+                            throw new TrackerException(164, [":max" => $max]);
+                    }
+                }
+            }
         }
 
         // So that , We can calculate Announce data on a exist session
@@ -715,7 +749,7 @@ class TrackerController
             ])->execute();
 
             Redis::del("user_passkey_" . $userInfo["passkey"] . "_content");
-            throw new TrackerException();
+            throw new TrackerException(170);
         }
 
         // Uploaded more than 1 GB with uploading rate higher than 25 MByte/S (For Consertive level). This is likely cheating.
