@@ -14,6 +14,7 @@ use mix\facades\Request;
 use mix\facades\Response;
 
 use apps\common\facades\Config;
+use apps\common\libraries\IPUtils;
 
 use SandFoxMe\Bencode\Bencode;
 
@@ -50,6 +51,7 @@ class TrackerController
     {
         // Set Response Header ( Format, HTTP Cache )
         Response::setHeader("Content-Type", "text/plain; charset=utf-8");
+        Response::setHeader("Connection", "close");
         Response::setHeader("Pragma", "no-cache");
 
         $userInfo = null;
@@ -301,7 +303,7 @@ class TrackerController
 
         // Start Check Client by `User-Agent` and `peer_id`
         $userAgent = Request::header("user-agent");
-        $peer_id = Request::get("peer_id") ?: "";
+        $peer_id = Request::get("peer_id") ?? "";
 
         $agentAccepted = null;
         $peerIdAccepted = null;
@@ -452,14 +454,15 @@ class TrackerController
         }
 
         $this->checkPortFields($queries["port"]);
+        $queries["ipv6_port"] = $queries["port"];
 
         // Part.2 check Announce **Option** Fields
         foreach ([
                      'event' => '', 'no_peer_id' => 1, 'compact' => 0,
                      'numwant' => 50, 'corrupt' => 0, 'key' => '',
-                     // 'ip' => '', 'ipv4' => '', 'ipv6' => ''
+                     'ip' => '', 'ipv4' => '', 'ipv6' => '',
                  ] as $item => $value) {
-            $queries[$item] = Request::get($item) ?: $value;
+            $queries[$item] = Request::get($item) ?? $value;
         }
 
         foreach (['numwant', 'corrupt', 'no_peer_id', 'compact'] as $item) {
@@ -473,8 +476,71 @@ class TrackerController
         if ($queries['port'] == 0 && strtolower($queries['event']) != 'stopped')
             throw new TrackerException(137, [":event" => strtolower($queries['event'])]);
 
-        // TODO Part.3 check Announce *IP* Fields
-        $queries["ip"] = filter_var(Request::getClientIp(), FILTER_VALIDATE_IP);
+        // FIXME Part.3 check Announce *IP* Fields
+        /**
+         * We have `ip` , `ipv6` , `port` ,`ipv6_port` Columns in Table `peers`
+         * But peer 's ip can be find in Requests Headers and param like `&ip=` , `&ipv4=` , `&ipv6=`
+         * So, we should deal with those situation.
+         *
+         * We get `ipv6` and `ipv6_port` data from `&ipv6=` (address or endpoint) ,
+         * Which is a  Native-IPv6 , not as link-local site-local loop-back Terodo 6to4
+         * If fails , then fail back to $remote_ip (If it's IPv6 format) and `&port=`
+         *
+         * As The same reason, `ip` will get form `&ipv4=` (address or endpoint) or
+         * `&ip=` (Not in BEP, but Used by some bittorrent clients like *UTorrent*) params
+         * and fail back to $remote_ip (If it's IPv4 format)
+         *
+         * After valid those ip params , we will identify peer connect type AS:
+         *  1. Only IPv4  2. Only IPv6  3. Both IPv4-IPv6
+         * Which is useful when generate Announce Response.
+         *
+         * See more: http://www.bittorrent.org/beps/bep_0007.html
+         */
+
+        $remote_ip = Request::getClientIp();  // IP address from Request Header (Which is NexusPHP used)
+
+        if ($queries["ipv6"]) {
+            if ($client = IPUtils::isEndPoint($queries["ipv6"])) {
+                $queries["ipv6"] = $client["ip"];
+                $queries["ipv6_port"] = $client["port"];
+            }
+
+            // Ignore all un-Native IPv6 address ( starting with FD or FC ; reserved IPv6 ) and IPv4-mapped-IPv6 address
+            if (!IPUtils::isNativeIPv6($queries["ipv6"]) || strpos($queries['ipv6'], '.') !== false) {
+                $queries['ipv6'] = $queries["ipv6_port"] = "";
+            }
+        }
+
+        // If we can't get valid IPv6 address from `&ipv6=` and remote_ip is IPv6 format , then use remote_ip
+        if (!$queries['ipv6'] && IPUtils::isNativeIPv6($remote_ip)) {
+            $queries['ipv6'] = $remote_ip;
+            $queries["ipv6_port"] = $queries["port"];
+        }
+
+        // `&ip=` is not a BEP param , however It's mainly used in UTorrent as `&ipv4=`
+        if ($queries["ip"] && !IPUtils::isValidIPv4($queries['ip'])) {
+            $queries['ip'] = '';
+        }
+
+        // param `&ipv4=` is like `&ipv6=`
+        if ($queries["ipv4"]) {
+            if ($client = IPUtils::isEndPoint($queries["ipv4"])) {
+                if (IPUtils::isValidIPv4($client['ip'])) {
+                    $queries['ip'] = $client['ip'];
+                    $queries['port'] = $client['port'];
+                }
+            } elseif (IPUtils::isValidIPv4($queries["ipv4"])) {
+                $queries['ip'] = $queries["ipv4"];
+            }
+        }
+
+        // Fail back
+        if (!IPUtils::isPublicIPv4($queries['ip']) && IPUtils::isValidIPv4($remote_ip)) {
+            $queries['ip'] = $remote_ip;
+        }
+
+        // Check peer's connect type
+        $queries["connect_type"] = ($queries["ipv6"] ? 2 : 0) + ($queries["ip"] ? 1 : 0);
     }
 
     /** Check Port
@@ -575,7 +641,7 @@ class TrackerController
                 $ratio = (($userInfo["downloaded"] > 0) ? ($userInfo["uploaded"] / $userInfo["downloaded"]) : 1);
                 $gigs = $userInfo["downloaded"] / (1024 * 1024 * 1024);
 
-                // Wait System
+                // FIXME Wait System
                 if (Config::get("tracker.enable_waitsystem")) {
                     if ($gigs > 10) {
                         if ($ratio < 0.4) $wait = 24;
@@ -590,7 +656,7 @@ class TrackerController
                     }
                 }
 
-                // Max SLots System
+                // FIXME Max SLots System
                 if (Config::get("tracker.enable_maxdlsystem")) {
                     $max = 0;
                     if ($gigs > 10) {
@@ -639,12 +705,16 @@ class TrackerController
                 ])->execute();
             } else {
                 // if session is exist but event!=stopped , we should continue the old session
-                PDO::createCommand("UPDATE `peers` SET `agent`=:agent,ip=INET6_ATON(:ip),`port`=:port,`seeder`=:seeder,
+                PDO::createCommand("UPDATE `peers` SET `agent`=:agent," .
+                    ($queries["ip"] ? "`ip`=INET6_ATON(:ip),`port`=:port," : "") .
+                    ($queries["ipv6"] ? "`ipv6`=INET6_ATON(:ipv6),`ipv6_port`=:ipv6_port," : "") .
+                    "`seeder`=:seeder,
                    `uploaded`=`uploaded` + :uploaded,`downloaded`= `downloaded` + :download,`to_go` = :left,
                    `last_action_at`=NOW(),`corrupt`=:corrupt,`key`=:key 
                    WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
                     "agent" => Request::header("user-agent"),
                     "ip" => $queries["ip"], "port" => $queries["port"],
+                    "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
                     "seeder" => $seeder, "uploaded" => $trueUploaded, "download" => $trueDownloaded, "left" => $queries["left"],
                     "corrupt" => $queries["corrupt"], "key" => $queries["key"],
                     "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
@@ -668,12 +738,19 @@ class TrackerController
             ])->execute();
 
             // First we create this NEW session in database
-            PDO::createCommand("INSERT INTO `peers`(`user_id`, `torrent_id`, `peer_id`, `agent`, ip, `port`, `seeder`, `uploaded`, `downloaded`, `to_go`, `finished`, `started_at`, `last_action_at`, `corrupt`, `key`)
-            VALUES (:uid,:tid,:pid,:agent,INET6_ATON(:ip),:port,:seeder,:upload,:download,:to_go,0,NOW(),NOW(),:corrupt,:key)")->bindParams([
+            PDO::createCommand("INSERT INTO `peers`(`user_id`, `torrent_id`, `peer_id`, `agent`, " .
+                ($queries["ip"] ? "`ip`, `port`," : "") .
+                ($queries["ipv6"] ? "`ipv6`, `ipv6_port`," : "") .
+                " `seeder`, `uploaded`, `downloaded`, `to_go`, `finished`, `started_at`, `last_action_at`, `corrupt`, `key`)
+            VALUES (:uid,:tid,:pid,:agent," .
+                ($queries["ip"] ? "INET6_ATON(:ip),:port," : "") .
+                ($queries["ipv6"] ? "INET6_ATON(:ipv6),:ipv6_port," : "") .
+                ":seeder,:upload,:download,:to_go,0,NOW(),NOW(),:corrupt,:key)")->bindParams([
                 "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"],
                 "agent" => Request::header("user-agent"),
                 "upload" => $trueUploaded, "download" => $trueDownloaded, "to_go" => $queries["left"],
                 "ip" => $queries["ip"], "port" => $queries["port"],
+                "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
                 "seeder" => $seeder, "corrupt" => $queries["corrupt"], "key" => $queries["key"],
             ])->execute();
 
@@ -785,27 +862,68 @@ class TrackerController
 
     private function generateAnnounceResponse($queries, $role, $torrentInfo, &$rep_dict)
     {
-        // TODO support `no_peer_id` and `compact` params
         $peerList = [];
         $rep_dict = [
             "interval" => Config::get("tracker.interval") + rand(5, 20),   // random interval to avoid BOOM
             "min interval" => Config::get("tracker.min_interval") + rand(1, 10),
-            "complete" => 0, // FIXME get real announce data
-            "incomplete" => 0,
+            "complete" => $torrentInfo["complete"], // FIXME get real announce data
+            "incomplete" => $torrentInfo["incomplete"],
             "peers" => &$peerList
         ];
 
-        $limit = ($queries["numwant"] <= 50) ? $queries["numwant"] : 50;
+        // For `stopped` event , we didn't send peers list any more~
+        if ($queries["event"] == "stopped") {
+            return;
+        }
 
-        $peers = PDO::createCommand("SELECT INET6_NTOA(`ip`) as `ip`,`port`,`peer_id` from `peers` WHERE torrent_id = :tid " .
-            "AND peer_id != :pid " .    // Don't select user himself
-            ($role != "no" ? "AND `seeder`='no' " : " ") .  // Don't report seeds to other seeders
-            "ORDER BY RAND() LIMIT $limit")->bindParams([
+        if ($queries["compact"] == 1) {
+            $queries["no_peer_id"] = 1;  // force `no_peer_id` when `compact` mode is enable
+            $peerList = "";
+            $rep_dict["peers6"] = "";
+        }
+
+        $limit = ($queries["numwant"] <= 50) ? $queries["numwant"] : 50;
+        $want_connect_type = [1 => "1", 2 => "2", 3 => "1,2,3"];
+
+        $peers = PDO::createCommand("SELECT " .
+            ($queries["ip"] ? " INET6_NTOA(`ip`) as `ip`,`port`, " : "") .
+            ($queries["ipv6"] ? " INET6_NTOA(`ipv6`) as `ipv6`,`ipv6_port` " : "") .
+            ($queries["no_peer_id"] == 0 ? ",`peer_id`" : "") .
+            " FROM `peers` WHERE torrent_id = :tid " .
+            " AND peer_id != :pid " .    // Don't select user himself
+            " AND connect_type IN ({$want_connect_type[$queries["connect_type"]]})" .
+            ($role != "no" ? " AND `seeder`='no' " : " ") .  // Don't report seeds to other seeders
+            " ORDER BY RAND() LIMIT {$limit}")->bindParams([
             "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
         ])->queryAll();
 
         foreach ($peers as $peer) {
-            $peerList[] = ["ip" => $peer["ip"], "port" => $peer["port"]];
+            $exchange_peer = [];
+
+            if ($queries["compact"] == 0 && $queries["no_peer_id"] == 0)
+                $exchange_peer["peer_id"] = $peer["peer_id"];
+
+            if ($queries["ip"]) {
+                if ($queries["compact"] == 1) {
+                    // $peerList .= pack("Nn", sprintf("%d",ip2long($peer["ip"])), $peer['port']);
+                    $peerList .= inet_pton($peer["ip"]) . pack("n", $peer["port"]);
+                } else {
+                    $exchange_peer["ip"] = $peer["ip"];
+                    $exchange_peer["port"] = $peer["port"];
+                    $peerList[] = $exchange_peer;
+                }
+            }
+
+            if ($queries["ipv6"]) {
+                if ($queries["compact"] == 1) {
+                    $rep_dict["peers6"] .= inet_pton($peer["ip"]) . pack("n", $peer["port"]);
+                } else {
+                    // If peer don't want compact response, we return ipv6-peer in `peers`
+                    $exchange_peer["ip"] = $peer["ipv6"];
+                    $exchange_peer["port"] = $peer["ipv6_port"];
+                    $peerList[] = $exchange_peer;
+                }
+            }
         }
     }
 
