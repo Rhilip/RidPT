@@ -1,44 +1,49 @@
 {
-    "name": "Rhilip/RidPT",
-    "description": "基于 MixPHP 的Private Torrent源码",
-    "type": "project",
-    "keywords": [
-        "mixphp",
-        "swoole",
-        "private torrent"
-    ],
-    "minimum-stability": "stable",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Rhilip",
-            "email": "rhilipruan@gmail.com"
-        }
-    ],
-    "version": "0.0.1",
-    "require": {
-        "php": ">=7.2.0",
-        "RidPT/framework": "dev-ridpt",
-        "ext-pdo": "*",
-        "ext-redis": "*",
-        "ext-curl": "*",
-        "sandfoxme/bencode": "^1.2",
-        "robthree/twofactorauth": "^1.6",
-        "swiftmailer/swiftmailer": "^6.1"
-    },
-    "autoload": {
-        "psr-4": {
-            "apps\\": "apps/"
-        }
-    },
-    "repositories": {
-        "0": {
-            "type": "vcs",
-            "url": "https://github.com/RidPT/framework"
-        },
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.laravel-china.org"
-        }
+  "name": "Rhilip/RidPT",
+  "description": "基于 MixPHP 的Private Torrent源码",
+  "type": "project",
+  "keywords": [
+    "mixphp",
+    "swoole",
+    "bittorrent",
+    "private torrent"
+  ],
+  "minimum-stability": "stable",
+  "license": "Apache-2.0",
+  "authors": [
+    {
+      "name": "Rhilip",
+      "email": "rhilipruan@gmail.com"
     }
+  ],
+  "version": "0.0.1",
+  "require": {
+    "php": ">=7.2.0",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-curl": "*",
+    "ext-redis": "*",
+    "ext-libxml": "*",
+    "ext-mbstring": "*",
+    "ext-simplexml": "*",
+    "sandfoxme/bencode": "^1.2",
+    "robthree/twofactorauth": "^1.6",
+    "swiftmailer/swiftmailer": "^6.1"
+  },
+  "autoload": {
+    "psr-4": {
+      "mix\\": "framework/",
+      "apps\\": "apps/"
+    },
+    "files": [
+      "framework/Mix.php",
+      "framework/helpers/functions.php"
+    ]
+  },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.laravel-china.org"
+    }
+  }
 }

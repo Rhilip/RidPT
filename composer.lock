@@ -4,64 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ef39ea065ed89443574038f4f42be1e8",
+    "content-hash": "347cc4490cefb28dfaeca006d18dc712",
     "packages": [
-        {
-            "name": "RidPT/framework",
-            "version": "dev-ridpt",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/RidPT/framework.git",
-                "reference": "d52fd89fd2dd93664425e0c6fd0140134e4e8f89"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/RidPT/framework/zipball/d52fd89fd2dd93664425e0c6fd0140134e4e8f89",
-                "reference": "d52fd89fd2dd93664425e0c6fd0140134e4e8f89",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-libxml": "*",
-                "ext-mbstring": "*",
-                "ext-simplexml": "*",
-                "php": ">=7.0.0"
-            },
-            "type": "framework",
-            "autoload": {
-                "psr-4": {
-                    "mix\\": "src/"
-                },
-                "files": [
-                    "src/Mix.php",
-                    "src/helpers/functions.php"
-                ]
-            },
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Jian Liu",
-                    "email": "coder.liu@qq.com"
-                },
-                {
-                    "name": "Rhilip",
-                    "email": "rhilipruan@gmail.com"
-                }
-            ],
-            "description": "基于 MixPHP",
-            "homepage": "http://www.mixphp.cn/",
-            "keywords": [
-                "framework",
-                "mixphp",
-                "swoole"
-            ],
-            "support": {
-                "source": "https://github.com/RidPT/framework/tree/ridpt"
-            },
-            "time": "2018-12-05T16:01:23+00:00"
-        },
         {
             "name": "doctrine/lexer",
             "version": "v1.0.1",
@@ -367,16 +311,18 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ridpt/framework": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.2.0",
         "ext-pdo": "*",
+        "ext-json": "*",
+        "ext-curl": "*",
         "ext-redis": "*",
-        "ext-curl": "*"
+        "ext-libxml": "*",
+        "ext-mbstring": "*",
+        "ext-simplexml": "*"
     },
     "platform-dev": []
 }
