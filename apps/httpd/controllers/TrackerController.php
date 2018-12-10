@@ -486,9 +486,11 @@ class TrackerController
          * Which is a  Native-IPv6 , not as link-local site-local loop-back Terodo 6to4
          * If fails , then fail back to $remote_ip (If it's IPv6 format) and `&port=`
          *
-         * As The same reason, `ip` will get form `&ipv4=` (address or endpoint) or
-         * `&ip=` (Not in BEP, but Used by some bittorrent clients like *UTorrent*) params
+         * As The same reason, `ip` will get form `&ipv4=` (address or endpoint)
          * and fail back to $remote_ip (If it's IPv4 format)
+         *
+         * However some *STUPID* bittorrent client like *UTorrent* may use `&ip=` to
+         * store peer's ipv4 or ipv6 address.........
          *
          * After valid those ip params , we will identify peer connect type AS:
          *  1. Only IPv4  2. Only IPv6  3. Both IPv4-IPv6
@@ -511,10 +513,15 @@ class TrackerController
             }
         }
 
-        // If we can't get valid IPv6 address from `&ipv6=` and remote_ip is IPv6 format , then use remote_ip
-        if (!$queries['ipv6'] && IPUtils::isNativeIPv6($remote_ip)) {
-            $queries['ipv6'] = $remote_ip;
-            $queries["ipv6_port"] = $queries["port"];
+        // If we can't get valid IPv6 address from `&ipv6=`
+        // fail back to `&ip=<IPv6>` then the IPv6 format remote_ip
+        if (!$queries["ipv6"]) {
+            if ($queries["ip"] && IPUtils::isValidIPv6($queries["ip"])) {
+                $queries['ipv6'] = $queries["ip"];
+            } elseif (IPUtils::isNativeIPv6($remote_ip)) {
+                $queries['ipv6'] = $remote_ip;
+            }
+            if ($queries["ipv6"]) $queries["ipv6_port"] = $queries["port"];
         }
 
         // `&ip=` is not a BEP param , however It's mainly used in UTorrent as `&ipv4=`
