@@ -21,6 +21,7 @@
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-curl": "*",
+    "ext-intl": "*",
     "ext-redis": "*",
     "ext-libxml": "*",
     "ext-mbstring": "*",
@@ -28,7 +29,8 @@
     "sandfoxme/bencode": "^1.2",
     "robthree/twofactorauth": "^1.6",
     "swiftmailer/swiftmailer": "^6.1",
-    "twig/twig": "^2.0"
+    "twig/twig": "^2.0",
+    "twig/extensions": "^1.5"
   },
   "autoload": {
     "psr-4": {
