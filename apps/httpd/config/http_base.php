@@ -35,6 +35,7 @@ return [
             // 路由规则
             'rules'          => [
                 'GET tracker/{tracker_action}' => ['tracker','index'],
+                'api/{controller}/{action}' => ['api/{controller}', '{action}', 'middleware' => ['Api']],
                 '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => ['Before']],
             ],
         ],
