@@ -1,0 +1,25 @@
+
+{% extends "layout.html.twig" %}
+
+{% block title %}login{% endblock %}
+
+{% block body %}
+<div class="container">
+
+    <form class="form-signin" method="post">
+        <h2 class="form-signin-heading">Sign Up in {{ config["base.site_name"] }}</h2>
+
+        <label for="username" class="sr-only">Username or Email address</label>
+        <input name="username" id="username" class="form-control" placeholder="Username or Email address" {% if username %}value="{{ username }}"{% endif %} required autofocus>
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+
+        {% if error_msg %}
+            <p class="bg-danger">{{ error_msg }}</p>
+        {% endif %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    </form>
+
+</div> <!-- /container -->
+
+{% endblock %}

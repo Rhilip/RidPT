@@ -2,6 +2,8 @@
 
 namespace mix\http;
 
+use apps\common\facades\Config;
+
 use mix\base\BaseObject;
 
 /**
@@ -12,6 +14,9 @@ class Controller extends BaseObject
 {
     public function render($name, $data = [])
     {
-        return (new View())->render($name, $data);
+        $view = new View();
+        $view->twig->addGlobal("config", Config::getAll());
+
+        return $view->render($name, $data);
     }
 }
