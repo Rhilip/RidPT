@@ -81,21 +81,21 @@ class Error extends Component
         }
         $format                           = \Mix::app()->error->format;
         $tpl                              = [
-            404 => "errors.{$format}.not_found",
-            500 => "errors.{$format}.internal_server_error",
+            404 => "errors/{$format}/not_found.html.twig",
+            500 => "errors/{$format}/internal_server_error.html.twig",
         ];
         $content                          = (new View())->render($tpl[$statusCode], $errors);
         \Mix::app()->response->statusCode = $statusCode;
         \Mix::app()->response->content    = $content;
         switch ($format) {
             case self::FORMAT_HTML:
-                \Mix::app()->response->format = \mix\http\Response::FORMAT_HTML;
+                \Mix::app()->response->format = Response::FORMAT_HTML;
                 break;
             case self::FORMAT_JSON:
-                \Mix::app()->response->format = \mix\http\Response::FORMAT_JSON;
+                \Mix::app()->response->format = Response::FORMAT_JSON;
                 break;
             case self::FORMAT_XML:
-                \Mix::app()->response->format = \mix\http\Response::FORMAT_XML;
+                \Mix::app()->response->format = Response::FORMAT_XML;
                 break;
         }
         \Mix::app()->response->send();

@@ -2,29 +2,24 @@
 
 namespace mix\http;
 
+use Twig_Environment;
+use Twig_Loader_Filesystem;
+
 /**
- * View类
- * @author 刘健 <coder.liu@qq.com>
+ * Class View
+ * @author Rhilip
  */
 class View
 {
-
-    // 标题
-    public $title;
-
-    // 渲染视图
     public function render($__template__, $__data__)
     {
-        // 传入变量
-        extract($__data__);
-        // 生成视图
-        $__filepath__ = \Mix::app()->getViewPath() . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, $__template__) . '.php';
-        if (!is_file($__filepath__)) {
-            throw new \mix\exceptions\ViewException("视图文件不存在：{$__filepath__}");
-        }
+        $loader = new Twig_Loader_Filesystem(\Mix::app()->getViewPath());
+        $twig = new Twig_Environment($loader, array(
+            'cache' => \Mix::app()->getRuntimePath() . DIRECTORY_SEPARATOR . "view",
+        ));
+
         ob_start();
-        include $__filepath__;
+        echo $twig->render($__template__, $__data__);
         return ob_get_clean();
     }
-
 }

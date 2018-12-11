@@ -8,7 +8,6 @@
     "bittorrent",
     "private torrent"
   ],
-  "minimum-stability": "stable",
   "license": "Apache-2.0",
   "authors": [
     {
@@ -28,7 +27,8 @@
     "ext-simplexml": "*",
     "sandfoxme/bencode": "^1.2",
     "robthree/twofactorauth": "^1.6",
-    "swiftmailer/swiftmailer": "^6.1"
+    "swiftmailer/swiftmailer": "^6.1",
+    "twig/twig": "^2.0"
   },
   "autoload": {
     "psr-4": {
@@ -45,5 +45,8 @@
       "type": "composer",
       "url": "https://packagist.laravel-china.org"
     }
+  },
+  "require-dev": {
+    "eaglewu/swoole-ide-helper": "dev-master"
   }
 }

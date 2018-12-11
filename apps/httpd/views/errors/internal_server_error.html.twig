@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title><?= $message ?></title>
+    <title>{{ message }}</title>
     <style type="text/css">
         body {
             font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
@@ -32,13 +32,14 @@
 </head>
 <body>
 
-<h1><span><?= $message ?></span></h1>
+<h1><span>{{ message }}</span></h1>
 
-<?php if (!empty($file)): ?>
-<p><?= $type ?> code <?= $code ?></p>
-    <p><span><?= $file ?></span> line <span><?= $line ?></span></p>
-<p><?= str_replace("\n", '<br>', $trace); ?></p>
-<?php endif; ?>
+<?php if ()): ?>
+{% if file%}
+<p>{{ type }} code {{ code }}</p>
+    <p><span>{{ file }}</span> line <span>{{ line }}</span></p>
+<p>{{ trace | nl2br }}</p>
+{% endif %}
 
 <p style="margin-top: 20px;"><a href="http://mixphp.cn" target="_blank">MixPHP：基于 Swoole 的常驻内存型 PHP 高性能框架</a></p>
 
