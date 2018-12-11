@@ -81,8 +81,8 @@ class Error extends Component
         }
         $format                           = \Mix::app()->error->format;
         $tpl                              = [
-            404 => "errors/{$format}/not_found.html.twig",
-            500 => "errors/{$format}/internal_server_error.html.twig",
+            404 => "errors/not_found.html.twig",
+            500 => "errors/internal_server_error.html.twig",
         ];
         $content                          = (new View())->render($tpl[$statusCode], $errors);
         \Mix::app()->response->statusCode = $statusCode;

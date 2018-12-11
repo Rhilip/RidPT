@@ -15,6 +15,7 @@ class View
     {
         $loader = new Twig_Loader_Filesystem(\Mix::app()->getViewPath());
         $twig = new Twig_Environment($loader, array(
+            'debug' => env("APP_DEBUG"),
             'cache' => \Mix::app()->getRuntimePath() . DIRECTORY_SEPARATOR . "view",
         ));
 
