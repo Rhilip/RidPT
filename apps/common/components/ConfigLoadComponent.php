@@ -19,20 +19,31 @@ class ConfigLoadComponent extends Component
     /** Config key prefix in Cache
      * @var string
      */
-    public $saveKeyPrefix = "CONFIG:";
+    public $saveField = "CONFIG:site_config";
 
     /** Config key stored table in Database
      * @var string
      */
     public $table = "site_config";
 
+    public function __construct(array $config = [])
+    {
+        parent::__construct($config);
+        $configs = PDO::createCommand("SELECT `name`,`value` FROM  `{$this->table}`")->queryAll();
+        foreach($configs as $config) {
+            Redis::hset($this->saveField,$config["name"],$config["value"]);
+        }
+    }
+
+    public function getAll() {
+        return Redis::hgetall($this->saveField);
+    }
+
     public function get(string $name)
     {
-        $cache_key = $this->buildCacheKey($name);
-
         // First Check config stored in Redis Cache, If it exist , then just return the cached key
-        $setting = Redis::get($cache_key);
-        if ($setting !== false) return $setting;
+        $setting = Redis::hget($this->saveField, $name);
+        if (!is_null($setting)) return $setting;
 
         // Get config From Database
         $setting = PDO::createCommand("SELECT `value` from `{$this->table}` WHERE `name` = :name")
@@ -42,30 +53,28 @@ class ConfigLoadComponent extends Component
         if ($setting === false) throw $this->createNotFoundException($name);
 
         // Cache it in Redis and return
-        Redis::setex($cache_key, 86400, $setting);
+        Redis::hset($this->saveField, $name, $setting);
         return $setting;
     }
 
     public function set(string $name, $value)
     {
-        PDO::update($this->table, ['value' => $value], [['name', '=', $name]])->execute();
-        $this->flush($name);
+        PDO::createCommand("UPDATE `{$this->table}` SET `value` = :val WHERE `name` = :name")->bindParams([
+            "val" => $value, "name" => $name
+        ])->execute();
+        return $this->flush($name);
     }
 
     public function flush($name)
     {
-        Redis::del($this->buildCacheKey($name));
+        Redis::hdel($this->saveField, $name);
+        return $this->get($name);
     }
 
     public function setMultiple(array $config_array)
     {
         foreach ($config_array as $key => $value)
             $this->set($key, $value);
-    }
-
-    protected function buildCacheKey($key): string
-    {
-        return $this->saveKeyPrefix . $key;
     }
 
     /**

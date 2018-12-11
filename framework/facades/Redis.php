@@ -22,6 +22,7 @@ use mix\base\Facade;
  * @method hset($key, $field, $value) static
  * @method hsetnx($key, $field, $value) static
  * @method hget($key, $field) static
+ * @method hdel($key, $field) static
  * @method lpush($key, $value) static
  * @method rpop($key) static
  * @method brpop($key, $timeout) static
