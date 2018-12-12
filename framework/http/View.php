@@ -2,6 +2,9 @@
 
 namespace mix\http;
 
+// FIXME it's not good to use a apps components in frameworks
+use apps\common\facades\Config;
+
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
@@ -34,6 +37,10 @@ class View
         $this->twig->addExtension(new Twig_Extensions_Extension_Intl());
         $this->twig->addExtension(new Twig_Extensions_Extension_Array());
         $this->twig->addExtension(new Twig_Extensions_Extension_Date());
+
+        $this->twig->addGlobal("config", Config::getAll());
+        if ($user = \mix\facades\Session::get("userInfo"))
+            $this->twig->addGlobal('user',$user);
     }
 
     public function render($__template__, $__data__)
