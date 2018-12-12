@@ -138,8 +138,8 @@ class TrackerController
                     throw new TrackerException(111, [":action" => $action]);
             }
         } catch (TrackerException $e) {
-            // Record agent deny log in Table `agent_deny_log` when the user and torrent info get success
-            if (!is_null($userInfo) && !is_null($torrentInfo)) {
+            // Record agent deny log in Table `agent_deny_log`
+            if ($e->getCode() >= 120) {
                 $raw_header = "";
                 foreach (Request::header() as $key => $value) {
                     $raw_header .= "$key : $value \n";
@@ -151,10 +151,10 @@ class TrackerController
                 ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
                                         `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`), 
                                         `last_action_at` = NOW();")->bindParams([
-                    "tid" => $torrentInfo["id"],
-                    'uid' => $userInfo["id"],
-                    'ua' => Request::header("user-agent"),
-                    'peer_id' => Request::get("peer_id"),
+                    "tid" => $torrentInfo ? $torrentInfo["id"]: 0,
+                    'uid' => $userInfo ? $userInfo["id"] : 0,
+                    'ua' => Request::header("user-agent") ?: "",
+                    'peer_id' => Request::get("peer_id") ?: "",
                     'req_info' => $req_info,
                     'msg' => $e->getMessage()
                 ])->execute();

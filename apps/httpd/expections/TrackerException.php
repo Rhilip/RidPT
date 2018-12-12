@@ -75,6 +75,6 @@ class TrackerException extends \Exception
             }
         }
 
-        parent::__construct($message, 200, $previous);
+        parent::__construct($message, $code, $previous);
     }
 }
