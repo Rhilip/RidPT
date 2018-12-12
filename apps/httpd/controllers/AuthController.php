@@ -36,27 +36,17 @@ class AuthController extends Controller
             $password = Request::post("password");
             $password_again = Request::post("password_again");
             $email = filter_var(Request::post("email"), FILTER_VALIDATE_EMAIL);
+            $accept_tos = filter_var(Request::post("accept_tos"),FILTER_VALIDATE_BOOLEAN);
 
             $invite_by = 0;
             $invite_hash = "";
-            $status = Config::get("register.user_default_status") ?? USER::STATUS_PENDING;
-            $class = Config::get("register.user_default_class") ?? USER::ROLE_USER;
-            $uploadpos = Config::get("register.user_default_uploadpos") ?? 1;
-            $downloadpos = Config::get("register.user_default_downloadpos") ?? 1;
-            $uploaded = Config::get("register.user_default_uploaded") ?? 1;
-            $downloaded = Config::get("register.user_default_downloaded") ?? 1;
-            $seedtime = Config::get("register.user_default_seedtime") ?? 0;
-            $leechtime = Config::get("register.user_default_leechtime") ?? 0;
-            $bonus = Config::get("register.user_default_bonus") ?? 0;
 
             // TODO check if register action is allow
             try {
-                if (!Request::isPost()) throw new \Exception("Requests method is not allowed");
-
                 $register_type = Request::post("type") ?? "open";
                 $this->isRegisterSystemOpen($register_type);
 
-                if (!$register_type || !$username || !$password || !$password_again || !$email)
+                if (!$register_type || !$username || !$password || !$password_again || !$email || !$accept_tos)
                     throw new \Exception("Miss required item in User Register Form");
 
                 $valid_user_name_res = User::validUsername($username);
@@ -118,9 +108,20 @@ class AuthController extends Controller
 
 
             } catch (\Exception $e) {
-                // FIXME Unified interface specification
-                return ['code' => 422, 'error' => $e->getMessage()];
+                return $this->render("auth/register_fail.html.twig",[
+                    "msg" => $e->getMessage()
+                ]);
             }
+
+            $status = Config::get("register.user_default_status") ?? USER::STATUS_PENDING;
+            $class = Config::get("register.user_default_class") ?? USER::ROLE_USER;
+            $uploadpos = Config::get("register.user_default_uploadpos") ?? 1;
+            $downloadpos = Config::get("register.user_default_downloadpos") ?? 1;
+            $uploaded = Config::get("register.user_default_uploaded") ?? 1;
+            $downloaded = Config::get("register.user_default_downloaded") ?? 1;
+            $seedtime = Config::get("register.user_default_seedtime") ?? 0;
+            $leechtime = Config::get("register.user_default_leechtime") ?? 0;
+            $bonus = Config::get("register.user_default_bonus") ?? 0;
 
             /**
              * Get The First User enough privilege ,
@@ -156,31 +157,35 @@ class AuthController extends Controller
                 SitePM::send(0, $invite_by, "New Invitee Signup Successful", "New Invitee Signup Successful");
             }
 
-            // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
-            SwiftMailer::send($email, "Please confirm your accent", "Click this link to confirm.");
             SiteLog::write("User $username($userId) is created now" . (
                 $register_type == "invite" ? ", Invite by " : ""
-
                 ), SiteLog::LEVEL_MOD);
-            // FIXME Unified interface specification
-            return ['code' => 1, 'message' => 'Success'];
-        }
-        else {
 
-
-
-            return $this->render("auth/register.html.twig");
+            if ($status == User::STATUS_CONFIRMED) {
+                return Response::redirect("/index");
+            } else {
+                // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
+                SwiftMailer::send([$email], "Please confirm your accent", "Click this link to confirm.");
+                return $this->render('auth/register_pending.html.twig',[
+                    "email" => $email
+                ]);
+            }
+        } else {
+            return $this->render("auth/register.html.twig",[
+                "register_type" => Request::get("type") ?? "open",
+                "invite_hash" => Request::get("invite_hash")
+            ]);
         }
     }
 
     public function actionConfirm()
     {
-
+        // TODO User Confirm Action
     }
 
     public function actionRecover()
     {
-
+        // TODO User Confirm Action
     }
 
     public function actionLogin()
@@ -239,7 +244,7 @@ class AuthController extends Controller
     {
         // TODO add CSRF protect
         Session::delete('userInfo');
-        return Response::redirect('/auth/login');  // FIXME Unified interface specification
+        return Response::redirect('/auth/login');
     }
 
     /**
@@ -299,7 +304,7 @@ class AuthController extends Controller
         if (Config::get("register.enabled_email_black_list") &&
             Config::get("register.email_black_list")) {
             $email_black_list = explode(",", Config::get("register.email_black_list"));
-            if (!in_array($email_suffix, $email_black_list))
+            if (in_array($email_suffix, $email_black_list))
                 throw new \Exception("The email suffix `$email_suffix` is not allowed.");
         }
     }
@@ -313,7 +318,7 @@ class AuthController extends Controller
         if (Config::get("register.enabled_email_white_list") &&
             Config::get("register.email_white_list")) {
             $email_white_list = explode(",", Config::get("register.email_white_list"));
-            if (in_array($email_suffix, $email_white_list))
+            if (!in_array($email_suffix, $email_white_list))
                 throw new \Exception("The email suffix `$email_suffix` is not allowed.");
         }
     }

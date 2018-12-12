@@ -1,0 +1,123 @@
+{% macro input(name, value , label , placeholder ,notice, type , requried) %}
+    <div class="form-group">
+        <label class="control-label" for="{{ name }}">{{ label }}</label>
+        <input autofocus="" class="form-control" id="{{ name }}" name="{{ name }}" placeholder="{{ placeholder }}"
+               title="" type="{{ type|default('text') }}" value="{{ value|e }}"
+               {% if requried %}required="required"{% endif %}>
+        {% if  notice|e %}
+            <small>{{ notice|raw }}</small>{% endif %}
+    </div>
+{% endmacro %}
+
+{% macro register_form(type, invite_hash) %}
+    {% import _self as forms %}
+    <form method="post">
+        <label>
+            <input name="type" value="{{ type }}" style="display: none">
+        </label>
+        <div class="row">
+            <div class="form-group col-md-4">
+                {{ forms.input('username', '' , 'Username' , 'Username',"Max Lengh 12 with those character: <code>A-Za-z0-9_</code>") }}
+                {{ forms.input('email','','Email','','We only allow those Email: <code>' ~ config["register.email_white_list"] ~ '</code>','email') }}
+                {{ forms.input('password','','Password','',null,'password') }}
+                {{ forms.input('password_again','','Retype Password Again','',null,'password') }}
+
+                {% if type == 'invite' %}
+                    {{ forms.input('invite_hash', invite_hash ,'Invite Code','',null,true) }}
+                {% endif %}
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="accept_tos" value="1" checked> Accept Our TOS and AOP
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <input type="submit" value="Register" class="btn btn-primary">
+            </div>
+        </div>
+    </form>
+
+{% endmacro %}
+
+{% macro nav(register_type,type) %}
+    <li role="presentation"
+        class="{% if register_type == type %}active{% endif %} {% if config['register.by_' ~ type] == false %}disabled{% endif %}">
+        <a href="#{{ type }}" id="{{ type }}-tab" role="tab" data-toggle="tab"
+           aria-controls="{{ type }}" aria-expanded="{% if register_type == type %}true{% endif %}">{{ type|upper }}</a>
+    </li>
+{% endmacro %}
+
+{% import _self as forms %}
+
+{% extends "layout.html.twig" %}
+
+{% block title %}Register{% endblock %}
+
+{% block container %}
+    <h1>Register</h1>
+
+    {% if config["base.enable_register_system"] != true %}
+        <div class="jumbotron">
+            <h2>Sorry~</h2>
+            <p class="lead">
+                The register system is close.
+            </p>
+        </div>
+    {% else %}
+        <ul id="register_tag" class="nav nav-tabs nav-justified" role="tablist">
+            {{ forms.nav(register_type,'open') }}
+            {{ forms.nav(register_type,'invite') }}
+            {{ forms.nav(register_type,'green') }}
+        </ul>
+        <div id="myTabContent" class="tab-content">
+            <div role="tabpanel" class="tab-pane fade {% if register_type == "open" %}active in{% endif %}" id="open"
+                 aria-labelledby="open-tab">
+                {% if config["register.by_open"] != true %}
+                    <div class="jumbotron">
+                        <h2>Sorry ~</h2>
+                        <p>
+                            Open registration is currently disabled. Invites only. If you are lucky you might have a
+                            friend who wants to invite you :) We just wanna see how much cheaters will start respecting
+                            their accounts after they realize they can't just come back in and get another one :). Keep
+                            this in mind, if you are already a member and you invite a known cheater, and you knew about
+                            it in the first place, both yours and the person you invited are disabled. You will have to
+                            come talk to us to get your account reenstated. If you want an invite and you know someone
+                            who have one it's up to them to give you an invite.
+                        </p>
+                    </div>
+                {% else %}
+                    {{ forms.register_form('open') }}
+                {% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane fade {% if register_type == "invite" %}active in{% endif %}"
+                 id="invite" aria-labelledby="profile-tab">
+                {% if config["register.by_invite"] != true %}
+                    <div class="jumbotron">
+                        <h2>Sorry ~</h2>
+                        <p>Invites registration is currently disabled. </p>
+                    </div>
+                {% else %}
+                    {{ forms.register_form('invite',invite_hash) }}
+                {% endif %}
+            </div>
+            <div role="tabpanel" class="tab-pane fade {% if register_type == "green" %}active in{% endif %}" id="green"
+                 aria-labelledby="green-tab">
+                {% if config["register.by_green"] != true %}
+                    <div class="jumbotron">
+                        <h2>Sorry ~</h2>
+                        <p>Green registration is currently disabled. </p>
+                    </div>
+                {% else %}
+                    <div class="jumbotron">
+                        <h2>Sorry ~</h2>
+                        <p>We did't support Green registration.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
