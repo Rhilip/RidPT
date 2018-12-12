@@ -117,6 +117,7 @@ class TrackerController
                             $role = 'partial';
 
                         // Start Database Transaction for below CRUD Action
+                        // TODO 2018.12.12 Check Muti-Tracker behaviour when a Transaction begin
                         PDO::beginTransaction();
                         try {
                             $this->processAnnounceRequest($queries, $role, $userInfo, $torrentInfo);
@@ -869,13 +870,12 @@ class TrackerController
 
     private function generateAnnounceResponse($queries, $role, $torrentInfo, &$rep_dict)
     {
-        $peerList = [];
         $rep_dict = [
             "interval" => Config::get("tracker.interval") + rand(5, 20),   // random interval to avoid BOOM
             "min interval" => Config::get("tracker.min_interval") + rand(1, 10),
-            "complete" => $torrentInfo["complete"], // FIXME get real announce data
+            "complete" => $torrentInfo["complete"],
             "incomplete" => $torrentInfo["incomplete"],
-            "peers" => &$peerList
+            "peers" => []  // By default it is a array object, only when `&compact=1` then it should be a string
         ];
 
         // For `stopped` event , we didn't send peers list any more~
@@ -885,8 +885,9 @@ class TrackerController
 
         if ($queries["compact"] == 1) {
             $queries["no_peer_id"] = 1;  // force `no_peer_id` when `compact` mode is enable
-            $peerList = "";
-            $rep_dict["peers6"] = "";
+            $rep_dict["peers"] = "";  // Change `peers` from array to string
+            if ($queries["ipv6"])   // If peer has IPv6 address , we should add packed string in `peers6`
+                $rep_dict["peers6"] = "";
         }
 
         $limit = ($queries["numwant"] <= 50) ? $queries["numwant"] : 50;
@@ -913,22 +914,22 @@ class TrackerController
             if ($queries["ip"]) {
                 if ($queries["compact"] == 1) {
                     // $peerList .= pack("Nn", sprintf("%d",ip2long($peer["ip"])), $peer['port']);
-                    $peerList .= inet_pton($peer["ip"]) . pack("n", $peer["port"]);
+                    $rep_dict["peers"] .= inet_pton($peer["ip"]) . pack("n", $peer["port"]);
                 } else {
                     $exchange_peer["ip"] = $peer["ip"];
                     $exchange_peer["port"] = $peer["port"];
-                    $peerList[] = $exchange_peer;
+                    $rep_dict["peers"][] = $exchange_peer;
                 }
             }
 
             if ($queries["ipv6"]) {
                 if ($queries["compact"] == 1) {
-                    $rep_dict["peers6"] .= inet_pton($peer["ip"]) . pack("n", $peer["port"]);
+                    $rep_dict["peers6"] .= inet_pton($peer["ipv6"]) . pack("n", $peer["port"]);
                 } else {
                     // If peer don't want compact response, we return ipv6-peer in `peers`
                     $exchange_peer["ip"] = $peer["ipv6"];
                     $exchange_peer["port"] = $peer["ipv6_port"];
-                    $peerList[] = $exchange_peer;
+                    $rep_dict["peers"][] = $exchange_peer;
                 }
             }
         }
