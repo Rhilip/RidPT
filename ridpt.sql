@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 11, 2018 at 12:28 AM
+-- Generation Time: Dec 12, 2018 at 10:28 PM
 -- Server version: 5.7.24-0ubuntu0.18.04.1
 -- PHP Version: 7.2.10-0ubuntu0.18.04.1
 
@@ -21,6 +21,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `ridpt`
 --
+CREATE DATABASE IF NOT EXISTS `ridpt` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `ridpt`;
 
 -- --------------------------------------------------------
 
@@ -38,6 +40,11 @@ CREATE TABLE IF NOT EXISTS `agent_allowed_exception` (
   KEY `family_id` (`family_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
+--
+-- Truncate table before insert `agent_allowed_exception`
+--
+
+TRUNCATE TABLE `agent_allowed_exception`;
 -- --------------------------------------------------------
 
 --
@@ -64,6 +71,11 @@ CREATE TABLE IF NOT EXISTS `agent_allowed_family` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
+--
+-- Truncate table before insert `agent_allowed_family`
+--
+
+TRUNCATE TABLE `agent_allowed_family`;
 --
 -- Dumping data for table `agent_allowed_family`
 --
@@ -225,6 +237,65 @@ CREATE TABLE IF NOT EXISTS `site_config` (
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='The site Config Table';
+
+--
+-- Truncate table before insert `site_config`
+--
+
+TRUNCATE TABLE `site_config`;
+--
+-- Dumping data for table `site_config`
+--
+
+INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
+('authority.pass_tracker_upspeed_check', '60', '2018-11-27 15:18:37'),
+('authority.see_banned_torrent', '40', '2018-11-23 14:01:31'),
+('authority.see_pending_torrent', '40', '2018-11-23 14:01:31'),
+('base.enable_register_system', '1', '2018-11-28 16:05:12'),
+('base.enable_tracker_system', '1', '2018-11-22 14:30:50'),
+('base.max_user', '5000', '2018-11-28 16:00:15'),
+('base.site_name', 'RidPT', '2018-11-22 07:16:42'),
+('buff.enable_large', '1', '2018-12-09 10:33:35'),
+('buff.enable_magic', '1', '2018-12-09 10:33:35'),
+('buff.enable_mod', '1', '2018-12-09 10:33:35'),
+('buff.enable_random', '1', '2018-12-09 10:33:34'),
+('buff.large_size', '107374182400', '2018-12-09 10:33:35'),
+('buff.large_type', 'Free', '2018-12-09 10:33:35'),
+('buff.random_percent_2x', '2', '2018-12-09 10:33:35'),
+('buff.random_percent_2x50%', '0', '2018-12-09 10:33:35'),
+('buff.random_percent_2xfree', '1', '2018-12-09 10:33:35'),
+('buff.random_percent_30%', '0', '2018-12-09 10:33:35'),
+('buff.random_percent_50%', '5', '2018-12-09 10:33:35'),
+('buff.random_percent_free', '2', '2018-12-09 10:33:35'),
+('register.by_green', '0', '2018-12-12 13:50:41'),
+('register.by_invite', '1', '2018-11-29 11:43:57'),
+('register.by_open', '1', '2018-12-12 13:50:41'),
+('register.email_black_list', '@test.com', '2018-12-08 01:50:10'),
+('register.email_white_list', '@gmail.com', '2018-12-08 01:50:10'),
+('register.enabled_email_black_list', '1', '2018-12-08 01:50:10'),
+('register.enabled_email_white_list', '1', '2018-12-08 01:50:10'),
+('register.max_ip_check', '1', '2018-11-29 11:39:55'),
+('register.max_user_check', '1', '2018-11-28 16:04:23'),
+('register.per_ip_user', '5', '2018-11-29 11:40:50'),
+('register.user_default_bonus', '0', '2018-12-05 14:52:12'),
+('register.user_default_class', '1', '2018-12-05 13:56:19'),
+('register.user_default_downloaded', '0', '2018-12-05 13:56:19'),
+('register.user_default_downloadpos', '1', '2018-12-05 13:56:19'),
+('register.user_default_leechtime', '0', '2018-12-05 13:56:19'),
+('register.user_default_seedtime', '0', '2018-12-05 13:56:19'),
+('register.user_default_status', 'pending', '2018-12-05 13:56:19'),
+('register.user_default_uploaded', '0', '2018-12-05 13:56:19'),
+('register.user_default_uploadpos', '1', '2018-12-05 13:56:19'),
+('tracker.cheater_check', '1', '2018-11-27 10:28:13'),
+('tracker.enable_announce', '1', '2018-11-23 13:37:35'),
+('tracker.enable_maxdlsystem', '1', '2018-12-09 10:47:16'),
+('tracker.enable_scrape', '1', '2018-11-23 03:04:26'),
+('tracker.enable_upspeed_check', '1', '2018-11-27 15:18:53'),
+('tracker.enable_waitsystem', '0', '2018-12-10 07:47:45'),
+('tracker.interval', '450', '2018-11-28 13:34:54'),
+('tracker.min_interval', '60', '2018-11-28 13:34:06'),
+('tracker.user_max_leech', '1', '2018-11-27 10:27:05'),
+('tracker.user_max_seed', '3', '2018-11-27 10:27:05');
 
 -- --------------------------------------------------------
 
