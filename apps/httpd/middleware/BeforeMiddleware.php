@@ -22,8 +22,11 @@ class BeforeMiddleware
         $userInfo = Session::get('userInfo');
 
         if ($controllerName === "apps\httpd\controllers\AuthController") {
-            if ($action !== "actionLogout")
-                return $next();  // FIXME 更细粒度的控制
+            if ($userInfo && in_array($action, ["actionLogin", "actionRegister"])) {
+                return Response::redirect("/index");
+            } elseif ($action !== "actionLogout") {
+                return $next();
+            }
         }
 
         if (empty($userInfo)) {

@@ -36,7 +36,7 @@ class AuthController extends Controller
             $password = Request::post("password");
             $password_again = Request::post("password_again");
             $email = filter_var(Request::post("email"), FILTER_VALIDATE_EMAIL);
-            $accept_tos = filter_var(Request::post("accept_tos"),FILTER_VALIDATE_BOOLEAN);
+            $accept_tos = filter_var(Request::post("accept_tos"), FILTER_VALIDATE_BOOLEAN);
 
             $invite_by = 0;
             $invite_hash = "";
@@ -108,7 +108,7 @@ class AuthController extends Controller
 
 
             } catch (\Exception $e) {
-                return $this->render("auth/register_fail.html.twig",[
+                return $this->render("auth/register_fail.html.twig", [
                     "msg" => $e->getMessage()
                 ]);
             }
@@ -166,12 +166,12 @@ class AuthController extends Controller
             } else {
                 // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
                 SwiftMailer::send([$email], "Please confirm your accent", "Click this link to confirm.");
-                return $this->render('auth/register_pending.html.twig',[
+                return $this->render('auth/register_pending.html.twig', [
                     "email" => $email
                 ]);
             }
         } else {
-            return $this->render("auth/register.html.twig",[
+            return $this->render("auth/register.html.twig", [
                 "register_type" => Request::get("type") ?? "open",
                 "invite_hash" => Request::get("invite_hash")
             ]);
@@ -216,7 +216,7 @@ class AuthController extends Controller
                     throw new \Exception("User account is not confirmed.");
                 }
             } catch (\Exception $e) {
-                return $this->render("auth/login.html.twig",["username" => $username, "error_msg"=> $e->getMessage()]);
+                return $this->render("auth/login.html.twig", ["username" => $username, "error_msg" => $e->getMessage()]);
             }
 
             Session::createSessionId();
@@ -228,14 +228,10 @@ class AuthController extends Controller
 
             PDO::createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
                 "ip" => Request::getClientIp(), "id" => $self["id"]
-            ]);
+            ])->execute();
 
             return Response::redirect('/index');
         } else {
-            if (Session::get('userInfo'))
-                return Response::redirect('/index');
-
-
             return $this->render("auth/login.html.twig");
         }
     }
