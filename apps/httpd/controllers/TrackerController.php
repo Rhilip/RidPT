@@ -122,9 +122,12 @@ class TrackerController
                         try {
                             $this->processAnnounceRequest($queries, $role, $userInfo, $torrentInfo);
                             PDO::commit();
+                        } catch (TrackerException $e) {
+                            PDO::rollback();
+                            throw $e;
                         } catch (\Exception $e) {
                             PDO::rollback();
-                            throw new TrackerException(999, [":test" => $e->getMessage()]);
+                            throw new TrackerException(998, [":msg" => $e->getMessage()]);
                         }
 
                         $this->generateAnnounceResponse($queries, $role, $torrentInfo, $rep_dict);

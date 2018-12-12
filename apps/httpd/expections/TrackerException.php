@@ -62,12 +62,13 @@ class TrackerException extends \Exception
         170 => "We believe you're trying to cheat. And your account is disabled.",
 
         // Test Message
+        998 => 'Internal server error :msg',
         999 => ':test',
     ];
 
     public function __construct(int $code = 999, array $replace = null, Throwable $previous = null)
     {
-        $message = $code . " - " . $this->error_msg[$code];
+        $message = $this->error_msg[$code];
         if ($replace) {
             foreach ($replace as $key => $value) {
                 $message = str_replace($key, $value, $message);
