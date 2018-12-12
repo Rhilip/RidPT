@@ -4,33 +4,84 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
-    <meta name="author" content="{{ config['test'] }}">
-    <link rel="icon" href="favicon.ico">
-
+    <meta name="author" content="">
     <title>{{ config["base.site_name"] }} :: {% block title %}{% endblock %} -- Powered by RidPT</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/static/css/signin.css" rel="stylesheet">
+    <link href="/static/css/main.css" rel="stylesheet">
+
+    {% block css %}{% endblock %}
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-    <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <script src="/static/js/html5shiv.min.js"></script>
+    <script src="/static/js/respond.min.js"></script>
     <![endif]-->
 </head>
-
 <body>
+<!-- Navigation -->
+<!-- Fixed navbar -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">{{ config["base.site_name"] }}</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/index">Index</a></li>
+                <li><a href="/torrents">Torrents</a></li>
+                <li><a href="/torrents/upload">Upload</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <form class="nav navbar-form navbar-right">
+                        <input type="text" class="form-control" placeholder="Search...">
+                    </form>
+                </li>
+                {% if user %}
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">{{ user["username"] }}<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/user">User Info Panel</a></li>
+                            <li><a href="/user/setting">User Setting</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/auth/logout">Logout</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li><a href="/auth/login">Login</a></li>
+                    <li><a href="/auth/register">Register</a></li>
+                {% endif %}
+            </ul>
+        </div><!--/.nav-collapse -->
+    </div>
+</nav>
+<!-- Page Content -->
+<div class="container">
+    {% block container %}
 
-{% block body %}
-
-
+    {% endblock %}
+</div> <!-- /container -->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+{% block script %}
+    <!-- Other script field -->
 {% endblock %}
-
-
 </body>
 </html>

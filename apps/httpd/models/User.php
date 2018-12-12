@@ -84,4 +84,9 @@ class User
 
         return "";
     }
+
+    public static function fetchUserCount()
+    {
+        return PDO::createCommand("SELECT COUNT(`id`) FROM `users`")->queryScalar();
+    }
 }

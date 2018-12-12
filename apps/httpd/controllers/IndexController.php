@@ -14,6 +14,6 @@ class IndexController extends Controller
     // 默认动作
     public function actionIndex()
     {
-        return $this->render("test.html.twig", ["title" => "RidPT"]);
+        return $this->render("index.html.twig");
     }
 }

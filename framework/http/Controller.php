@@ -16,6 +16,8 @@ class Controller extends BaseObject
     {
         $view = new View();
         $view->twig->addGlobal("config", Config::getAll());
+        if ($user = \mix\facades\Session::get("userInfo"))
+            $view->twig->addGlobal('user',$user);
 
         return $view->render($name, $data);
     }
