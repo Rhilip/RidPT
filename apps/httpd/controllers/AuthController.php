@@ -41,6 +41,16 @@ class AuthController extends Controller
             $invite_by = 0;
             $invite_hash = "";
 
+            $status = Config::get("register.user_default_status") ?? USER::STATUS_PENDING;
+            $class = Config::get("register.user_default_class") ?? USER::ROLE_USER;
+            $uploadpos = Config::get("register.user_default_uploadpos") ?? 1;
+            $downloadpos = Config::get("register.user_default_downloadpos") ?? 1;
+            $uploaded = Config::get("register.user_default_uploaded") ?? 1;
+            $downloaded = Config::get("register.user_default_downloaded") ?? 1;
+            $seedtime = Config::get("register.user_default_seedtime") ?? 0;
+            $leechtime = Config::get("register.user_default_leechtime") ?? 0;
+            $bonus = Config::get("register.user_default_bonus") ?? 0;
+
             // TODO check if register action is allow
             try {
                 $register_type = Request::post("type") ?? "open";
@@ -105,26 +115,14 @@ class AuthController extends Controller
                      */
                     throw new \Exception("The Green way to register in this site is not Implemented.");
                 }
-
-
             } catch (\Exception $e) {
                 return $this->render("auth/register_fail.html.twig", [
                     "msg" => $e->getMessage()
                 ]);
             }
 
-            $status = Config::get("register.user_default_status") ?? USER::STATUS_PENDING;
-            $class = Config::get("register.user_default_class") ?? USER::ROLE_USER;
-            $uploadpos = Config::get("register.user_default_uploadpos") ?? 1;
-            $downloadpos = Config::get("register.user_default_downloadpos") ?? 1;
-            $uploaded = Config::get("register.user_default_uploaded") ?? 1;
-            $downloaded = Config::get("register.user_default_downloaded") ?? 1;
-            $seedtime = Config::get("register.user_default_seedtime") ?? 0;
-            $leechtime = Config::get("register.user_default_leechtime") ?? 0;
-            $bonus = Config::get("register.user_default_bonus") ?? 0;
-
             /**
-             * Get The First User enough privilege ,
+             * Set The First User enough privilege ,
              * so that He needn't email (or other way) to confirm his account ,
              * and can access the (super)admin panel to change site config .
              */
@@ -164,11 +162,27 @@ class AuthController extends Controller
             if ($status == User::STATUS_CONFIRMED) {
                 return Response::redirect("/index");
             } else {
-                // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
-                SwiftMailer::send([$email], "Please confirm your accent", "Click this link to confirm.");
-                return $this->render('auth/register_pending.html.twig', [
-                    "email" => $email
-                ]);
+                switch (Config::get("register.user_confirm_way")) {
+                    case "auto":
+                        PDO::createCommand("UPDATE `users` SET `status` = :s WHERE `id` = :id")->bindParams([
+                            "s" => User::STATUS_CONFIRMED, "id" => $userId,
+                        ])->execute();
+                        return Response::redirect("/index");
+                    case "mod":
+                        return $this->render('auth/register_pending.html.twig', [
+                            "confirm_way" => "mod",
+                        ]);
+                    case "email":
+                    default:
+                        {
+                            // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
+                            SwiftMailer::send([$email], "Please confirm your accent", "Click this link to confirm.");
+                            return $this->render('auth/register_pending.html.twig', [
+                                "confirm_way" => "email",
+                                "email" => $email
+                            ]);
+                        }
+                }
             }
         } else {
             return $this->render("auth/register.html.twig", [
@@ -185,7 +199,7 @@ class AuthController extends Controller
 
     public function actionRecover()
     {
-        // TODO User Confirm Action
+        // TODO User Recover Action
     }
 
     public function actionLogin()
@@ -208,7 +222,7 @@ class AuthController extends Controller
                 if ($self["opt"]) {
                     $tfa = new TwoFactorAuth(Config::get("base.site_name"));
                     if ($tfa->verifyCode($self["opt"], Request::post("opt")) == false)
-                        throw new \Exception("Invalid username/password");
+                        throw new \Exception("2FA Validation failed");
                 }
 
                 // User 's status is banned or pending~

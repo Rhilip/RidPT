@@ -279,6 +279,7 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('register.max_ip_check', '1', '2018-11-29 11:39:55'),
 ('register.max_user_check', '1', '2018-11-28 16:04:23'),
 ('register.per_ip_user', '5', '2018-11-29 11:40:50'),
+('register.user_confirm_way', 'email', '2018-12-13 02:04:45'),
 ('register.user_default_bonus', '0', '2018-12-05 14:52:12'),
 ('register.user_default_class', '1', '2018-12-05 13:56:19'),
 ('register.user_default_downloaded', '0', '2018-12-05 13:56:19'),
