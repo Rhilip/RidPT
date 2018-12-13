@@ -254,6 +254,8 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('base.enable_register_system', '1', '2018-11-28 16:05:12'),
 ('base.enable_tracker_system', '1', '2018-11-22 14:30:50'),
 ('base.max_user', '5000', '2018-11-28 16:00:15'),
+('base.site_author', 'Rhilip', '2018-12-13 01:57:18'),
+('base.site_description', 'A Private Tracker Site', '2018-12-13 01:57:18'),
 ('base.site_name', 'RidPT', '2018-11-22 07:16:42'),
 ('buff.enable_large', '1', '2018-12-09 10:33:35'),
 ('buff.enable_magic', '1', '2018-12-09 10:33:35'),
