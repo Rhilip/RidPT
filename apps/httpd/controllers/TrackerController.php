@@ -698,18 +698,19 @@ class TrackerController
                 $trueDownloaded = max(0, $queries['downloaded']);
 
                 PDO::createCommand("INSERT INTO `peers`(`user_id`, `torrent_id`, `peer_id`, `agent`, " .
-                    ($queries["ip"] ? "`ip`, `port`," : "") .
-                    ($queries["ipv6"] ? "`ipv6`, `ipv6_port`," : "") .
-                    " `seeder`, `uploaded`, `downloaded`, `to_go`, `finished`, `started_at`, `last_action_at`, `corrupt`, `key`)
+                    ($queries["ip"] ? "`ip`, `port`, " : "") .
+                    ($queries["ipv6"] ? "`ipv6`, `ipv6_port`, " : "") .
+                    "`connect_type`,`seeder`, `uploaded`, `downloaded`, `to_go`, `finished`, `started_at`, `last_action_at`, `corrupt`, `key`)
                     VALUES (:uid,:tid,:pid,:agent," .
                     ($queries["ip"] ? "INET6_ATON(:ip),:port," : "") .
                     ($queries["ipv6"] ? "INET6_ATON(:ipv6),:ipv6_port," : "") .
-                    ":seeder,:upload,:download,:to_go,0,NOW(),NOW(),:corrupt,:key)")->bindParams([
+                    ":connect_type,:seeder,:upload,:download,:to_go,0,NOW(),NOW(),:corrupt,:key)")->bindParams([
                     "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"],
                     "agent" => Request::header("user-agent"),
                     "upload" => $trueUploaded, "download" => $trueDownloaded, "to_go" => $queries["left"],
                     "ip" => $queries["ip"], "port" => $queries["port"],
                     "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
+                    "connect_type" => $queries["connect_type"],
                     "seeder" => $seeder, "corrupt" => $queries["corrupt"], "key" => $queries["key"],
                 ])->execute();
 
@@ -762,14 +763,15 @@ class TrackerController
                 PDO::createCommand("UPDATE `peers` SET `agent`=:agent," .
                     ($queries["ip"] ? "`ip`=INET6_ATON(:ip),`port`=:port," : "") .
                     ($queries["ipv6"] ? "`ipv6`=INET6_ATON(:ipv6),`ipv6_port`=:ipv6_port," : "") .
-                    "`seeder`=:seeder,
-                    `uploaded`=`uploaded` + :uploaded,`downloaded`= `downloaded` + :download,`to_go` = :left,
-                    `last_action_at`=NOW(),`corrupt`=:corrupt,`key`=:key 
+                    "`seeder`=:seeder, `connect_type` = :connect_type, 
+                    `uploaded`=`uploaded` + :uploaded, `downloaded`= `downloaded` + :download, `to_go` = :left,
+                    `last_action_at`=NOW(), `corrupt`=:corrupt, `key`=:key 
                     WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
                     "agent" => Request::header("user-agent"),
                     "ip" => $queries["ip"], "port" => $queries["port"],
                     "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
-                    "seeder" => $seeder, "uploaded" => $trueUploaded, "download" => $trueDownloaded, "left" => $queries["left"],
+                    "connect_type" => $queries["connect_type"], "seeder" => $seeder,
+                    "uploaded" => $trueUploaded, "download" => $trueDownloaded, "left" => $queries["left"],
                     "corrupt" => $queries["corrupt"], "key" => $queries["key"],
                     "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
                 ])->execute();
