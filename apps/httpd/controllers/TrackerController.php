@@ -151,7 +151,7 @@ class TrackerController
                 ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
                                         `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`), 
                                         `last_action_at` = NOW();")->bindParams([
-                    "tid" => $torrentInfo ? $torrentInfo["id"]: 0,
+                    "tid" => $torrentInfo ? $torrentInfo["id"] : 0,
                     'uid' => $userInfo ? $userInfo["id"] : 0,
                     'ua' => Request::header("user-agent") ?: "",
                     'peer_id' => Request::get("peer_id") ?: "",
@@ -623,6 +623,8 @@ class TrackerController
     {
         $timeKey = ($seeder == 'yes') ? 'seed_time' : 'leech_time';
         $torrentUpdateKey = ($seeder == 'yes') ? "complete" : "incomplete";
+        $trueUploaded = $trueDownloaded = 0;
+        $thisUploaded = $thisDownloaded = 0;
 
         // Try to fetch session from Table `peers`
         $self = PDO::createCommand("SELECT `uploaded`,`downloaded`,(NOW() - `last_action_at`) as `duration` 
@@ -630,78 +632,119 @@ class TrackerController
             "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
         ])->queryOne();
 
-        if (!$self) unset($self);
+        if ($self === false) {
+            // If session is not exist and &event!=stopped, a new session should start
+            if ($queries['event'] != 'stopped') {
+                // First check if this peer can open this NEW session then create it
+                $selfCount = PDO::createCommand("SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;")->bindParams([
+                    "uid" => $userInfo["id"],
+                    "tid" => $torrentInfo["id"]
+                ])->queryScalar();
 
-        // If this session is not exist , We should check if this peer can open this NEW session then create it
-        if (!isset($self)) {
-            $selfCount = PDO::createCommand("SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;")->bindParams([
-                "uid" => $userInfo["id"],
-                "tid" => $torrentInfo["id"]
-            ])->queryScalar();
+                // Ban one torrent seeding/leech at muti-location due to your site config
+                if ($seeder == 'yes') { // if this peer's role is seeder
+                    if ($selfCount >= (Config::get('tracker.user_max_seed')))
+                        throw new TrackerException(160, [":count" => Config::get('tracker.user_max_seed')]);
+                } else {
+                    if ($selfCount >= (Config::get('tracker.user_max_leech')))
+                        throw new TrackerException(161, [":count" => Config::get('tracker.user_max_leech')]);
+                }
 
-            // Ban one torrent seeding/leech at muti-location due to your site config
-            if ($seeder == 'yes') { // if this peer's role is seeder
-                if ($selfCount >= (Config::get('tracker.user_max_seed')))
-                    throw new TrackerException(160, [":count" => Config::get('tracker.user_max_seed')]);
-            } else {
-                if ($selfCount >= (Config::get('tracker.user_max_leech')))
-                    throw new TrackerException(161, [":count" => Config::get('tracker.user_max_leech')]);
-            }
+                if ($userInfo["class"] < User::ROLE_VIP) {
+                    $ratio = (($userInfo["downloaded"] > 0) ? ($userInfo["uploaded"] / $userInfo["downloaded"]) : 1);
+                    $gigs = $userInfo["downloaded"] / (1024 * 1024 * 1024);
 
-            if ($userInfo["class"] < User::ROLE_VIP) {
-                $ratio = (($userInfo["downloaded"] > 0) ? ($userInfo["uploaded"] / $userInfo["downloaded"]) : 1);
-                $gigs = $userInfo["downloaded"] / (1024 * 1024 * 1024);
+                    // FIXME Wait System
+                    if (Config::get("tracker.enable_waitsystem")) {
+                        if ($gigs > 10) {
+                            if ($ratio < 0.4) $wait = 24;
+                            elseif ($ratio < 0.5) $wait = 12;
+                            elseif ($ratio < 0.6) $wait = 6;
+                            elseif ($ratio < 0.8) $wait = 3;
+                            else $wait = 0;
 
-                // FIXME Wait System
-                if (Config::get("tracker.enable_waitsystem")) {
-                    if ($gigs > 10) {
-                        if ($ratio < 0.4) $wait = 24;
-                        elseif ($ratio < 0.5) $wait = 12;
-                        elseif ($ratio < 0.6) $wait = 6;
-                        elseif ($ratio < 0.8) $wait = 3;
-                        else $wait = 0;
+                            $elapsed = time() - $torrentInfo["added_at"];
+                            if ($elapsed < $wait)
+                                throw new TrackerException(163, [":sec" => $wait * 3600 - $elapsed]);
+                        }
+                    }
 
-                        $elapsed = time() - $torrentInfo["added_at"];
-                        if ($elapsed < $wait)
-                            throw new TrackerException(163, [":sec" => $wait * 3600 - $elapsed]);
+                    // FIXME Max SLots System
+                    if (Config::get("tracker.enable_maxdlsystem")) {
+                        $max = 0;
+                        if ($gigs > 10) {
+                            if ($ratio < 0.5) $max = 1;
+                            elseif ($ratio < 0.65) $max = 2;
+                            elseif ($ratio < 0.8) $max = 3;
+                            elseif ($ratio < 0.95) $max = 4;
+                        }
+                        if ($max > 0) {
+                            $count = PDO::createCommand("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
+                                "uid" => $userInfo["id"]
+                            ])->queryScalar();
+                            if ($count >= $max)
+                                throw new TrackerException(164, [":max" => $max]);
+                        }
                     }
                 }
 
-                // FIXME Max SLots System
-                if (Config::get("tracker.enable_maxdlsystem")) {
-                    $max = 0;
-                    if ($gigs > 10) {
-                        if ($ratio < 0.5) $max = 1;
-                        elseif ($ratio < 0.65) $max = 2;
-                        elseif ($ratio < 0.8) $max = 3;
-                        elseif ($ratio < 0.95) $max = 4;
-                    }
-                    if ($max > 0) {
-                        $count = PDO::createCommand("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
-                            "uid" => $userInfo["id"]
-                        ])->queryScalar();
-                        if ($count >= $max)
-                            throw new TrackerException(164, [":max" => $max]);
-                    }
+                // Then create new session in database
+                // Update `torrents`, if peer's role is a seeder ,so complete +1 , elseif  he is a leecher , so incomplete +1
+                PDO::createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
+                    "tid" => $torrentInfo["id"]
+                ])->execute();
+
+                $trueUploaded = max(0, $queries['uploaded']);
+                $trueDownloaded = max(0, $queries['downloaded']);
+
+                PDO::createCommand("INSERT INTO `peers`(`user_id`, `torrent_id`, `peer_id`, `agent`, " .
+                    ($queries["ip"] ? "`ip`, `port`," : "") .
+                    ($queries["ipv6"] ? "`ipv6`, `ipv6_port`," : "") .
+                    " `seeder`, `uploaded`, `downloaded`, `to_go`, `finished`, `started_at`, `last_action_at`, `corrupt`, `key`)
+                    VALUES (:uid,:tid,:pid,:agent," .
+                    ($queries["ip"] ? "INET6_ATON(:ip),:port," : "") .
+                    ($queries["ipv6"] ? "INET6_ATON(:ipv6),:ipv6_port," : "") .
+                    ":seeder,:upload,:download,:to_go,0,NOW(),NOW(),:corrupt,:key)")->bindParams([
+                    "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"],
+                    "agent" => Request::header("user-agent"),
+                    "upload" => $trueUploaded, "download" => $trueDownloaded, "to_go" => $queries["left"],
+                    "ip" => $queries["ip"], "port" => $queries["port"],
+                    "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
+                    "seeder" => $seeder, "corrupt" => $queries["corrupt"], "key" => $queries["key"],
+                ])->execute();
+
+                // Search history record, and create new record if not exist.
+                $selfRecordCount = PDO::createCommand("SELECT COUNT(`id`) FROM snatched WHERE user_id=:uid AND torrent_id = :tid")->bindParams([
+                    "uid" => $userInfo["id"],
+                    "tid" => $torrentInfo["id"]
+                ])->queryScalar();
+
+                if ($selfRecordCount == 0) {
+                    PDO::createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`) 
+                        VALUES (:uid,:tid,:agent,:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,NOW(),NOW())")->bindParams([
+                        "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
+                        "agent" => Request::header("user-agent"), "port" => $queries["port"],
+                        "true_up" => 0, "true_dl" => 0,
+                        "this_up" => 0, "this_dl" => 0,
+                        "to_go" => $queries["left"], "time" => 0
+                    ])->execute();
                 }
             }
-        }
+        } else {
+            // So that , We can calculate Announce data on a exist session
+            $trueUploaded = max(0, $queries['uploaded'] - $self['uploaded']);
+            $trueDownloaded = max(0, $queries['downloaded'] - $self['downloaded']);
+            $duration = max(0, $self['duration']);
 
-        // So that , We can calculate Announce data on a exist session
-        $trueUploaded = max(0, $queries['uploaded'] - (isset($self) ? $self['uploaded'] : 0));
-        $trueDownloaded = max(0, $queries['downloaded'] - (isset($self) ? $self['downloaded'] : 0));
-        $duration = max(0, (isset($self) ? $self['duration'] : 0));
+            if (Config::get("tracker.enable_upspeed_check")) {
+                if ($userInfo["class"] < Config::get("authority.pass_tracker_upspeed_check") && $duration > 0)
+                    $this->checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration);
+            }
 
-        if (Config::get("tracker.enable_upspeed_check")) {
-            if ($userInfo["class"] < Config::get("authority.pass_tracker_upspeed_check") && $duration > 0)
-                $this->checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration);
-        }
+            $this->getTorrentBuff($userInfo['id'], $torrentInfo["id"], $trueUploaded, $trueDownloaded, $thisUploaded, $thisDownloaded);
 
-        $this->getTorrentBuff($userInfo['id'], $torrentInfo["id"], $trueUploaded, $trueDownloaded, $thisUploaded, $thisDownloaded);
-
-        // Update Table `peers`, `snatched` by it's event tag
-        // Notice : there MUST have history record in Table `snatched` if session is exist !!!!!!!!
-        if (isset($self)) {
+            // Update Table `peers`, `snatched` by it's event tag
+            // Notice : there MUST have history record in Table `snatched` if session is exist !!!!!!!!
             if ($queries["event"] === "stopped") {
                 // Update `torrents`, if peer's role is a seeder ,so complete -1 , elseif  he is a leecher , so incomplete -1
                 PDO::createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` -1 WHERE id=:tid")->bindParams([
@@ -720,9 +763,9 @@ class TrackerController
                     ($queries["ip"] ? "`ip`=INET6_ATON(:ip),`port`=:port," : "") .
                     ($queries["ipv6"] ? "`ipv6`=INET6_ATON(:ipv6),`ipv6_port`=:ipv6_port," : "") .
                     "`seeder`=:seeder,
-                   `uploaded`=`uploaded` + :uploaded,`downloaded`= `downloaded` + :download,`to_go` = :left,
-                   `last_action_at`=NOW(),`corrupt`=:corrupt,`key`=:key 
-                   WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
+                    `uploaded`=`uploaded` + :uploaded,`downloaded`= `downloaded` + :download,`to_go` = :left,
+                    `last_action_at`=NOW(),`corrupt`=:corrupt,`key`=:key 
+                    WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
                     "agent" => Request::header("user-agent"),
                     "ip" => $queries["ip"], "port" => $queries["port"],
                     "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
@@ -733,52 +776,11 @@ class TrackerController
             }
             if (PDO::getRowCount() > 0) {   // It means that the delete or update query affected so we can safety update `snatched` table
                 PDO::createCommand("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
-                      `this_uploaded` = `this_uploaded` + :this_up, `this_download` = `this_download` + :this_dl, `to_go` = :left, `{$timeKey}`=`{$timeKey}` + :duration,
-                      `agent` = :agent WHERE `torrent_id` = :tid AND `user_id` = :uid")->bindParams([
+                    `this_uploaded` = `this_uploaded` + :this_up, `this_download` = `this_download` + :this_dl, `to_go` = :left, `{$timeKey}`=`{$timeKey}` + :duration,
+                    `agent` = :agent WHERE `torrent_id` = :tid AND `user_id` = :uid")->bindParams([
                     "true_up" => $trueUploaded, "true_dl" => $trueDownloaded, "this_up" => $thisUploaded, "this_dl" => $thisDownloaded,
                     "left" => $queries["left"], "duration" => $duration, "agent" => Request::header("user-agent"),
                     "tid" => $torrentInfo["id"], "uid" => $userInfo["id"]
-                ])->execute();
-            }
-        } elseif ($queries['event'] != 'stopped') {
-            // if session is not exist , a new session should start
-
-            // Update `torrents`, if peer's role is a seeder ,so complete +1 , elseif  he is a leecher , so incomplete +1
-            PDO::createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
-                "tid" => $torrentInfo["id"]
-            ])->execute();
-
-            // First we create this NEW session in database
-            PDO::createCommand("INSERT INTO `peers`(`user_id`, `torrent_id`, `peer_id`, `agent`, " .
-                ($queries["ip"] ? "`ip`, `port`," : "") .
-                ($queries["ipv6"] ? "`ipv6`, `ipv6_port`," : "") .
-                " `seeder`, `uploaded`, `downloaded`, `to_go`, `finished`, `started_at`, `last_action_at`, `corrupt`, `key`)
-            VALUES (:uid,:tid,:pid,:agent," .
-                ($queries["ip"] ? "INET6_ATON(:ip),:port," : "") .
-                ($queries["ipv6"] ? "INET6_ATON(:ipv6),:ipv6_port," : "") .
-                ":seeder,:upload,:download,:to_go,0,NOW(),NOW(),:corrupt,:key)")->bindParams([
-                "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"],
-                "agent" => Request::header("user-agent"),
-                "upload" => $trueUploaded, "download" => $trueDownloaded, "to_go" => $queries["left"],
-                "ip" => $queries["ip"], "port" => $queries["port"],
-                "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
-                "seeder" => $seeder, "corrupt" => $queries["corrupt"], "key" => $queries["key"],
-            ])->execute();
-
-            // Search history record, and create new record if not exist.
-            $selfRecordCount = PDO::createCommand("SELECT COUNT(`id`) FROM snatched WHERE user_id=:uid AND torrent_id = :tid")->bindParams([
-                "uid" => $userInfo["id"],
-                "tid" => $torrentInfo["id"]
-            ])->queryScalar();
-
-            if ($selfRecordCount == 0) {
-                PDO::createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`) 
-                VALUES (:uid,:tid,:agent,:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,NOW(),NOW())")->bindParams([
-                    "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
-                    "agent" => Request::header("user-agent"), "port" => $queries["port"],
-                    "true_up" => $trueUploaded, "true_dl" => $trueDownloaded,
-                    "this_up" => $thisUploaded, "this_dl" => $thisDownloaded,
-                    "to_go" => $queries["left"], "time" => $duration
                 ])->execute();
             }
         }
