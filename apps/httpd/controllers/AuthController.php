@@ -20,8 +20,8 @@ use Mix\Facades\Request;
 use apps\common\facades\Config;
 
 use apps\httpd\models\User;
-use apps\httpd\libraries\RandomString;
 
+use Mix\Helpers\StringHelper;
 use Mix\Http\Controller;
 use RobThree\Auth\TwoFactorAuth;
 
@@ -132,7 +132,7 @@ class AuthController extends Controller
             }
 
             // If pass the validate, then Create this user
-            $passkey = RandomString::md5($username . date("Y-m-d H:i:s"), 10);
+            $passkey = StringHelper::md5($username . date("Y-m-d H:i:s"), 10);
 
             PDO::createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`) 
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus)")->bindParams(array(
