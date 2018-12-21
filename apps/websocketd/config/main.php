@@ -25,19 +25,19 @@ return [
         // 输入
         'input'                    => [
             // 类路径
-            'class' => 'mix\console\Input',
+            'class' => 'Mix\Console\Input',
         ],
 
         // 输出
         'output'                   => [
             // 类路径
-            'class' => 'mix\console\Output',
+            'class' => 'Mix\Console\Output',
         ],
 
         // 错误
         'error'                    => [
             // 类路径
-            'class' => 'mix\console\Error',
+            'class' => 'Mix\Console\Error',
             // 错误级别
             'level' => E_ALL,
         ],
@@ -45,13 +45,13 @@ return [
         // 日志
         'log'                      => [
             // 类路径
-            'class'       => 'mix\base\Log',
+            'class'       => 'Mix\Log\Log',
             // 日志记录级别
             'level'       => ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'],
             // 日志目录
             'dir'         => 'logs',
             // 日志轮转类型
-            'rotate'      => mix\Base\Log::ROTATE_DAY,
+            'rotate'      => Mix\Log\Log::ROTATE_DAY,
             // 最大文件尺寸
             'maxFileSize' => 0,
         ],
@@ -59,13 +59,13 @@ return [
         // 数据库
         'pdo'                      => [
             // 类路径
-            'class'     => 'mix\client\PDO',
+            'class'         => 'Mix\Database\PDOConnection',
             // 数据源格式
-            'dsn'       => env('DB.DSN'),
+            'dsn'           => env('DATABASE_DSN'),
             // 数据库用户名
-            'username'  => env('DB.USERNAME'),
+            'username'      => env('DATABASE_USERNAME'),
             // 数据库密码
-            'password'  => env('DB.PASSWORD'),
+            'password'      => env('DATABASE_PASSWORD'),
             // 设置PDO属性: http://php.net/manual/zh/pdo.setattribute.php
             'attribute' => [
                 // 设置默认的提取模式: \PDOConnection::FETCH_OBJ | \PDOConnection::FETCH_ASSOC
@@ -76,33 +76,36 @@ return [
         // redis
         'redis'                    => [
             // 类路径
-            'class'    => 'mix\client\RedisPersistent',
+            'class'    => 'Mix\Redis\Persistent\RedisConnection',
             // 主机
-            'host'     => env('REDIS.HOST'),
+            'host'     => env('REDIS_HOST'),
             // 端口
-            'port'     => env('REDIS.PORT'),
+            'port'     => env('REDIS_PORT'),
             // 数据库
-            'database' => env('REDIS.DATABASE'),
+            'database' => env('REDIS_DATABASE'),
             // 密码
-            'password' => env('REDIS.PASSWORD'),
+            'password' => env('REDIS_PASSWORD'),
+            'driverOptions' => [
+                \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
+            ]
         ],
 
         // Session
         'websocket.sessionReader'  => [
             // 类路径
-            'class'         => 'mix\websocket\SessionReader',
+            'class'         => 'Mix\Websocket\SessionReader',
             // 保存处理者
             'saveHandler'   => [
                 // 类路径
-                'class'    => 'mix\client\Redis',
+                'class'    => 'Mix\Redis\RedisConnection',
                 // 主机
-                'host'     => env('REDIS.HOST'),
+                'host'     => env('REDIS_HOST'),
                 // 端口
-                'port'     => env('REDIS.PORT'),
+                'port'     => env('REDIS_PORT'),
                 // 数据库
-                'database' => env('REDIS.DATABASE'),
+                'database' => env('REDIS_DATABASE'),
                 // 密码
-                'password' => env('REDIS.PASSWORD'),
+                'password' => env('REDIS_PASSWORD'),
             ],
             // 保存的Key前缀
             'saveKeyPrefix' => 'SESSION:',
@@ -113,19 +116,19 @@ return [
         // Token
         'websocket.tokenReader'    => [
             // 类路径
-            'class'         => 'mix\websocket\TokenReader',
+            'class'         => 'Mix\Websocket\TokenReader',
             // 保存处理者
             'saveHandler'   => [
                 // 类路径
-                'class'    => 'mix\client\Redis',
+                'class'    => 'Mix\Client\Redis',
                 // 主机
-                'host'     => env('REDIS.HOST'),
+                'host'     => env('REDIS_HOST'),
                 // 端口
-                'port'     => env('REDIS.PORT'),
+                'port'     => env('REDIS_PORT'),
                 // 数据库
-                'database' => env('REDIS.DATABASE'),
+                'database' => env('REDIS_DATABASE'),
                 // 密码
-                'password' => env('REDIS.PASSWORD'),
+                'password' => env('REDIS_PASSWORD'),
             ],
             // 保存的Key前缀
             'saveKeyPrefix' => 'TOKEN:',
@@ -136,7 +139,7 @@ return [
         // 消息处理器
         'websocket.messageHandler' => [
             // 类路径
-            'class'               => 'mix\websocket\MessageHandler',
+            'class'               => 'Mix\Websocket\MessageHandler',
             // 控制器命名空间
             'controllerNamespace' => 'apps\websocketd\controllers',
             // 路由规则
@@ -157,7 +160,7 @@ return [
         'webSocketServer' => [
 
             // 类路径
-            'class'    => 'mix\websocket\WebSocketServer',
+            'class'    => 'Mix\Websocket\WebSocketServer',
             // 主机
             'host'     => 'localhost',
             // 端口
@@ -192,15 +195,15 @@ return [
         // 异步redis
         'async.redis'     => [
             // 类路径
-            'class'    => 'mix\client\RedisAsync',
+            'class'    => 'Mix\Redis\Async\RedisConnection',
             // 主机
-            'host'     => env('REDIS.HOST'),
+            'host'     => env('REDIS_HOST'),
             // 端口
-            'port'     => env('REDIS.PORT'),
+            'port'     => env('REDIS_PORT'),
             // 数据库
-            'database' => env('REDIS.DATABASE'),
+            'database' => env('REDIS_DATABASE'),
             // 密码
-            'password' => env('REDIS.PASSWORD'),
+            'password' => env('REDIS_PASSWORD'),
         ],
 
     ],
