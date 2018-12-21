@@ -1,9 +1,9 @@
 <?php
 
-namespace mix\Http;
+namespace Mix\Http;
 
 // FIXME it's not good to use a apps components in frameworks
-use apps\common\facades\Config;
+use Mix\Facades\Config;
 
 use Twig_Loader_Filesystem;
 use Twig_Environment;
