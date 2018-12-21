@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\helpers;
+namespace Mix\helpers;
 
 /**
  * FileSystemHelper类

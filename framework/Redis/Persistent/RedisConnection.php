@@ -1,12 +1,12 @@
 <?php
 
-namespace mix\client;
+namespace Mix\Redis\Persistent;
 
 /**
  * redis长连接组件
  * @author 刘健 <coder.liu@qq.com>
  */
-class RedisPersistent extends BaseRedisPersistent
+class RedisConnection extends BaseRedisConnection
 {
 
     // 析构事件

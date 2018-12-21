@@ -1,17 +1,17 @@
 <?php
 
-namespace mix\facades;
+namespace Mix\Facades;
 
-use mix\base\Facade;
+use Mix\Base\Facade;
 
 /**
  * RDB 门面类
  * @author 刘健 <coder.liu@qq.com>
  *
  * @method disconnect() static
- * @method \mix\client\PDO queryBuilder($sqlItem) static
- * @method \mix\client\PDO createCommand($sql = null) static
- * @method \mix\client\PDO bindParams($data) static
+ * @method \Mix\Database\PDOConnection queryBuilder($sqlItem) static
+ * @method \Mix\Database\PDOConnection createCommand($sql = null) static
+ * @method \Mix\Database\PDOConnection bindParams($data) static
  * @method queryAll() static
  * @method queryOne() static
  * @method queryColumn($columnNumber = 0) static
@@ -19,10 +19,10 @@ use mix\base\Facade;
  * @method execute() static
  * @method getLastInsertId() static
  * @method getRowCount() static
- * @method \mix\client\PDO insert($table, $data) static
- * @method \mix\client\PDO batchInsert($table, $data) static
- * @method \mix\client\PDO update($table, $data, $where) static
- * @method \mix\client\PDO delete($table, $where) static
+ * @method \Mix\Database\PDOConnection insert($table, $data) static
+ * @method \Mix\Database\PDOConnection batchInsert($table, $data) static
+ * @method \Mix\Database\PDOConnection update($table, $data, $where) static
+ * @method \Mix\Database\PDOConnection delete($table, $where) static
  * @method transaction($closure) static
  * @method beginTransaction() static
  * @method commit() static
@@ -35,7 +35,7 @@ class PDO extends Facade
     /**
      * 获取实例
      * @param $name
-     * @return \mix\client\PDO
+     * @return \Mix\Database\PDOConnection
      */
     public static function name($name)
     {

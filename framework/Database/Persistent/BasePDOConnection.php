@@ -1,12 +1,12 @@
 <?php
 
-namespace mix\client;
+namespace Mix\Database\Persistent;
 
 /**
  * BasePdoPersistent组件
  * @author 刘健 <coder.liu@qq.com>
  */
-class BasePDOPersistent extends BasePDO
+class BasePDOConnection extends \Mix\Database\BasePDOConnection
 {
 
     // 重新连接
@@ -96,7 +96,7 @@ class BasePDOPersistent extends BasePDO
             'Resource deadlock avoided',
             'failed with errno',
         ];
-        $errorMessage       = $e->getMessage();
+        $errorMessage = $e->getMessage();
         foreach ($disconnectMessages as $message) {
             if (false !== stripos($errorMessage, $message)) {
                 return true;

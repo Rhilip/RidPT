@@ -8,10 +8,10 @@
 
 namespace apps\httpd\controllers;
 
-use mix\facades\PDO;
-use mix\facades\Redis;
-use mix\facades\Request;
-use mix\facades\Response;
+use Mix\Facades\PDO;
+use Mix\Facades\Redis;
+use Mix\Facades\Request;
+use Mix\Facades\Response;
 
 use apps\common\facades\Config;
 use apps\common\libraries\IPUtils;
@@ -229,7 +229,7 @@ class TrackerController
         if (strspn(strtolower($passkey), 'abcdef0123456789') != 32)
             throw new TrackerException(131, [":attribute" => "passkey", ":reason" => "The format of passkey isn't correct"]);
 
-        // Get userInfo from Redis Cache and then Database
+        // Get userInfo from RedisConnection Cache and then Database
         $userInfo = Redis::get("user_passkey_" . $passkey . "_content");
         if ($userInfo === false) {
             // If Cache breakdown , We will get User info from Database and then cache it
@@ -292,7 +292,7 @@ class TrackerController
      */
     private function checkUserAgent(bool $onlyCheckUA = false)
     {
-        // Get Client White-And-Exception List From Database and storage it in Redis Cache
+        // Get Client White-And-Exception List From Database and storage it in RedisConnection Cache
         $allowedFamily = Redis::get("allowed_client_list");
         if ($allowedFamily === false) {
             $allowedFamily = PDO::createCommand("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();

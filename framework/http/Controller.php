@@ -1,10 +1,8 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use apps\common\facades\Config;
-
-use mix\base\BaseObject;
+use Mix\Base\BaseObject;
 
 /**
  * Controller类

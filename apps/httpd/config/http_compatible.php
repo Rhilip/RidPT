@@ -8,12 +8,12 @@ return array_replace_recursive($base, [
     'components' => [
         // 请求
         'request' => [
-            'class' => 'mix\http\compatible\Request',
+            'class' => 'Mix\Http\Compatible\Request',
         ],
 
         'response' => [
             // 类路径
-            'class' => 'mix\http\compatible\Response',
+            'class' => 'Mix\Http\Compatible\Response',
         ],
 
         // 错误

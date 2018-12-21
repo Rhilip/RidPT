@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
 /**
  * Image类

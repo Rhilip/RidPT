@@ -2,7 +2,7 @@
 
 namespace apps\websocketd\models;
 
-use mix\validators\Validator;
+use mix\Validators\Validator;
 
 /**
  * Message 表单模型类

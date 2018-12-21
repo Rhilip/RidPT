@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\pool;
+namespace Mix\pool;
 
-use mix\base\Component;
+use Mix\Base\Component;
 
 /**
  * ConnectionPool组件

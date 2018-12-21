@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\client;
+namespace Mix\Redis;
 
-use mix\base\Component;
+use Mix\Base\Component;
 
 /**
  * BaseRedis组件
@@ -34,7 +34,7 @@ use mix\base\Component;
  * @method publish($channel, $message)
  * @method ttl($key)
  */
-class BaseRedis extends Component
+class BaseRedisConnection extends Component
 {
 
     // 主机
@@ -79,7 +79,7 @@ class BaseRedis extends Component
         $redis = new \Redis();
         // connect 这里如果设置timeout，是全局有效的，执行brPop时会受影响
         if (!$redis->connect($this->host, $this->port)) {
-            throw new \mix\exceptions\ConnectionException('redis connection failed.');
+            throw new \Mix\Exceptions\ConnectionException('redis connection failed.');
         }
         $redis->auth($this->password);
         $redis->select($this->database);

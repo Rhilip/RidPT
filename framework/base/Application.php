@@ -1,46 +1,40 @@
 <?php
 
-namespace mix\base;
+namespace Mix\Base;
 
 /**
  * App类
  * @author 刘健 <coder.liu@qq.com>
  *
- * @property \mix\base\Log $log
- * @property \mix\console\Input $input
- * @property \mix\console\Output $output
- * @property \mix\http\Route $route
- * @property \mix\http\Request|\mix\http\compatible\Request $request
- * @property \mix\http\Response|\mix\http\compatible\Response $response
- * @property \mix\http\Error|\mix\console\Error $error
- * @property \mix\http\Token $token
- * @property \mix\http\Session $session
- * @property \mix\http\Cookie $cookie
- * @property \mix\client\PDO $pdo
- * @property \mix\client\Redis $redis
- * @property \mix\websocket\TokenReader $tokenReader
- * @property \mix\websocket\SessionReader $sessionReader
- * @property \mix\websocket\MessageHandler $messageHandler
- * @property \mix\pool\ConnectionPool $connectionPool
+ * @property \Mix\Log\Log $log
+ * @property \Mix\Console\Input $input
+ * @property \Mix\Console\Output $output
+ * @property \Mix\Http\Route $route
+ * @property \Mix\Http\Request|\Mix\Http\Compatible\Request $request
+ * @property \Mix\Http\Response|\Mix\Http\Compatible\Response $response
+ * @property \Mix\Http\Error|\Mix\Console\Error $error
+ * @property \Mix\Http\Token $token
+ * @property \Mix\Http\Session $session
+ * @property \Mix\Http\Cookie $cookie
+ * @property \Mix\Database\PDOConnection $pdo
+ * @property \Mix\Redis\RedisConnection $redis
+ * @property \Mix\Websocket\TokenReader $tokenReader
+ * @property \Mix\Websocket\SessionReader $sessionReader
+ * @property \Mix\Websocket\MessageHandler $messageHandler
+ * @property \Mix\Pool\ConnectionPool $connectionPool
  */
 class Application extends BaseObject
 {
-
     // 初始化回调
     public $initialize = [];
-
     // 基础路径
     public $basePath = '';
-
     // 组件配置
     public $components = [];
-
     // 类库配置
     public $libraries = [];
-
     // 组件容器
     protected $_components;
-
     // 组件命名空间
     protected $_componentPrefix;
 
@@ -51,7 +45,7 @@ class Application extends BaseObject
         // 快捷引用
         \Mix::setApp($this);
         // 错误注册
-        \mix\base\Error::register();
+        \Mix\Base\Error::register();
         // 执行初始化回调
         foreach ($this->initialize as $callback) {
             call_user_func($callback);
@@ -73,13 +67,13 @@ class Application extends BaseObject
         }
         // 未注册
         if (!isset($this->components[$name])) {
-            throw new \mix\exceptions\ComponentException("组件不存在：{$name}");
+            throw new \Mix\Exceptions\ComponentException("组件不存在：{$name}");
         }
         // 使用配置创建新对象
         $object = \Mix::createObject($this->components[$name], $name);
         // 组件效验
         if (!($object instanceof ComponentInterface)) {
-            throw new \mix\exceptions\ComponentException("不是组件类型：{$this->components[$name]['class']}");
+            throw new \Mix\Exceptions\ComponentException("不是组件类型：{$this->components[$name]['class']}");
         }
         if ($return) {
             return $object;
@@ -94,8 +88,8 @@ class Application extends BaseObject
         $message = "Config does not exist: {$name}.";
         // 处理带前缀的名称
         preg_match('/(\[[\w.]+\])/', $name, $matches);
-        $subname   = array_pop($matches);
-        $name      = str_replace($subname, str_replace('.', '|', $subname), $name);
+        $subname = array_pop($matches);
+        $name = str_replace($subname, str_replace('.', '|', $subname), $name);
         $fragments = explode('.', $name);
         foreach ($fragments as $key => $value) {
             if (strpos($value, '[') !== false) {
@@ -106,13 +100,13 @@ class Application extends BaseObject
         // 判断一级配置是否存在
         $first = array_shift($fragments);
         if (!isset($this->$first)) {
-            throw new \mix\exceptions\ConfigException($message);
+            throw new \Mix\Exceptions\ConfigException($message);
         }
         // 判断其他配置是否存在
         $current = $this->$first;
         foreach ($fragments as $key) {
             if (!isset($current[$key])) {
-                throw new \mix\exceptions\ConfigException($message);
+                throw new \Mix\Exceptions\ConfigException($message);
             }
             $current = $current[$key];
         }
@@ -130,5 +124,4 @@ class Application extends BaseObject
     {
         return $this->basePath . DIRECTORY_SEPARATOR . 'runtime';
     }
-
 }

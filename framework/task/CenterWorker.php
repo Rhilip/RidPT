@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\task;
+namespace Mix\Task;
 
 /**
  * 工作者基类(中)

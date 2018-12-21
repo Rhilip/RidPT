@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\http;
+namespace mix\Http;
 
-use mix\base\BaseObject;
+use mix\Base\BaseObject;
 
 /**
  * Pagination类

@@ -2,12 +2,12 @@
 
 namespace apps\daemon\commands;
 
-use mix\client\RedisPersistent;
-use mix\console\ExitCode;
-use mix\facades\Input;
-use mix\task\CenterWorker;
-use mix\task\LeftWorker;
-use mix\task\ProcessPoolTaskExecutor;
+use mix\Redis\RedisConnection;
+use mix\Console\ExitCode;
+use mix\Facades\Input;
+use mix\Task\CenterWorker;
+use mix\Task\LeftWorker;
+use mix\Task\ProcessPoolTaskExecutor;
 
 /**
  * 推送模式范例
@@ -80,7 +80,7 @@ class PushCommand extends BaseCommand
     public function onLeftStart(LeftWorker $worker)
     {
         // 使用长连接客户端，这样会自动帮你维护连接不断线
-        $redis = RedisPersistent::newInstanceByConfig('libraries.[persistent.redis]');
+        $redis = RedisConnection::newInstanceByConfig('libraries.[persistent.redis]');
         // 通过循环保持任务执行状态
         while (true) {
             // 从消息队列中间件阻塞获取一条消息

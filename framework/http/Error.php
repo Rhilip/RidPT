@@ -1,9 +1,8 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\Component;
-use mix\http\View;
+use Mix\Base\Component;
 
 /**
  * Error类
@@ -35,13 +34,13 @@ class Error extends Component
     public function handleException($e)
     {
         // debug处理 & exit处理
-        if ($e instanceof \mix\exceptions\DebugException || $e instanceof \mix\exceptions\EndException) {
+        if ($e instanceof \Mix\Exceptions\DebugException || $e instanceof \Mix\Exceptions\EndException) {
             \Mix::app()->response->content = $e->getMessage();
             \Mix::app()->response->send();
             return;
         }
         // 错误参数定义
-        $statusCode = $e instanceof \mix\exceptions\NotFoundException ? 404 : 500;
+        $statusCode = $e instanceof \Mix\Exceptions\NotFoundException ? 404 : 500;
         $errors     = [
             'status'  => $statusCode,
             'code'    => $e->getCode(),
@@ -52,7 +51,7 @@ class Error extends Component
             'trace'   => $e->getTraceAsString(),
         ];
         // 日志处理
-        if (!($e instanceof \mix\exceptions\NotFoundException)) {
+        if (!($e instanceof \Mix\Exceptions\NotFoundException)) {
             $message = "{$errors['message']}" . PHP_EOL;
             $message .= "[type] {$errors['type']} [code] {$errors['code']}" . PHP_EOL;
             $message .= "[file] {$errors['file']} [line] {$errors['line']}" . PHP_EOL;

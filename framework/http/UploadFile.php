@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\helpers\StringHelper;
+use Mix\Helpers\StringHelper;
 
 /**
  * UploadFile类

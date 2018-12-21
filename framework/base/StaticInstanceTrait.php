@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\base;
+namespace Mix\Base;
 
 /**
  * Trait InstanceTrait
@@ -20,7 +20,7 @@ trait StaticInstanceTrait
         $config = \Mix::app()->config($name);
         $object = \Mix::createObject($config);
         if (get_class($object) != $class) {
-            throw new \mix\exceptions\ConfigException('实例化类型与配置类型不符');
+            throw new \Mix\Exceptions\ConfigException('实例化类型与配置类型不符');
         }
         return $object;
     }

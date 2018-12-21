@@ -2,7 +2,7 @@
 
 namespace apps\httpd\models;
 
-use mix\facades\PDO;
+use mix\Facades\PDO;
 
 class User
 {

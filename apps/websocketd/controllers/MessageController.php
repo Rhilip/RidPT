@@ -2,8 +2,8 @@
 
 namespace apps\websocketd\controllers;
 
-use mix\facades\Redis;
-use mix\websocket\Controller;
+use mix\Facades\Redis;
+use mix\Websocket\Controller;
 use apps\websocketd\models\MessageForm;
 
 /**

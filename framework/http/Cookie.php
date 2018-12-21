@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\Component;
+use Mix\Base\Component;
 
 /**
  * Cookie组件
@@ -55,14 +55,14 @@ class Cookie extends Component
     // 删除
     public function delete($name)
     {
-        return $this->set($name, null);
+        return $this->set($name, null, 0);
     }
 
     // 清空当前域所有cookie
     public function clear()
     {
         foreach (\Mix::app()->request->cookie() as $name => $value) {
-            $this->set($name, null);
+            $this->set($name, null, 0);
         }
         return true;
     }

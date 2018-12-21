@@ -2,7 +2,7 @@
 
 namespace apps\common\models;
 
-use mix\facades\Redis;
+use mix\Facades\Redis;
 
 /**
  * 队列模型类

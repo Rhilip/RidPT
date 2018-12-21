@@ -2,9 +2,9 @@
 
 namespace apps\daemon\commands;
 
-use mix\console\Command;
-use mix\console\ExitCode;
-use mix\facades\Output;
+use mix\Console\Command;
+use mix\Console\ExitCode;
+use mix\Facades\Output;
 use mix\helpers\ProcessHelper;
 
 /**

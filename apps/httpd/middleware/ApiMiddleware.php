@@ -13,7 +13,7 @@ class ApiMiddleware
 {
     public function handle($callable, \Closure $next)
     {
-        app()->response->format = \mix\http\Response::FORMAT_JSON;
+        app()->response->format = \Mix\Http\Response::FORMAT_JSON;
         return $next();
     }
 }

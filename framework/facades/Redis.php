@@ -1,11 +1,11 @@
 <?php
 
-namespace mix\facades;
+namespace Mix\Facades;
 
-use mix\base\Facade;
+use Mix\Base\Facade;
 
 /**
- * Redis 门面类
+ * RedisConnection 门面类
  * @author 刘健 <coder.liu@qq.com>
  *
  * @method disconnect() static
@@ -42,7 +42,7 @@ class Redis extends Facade
     /**
      * 获取实例
      * @param $name
-     * @return \mix\client\Redis
+     * @return \Mix\Redis\RedisConnection
      */
     public static function name($name)
     {

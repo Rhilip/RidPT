@@ -2,7 +2,7 @@
 
 namespace apps\common\models;
 
-use mix\facades\Redis;
+use mix\Facades\Redis;
 
 /**
  * 缓存模型类

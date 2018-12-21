@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\exceptions;
+namespace Mix\Exceptions;
 
 /**
  * ModelException类

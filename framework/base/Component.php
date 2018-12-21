@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\base;
+namespace Mix\Base;
 
 /**
  * 组件基类

@@ -1,9 +1,9 @@
 <?php
 
-namespace mix\console;
+namespace Mix\Console;
 
-use mix\base\Component;
-use mix\helpers\PhpInfoHelper;
+use Mix\Base\Component;
+use Mix\helpers\PhpInfoHelper;
 
 /**
  * Output组件

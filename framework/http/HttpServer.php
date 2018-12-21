@@ -1,10 +1,10 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\BaseObject;
-use mix\facades\Output;
-use mix\helpers\ProcessHelper;
+use Mix\Base\BaseObject;
+use Mix\Facades\Output;
+use Mix\Helpers\ProcessHelper;
 
 /**
  * Http服务器类
@@ -33,7 +33,7 @@ class HttpServer extends BaseObject
         'pid_file'         => '/var/run/mix-httpd.pid',
         // 日志文件路径
         'log_file'         => '/tmp/mix-httpd.log',
-        // 开启后，PDO 协程多次 prepare 才不会有 40ms 延迟
+        // 开启后，PDOConnection 协程多次 prepare 才不会有 40ms 延迟
         'open_tcp_nodelay' => true,
     ];
 
@@ -100,7 +100,7 @@ class HttpServer extends BaseObject
             }
             // 实例化App
             $config = require $this->virtualHost['configFile'];
-            $app    = new \mix\http\Application($config);
+            $app    = new Application($config);
             $app->loadAllComponents();
         });
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\http;
+namespace mix\Http;
 
 // FIXME it's not good to use a apps components in frameworks
 use apps\common\facades\Config;
@@ -39,7 +39,7 @@ class View
         $this->twig->addExtension(new Twig_Extensions_Extension_Date());
 
         $this->twig->addGlobal("config", Config::getAll());
-        if ($user = \mix\facades\Session::get("userInfo"))
+        if ($user = \Mix\Facades\Session::get("userInfo"))
             $this->twig->addGlobal('user',$user);
     }
 

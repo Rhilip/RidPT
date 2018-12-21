@@ -16,7 +16,7 @@ class Mix
     /**
      * 返回App，并设置组件命名空间
      *
-     * @return \mix\http\Application|\mix\console\Application
+     * @return \Mix\Http\Application|\Mix\Console\Application
      */
     public static function app($prefix = null)
     {
@@ -31,7 +31,7 @@ class Mix
     /**
      * 获取App
      *
-     * @return \mix\http\Application|\mix\console\Application
+     * @return \Mix\Http\Application|\Mix\Console\Application
      */
     protected static function getApp()
     {

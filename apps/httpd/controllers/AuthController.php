@@ -12,17 +12,17 @@ use apps\common\facades\SwiftMailer;
 use apps\common\libraries\SiteLog;
 use apps\common\libraries\SitePM;
 
-use mix\facades\PDO;
-use mix\facades\Response;
-use mix\facades\Session;
-use mix\facades\Request;
+use Mix\Facades\PDO;
+use Mix\Facades\Response;
+use Mix\Facades\Session;
+use Mix\Facades\Request;
 
 use apps\common\facades\Config;
 
 use apps\httpd\models\User;
 use apps\httpd\libraries\RandomString;
 
-use mix\http\Controller;
+use Mix\Http\Controller;
 use RobThree\Auth\TwoFactorAuth;
 
 

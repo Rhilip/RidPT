@@ -1,9 +1,9 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\BaseObject;
-use mix\helpers\XmlHelper;
+use Mix\Base\BaseObject;
+use Mix\Helpers\XmlHelper;
 
 /**
  * Xml类

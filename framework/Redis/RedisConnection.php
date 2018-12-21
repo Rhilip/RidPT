@@ -1,12 +1,12 @@
 <?php
 
-namespace mix\client;
+namespace Mix\Redis;
 
 /**
  * redis组件
  * @author 刘健 <coder.liu@qq.com>
  */
-class Redis extends BaseRedis
+class RedisConnection extends BaseRedisConnection
 {
 
     // 请求后置事件

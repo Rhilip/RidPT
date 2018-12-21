@@ -2,14 +2,14 @@
 
 namespace apps\daemon\commands;
 
-use mix\client\PDOPersistent;
-use mix\client\RedisPersistent;
-use mix\console\ExitCode;
-use mix\facades\Input;
-use mix\task\CenterWorker;
-use mix\task\LeftWorker;
-use mix\task\RightWorker;
-use mix\task\ProcessPoolTaskExecutor;
+use mix\Redis\PDO;
+use mix\Redis\RedisConnection;
+use mix\Console\ExitCode;
+use mix\Facades\Input;
+use mix\Task\CenterWorker;
+use mix\Task\LeftWorker;
+use mix\Task\RightWorker;
+use mix\Task\ProcessPoolTaskExecutor;
 
 /**
  * 流水线模式范例
@@ -19,7 +19,7 @@ class AssemblyLineCommand extends BaseCommand
 {
 
     /**
-     * @var \mix\client\PDOPersistent
+     * @var \mix\Redis\PDO
      */
     public $pdo;
 
@@ -96,7 +96,7 @@ class AssemblyLineCommand extends BaseCommand
     public function onLeftStart(LeftWorker $worker)
     {
         // 使用长连接客户端，这样会自动帮你维护连接不断线
-        $redis = RedisPersistent::newInstanceByConfig('libraries.[persistent.redis]');
+        $redis = RedisConnection::newInstanceByConfig('libraries.[persistent.redis]');
         // 通过循环保持任务执行状态
         while (true) {
             // 从消息队列中间件阻塞获取一条消息
@@ -134,7 +134,7 @@ class AssemblyLineCommand extends BaseCommand
         /* 可以在这里实例化一些对象，供 onRightMessage 中使用，这样就不需要重复实例化。 */
 
         // 通过配置实例化数据库客户端
-        $this->pdo = PDOPersistent::newInstanceByConfig('libraries.[persistent.pdo]');
+        $this->pdo = PDO::newInstanceByConfig('libraries.[persistent.pdo]');
 
         // 实例化模型 (与上面的方法二选一)
         $this->model = new \apps\common\models\TableModel();

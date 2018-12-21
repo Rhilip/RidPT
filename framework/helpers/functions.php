@@ -17,7 +17,7 @@ if (!function_exists('env')) {
     // 获取一个环境变量的值
     function env($name = null)
     {
-        return \mix\base\Env::get($name);
+        return \Mix\Base\Env::get($name);
     }
 }
 
@@ -26,7 +26,7 @@ if (!function_exists('tgo')) {
     function tgo($closure)
     {
         go(function () use ($closure) {
-            $hook = new \mix\base\ChannelHook();
+            $hook = new \Mix\Base\ChannelHook();
             try {
                 $closure($hook);
             } catch (\Throwable $e) {

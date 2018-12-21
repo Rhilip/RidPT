@@ -9,8 +9,8 @@
 namespace apps\common\libraries;
 
 
-use mix\facades\PDO;
-use mix\facades\Redis;
+use mix\Facades\PDO;
+use mix\Facades\Redis;
 
 class SitePM
 {

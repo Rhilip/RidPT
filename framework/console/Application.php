@@ -1,17 +1,14 @@
 <?php
 
-namespace mix\console;
-
+namespace Mix\Console;
 /**
  * App类
  * @author 刘健 <coder.liu@qq.com>
  */
-class Application extends \mix\base\Application
+class Application extends \Mix\Base\Application
 {
-
     // 命令命名空间
     public $commandNamespace = '';
-
     // 命令
     public $commands = [];
 
@@ -21,11 +18,11 @@ class Application extends \mix\base\Application
         if (PHP_SAPI != 'cli') {
             throw new \RuntimeException('Please run in CLI mode.');
         }
-        $input   = \Mix::app()->input;
+        $input = \Mix::app()->input;
         $command = $input->getCommand();
         $options = $input->getOptions();
         if (empty($command)) {
-            throw new \mix\exceptions\NotFoundException("Please input command, '-h/--help' view help.");
+            throw new \Mix\Exceptions\NotFoundException("Please input command, '-h/--help' view help.");
         }
         if (in_array($command, ['-h', '--help'])) {
             $this->help();
@@ -41,7 +38,7 @@ class Application extends \mix\base\Application
     // 帮助
     protected function help()
     {
-        $input  = \Mix::app()->input;
+        $input = \Mix::app()->input;
         $output = \Mix::app()->output;
         $output->writeln("Usage: {$input->getScriptFileName()} [OPTIONS] [COMMAND [OPTIONS]]");
         $this->printOptions();
@@ -52,8 +49,8 @@ class Application extends \mix\base\Application
     // 版本
     protected function version()
     {
-        $input   = \Mix::app()->input;
-        $output  = \Mix::app()->output;
+        $input = \Mix::app()->input;
+        $output = \Mix::app()->output;
         $version = \Mix::VERSION;
         $output->writeln("MixPHP Framework Version {$version}");
     }
@@ -92,11 +89,11 @@ class Application extends \mix\base\Application
         if (isset($this->commands[$command])) {
             // 实例化控制器
             list($shortClass, $shortAction) = $this->commands[$command];
-            $shortClass    = str_replace('/', "\\", $shortClass);
-            $commandDir    = \mix\helpers\FileSystemHelper::dirname($shortClass);
-            $commandDir    = $commandDir == '.' ? '' : "$commandDir\\";
-            $commandName   = \mix\helpers\FileSystemHelper::basename($shortClass);
-            $commandClass  = "{$this->commandNamespace}\\{$commandDir}{$commandName}Command";
+            $shortClass = str_replace('/', "\\", $shortClass);
+            $commandDir = \Mix\Helpers\FileSystemHelper::dirname($shortClass);
+            $commandDir = $commandDir == '.' ? '' : "$commandDir\\";
+            $commandName = \Mix\Helpers\FileSystemHelper::basename($shortClass);
+            $commandClass = "{$this->commandNamespace}\\{$commandDir}{$commandName}Command";
             $commandAction = "action{$shortAction}";
             // 判断类是否存在
             if (class_exists($commandClass)) {
@@ -107,7 +104,7 @@ class Application extends \mix\base\Application
                 }
             }
         }
-        throw new \mix\exceptions\NotFoundException("ERRER unknown command '{$command}'");
+        throw new \Mix\Exceptions\NotFoundException("ERRER unknown command '{$command}'");
     }
 
     // 获取组件
@@ -136,16 +133,15 @@ class Application extends \mix\base\Application
         ob_start();
         var_dump($var);
         $dumpContent = ob_get_clean();
-        $content     .= $dumpContent;
+        $content .= $dumpContent;
         if ($send) {
-            throw new \mix\exceptions\DebugException($content);
+            throw new \Mix\Exceptions\DebugException($content);
         }
     }
 
     // 终止程序
     public function end($exitCode = ExitCode::OK)
     {
-        throw new \mix\exceptions\EndException($exitCode);
+        throw new \Mix\Exceptions\EndException($exitCode);
     }
-
 }

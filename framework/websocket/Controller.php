@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\websocket;
+namespace Mix\Websocket;
 
-use mix\base\BaseObject;
+use Mix\Base\BaseObject;
 
 /**
  * Controller类

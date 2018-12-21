@@ -2,13 +2,13 @@
 
 namespace apps\httpd\models;
 
-use mix\validators\Validator;
+use mix\Validators\Validator;
 
 class FileForm extends Validator
 {
 
     /**
-     * @var \mix\http\UploadFile
+     * @var \mix\Http\UploadFile
      */
     public $file;
 

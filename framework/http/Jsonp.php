@@ -1,9 +1,9 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\BaseObject;
-use mix\helpers\JsonHelper;
+use Mix\Base\BaseObject;
+use Mix\Helpers\JsonHelper;
 
 /**
  * JSONP 类

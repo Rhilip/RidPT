@@ -8,7 +8,7 @@
 
 namespace apps\common\facades;
 
-use mix\base\Facade;
+use mix\Base\Facade;
 
 /**
  * Class Config

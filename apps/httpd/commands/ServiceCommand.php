@@ -2,10 +2,10 @@
 
 namespace apps\httpd\commands;
 
-use mix\console\Command;
-use mix\console\ExitCode;
-use mix\facades\Output;
-use mix\helpers\ProcessHelper;
+use Mix\Console\Command;
+use Mix\Console\ExitCode;
+use Mix\Facades\Output;
+use Mix\Helpers\ProcessHelper;
 
 /**
  * Service 命令
@@ -50,7 +50,7 @@ class ServiceCommand extends Command
             Output::writeln("mix-httpd is running, PID : {$pid}.");
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        $server = \mix\http\HttpServer::newInstanceByConfig('libraries.httpServer');
+        $server = \Mix\Http\HttpServer::newInstanceByConfig('libraries.httpServer');
         if ($this->update) {
             $server->settings['max_request'] = 1;
         }

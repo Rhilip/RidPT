@@ -2,10 +2,10 @@
 
 namespace apps\websocketd\commands;
 
-use mix\console\Command;
-use mix\console\ExitCode;
-use mix\facades\Error;
-use mix\facades\Output;
+use mix\Console\Command;
+use mix\Console\ExitCode;
+use mix\Facades\Error;
+use mix\Facades\Output;
 use mix\helpers\ProcessHelper;
 
 /**
@@ -56,7 +56,7 @@ class ServiceCommand extends Command
             ProcessHelper::daemon();
         }
         // 创建服务
-        $server = \mix\websocket\WebSocketServer::newInstanceByConfig('libraries.webSocketServer');
+        $server = \mix\Websocket\WebSocketServer::newInstanceByConfig('libraries.webSocketServer');
         $server->on('Open', [$this, 'onOpen']);
         $server->on('Message', [$this, 'onMessage']);
         $server->on('Close', [$this, 'onClose']);
@@ -105,7 +105,7 @@ class ServiceCommand extends Command
     }
 
     // 连接事件回调函数
-    public function onOpen(\Swoole\WebSocket\Server $webSocket, $fd, \mix\http\Request $request)
+    public function onOpen(\Swoole\WebSocket\Server $webSocket, $fd, \mix\Http\Request $request)
     {
         // 效验session
         $userinfo = app('websocket')->sessionReader->loadSessionId($request)->get('userinfo');
@@ -137,7 +137,7 @@ class ServiceCommand extends Command
         ];
 
         // 异步订阅
-        $redis = \mix\client\RedisAsync::newInstanceByConfig('libraries.[async.redis]');
+        $redis = \mix\Redis\RedisConnection::newInstanceByConfig('libraries.[async.redis]');
         $redis->on('Message', function (\Swoole\Redis $client, $result) use ($webSocket, $fd) {
             try {
                 // 错误处理

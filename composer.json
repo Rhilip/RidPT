@@ -18,12 +18,14 @@
   "version": "0.0.1",
   "require": {
     "php": ">=7.2.0",
+    "ext-gd": "*",
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-curl": "*",
     "ext-intl": "*",
     "ext-redis": "*",
     "ext-libxml": "*",
+    "ext-swoole": "*",
     "ext-mbstring": "*",
     "ext-simplexml": "*",
     "sandfoxme/bencode": "^1.2",
@@ -34,12 +36,12 @@
   },
   "autoload": {
     "psr-4": {
-      "mix\\": "framework/",
+      "Mix\\": "framework/",
       "apps\\": "apps/"
     },
     "files": [
       "framework/Mix.php",
-      "framework/helpers/functions.php"
+      "framework/Helpers/functions.php"
     ]
   },
   "repositories": {

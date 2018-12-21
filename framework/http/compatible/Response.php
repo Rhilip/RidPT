@@ -1,12 +1,12 @@
 <?php
 
-namespace mix\http\compatible;
+namespace Mix\Http\Compatible;
 
 /**
  * Response组件
  * @author 刘健 <coder.liu@qq.com>
  */
-class Response extends \mix\http\BaseResponse
+class Response extends \Mix\Http\BaseResponse
 {
 
     // 请求前置事件

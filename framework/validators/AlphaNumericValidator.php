@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\validators;
+namespace Mix\Validators;
 
 /**
  * AlphaNumericValidator类

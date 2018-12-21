@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\facades;
+namespace Mix\Facades;
 
-use mix\base\Facade;
+use Mix\Base\Facade;
 
 /**
  * Request 门面类

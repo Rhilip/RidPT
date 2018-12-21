@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\validators;
+namespace Mix\Validators;
 
-use mix\base\BaseObject;
+use Mix\Base\BaseObject;
 
 /**
  * Validator基类
@@ -19,21 +19,21 @@ class Validator extends BaseObject
 
     // 验证器类路径
     protected $_validators = [
-        'integer'      => '\mix\validators\IntegerValidator',
-        'double'       => '\mix\validators\DoubleValidator',
-        'alpha'        => '\mix\validators\AlphaValidator',
-        'alphaNumeric' => '\mix\validators\AlphaNumericValidator',
-        'string'       => '\mix\validators\StringValidator',
-        'in'           => '\mix\validators\InValidator',
-        'date'         => '\mix\validators\DateValidator',
-        'email'        => '\mix\validators\EmailValidator',
-        'phone'        => '\mix\validators\PhoneValidator',
-        'url'          => '\mix\validators\UrlValidator',
-        'compare'      => '\mix\validators\CompareValidator',
-        'match'        => '\mix\validators\MatchValidator',
-        'call'         => '\mix\validators\CallValidator',
-        'file'         => '\mix\validators\FileValidator',
-        'image'        => '\mix\validators\ImageValidator',
+        'integer'      => '\Mix\Validators\IntegerValidator',
+        'double'       => '\Mix\Validators\DoubleValidator',
+        'alpha'        => '\Mix\Validators\AlphaValidator',
+        'alphaNumeric' => '\Mix\Validators\AlphaNumericValidator',
+        'string'       => '\Mix\Validators\StringValidator',
+        'in'           => '\Mix\Validators\InValidator',
+        'date'         => '\Mix\Validators\DateValidator',
+        'email'        => '\Mix\Validators\EmailValidator',
+        'phone'        => '\Mix\Validators\PhoneValidator',
+        'url'          => '\Mix\Validators\UrlValidator',
+        'compare'      => '\Mix\Validators\CompareValidator',
+        'match'        => '\Mix\Validators\MatchValidator',
+        'call'         => '\Mix\Validators\CallValidator',
+        'file'         => '\Mix\Validators\FileValidator',
+        'image'        => '\Mix\Validators\ImageValidator',
     ];
 
     // 错误
@@ -62,10 +62,10 @@ class Validator extends BaseObject
     {
         $scenarios = $this->scenarios();
         if (!isset($scenarios[$scenario])) {
-            throw new \mix\exceptions\ValidatorException("场景不存在：{$scenario}");
+            throw new \Mix\Exceptions\ValidatorException("场景不存在：{$scenario}");
         }
         if (!isset($scenarios[$scenario]['required'])) {
-            throw new \mix\exceptions\ValidatorException("场景 {$scenario} 未定义 required 选项");
+            throw new \Mix\Exceptions\ValidatorException("场景 {$scenario} 未定义 required 选项");
         }
         if (!isset($scenarios[$scenario]['optional'])) {
             $scenarios[$scenario]['optional'] = [];
@@ -77,7 +77,7 @@ class Validator extends BaseObject
     public function validate()
     {
         if (!isset($this->_scenario)) {
-            throw new \mix\exceptions\ValidatorException("场景未设置");
+            throw new \Mix\Exceptions\ValidatorException("场景未设置");
         }
         $this->_errors      = [];
         $scenario           = $this->_scenario;
@@ -87,7 +87,7 @@ class Validator extends BaseObject
         // 判断是否定义了规则
         foreach ($scenarioAttributes as $attribute) {
             if (!isset($rules[$attribute])) {
-                throw new \mix\exceptions\ValidatorException("属性 {$attribute} 未定义规则");
+                throw new \Mix\Exceptions\ValidatorException("属性 {$attribute} 未定义规则");
             }
         }
         // 验证器验证
@@ -97,7 +97,7 @@ class Validator extends BaseObject
             }
             $validatorType = array_shift($rule);
             if (!isset($this->_validators[$validatorType])) {
-                throw new \mix\exceptions\ValidatorException("属性 {$attribute} 的验证类型 {$validatorType} 不存在");
+                throw new \Mix\Exceptions\ValidatorException("属性 {$attribute} 的验证类型 {$validatorType} 不存在");
             }
             $attributeValue = isset($this->attributes[$attribute]) ? $this->attributes[$attribute] : null;
             // 实例化

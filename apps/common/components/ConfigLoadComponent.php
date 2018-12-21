@@ -8,10 +8,10 @@
 
 namespace apps\common\components;
 
-use mix\facades\PDO;
-use mix\facades\Redis;
+use Mix\Facades\PDO;
+use Mix\Facades\Redis;
 
-use mix\base\Component;
+use Mix\Base\Component;
 
 class ConfigLoadComponent extends Component
 {
@@ -41,7 +41,7 @@ class ConfigLoadComponent extends Component
 
     public function get(string $name)
     {
-        // First Check config stored in Redis Cache, If it exist , then just return the cached key
+        // First Check config stored in RedisConnection Cache, If it exist , then just return the cached key
         $setting = Redis::hget($this->saveField, $name);
         if (!is_null($setting)) return $setting;
 
@@ -52,7 +52,7 @@ class ConfigLoadComponent extends Component
         // In this case (Load config From Database Failed) , A Exception should throw
         if ($setting === false) throw $this->createNotFoundException($name);
 
-        // Cache it in Redis and return
+        // Cache it in RedisConnection and return
         Redis::hset($this->saveField, $name, $setting);
         return $setting;
     }

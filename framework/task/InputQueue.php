@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\task;
+namespace Mix\Task;
 
 /**
  * 输入消息队列

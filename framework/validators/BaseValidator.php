@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\validators;
+namespace Mix\Validators;
 
-use mix\base\BaseObject;
+use Mix\Base\BaseObject;
 
 /**
  * 基础验证器类
@@ -55,7 +55,7 @@ class BaseValidator extends BaseObject
             // 预处理
             foreach ($this->options as $name => $option) {
                 if (!in_array($name, $this->_enabledOptions)) {
-                    throw new \mix\exceptions\ValidatorException("属性 {$this->attribute} 的验证选项 {$name} 不存在");
+                    throw new \Mix\Exceptions\ValidatorException("属性 {$this->attribute} 的验证选项 {$name} 不存在");
                 }
                 // 不存在的选项转为设置
                 if (!method_exists($this, $name)) {
@@ -81,9 +81,9 @@ class BaseValidator extends BaseObject
         if (!$result) {
             $this->mainValidator->$attribute = null;
         } else {
-            if ($this instanceof \mix\validators\FileValidator) {
+            if ($this instanceof \Mix\Validators\FileValidator) {
                 // 实例化文件对象
-                $this->mainValidator->$attribute = \mix\http\UploadFile::newInstanceByName($attribute);
+                $this->mainValidator->$attribute = \Mix\Http\UploadFile::newInstanceByName($attribute);
             } else {
                 // 属性赋值
                 $this->mainValidator->$attribute = $this->attributeValue;
@@ -136,7 +136,7 @@ class BaseValidator extends BaseObject
         $value = $this->attributeValue;
         if (!is_null($value) && !is_scalar($value)) {
             // 文件/图片验证器忽略该类型的验证
-            if ($this instanceof \mix\validators\FileValidator) {
+            if ($this instanceof \Mix\Validators\FileValidator) {
                 return true;
             }
             // 设置错误消息

@@ -9,13 +9,13 @@ return array_replace_recursive($base, [
         // 数据库
         'pdo' => [
             // 类路径
-            'class' => 'mix\client\PDOPersistent',
+            'class' => 'Mix\Database\Persistent\PDOConnection',
         ],
 
         // redis
         'redis' => [
             // 类路径
-            'class' => 'mix\client\RedisPersistent',
+            'class' => 'Mix\Redis\Persistent\RedisConnection',
         ],
     ],
 ]);

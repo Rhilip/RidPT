@@ -2,8 +2,8 @@
 
 namespace apps\websocketd\controllers;
 
-use mix\websocket\Controller;
-use mix\http\Json;
+use mix\Websocket\Controller;
+use mix\Http\Json;
 use apps\websocketd\models\JoinForm;
 
 /**

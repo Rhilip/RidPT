@@ -2,10 +2,10 @@
 
 namespace apps\daemon\commands;
 
-use mix\client\PDOPersistent;
-use mix\console\ExitCode;
-use mix\facades\Error;
-use mix\facades\Input;
+use mix\Redis\PDO;
+use mix\Console\ExitCode;
+use mix\Facades\Error;
+use mix\Facades\Input;
 
 /**
  * 单进程范例
@@ -56,7 +56,7 @@ class SingleCommand extends BaseCommand
     public function work()
     {
         // 使用长连接客户端，这样会自动帮你维护连接不断线
-        $pdo = PDOPersistent::newInstanceByConfig('libraries.[persistent.pdo]');
+        $pdo = PDO::newInstanceByConfig('libraries.[persistent.pdo]');
         // 循环执行任务
         while (true) {
             // 执行业务代码

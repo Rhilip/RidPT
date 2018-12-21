@@ -15,7 +15,7 @@
  * file that was distributed with this source code.
  */
 
-namespace mix\http;
+namespace mix\Http;
 
 /**
  * Http utility functions.

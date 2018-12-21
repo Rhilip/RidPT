@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\task;
+namespace Mix\Task;
 
-use mix\base\BaseObject;
+use Mix\Base\BaseObject;
 
 /**
  * 消息队列基类

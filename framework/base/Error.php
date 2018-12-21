@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\base;
+namespace Mix\Base;
 
 /**
  * Error类
@@ -31,14 +31,14 @@ class Error
     // 错误处理
     public static function appError($errno, $errstr, $errfile = '', $errline = 0)
     {
-        throw new \mix\exceptions\ErrorException($errno, $errstr, $errfile, $errline);
+        throw new \Mix\Exceptions\ErrorException($errno, $errstr, $errfile, $errline);
     }
 
     // 停止处理
     public static function appShutdown()
     {
         if ($error = error_get_last()) {
-            self::appException(new \mix\exceptions\ErrorException($error['type'], $error['message'], $error['file'], $error['line']));
+            self::appException(new \Mix\Exceptions\ErrorException($error['type'], $error['message'], $error['file'], $error['line']));
         }
     }
 

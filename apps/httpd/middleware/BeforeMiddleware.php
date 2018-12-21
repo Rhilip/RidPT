@@ -2,10 +2,10 @@
 
 namespace apps\httpd\middleware;
 
-use mix\facades\PDO;
-use mix\facades\Request;
-use mix\facades\Session;
-use mix\facades\Response;
+use Mix\Facades\PDO;
+use Mix\Facades\Request;
+use Mix\Facades\Session;
+use Mix\Facades\Response;
 
 /**
  * 前置中间件

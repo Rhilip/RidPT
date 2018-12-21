@@ -1,9 +1,9 @@
 <?php
 
-namespace mix\websocket;
+namespace Mix\Websocket;
 
-use mix\base\BaseObject;
-use mix\helpers\ProcessHelper;
+use Mix\Base\BaseObject;
+use Mix\Helpers\ProcessHelper;
 
 /**
  * Http服务器类
@@ -120,7 +120,7 @@ class WebSocketServer extends BaseObject
             $this->_server->on('open', function ($server, $request) {
                 try {
                     // 组件初始化处理
-                    $mixRequest = new \mix\http\Request();
+                    $mixRequest = new \Mix\Http\Request();
                     $mixRequest->setRequester($request);
                     // 执行绑定的回调函数
                     list($object, $method) = $this->_onOpenCallback;

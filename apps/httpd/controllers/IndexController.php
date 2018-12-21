@@ -2,7 +2,7 @@
 
 namespace apps\httpd\controllers;
 
-use mix\http\Controller;
+use Mix\Http\Controller;
 
 /**
  * 默认控制器

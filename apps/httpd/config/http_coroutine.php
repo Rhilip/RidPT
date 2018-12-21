@@ -12,7 +12,7 @@ return array_replace_recursive($base, [
             // 保存处理者
             'saveHandler' => [
                 // 类路径
-                'class' => 'mix\client\RedisCoroutine',
+                'class' => 'Mix\Redis\Coroutine\RedisConnection',
                 // 连接池
                 'connectionPool' => [
                     // 组件路径
@@ -24,7 +24,7 @@ return array_replace_recursive($base, [
         // 连接池
         'token.connectionPool' => [
             // 类路径
-            'class' => 'mix\pool\ConnectionPool',
+            'class' => 'Mix\Pool\ConnectionPool',
             // 最小连接数
             'min' => 5,
             // 最大连接数
@@ -36,7 +36,7 @@ return array_replace_recursive($base, [
             // 保存处理者
             'saveHandler' => [
                 // 类路径
-                'class' => 'mix\client\RedisCoroutine',
+                'class' => 'Mix\Redis\Coroutine\RedisConnection',
                 // 连接池
                 'connectionPool' => [
                     // 组件路径
@@ -48,7 +48,7 @@ return array_replace_recursive($base, [
         // 连接池
         'session.connectionPool' => [
             // 类路径
-            'class' => 'mix\pool\ConnectionPool',
+            'class' => 'Mix\Pool\ConnectionPool',
             // 最小连接数
             'min' => 5,
             // 最大连接数
@@ -58,7 +58,7 @@ return array_replace_recursive($base, [
         // 数据库
         'pdo' => [
             // 类路径
-            'class' => 'mix\client\PDOCoroutine',
+            'class' => 'Mix\Database\Coroutine\PDOConnection ',
             // 连接池
             'connectionPool' => [
                 // 组件路径
@@ -69,7 +69,7 @@ return array_replace_recursive($base, [
         // 连接池
         'pdo.connectionPool' => [
             // 类路径
-            'class' => 'mix\pool\ConnectionPool',
+            'class' => 'Mix\Pool\ConnectionPool',
             // 最小连接数
             'min' => 5,
             // 最大连接数
@@ -79,7 +79,7 @@ return array_replace_recursive($base, [
         // redis
         'redis' => [
             // 类路径
-            'class' => 'mix\client\RedisCoroutine',
+            'class' => 'Mix\Redis\Coroutine\RedisConnection',
             // 连接池
             'connectionPool' => [
                 // 组件路径

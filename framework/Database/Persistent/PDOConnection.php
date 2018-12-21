@@ -1,12 +1,12 @@
 <?php
 
-namespace mix\client;
+namespace Mix\Database\Persistent;
 
 /**
  * PdoPersistent组件
  * @author 刘健 <coder.liu@qq.com>
  */
-class PDOPersistent extends BasePDOPersistent
+class PDOConnection extends BasePDOConnection
 {
 
     // 析构事件

@@ -1,14 +1,14 @@
 <?php
 
-namespace mix\client;
+namespace Mix\Database;
 
-use mix\base\Component;
+use Mix\Base\Component;
 
 /**
  * BasePdo组件
  * @author 刘健 <coder.liu@qq.com>
  */
-class BasePDO extends Component
+class BasePDOConnection extends Component
 {
 
     // 数据源格式
@@ -23,7 +23,7 @@ class BasePDO extends Component
     // 驱动连接选项
     public $driverOptions = [];
 
-    // PDO
+    // PDOConnection
     /** @var \PDO */
     protected $_pdo;
 

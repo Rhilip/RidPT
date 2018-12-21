@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\BaseObject;
+use Mix\Base\BaseObject;
 
 /**
  * Captcha类

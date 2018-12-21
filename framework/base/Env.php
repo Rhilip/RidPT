@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\base;
+namespace Mix\Base;
 
 /**
  * 环境类
@@ -16,7 +16,7 @@ class Env
     public static function load($envFile)
     {
         if (!is_file($envFile)) {
-            throw new \mix\exceptions\EnvException('Environment file does not exist.');
+            throw new \Mix\Exceptions\EnvException('Environment file does not exist.');
         }
         $env        = parse_ini_file($envFile, true);
         self::$_env = array_merge($env, $_SERVER, $_ENV);
@@ -32,7 +32,7 @@ class Env
         $current   = self::$_env;
         foreach ($fragments as $key) {
             if (!isset($current[$key])) {
-                throw new \mix\exceptions\EnvException("Environment config does not exist: {$name}.");
+                throw new \Mix\Exceptions\EnvException("Environment config does not exist: {$name}.");
             }
             $current = $current[$key];
         }

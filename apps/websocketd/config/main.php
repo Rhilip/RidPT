@@ -51,7 +51,7 @@ return [
             // 日志目录
             'dir'         => 'logs',
             // 日志轮转类型
-            'rotate'      => mix\base\Log::ROTATE_DAY,
+            'rotate'      => mix\Base\Log::ROTATE_DAY,
             // 最大文件尺寸
             'maxFileSize' => 0,
         ],
@@ -59,7 +59,7 @@ return [
         // 数据库
         'pdo'                      => [
             // 类路径
-            'class'     => 'mix\client\PDOPersistent',
+            'class'     => 'mix\client\PDO',
             // 数据源格式
             'dsn'       => env('DB.DSN'),
             // 数据库用户名
@@ -68,7 +68,7 @@ return [
             'password'  => env('DB.PASSWORD'),
             // 设置PDO属性: http://php.net/manual/zh/pdo.setattribute.php
             'attribute' => [
-                // 设置默认的提取模式: \PDO::FETCH_OBJ | \PDO::FETCH_ASSOC
+                // 设置默认的提取模式: \PDOConnection::FETCH_OBJ | \PDOConnection::FETCH_ASSOC
                 \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
             ],
         ],

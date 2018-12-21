@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\websocket;
+namespace Mix\Websocket;
 
-use mix\base\Component;
+use Mix\Base\Component;
 
 /**
  * SessionReader组件
@@ -45,9 +45,9 @@ class MessageHandler extends Component
             // 实例化控制器
             list($shortClass, $shortAction) = $this->rules[$action];
             $shortClass       = str_replace('/', "\\", $shortClass);
-            $controllerDir    = \mix\helpers\FileSystemHelper::dirname($shortClass);
+            $controllerDir    = \Mix\Helpers\FileSystemHelper::dirname($shortClass);
             $controllerDir    = $controllerDir == '.' ? '' : "$controllerDir\\";
-            $controllerName   = \mix\helpers\FileSystemHelper::basename($shortClass);
+            $controllerName   = \Mix\Helpers\FileSystemHelper::basename($shortClass);
             $controllerClass  = "{$this->controllerNamespace}\\{$controllerDir}{$controllerName}Controller";
             $controllerAction = "action{$shortAction}";
             // 判断类是否存在
@@ -68,7 +68,7 @@ class MessageHandler extends Component
                 }
             }
         }
-        throw new \mix\exceptions\NotFoundException("ERRER unknown action '{$action}'");
+        throw new \Mix\Exceptions\NotFoundException("ERRER unknown action '{$action}'");
     }
 
 }

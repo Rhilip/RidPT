@@ -1,12 +1,12 @@
 <?php
 
-namespace mix\client;
+namespace Mix\Database\MasterSlave;
 
 /**
  * BasePdoMasterSlave组件
  * @author 刘健 <coder.liu@qq.com>
  */
-class BasePDOMasterSlave extends BasePDO
+class BasePDOConnection extends \Mix\Database\BasePDOConnection
 {
 
     // 主服务器组

@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\Component;
+use Mix\Base\Component;
 
 /**
  * Response组件基类
@@ -22,17 +22,17 @@ class BaseResponse extends Component
     public $defaultFormat = self::FORMAT_HTML;
 
     /**
-     * @var \mix\http\Json
+     * @var \mix\Http\Json
      */
     public $json;
 
     /**
-     * @var \mix\http\Jsonp
+     * @var \mix\Http\Jsonp
      */
     public $jsonp;
 
     /**
-     * @var \mix\http\Xml
+     * @var \mix\Http\Xml
      */
     public $xml;
 

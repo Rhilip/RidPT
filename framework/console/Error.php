@@ -1,11 +1,11 @@
 <?php
 
-namespace mix\console;
+namespace Mix\Console;
 
-use mix\base\Component;
-use mix\helpers\CoroutineHelper;
-use mix\helpers\PhpInfoHelper;
-use mix\helpers\ProcessHelper;
+use Mix\Base\Component;
+use Mix\Helpers\CoroutineHelper;
+use Mix\Helpers\PhpInfoHelper;
+use Mix\Helpers\ProcessHelper;
 
 /**
  * Error类
@@ -21,13 +21,13 @@ class Error extends Component
     public function handleException($e, $exit = false)
     {
         // debug处理
-        if ($e instanceof \mix\exceptions\DebugException) {
+        if ($e instanceof \Mix\Exceptions\DebugException) {
             $content = $e->getMessage();
             echo $content;
             $this->exit(ExitCode::OK);
         }
         // exit处理
-        if ($e instanceof \mix\exceptions\EndException) {
+        if ($e instanceof \Mix\Exceptions\EndException) {
             $exitCode = (int)$e->getMessage();
             $this->exit($exitCode);
         }
@@ -42,7 +42,7 @@ class Error extends Component
         ];
         $time   = date('Y-m-d H:i:s');
         // 日志处理
-        if (!($e instanceof \mix\exceptions\NotFoundException)) {
+        if (!($e instanceof \Mix\Exceptions\NotFoundException)) {
             $message = "{$errors['message']}" . PHP_EOL;
             $message .= "[type] {$errors['type']} [code] {$errors['code']}" . PHP_EOL;
             $message .= "[file] {$errors['file']} [line] {$errors['line']}" . PHP_EOL;

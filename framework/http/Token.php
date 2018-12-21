@@ -1,9 +1,9 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\Component;
-use mix\helpers\StringHelper;
+use Mix\Base\Component;
+use Mix\Helpers\StringHelper;
 
 /**
  * Token组件

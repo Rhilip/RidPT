@@ -1,12 +1,12 @@
 <?php
 
-namespace mix\client;
+namespace Mix\Database;
 
 /**
- * PdoMasterSlave组件
+ * Pdo组件
  * @author 刘健 <coder.liu@qq.com>
  */
-class PDOMasterSlave extends BasePDOMasterSlave
+class PDOConnection extends BasePDOConnection
 {
 
     // 请求后置事件

@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\console;
+namespace Mix\Console;
 
 /**
  * ExitCode类

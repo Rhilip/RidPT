@@ -1,15 +1,15 @@
 <?php
 
-namespace mix\http;
+namespace Mix\Http;
 
-use mix\base\Component;
-use mix\helpers\CoroutineHelper;
+use Mix\Base\Component;
+use Mix\Helpers\CoroutineHelper;
 
 /**
  * App类
  * @author 刘健 <coder.liu@qq.com>
  */
-class Application extends \mix\base\Application
+class Application extends \Mix\Base\Application
 {
 
     // 控制器命名空间
@@ -57,11 +57,11 @@ class Application extends \mix\base\Application
             \Mix::app()->request->setRoute($queryParams);
             // 实例化控制器
             list($shortClass, $shortAction) = $route;
-            $controllerDir    = \mix\helpers\FileSystemHelper::dirname($shortClass);
+            $controllerDir    = \Mix\Helpers\FileSystemHelper::dirname($shortClass);
             $controllerDir    = $controllerDir == '.' ? '' : "$controllerDir\\";
-            $controllerName   = \mix\helpers\NameHelper::snakeToCamel(\mix\helpers\FileSystemHelper::basename($shortClass), true);
+            $controllerName   = \Mix\Helpers\NameHelper::snakeToCamel(\Mix\Helpers\FileSystemHelper::basename($shortClass), true);
             $controllerClass  = "{$this->controllerNamespace}\\{$controllerDir}{$controllerName}Controller";
-            $shortAction      = \mix\helpers\NameHelper::snakeToCamel($shortAction, true);
+            $shortAction      = \Mix\Helpers\NameHelper::snakeToCamel($shortAction, true);
             $controllerAction = "action{$shortAction}";
             // 判断类是否存在
             if (class_exists($controllerClass)) {
@@ -82,7 +82,7 @@ class Application extends \mix\base\Application
                 break;
             }
         }
-        throw new \mix\exceptions\NotFoundException('Not Found (#404)');
+        throw new \Mix\Exceptions\NotFoundException('Not Found (#404)');
     }
 
     // 执行中间件
@@ -223,14 +223,14 @@ class Application extends \mix\base\Application
         $dumpContent                   = ob_get_clean();
         \Mix::app()->response->content .= $dumpContent;
         if ($send) {
-            throw new \mix\exceptions\DebugException(\Mix::app()->response->content);
+            throw new \Mix\Exceptions\DebugException(\Mix::app()->response->content);
         }
     }
 
     // 终止程序
     public function end($content = '')
     {
-        throw new \mix\exceptions\EndException($content);
+        throw new \Mix\Exceptions\EndException($content);
     }
 
 }

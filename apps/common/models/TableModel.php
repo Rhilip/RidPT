@@ -2,7 +2,7 @@
 
 namespace apps\common\models;
 
-use mix\facades\PDO;
+use mix\Facades\PDO;
 
 /**
  * 数据表模型类

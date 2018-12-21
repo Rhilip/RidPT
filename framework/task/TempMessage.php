@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\task;
+namespace Mix\Task;
 
-use mix\helpers\StringHelper;
+use Mix\Helpers\StringHelper;
 
 /**
  * 临时消息类

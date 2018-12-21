@@ -2,12 +2,12 @@
 
 namespace apps\console\commands;
 
-use mix\client\PDOPersistent;
-use mix\console\ExitCode;
-use mix\facades\Input;
-use mix\task\CenterWorker;
-use mix\task\LeftWorker;
-use mix\task\ProcessPoolTaskExecutor;
+use mix\Redis\PDO;
+use mix\Console\ExitCode;
+use mix\Facades\Input;
+use mix\Task\CenterWorker;
+use mix\Task\LeftWorker;
+use mix\Task\ProcessPoolTaskExecutor;
 
 /**
  * 推送模式范例
@@ -67,7 +67,7 @@ class PushCommand extends BaseCommand
     public function onLeftStart(LeftWorker $worker)
     {
         // 使用长连接客户端，这样会自动帮你维护连接不断线
-        $pdo    = PDOPersistent::newInstanceByConfig('libraries.[persistent.pdo]');
+        $pdo    = PDO::newInstanceByConfig('libraries.[persistent.pdo]');
         $result = $pdo->createCommand("SELECT * FROM `table`")->queryAll();
         // 取出全量数据一行一行推送给中进程去处理
         foreach ($result as $item) {

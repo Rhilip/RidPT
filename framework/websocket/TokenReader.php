@@ -1,8 +1,8 @@
 <?php
 
-namespace mix\websocket;
+namespace Mix\Websocket;
 
-use mix\base\Component;
+use Mix\Base\Component;
 
 /**
  * TokenReader组件

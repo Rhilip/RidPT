@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\task;
+namespace Mix\Task;
 
 /**
  * 输出消息队列

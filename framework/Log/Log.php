@@ -1,8 +1,9 @@
 <?php
 
-namespace mix\base;
+namespace Mix\Log;
 
-use mix\helpers\JsonHelper;
+use Mix\Base\Component;
+use Mix\Helpers\JsonHelper;
 
 /**
  * Log组件

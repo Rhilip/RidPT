@@ -2,7 +2,7 @@
 
 namespace apps\console\commands;
 
-use mix\console\Command;
+use mix\Console\Command;
 use mix\helpers\ProcessHelper;
 
 /**

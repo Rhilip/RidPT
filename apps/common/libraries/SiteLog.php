@@ -9,7 +9,7 @@
 namespace apps\common\libraries;
 
 
-use mix\facades\PDO;
+use mix\Facades\PDO;
 
 class SiteLog
 {
