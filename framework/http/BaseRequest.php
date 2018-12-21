@@ -4,6 +4,9 @@ namespace Mix\Http;
 
 use Mix\Base\Component;
 
+use Mix\Utils\HeaderUtils;
+use Mix\Utils\IpUtils;
+
 /**
  * Request组件基类
  * @author 刘健 <coder.liu@qq.com>

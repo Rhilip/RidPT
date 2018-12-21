@@ -507,13 +507,13 @@ class TrackerController
         $remote_ip = Request::getClientIp();  // IP address from Request Header (Which is NexusPHP used)
 
         if ($queries["ipv6"]) {
-            if ($client = IPUtils::isEndPoint($queries["ipv6"])) {
+            if ($client = IpUtils::isEndPoint($queries["ipv6"])) {
                 $queries["ipv6"] = $client["ip"];
                 $queries["ipv6_port"] = $client["port"];
             }
 
             // Ignore all un-Native IPv6 address ( starting with FD or FC ; reserved IPv6 ) and IPv4-mapped-IPv6 address
-            if (!IPUtils::isNativeIPv6($queries["ipv6"]) || strpos($queries['ipv6'], '.') !== false) {
+            if (!IpUtils::isPublicIPv6($queries["ipv6"]) || strpos($queries['ipv6'], '.') !== false) {
                 $queries['ipv6'] = $queries["ipv6_port"] = "";
             }
         }
@@ -521,33 +521,33 @@ class TrackerController
         // If we can't get valid IPv6 address from `&ipv6=`
         // fail back to `&ip=<IPv6>` then the IPv6 format remote_ip
         if (!$queries["ipv6"]) {
-            if ($queries["ip"] && IPUtils::isValidIPv6($queries["ip"])) {
+            if ($queries["ip"] && IpUtils::isValidIPv6($queries["ip"])) {
                 $queries['ipv6'] = $queries["ip"];
-            } elseif (IPUtils::isNativeIPv6($remote_ip)) {
+            } elseif (IpUtils::isPublicIPv6($remote_ip)) {
                 $queries['ipv6'] = $remote_ip;
             }
             if ($queries["ipv6"]) $queries["ipv6_port"] = $queries["port"];
         }
 
         // `&ip=` is not a BEP param , however It's mainly used in UTorrent as `&ipv4=`
-        if ($queries["ip"] && !IPUtils::isValidIPv4($queries['ip'])) {
+        if ($queries["ip"] && !IpUtils::isValidIPv4($queries['ip'])) {
             $queries['ip'] = '';
         }
 
         // param `&ipv4=` is like `&ipv6=`
         if ($queries["ipv4"]) {
-            if ($client = IPUtils::isEndPoint($queries["ipv4"])) {
-                if (IPUtils::isValidIPv4($client['ip'])) {
+            if ($client = IpUtils::isEndPoint($queries["ipv4"])) {
+                if (IpUtils::isValidIPv4($client['ip'])) {
                     $queries['ip'] = $client['ip'];
                     $queries['port'] = $client['port'];
                 }
-            } elseif (IPUtils::isValidIPv4($queries["ipv4"])) {
+            } elseif (IpUtils::isValidIPv4($queries["ipv4"])) {
                 $queries['ip'] = $queries["ipv4"];
             }
         }
 
         // Fail back
-        if (!IPUtils::isPublicIPv4($queries['ip']) && IPUtils::isValidIPv4($remote_ip)) {
+        if (!IpUtils::isPublicIPv4($queries['ip']) && IpUtils::isValidIPv4($remote_ip)) {
             $queries['ip'] = $remote_ip;
         }
 
