@@ -6,15 +6,15 @@
  * Time: 17:30
  */
 
-namespace apps\common\components;
-
+namespace Mix\Mailer;
 
 use Mix\Base\Component;
+
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SmtpTransport;
 
-class MailerComponent extends Component
+class Mailer extends Component
 {
     public $host;
     public $port;

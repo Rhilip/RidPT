@@ -203,11 +203,11 @@ return [
         ],
 
         'config' => [
-            'class'   => 'apps\common\components\ConfigLoadComponent',
+            'class'   => 'Mix\Config\Config',
         ],
 
         'swiftmailer' => [
-            'class'   => 'apps\common\components\MailerComponent',
+            'class'   => 'Mix\Mailer\Mailer',
             'host'    => env('MAILER_HOST'),
             'port'    => env('MAILER_PORT'),
             'encryption' => env('MAILER_ENCRYPTION'),

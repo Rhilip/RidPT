@@ -13,7 +13,8 @@ use Mix\Facades\Redis;
 use Mix\Facades\Request;
 use Mix\Facades\Response;
 
-use apps\common\facades\Config;
+use Mix\Facades\Config;
+
 use apps\common\libraries\IPUtils;
 
 use SandFoxMe\Bencode\Bencode;

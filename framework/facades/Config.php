@@ -6,9 +6,9 @@
  * Time: 22:59
  */
 
-namespace apps\common\facades;
+namespace Mix\Facades;
 
-use mix\Base\Facade;
+use Mix\Base\Facade;
 
 /**
  * Class Config

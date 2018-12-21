@@ -6,16 +6,15 @@
  * Time: 19:46
  */
 
-namespace apps\common\facades;
+namespace Mix\Facades;
 
-
-use mix\Base\Facade;
+use Mix\Base\Facade;
 
 /**
  * Class SwiftMailer
  * @package apps\common\facades
  *
- * @method send(array $receiver,string $subject,string $body) static
+ * @method send(array $receiver, string $subject, string $body) static
  */
 class SwiftMailer extends Facade
 {

@@ -8,7 +8,6 @@
 
 namespace apps\httpd\controllers;
 
-use apps\common\facades\SwiftMailer;
 use apps\common\libraries\SiteLog;
 use apps\common\libraries\SitePM;
 
@@ -17,7 +16,8 @@ use Mix\Facades\Response;
 use Mix\Facades\Session;
 use Mix\Facades\Request;
 
-use apps\common\facades\Config;
+use Mix\Facades\Config;
+use Mix\Facades\SwiftMailer;
 
 use apps\httpd\models\User;
 

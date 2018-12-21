@@ -6,14 +6,14 @@
  * Time: 20:39
  */
 
-namespace apps\common\components;
+namespace Mix\Config;
 
 use Mix\Facades\PDO;
 use Mix\Facades\Redis;
 
 use Mix\Base\Component;
 
-class ConfigLoadComponent extends Component
+class Config extends Component
 {
 
     /** Config key prefix in Cache
@@ -21,21 +21,17 @@ class ConfigLoadComponent extends Component
      */
     public $saveField = "CONFIG:site_config";
 
-    /** Config key stored table in Database
-     * @var string
-     */
-    public $table = "site_config";
-
     public function __construct(array $config = [])
     {
         parent::__construct($config);
-        $configs = PDO::createCommand("SELECT `name`,`value` FROM  `{$this->table}`")->queryAll();
-        foreach($configs as $config) {
-            Redis::hset($this->saveField,$config["name"],$config["value"]);
+        $configs = PDO::createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
+        foreach ($configs as $config) {
+            Redis::hset($this->saveField, $config["name"], $config["value"]);
         }
     }
 
-    public function getAll() {
+    public function getAll()
+    {
         return Redis::hgetall($this->saveField);
     }
 
@@ -46,7 +42,7 @@ class ConfigLoadComponent extends Component
         if (!is_null($setting)) return $setting;
 
         // Get config From Database
-        $setting = PDO::createCommand("SELECT `value` from `{$this->table}` WHERE `name` = :name")
+        $setting = PDO::createCommand("SELECT `value` from `site_config` WHERE `name` = :name")
             ->bindParams(["name" => $name])->queryScalar();
 
         // In this case (Load config From Database Failed) , A Exception should throw
@@ -59,7 +55,7 @@ class ConfigLoadComponent extends Component
 
     public function set(string $name, $value)
     {
-        PDO::createCommand("UPDATE `{$this->table}` SET `value` = :val WHERE `name` = :name")->bindParams([
+        PDO::createCommand("UPDATE `site_config` SET `value` = :val WHERE `name` = :name")->bindParams([
             "val" => $value, "name" => $name
         ])->execute();
         return $this->flush($name);
