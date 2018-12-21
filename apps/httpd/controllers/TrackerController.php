@@ -15,8 +15,7 @@ use Mix\Facades\Response;
 
 use Mix\Facades\Config;
 
-use apps\common\libraries\IPUtils;
-
+use Mix\Utils\IpUtils;
 use SandFoxMe\Bencode\Bencode;
 
 use apps\httpd\models\User;
@@ -458,9 +457,6 @@ class TrackerController
                 throw new TrackerException(134, [":attribute" => $item]);
         }
 
-        $this->checkPortFields($queries["port"]);
-        $queries["ipv6_port"] = $queries["port"];
-
         // Part.2 check Announce **Option** Fields
         foreach ([
                      'event' => '', 'no_peer_id' => 1, 'compact' => 0,
@@ -477,9 +473,6 @@ class TrackerController
 
         if (!in_array(strtolower($queries['event']), ['started', 'completed', 'stopped', 'paused', '']))
             throw new TrackerException(136, [":event" => strtolower($queries['event'])]);
-
-        if ($queries['port'] == 0 && strtolower($queries['event']) != 'stopped')
-            throw new TrackerException(137, [":event" => strtolower($queries['event'])]);
 
         // FIXME Part.3 check Announce *IP* Fields
         /**
@@ -523,13 +516,13 @@ class TrackerController
         if (!$queries["ipv6"]) {
             if ($queries["ip"] && IpUtils::isValidIPv6($queries["ip"])) {
                 $queries['ipv6'] = $queries["ip"];
-            } elseif (IpUtils::isPublicIPv6($remote_ip)) {
+            } elseif (IpUtils::isValidIPv6($remote_ip)) {
                 $queries['ipv6'] = $remote_ip;
             }
             if ($queries["ipv6"]) $queries["ipv6_port"] = $queries["port"];
         }
 
-        // `&ip=` is not a BEP param , however It's mainly used in UTorrent as `&ipv4=`
+        // `&ip=` is not a BEP param , however It's mainly used in UTorrent as `&ipv4=` or `&ipv6=`
         if ($queries["ip"] && !IpUtils::isValidIPv4($queries['ip'])) {
             $queries['ip'] = '';
         }
@@ -550,6 +543,11 @@ class TrackerController
         if (!IpUtils::isPublicIPv4($queries['ip']) && IpUtils::isValidIPv4($remote_ip)) {
             $queries['ip'] = $remote_ip;
         }
+
+        // Part.4 check Port Fields is Valid and Allowed
+        $this->checkPortFields($queries["port"]);
+        if ($queries['port'] == 0 && strtolower($queries['event']) != 'stopped')
+            throw new TrackerException(137, [":event" => strtolower($queries['event'])]);
 
         // Check peer's connect type
         $queries["connect_type"] = ($queries["ipv6"] ? 2 : 0) + ($queries["ip"] ? 1 : 0);
