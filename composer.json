@@ -43,7 +43,7 @@
     },
     "files": [
       "framework/Mix.php",
-      "framework/Helpers/functions.php"
+      "framework/functions.php"
     ]
   },
   "repositories": {
