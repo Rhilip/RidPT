@@ -32,7 +32,8 @@
     "robthree/twofactorauth": "^1.6",
     "swiftmailer/swiftmailer": "^6.1",
     "twig/twig": "^2.0",
-    "twig/extensions": "^1.5"
+    "twig/extensions": "^1.5",
+    "symfony/validator": "^4.2"
   },
   "autoload": {
     "psr-4": {

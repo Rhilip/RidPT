@@ -8,7 +8,6 @@
 
 namespace apps\httpd\models;
 
-
 use Mix\Facades\Config;
 use Mix\Validators\Validator;
 
@@ -42,15 +41,6 @@ class TorrentUploadForm extends Validator
                 'required' => ['name', 'file', 'descr'],
                 'optional' => ['uplver']
             ],
-        ];
-    }
-
-    // 消息
-    public function messages()
-    {
-        return [
-            'file.mimes' => '文件类型不支持.',
-            'file.maxSize' => '文件大小不能超过1MB.',
         ];
     }
 }
