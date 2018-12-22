@@ -22,6 +22,6 @@ class SiteLog
     {
         PDO::createCommand("INSERT INTO `site_log`(`msg`, `level`) VALUES (:msg,:level)")->bindParams([
             "msg" => $msg, "level" => $level
-        ]);
+        ])->execute();
     }
 }
