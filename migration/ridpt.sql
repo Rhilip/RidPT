@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.8.4
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 12, 2018 at 10:28 PM
--- Server version: 5.7.24-0ubuntu0.18.04.1
--- PHP Version: 7.2.10-0ubuntu0.18.04.1
+-- Generation Time: Dec 22, 2018 at 10:09 AM
+-- Server version: 5.7.22-log
+-- PHP Version: 7.2.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -150,6 +150,22 @@ CREATE TABLE IF NOT EXISTS `cheaters` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `files`
+--
+
+DROP TABLE IF EXISTS `files`;
+CREATE TABLE IF NOT EXISTS `files` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `torrent_id` int(10) UNSIGNED NOT NULL,
+  `filename` varchar(255) NOT NULL DEFAULT '',
+  `size` bigint(20) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `torrent_id` (`torrent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `invite`
 --
 
@@ -251,6 +267,7 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('authority.pass_tracker_upspeed_check', '60', '2018-11-27 15:18:37'),
 ('authority.see_banned_torrent', '40', '2018-11-23 14:01:31'),
 ('authority.see_pending_torrent', '40', '2018-11-23 14:01:31'),
+('authority.upload_anonymous', '5', '2018-12-13 08:48:00'),
 ('base.enable_register_system', '1', '2018-11-28 16:05:12'),
 ('base.enable_tracker_system', '1', '2018-11-22 14:30:50'),
 ('base.max_user', '5000', '2018-11-28 16:00:15'),
@@ -289,6 +306,8 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('register.user_default_status', 'pending', '2018-12-05 13:56:19'),
 ('register.user_default_uploaded', '0', '2018-12-05 13:56:19'),
 ('register.user_default_uploadpos', '1', '2018-12-05 13:56:19'),
+('torrent.max_file_size', '3145728', '2018-12-13 02:04:45'),
+('torrent.max_nfo_size', '65535', '2018-12-13 02:04:45'),
 ('tracker.cheater_check', '1', '2018-11-27 10:28:13'),
 ('tracker.enable_announce', '1', '2018-11-23 13:37:35'),
 ('tracker.enable_maxdlsystem', '1', '2018-12-09 10:47:16'),
@@ -360,6 +379,10 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `complete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have completed downloading.',
   `incomplete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have not completed downloading.',
   `downloaded` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of peers that have ever completed downloading.',
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `filename` varchar(255) NOT NULL,
+  `descr` text,
+  `size` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -435,6 +458,16 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Indexes for table `site_log`
 --
 ALTER TABLE `site_log` ADD FULLTEXT KEY `msg` (`msg`);
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `files`
+--
+ALTER TABLE `files`
+  ADD CONSTRAINT `files_torrents_id_fk` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -28,9 +28,9 @@ class TorrentUploadForm extends Validator
     {
         return [
             'name' => ['string', 'filter' => ['trim', 'strip_tags', 'htmlspecialchars']],
-            'file' => ['file', 'mimes' => ["application/x-bittorrent"], 'maxSize' => Config::get("torrent.max_file_size")],
+            'file' => ['torrent', 'mimes' => ["application/x-bittorrent"], 'maxSize' => Config::get("torrent.max_file_size")],
             'descr' => ['string', 'filter' => ['trim', 'strip_tags', 'htmlspecialchars']],
-            'uplver' => ['in', 'range' => ['yes', 'no'], 'strict' => true],
+            'uplver' => ['in', 'range' => ['no', 'yes'], 'strict' => true],
         ];
     }
 

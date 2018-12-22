@@ -34,6 +34,7 @@ class Validator extends BaseObject
         'call'         => '\Mix\Validators\CallValidator',
         'file'         => '\Mix\Validators\FileValidator',
         'image'        => '\Mix\Validators\ImageValidator',
+        'torrent'      => '\Mix\Validators\TorrentValidator'
     ];
 
     // 错误
