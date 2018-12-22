@@ -7,11 +7,16 @@ use Mix\Base\BaseObject;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
+/**
+ * Docs: https://symfony.com/doc/current/reference/constraints.html
+ *
+ * Class Validator
+ * @package Mix\Validators
+ */
 class Validator extends BaseObject
 {
-
-    // 全部属性
-    public $attributes;
+    /**  @var \Symfony\Component\Validator\ConstraintViolationListInterface */
+    private $_errors;
 
     public static function rule()
     {
@@ -38,7 +43,21 @@ class Validator extends BaseObject
         $validator = Validation::createValidatorBuilder()
             ->addMethodMapping('loadValidatorMetadata')
             ->getValidator();
-        $errors = $validator->validate($this);
-        return $errors;
+        $this->_errors = $validator->validate($this);
+        return $this->_errors;
+    }
+
+    public function getErrors() {
+        return $this->_errors;
+    }
+
+    public function getError()
+    {
+        $errors = $this->_errors;
+        if (empty($errors)) {
+            return '';
+        }
+
+        return $errors->get(0);
     }
 }
