@@ -67,7 +67,7 @@ class UserRegisterForm extends Validator
         $this->bonus = Config::get("register.user_default_bonus") ?? 0;
     }
 
-    public static function rule()
+    public static function rules()
     {
         return [
             'type' => [
@@ -95,7 +95,7 @@ class UserRegisterForm extends Validator
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         // FIXME It will not add the rule in self::rule() when use parent::loadValidatorMetadata()
-        $rules = self::rule();
+        $rules = self::rules();
         foreach ($rules as $property => $constraints) {
             $metadata->addPropertyConstraints($property, $constraints);
         }

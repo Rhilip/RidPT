@@ -18,14 +18,14 @@ class Validator extends BaseObject
     /**  @var \Symfony\Component\Validator\ConstraintViolationListInterface */
     private $_errors;
 
-    public static function rule()
+    public static function rules()
     {
         return [];
     }
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        $rules = self::rule();
+        $rules = self::rules();
         foreach ($rules as $property => $constraints) {
             $metadata->addPropertyConstraints($property, $constraints);
         }
