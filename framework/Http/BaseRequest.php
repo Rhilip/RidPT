@@ -72,7 +72,7 @@ class BaseRequest extends Component
     /**
      * @var string[]
      */
-    protected static $trustedProxies = array();
+    protected static $trustedProxies = array('127.0.0.1','::1');
 
     private static $trustedHeaderSet = -1;
 
