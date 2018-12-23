@@ -2,13 +2,13 @@
 
 namespace Mix\Http;
 
-use Mix\Helpers\StringHelper;
+use SplFileInfo;
 
 /**
  * UploadFile类
  * @author 刘健 <coder.liu@qq.com>
  */
-class UploadFile
+class UploadFile extends SplFileInfo
 {
 
     // 文件名
@@ -17,14 +17,8 @@ class UploadFile
     // MIME类型
     public $type;
 
-    // 临时文件
-    public $tmpName;
-
     // 错误码
     public $error;
-
-    // 文件尺寸
-    public $size;
 
     /**
      * 创建实例，通过表单名称
@@ -40,11 +34,10 @@ class UploadFile
     // 构造
     public function __construct($file)
     {
+        parent::__construct($file['tmp_name']);
         $this->name    = $file['name'];
         $this->type    = $file['type'];
-        $this->tmpName = $file['tmp_name'];
         $this->error   = $file['error'];
-        $this->size    = $file['size'];
     }
 
     // 文件另存为
@@ -54,14 +47,14 @@ class UploadFile
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $bytes = file_put_contents($filename, file_get_contents($this->tmpName));
+        $bytes = file_put_contents($filename, file_get_contents($this->getPathname()));
         return $bytes ? true : false;
     }
 
     // 获取基础名称
-    public function getBaseName()
+    public function getBaseName($suffix = null)
     {
-        return pathinfo($this->name)['filename'];
+        return $this->name;
     }
 
     // 获取扩展名
@@ -69,11 +62,4 @@ class UploadFile
     {
         return pathinfo($this->name)['extension'];
     }
-
-    // 获取随机文件名
-    public function getRandomFileName()
-    {
-        return md5(StringHelper::getRandomString(32)) . '.' . $this->getExtension();
-    }
-
 }

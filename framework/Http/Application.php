@@ -215,6 +215,11 @@ class Application extends \Mix\Base\Application
         return $this->basePath . DIRECTORY_SEPARATOR . 'views';
     }
 
+    public function getPrivatePath($sub_folder = null)
+    {
+        return $this->basePath . DIRECTORY_SEPARATOR . 'private' . (is_null($sub_folder) ? "" : DIRECTORY_SEPARATOR . $sub_folder);
+    }
+
     // 打印变量的相关信息
     public function dump($var, $send = false)
     {
