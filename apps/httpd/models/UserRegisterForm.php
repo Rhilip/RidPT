@@ -37,16 +37,17 @@ class UserRegisterForm extends Validator
     public $invite_hash = "";
     public $confirm_way;
 
-    public $passkey;
     public $status;
-    public $class;
-    public $uploadpos;
-    public $downloadpos;
-    public $uploaded;
-    public $downloaded;
-    public $seedtime;
-    public $leechtime;
-    public $bonus;
+
+    private $passkey;
+    private $class;
+    private $uploadpos;
+    private $downloadpos;
+    private $uploaded;
+    private $downloaded;
+    private $seedtime;
+    private $leechtime;
+    private $bonus;
 
     public function importAttributes($config)
     {
@@ -84,11 +85,14 @@ class UserRegisterForm extends Validator
                     'min' => 6, 'minMessage' => "Password is too Short , should at least {{ limit }} characters",
                     'max' => 40, 'maxMessage' => 'Password is too Long ( At most {{ limit }} characters )'
                 ]),
-                new Assert\NotEqualTo(['propertyPath' => 'username','message'=> 'The password cannot match your username.'])
+                new Assert\NotEqualTo(['propertyPath' => 'username', 'message' => 'The password cannot match your username.'])
             ],
-            'password_again' => [new Assert\NotBlank(), new Assert\EqualTo(['propertyPath' => 'password','message'=>'Password is not matched.'])],
+            'password_again' => [
+                new Assert\NotBlank(),
+                new Assert\EqualTo(['propertyPath' => 'password', 'message' => 'Password is not matched.'])
+            ],
             'email' => [new Assert\NotBlank(), new Assert\Email()],
-            'accept_tos' => [new Assert\NotBlank(), new Assert\EqualTo(1)],
+            'accept_tos' => [new Assert\NotBlank(), new Assert\IsTrue()],
         ];
     }
 
@@ -99,7 +103,7 @@ class UserRegisterForm extends Validator
         foreach ($rules as $property => $constraints) {
             $metadata->addPropertyConstraints($property, $constraints);
         }
-        
+
         $metadata->addConstraint(new Assert\Callback('isRegisterSystemOpen'));
         $metadata->addConstraint(new Assert\Callback('isMaxUserReached'));
         $metadata->addConstraint(new Assert\Callback('isMaxRegisterIpReached'));
@@ -227,18 +231,8 @@ class UserRegisterForm extends Validator
             $this->confirm_way = "auto";
         }
 
-        switch ($this->confirm_way) {
-            case "auto":
-                $this->status = User::STATUS_CONFIRMED;
-                break;
-            case "mod":
-                break;
-            case "email":
-            default:
-                {
-                    // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
-                    SwiftMailer::send([$this->email], "Please confirm your accent", "Click this link to confirm.");
-                }
+        if ($this->confirm_way == 'auto' and $this->status != User::STATUS_CONFIRMED) {
+            $this->status = User::STATUS_CONFIRMED;
         }
 
         PDO::createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`) 
@@ -260,6 +254,11 @@ class UserRegisterForm extends Validator
 
             // FIXME Send PM to inviter
             SitePM::send(0, $this->invite_by, "New Invitee Signup Successful", "New Invitee Signup Successful");
+        }
+
+        if ($this->confirm_way == "email") {
+            // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
+            SwiftMailer::send([$this->email], "Please confirm your accent", "Click this link to confirm.");
         }
 
         SiteLog::write("User $this->username($this->id) is created now" . (
