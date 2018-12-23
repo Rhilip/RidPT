@@ -19,26 +19,33 @@ class Config extends Component
     /** Config key prefix in Cache
      * @var string
      */
-    public $saveField = "CONFIG:site_config";
+    public $cacheField = "CONFIG:site_config";
 
     public function __construct(array $config = [])
     {
         parent::__construct($config);
         $configs = PDO::createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
         foreach ($configs as $config) {
-            Redis::hset($this->saveField, $config["name"], $config["value"]);
+            Redis::hset($this->cacheField, $config["name"], $config["value"]);
         }
     }
 
     public function getAll()
     {
-        return Redis::hgetall($this->saveField);
+        return Redis::hgetall($this->cacheField);
+    }
+
+    public function getSection($prefix = null)
+    {
+        return array_filter($this->getAll(), function ($k) use ($prefix) {
+            return strpos($k, $prefix) === 0;
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     public function get(string $name)
     {
         // First Check config stored in RedisConnection Cache, If it exist , then just return the cached key
-        $setting = Redis::hget($this->saveField, $name);
+        $setting = Redis::hget($this->cacheField, $name);
         if (!is_null($setting)) return $setting;
 
         // Get config From Database
@@ -49,7 +56,7 @@ class Config extends Component
         if ($setting === false) throw $this->createNotFoundException($name);
 
         // Cache it in RedisConnection and return
-        Redis::hset($this->saveField, $name, $setting);
+        Redis::hset($this->cacheField, $name, $setting);
         return $setting;
     }
 
@@ -63,7 +70,7 @@ class Config extends Component
 
     public function flush($name)
     {
-        Redis::hdel($this->saveField, $name);
+        Redis::hdel($this->cacheField, $name);
         return $this->get($name);
     }
 
