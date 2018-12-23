@@ -18,7 +18,7 @@
         <div class="row">
             <div class="form-group col-md-4">
                 {{ forms.input('username', '' , 'Username' , 'Username',"Max Lengh 12 with those character: <code>A-Za-z0-9_</code>") }}
-                {{ forms.input('email','','Email','','We only allow those Email: <code>' ~ config["register.email_white_list"] ~ '</code>','email') }}
+                {{ forms.input('email','','Email','','We only allow those Email: <code>' ~ config.get('register.email_white_list') ~ '</code>','email') }}
                 {{ forms.input('password','','Password','',null,'password') }}
                 {{ forms.input('password_again','','Retype Password Again','',null,'password') }}
 
@@ -45,7 +45,7 @@
 
 {% macro nav(register_type,type) %}
     <li role="presentation"
-        class="{% if register_type == type %}active{% endif %} {% if config['register.by_' ~ type] == false %}disabled{% endif %}">
+        class="{% if register_type == type %}active{% endif %} {% if config.get('register.by_' ~ type) == false %}disabled{% endif %}">
         <a href="#{{ type }}" id="{{ type }}-tab" role="tab" data-toggle="tab"
            aria-controls="{{ type }}" aria-expanded="{% if register_type == type %}true{% endif %}">{{ type|upper }}</a>
     </li>
@@ -60,7 +60,7 @@
 {% block container %}
     <h1>Register</h1>
 
-    {% if config["base.enable_register_system"] != true %}
+    {% if config.get('base.enable_register_system') != true %}
         <div class="jumbotron">
             <h2>Sorry~</h2>
             <p class="lead">
@@ -76,7 +76,7 @@
         <div id="myTabContent" class="tab-content">
             <div role="tabpanel" class="tab-pane fade {% if register_type == "open" %}active in{% endif %}" id="open"
                  aria-labelledby="open-tab">
-                {% if config["register.by_open"] != true %}
+                {% if config.get('register.by_open') != true %}
                     <div class="jumbotron">
                         <h2>Sorry ~</h2>
                         <p>
@@ -95,7 +95,7 @@
             </div>
             <div role="tabpanel" class="tab-pane fade {% if register_type == "invite" %}active in{% endif %}"
                  id="invite" aria-labelledby="profile-tab">
-                {% if config["register.by_invite"] != true %}
+                {% if config.get('register.by_invite') != true %}
                     <div class="jumbotron">
                         <h2>Sorry ~</h2>
                         <p>Invites registration is currently disabled. </p>
@@ -106,7 +106,7 @@
             </div>
             <div role="tabpanel" class="tab-pane fade {% if register_type == "green" %}active in{% endif %}" id="green"
                  aria-labelledby="green-tab">
-                {% if config["register.by_green"] != true %}
+                {% if config.get('register.by_green') != true %}
                     <div class="jumbotron">
                         <h2>Sorry ~</h2>
                         <p>Green registration is currently disabled. </p>

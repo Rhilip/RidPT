@@ -5,9 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="description" content="{{ config["base.site_description"] }}">
-    <meta name="author" content="{{ config["base.site_author"] }}">
-    <title>{{ config["base.site_name"] }} :: {% block title %}{% endblock %} -- Powered by RidPT</title>
+    <meta name="description" content="{{ config.get('base.site_description') }}">
+    <meta name="author" content="{{ config.get("base.site_author") }}">
+    <title>{{ config.get("base.site_name") }} :: {% block title %}{% endblock %} -- Powered by RidPT</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
