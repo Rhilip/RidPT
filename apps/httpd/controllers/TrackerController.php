@@ -930,7 +930,7 @@ class TrackerController
 
             if ($queries["ipv6"]) {
                 if ($queries["compact"] == 1) {
-                    $rep_dict["peers6"] .= inet_pton($peer["ipv6"]) . pack("n", $peer["port"]);
+                    $rep_dict["peers6"] .= inet_pton($peer["ipv6"]) . pack("n", $peer["ipv6_port"]);
                 } else {
                     // If peer don't want compact response, we return ipv6-peer in `peers`
                     $exchange_peer["ip"] = $peer["ipv6"];
