@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 22, 2018 at 10:09 AM
+-- Generation Time: Dec 28, 2018 at 09:40 PM
 -- Server version: 5.7.22-log
 -- PHP Version: 7.2.6
 
@@ -274,6 +274,8 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('base.site_author', 'Rhilip', '2018-12-13 01:57:18'),
 ('base.site_description', 'A Private Tracker Site', '2018-12-13 01:57:18'),
 ('base.site_name', 'RidPT', '2018-11-22 07:16:42'),
+('base.site_tracker_url', 'ridpt.rhilip.info/tracker', '2018-12-23 07:06:36'),
+('base.site_url', 'ridpt.rhilip.info', '2018-12-23 07:06:12'),
 ('buff.enable_large', '1', '2018-12-09 10:33:35'),
 ('buff.enable_magic', '1', '2018-12-09 10:33:35'),
 ('buff.enable_mod', '1', '2018-12-09 10:33:35'),
@@ -379,11 +381,16 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `complete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have completed downloading.',
   `incomplete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have not completed downloading.',
   `downloaded` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of peers that have ever completed downloading.',
-  `name` varchar(255) NOT NULL DEFAULT '',
-  `filename` varchar(255) NOT NULL,
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `subtitle` varchar(255) NOT NULL DEFAULT '',
+  `filename` varchar(255) NOT NULL DEFAULT '',
+  `torrent_name` varchar(255) NOT NULL DEFAULT '',
+  `torrent_type` enum('single','multi') NOT NULL DEFAULT 'multi',
+  `torrent_size` bigint(20) NOT NULL DEFAULT '0',
   `descr` text,
-  `size` bigint(20) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
+  `uplver` enum('yes','no') NOT NULL DEFAULT 'no',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `info_hash` (`info_hash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -405,7 +412,8 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
   `add_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `start_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expired_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `t_buff_index` (`start_at`,`expired_at`,`torrentid`,`beneficiary_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -458,6 +466,12 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Indexes for table `site_log`
 --
 ALTER TABLE `site_log` ADD FULLTEXT KEY `msg` (`msg`);
+
+--
+-- Indexes for table `torrents`
+--
+ALTER TABLE `torrents` ADD FULLTEXT KEY `descr` (`descr`);
+ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
 
 --
 -- Constraints for dumped tables

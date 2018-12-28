@@ -167,7 +167,6 @@ class Validator extends BaseObject
                 ->setCode(File::INVALID_MIME_TYPE_ERROR)
                 ->addViolation();
         }
-        var_dump("hits");
     }
 
 
