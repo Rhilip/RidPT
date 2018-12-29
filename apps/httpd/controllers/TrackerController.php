@@ -498,6 +498,7 @@ class TrackerController
          */
 
         $remote_ip = Request::getClientIp();  // IP address from Request Header (Which is NexusPHP used)
+        $queries["ipv6_port"] = $queries["port"];
 
         if ($queries["ipv6"]) {
             if ($client = IpUtils::isEndPoint($queries["ipv6"])) {
@@ -551,6 +552,7 @@ class TrackerController
 
         // Check peer's connect type
         $queries["connect_type"] = ($queries["ipv6"] ? 2 : 0) + ($queries["ip"] ? 1 : 0);
+        var_dump($queries);
     }
 
     /** Check Port
@@ -625,6 +627,8 @@ class TrackerController
         $trueUploaded = $trueDownloaded = 0;
         $thisUploaded = $thisDownloaded = 0;
 
+        [$ipField, $ipBindField] = $this->getIpField($queries);
+
         // Try to fetch session from Table `peers`
         $self = PDO::createCommand("SELECT `uploaded`,`downloaded`,(NOW() - `last_action_at`) as `duration` 
         FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid LIMIT 1;")->bindParams([
@@ -696,22 +700,18 @@ class TrackerController
                 $trueUploaded = max(0, $queries['uploaded']);
                 $trueDownloaded = max(0, $queries['downloaded']);
 
-                PDO::createCommand("INSERT INTO `peers`(`user_id`, `torrent_id`, `peer_id`, `agent`, " .
-                    ($queries["ip"] ? "`ip`, `port`, " : "") .
-                    ($queries["ipv6"] ? "`ipv6`, `ipv6_port`, " : "") .
-                    "`connect_type`,`seeder`, `uploaded`, `downloaded`, `to_go`, `finished`, `started_at`, `last_action_at`, `corrupt`, `key`)
-                    VALUES (:uid,:tid,:pid,:agent," .
-                    ($queries["ip"] ? "INET6_ATON(:ip),:port," : "") .
-                    ($queries["ipv6"] ? "INET6_ATON(:ipv6),:ipv6_port," : "") .
-                    ":connect_type,:seeder,:upload,:download,:to_go,0,NOW(),NOW(),:corrupt,:key)")->bindParams([
-                    "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"],
-                    "agent" => Request::header("user-agent"),
-                    "upload" => $trueUploaded, "download" => $trueDownloaded, "to_go" => $queries["left"],
-                    "ip" => $queries["ip"], "port" => $queries["port"],
-                    "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
-                    "connect_type" => $queries["connect_type"],
-                    "seeder" => $seeder, "corrupt" => $queries["corrupt"], "key" => $queries["key"],
-                ])->execute();
+                PDO::createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, 
+                        `agent`=:agent, {$ipField}
+                        `connect_type` = :connect_type, `seeder` = :seeder,
+                        `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
+                        `corrupt` = :corrupt , `key` = :key ;
+                        ")->bindParams([
+                        "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"],
+                        "agent" => Request::header("user-agent"),
+                        "connect_type" => $queries["connect_type"],
+                        "upload" => $trueUploaded, "download" => $trueDownloaded, "to_go" => $queries["left"],
+                        "seeder" => $seeder, "corrupt" => $queries["corrupt"], "key" => $queries["key"],
+                    ] + $ipBindField)->execute();
 
                 // Search history record, and create new record if not exist.
                 $selfRecordCount = PDO::createCommand("SELECT COUNT(`id`) FROM snatched WHERE user_id=:uid AND torrent_id = :tid")->bindParams([
@@ -759,21 +759,17 @@ class TrackerController
                 ])->execute();
             } else {
                 // if session is exist but event!=stopped , we should continue the old session
-                PDO::createCommand("UPDATE `peers` SET `agent`=:agent," .
-                    ($queries["ip"] ? "`ip`=INET6_ATON(:ip),`port`=:port," : "") .
-                    ($queries["ipv6"] ? "`ipv6`=INET6_ATON(:ipv6),`ipv6_port`=:ipv6_port," : "") .
+                PDO::createCommand("UPDATE `peers` SET `agent`=:agent, {$ipField}," .
                     "`seeder`=:seeder, `connect_type` = :connect_type, 
                     `uploaded`=`uploaded` + :uploaded, `downloaded`= `downloaded` + :download, `to_go` = :left,
                     `last_action_at`=NOW(), `corrupt`=:corrupt, `key`=:key 
                     WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
-                    "agent" => Request::header("user-agent"),
-                    "ip" => $queries["ip"], "port" => $queries["port"],
-                    "ipv6" => $queries["ipv6"], "ipv6_port" => $queries["ipv6_port"],
-                    "connect_type" => $queries["connect_type"], "seeder" => $seeder,
-                    "uploaded" => $trueUploaded, "download" => $trueDownloaded, "left" => $queries["left"],
-                    "corrupt" => $queries["corrupt"], "key" => $queries["key"],
-                    "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
-                ])->execute();
+                        "agent" => Request::header("user-agent"),
+                        "connect_type" => $queries["connect_type"], "seeder" => $seeder,
+                        "uploaded" => $trueUploaded, "download" => $trueDownloaded, "left" => $queries["left"],
+                        "corrupt" => $queries["corrupt"], "key" => $queries["key"],
+                        "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
+                    ] + $ipBindField)->execute();
             }
             if (PDO::getRowCount() > 0) {   // It means that the delete or update query affected so we can safety update `snatched` table
                 PDO::createCommand("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
@@ -789,7 +785,7 @@ class TrackerController
         // Deal with completed event
         if ($queries["event"] === "completed") {
             PDO::createCommand("UPDATE `snatched` SET `finished` = 'yes' , finish_ip = INET6_ATON(:ip) , finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
-                "ip" => $queries["ip"],
+                "ip" => Request::getClientIp(),
                 "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
             ]);
             // Update `torrents`, with complete +1  incomplete -1 downloaded +1
@@ -902,7 +898,7 @@ class TrackerController
         $peers = PDO::createCommand("SELECT " .
             ($queries["ip"] ? " INET6_NTOA(`ip`) as `ip`,`port`, " : "") .
             ($queries["ipv6"] ? " INET6_NTOA(`ipv6`) as `ipv6`,`ipv6_port` " : "") .
-            ($queries["no_peer_id"] == 0 ? ",`peer_id`" : "") .
+            ($queries["no_peer_id"] == 0 ? " ,`peer_id` " : "") .
             " FROM `peers` WHERE torrent_id = :tid " .
             " AND peer_id != :pid " .    // Don't select user himself
             " AND connect_type IN ({$want_connect_type[$queries["connect_type"]]})" .
@@ -939,6 +935,26 @@ class TrackerController
                 }
             }
         }
+    }
+
+    private function getIpField($queries)
+    {
+        $setField = [];
+        $bindField = [];
+        if ($queries['ip'] && $queries['port']) {
+            $setField[] = "`ip` = INET6_ATON(:ip), `port` = :port";
+            $bindField['ip'] = $queries['ip'];
+            $bindField['port'] = $queries['port'];
+        }
+
+        if ($queries['ipv6'] && $queries['ipv6_port']) {
+            $setField[] = '`ipv6` = INET6_ATON(:ipv6), `ipv6_port` = :ipv6_port';
+            $bindField['ipv6'] = $queries['ipv6'];
+            $bindField['ipv6_port'] = $queries['ipv6_port'];
+        }
+        $setField = join(', ', $setField);
+
+        return [$setField, $bindField];
     }
 
     /**
