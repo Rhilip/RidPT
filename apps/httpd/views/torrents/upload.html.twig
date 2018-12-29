@@ -1,0 +1,61 @@
+{% extends "layout/base.html.twig" %}
+
+{% block title %}Upload Torrent{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="http://cdn.wysibb.com/css/default/wbbtheme.css" />
+{% endblock %}
+
+{% block script %}
+    <script src="http://cdn.wysibb.com/js/jquery.wysibb.min.js"></script> <!-- Temp Use... -->
+    <script>
+        $(function() {
+            $("#descr").wysibb();
+        })
+    </script>
+{% endblock %}
+
+{% block container %}
+    <h1>Upload Torrent</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="form-group col-md-12">
+                <div class="form-group">
+                    <label class="control-label" for="title">Title</label>
+                    <input class="form-control" id="title" name="title"
+                           placeholder="The main title of Your upload torrent"
+                           type="text" required="required">
+                    <small>You should obey our upload rules.</small>
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="subtitle">Sub Title</label>
+                    <input class="form-control" id="subtitle" name="subtitle"
+                           placeholder="The subtitle of Your upload torrent"
+                           type="text">
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="file">Torrent File</label>
+                    <input class="form-control" id="file" name="file" accept=".torrent" type="file" required="required">
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="descr">Description</label>
+                    <textarea class="form-control" id="descr" name="descr" required="required"></textarea>
+                </div>
+                {% if user["class"] > config.get("authority.upload_anonymous") %}
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="uplver" value="yes"> Upload Anonymous
+                        </label>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4">
+                <input type="submit" value="Upload" class="btn btn-primary" onclick="$('#descr').sync()">
+            </div>
+        </div>
+    </form>
+{% endblock %}

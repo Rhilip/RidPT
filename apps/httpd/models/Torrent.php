@@ -8,16 +8,16 @@
 
 namespace apps\httpd\models;
 
-
 use Mix\Facades\PDO;
+use Mix\Exceptions\NotFoundException;
 
 class Torrent
 {
     private $id;
     private $owner_id;
-    public $info_hash;
+    private $info_hash;
 
-    public $status;
+    private $status;
 
     private $added_at;
 
@@ -25,11 +25,14 @@ class Torrent
     private $incomplete;
     private $downloaded;
 
-    public $torrent_name;
-    public $torrent_type;
-    public $torrent_size;
-    public $descr;
-    public $uplver;
+    private $title;
+    private $subtitle;
+
+    private $torrent_name;
+    private $torrent_type;
+    private $torrent_size;
+    private $descr;
+    private $uplver;
 
     public function __construct($id = null)
     {
@@ -39,7 +42,14 @@ class Torrent
         if ($fetch) {
             foreach ($fetch as $key => $value)
                 $this->$key = $value;
+        } else {
+            throw new NotFoundException("Not Found");
         }
+    }
+
+    public static function TorrentFileLoc($id = 0)
+    {
+        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $id . ".torrent";
     }
 
     /**
@@ -98,8 +108,67 @@ class Torrent
         return $this->torrent_name;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
 
-    public static function TorrentFileLoc($id = 0) {
-        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $id . ".torrent";
+    /**
+     * @return mixed
+     */
+    public function getSubtitle()
+    {
+        return $this->subtitle;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescr()
+    {
+        return $this->descr;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInfoHash()
+    {
+        return $this->info_hash;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTorrentType()
+    {
+        return $this->torrent_type;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTorrentSize()
+    {
+        return $this->torrent_size;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUplver()
+    {
+        return $this->uplver;
     }
 }

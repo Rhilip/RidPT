@@ -2,8 +2,6 @@
 
 namespace apps\httpd\models;
 
-use mix\Facades\PDO;
-
 class User
 {
     // User class
@@ -67,4 +65,10 @@ class User
 
     public $id;
     public $username;
+    public $passkey;
+
+    public function __construct($id = null)
+    {
+
+    }
 }

@@ -4,6 +4,7 @@
 
 {% block container %}
     {% for torrent in torrents %}
-        <li>{{ torrent.getTorrentName() }}</li>
+        <li><a href="/torrents/details?id={{ torrent.getId() }}" target="_blank">{{ torrent.getTitle() }}</a>
+            seeder: {{ torrent.getComplete() }} leecher: {{ torrent.getIncomplete() }} completed: {{ torrent.getDownloaded() }}</li>
     {% endfor %}
 {% endblock %}

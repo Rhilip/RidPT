@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 28, 2018 at 09:40 PM
+-- Generation Time: Dec 29, 2018 at 11:52 PM
 -- Server version: 5.7.22-log
 -- PHP Version: 7.2.6
 
@@ -216,8 +216,8 @@ CREATE TABLE IF NOT EXISTS `peers` (
   `torrent_id` int(11) NOT NULL,
   `peer_id` varbinary(20) NOT NULL,
   `ip` varbinary(16) DEFAULT NULL,
-  `ipv6` varbinary(16) DEFAULT NULL,
   `port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
+  `ipv6` varbinary(16) DEFAULT NULL,
   `ipv6_port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `connect_type` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `seeder` enum('yes','partial','no') NOT NULL DEFAULT 'no',
@@ -226,7 +226,7 @@ CREATE TABLE IF NOT EXISTS `peers` (
   `to_go` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `finished` tinyint(1) NOT NULL DEFAULT '0',
   `started_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_action_at` timestamp NULL DEFAULT NULL,
+  `last_action_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `finish_at` timestamp NULL DEFAULT NULL,
   `agent` varchar(64) NOT NULL,
   `corrupt` tinyint(1) NOT NULL DEFAULT '0',
@@ -273,9 +273,10 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('base.max_user', '5000', '2018-11-28 16:00:15'),
 ('base.site_author', 'Rhilip', '2018-12-13 01:57:18'),
 ('base.site_description', 'A Private Tracker Site', '2018-12-13 01:57:18'),
+('base.site_muti_tracker_url', '', '2018-12-29 15:52:06'),
 ('base.site_name', 'RidPT', '2018-11-22 07:16:42'),
-('base.site_tracker_url', 'ridpt.rhilip.info/tracker', '2018-12-23 07:06:36'),
-('base.site_url', 'ridpt.rhilip.info', '2018-12-23 07:06:12'),
+('base.site_tracker_url', 'ridpt.rhilip.info/tracker', '2018-12-29 15:52:06'),
+('base.site_url', 'ridpt.rhilip.info', '2018-12-29 15:52:06'),
 ('buff.enable_large', '1', '2018-12-09 10:33:35'),
 ('buff.enable_magic', '1', '2018-12-09 10:33:35'),
 ('buff.enable_mod', '1', '2018-12-09 10:33:35'),
@@ -298,7 +299,7 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('register.max_ip_check', '1', '2018-11-29 11:39:55'),
 ('register.max_user_check', '1', '2018-11-28 16:04:23'),
 ('register.per_ip_user', '5', '2018-11-29 11:40:50'),
-('register.user_confirm_way', 'email', '2018-12-13 02:04:45'),
+('register.user_confirm_way', 'auto', '2018-12-29 12:01:04'),
 ('register.user_default_bonus', '0', '2018-12-05 14:52:12'),
 ('register.user_default_class', '1', '2018-12-05 13:56:19'),
 ('register.user_default_downloaded', '0', '2018-12-05 13:56:19'),
@@ -413,7 +414,7 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
   `start_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expired_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
-  KEY `t_buff_index` (`start_at`,`expired_at`,`torrentid`,`beneficiary_id`) USING BTREE
+  KEY `t_buff_index` (`beneficiary_id`,`torrentid`,`start_at`,`expired_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
