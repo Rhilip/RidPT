@@ -1,0 +1,9 @@
+{% extends "layout/base.html.twig" %}
+
+{% block title %}Torrents List{% endblock %}
+
+{% block container %}
+    {% for torrent in torrents %}
+        <li>{{ torrent.getTorrentName() }}</li>
+    {% endfor %}
+{% endblock %}

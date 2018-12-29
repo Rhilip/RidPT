@@ -8,6 +8,7 @@
 
 namespace apps\httpd\models\form;
 
+use apps\httpd\models\Torrent;
 use Mix\Facades\Config;
 use Mix\Facades\PDO;
 use Mix\Facades\Session;
@@ -168,7 +169,7 @@ class TorrentUploadForm extends Validator
             $this->setBuff();
 
             // Save this torrent
-            $dump_status = Bencode::dump($this->buildTorrentLoc(), $this->torrent_dict);
+            $dump_status = Bencode::dump(Torrent::TorrentFileLoc($this->id), $this->torrent_dict);
             if ($dump_status == false) {
                 throw new \Exception('std_torrent_cannot_save');
             }
@@ -177,7 +178,7 @@ class TorrentUploadForm extends Validator
         } catch (\Exception $e) {
             PDO::rollback();
             if ($this->id != 0) {
-                unlink($this->buildTorrentLoc());
+                unlink(Torrent::TorrentFileLoc($this->id));
             }
 
             if ($e->getCode() == 23000)
@@ -185,12 +186,6 @@ class TorrentUploadForm extends Validator
 
             throw $e;
         }
-    }
-
-
-    private function buildTorrentLoc()
-    {
-        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $this->id . ".torrent";
     }
 
     private function setBuff()

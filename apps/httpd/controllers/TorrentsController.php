@@ -8,12 +8,19 @@
 
 namespace apps\httpd\controllers;
 
+use apps\httpd\models\Torrent;
+
+use Mix\Facades\Config;
 use Mix\Facades\PDO;
 use Mix\Facades\Request;
 use Mix\Facades\Response;
+use Mix\Facades\Session;
+
 use Mix\Http\Controller;
 
 use apps\httpd\models\form\TorrentUploadForm;
+
+use SandFoxMe\Bencode\Bencode;
 
 
 class TorrentsController extends Controller
@@ -21,6 +28,15 @@ class TorrentsController extends Controller
 
     public function actionIndex()
     {
+        $fetch = PDO::createCommand("SELECT `id` FROM torrents LIMIT 50;")->queryAll();
+
+        $torrents = array_map(function ($id) {
+            return new Torrent($id);
+        }, $fetch);
+
+        return $this->render("torrents/list.html.twig", [
+            "torrents" => $torrents
+        ]);
 
     }
 
@@ -66,5 +82,52 @@ class TorrentsController extends Controller
         ])->queryOne();
 
 
+    }
+
+    public function actionDownload()
+    {
+        // TODO add remote download by &passkey=  (Add change our BeforeMiddle)
+        $tid = Request::get('id');
+        $userInfo = Session::get('userInfo');
+
+        $torrent = new Torrent($tid);
+        $filename = "[" .Config::get("base.site_name") . "]" . $torrent->torrent_name . ".torrent";
+        $file = $torrent::TorrentFileLoc($tid);
+        $dict = Bencode::load($file);
+
+        $scheme = "http://";
+        if (filter_var(Request::get("https"), FILTER_VALIDATE_BOOLEAN))
+            $scheme = "https://";
+        else if (filter_var(Request::get("https"), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))
+            $scheme = "http://";
+        else if (Request::isSecure())
+            $scheme = "https://";
+
+        $announce_suffix = "/announce?passkey=" . $userInfo["uid"];   // FIXME user passkey
+        $dict["announce"] = $scheme . Config::get("base.site_tracker_url") . $announce_suffix;
+
+        /** BEP 0012 Multitracker Metadata Extension
+         * See more on : http://www.bittorrent.org/beps/bep_0012.html
+         */
+        if ($muti_tracker = Config::get("base.site_muti_tracker_url")) {
+            $dict["announce-list"] = [];
+
+            // Add our main tracker into muti_tracker_list to avoid lost error....
+            $muti_tracker = Config::get("base.site_tracker_url") .",". $muti_tracker;
+
+            $muti_tracker_list = explode(",", $muti_tracker);
+            foreach (array_unique($muti_tracker_list) as $tracker) {
+                $dict["announce-list"][] = [$scheme . $tracker . $announce_suffix];
+            }
+        }
+
+        Response::setHeader("Content-Type", "application/x-bittorrent");
+        if (strpos(Request::header("user-agent"), "IE")) {
+            Response::setHeader("Content-Disposition", "attachment; filename=" . str_replace("+", "%20", rawurlencode($filename)));
+        } else {
+            Response::setHeader("Content-Disposition", "attachment; filename=\"$filename\" ; charset=utf-8");
+        }
+
+        return Bencode::encode($dict);
     }
 }

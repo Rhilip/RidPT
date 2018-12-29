@@ -23,6 +23,7 @@ use Mix\Base\Facade;
  * @method hsetnx($key, $field, $value) static
  * @method hget($key, $field) static
  * @method hdel($key, $field) static
+ * @method hincrby($key, $field, $increment) static
  * @method lpush($key, $value) static
  * @method rpop($key) static
  * @method brpop($key, $timeout) static

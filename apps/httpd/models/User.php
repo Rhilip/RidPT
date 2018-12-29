@@ -68,23 +68,7 @@ class User
     public $id;
     public $username;
 
-    public static function validUsername($username)
-    {
-        if ($username == "") return "Empty User name";
-        if (strlen($username) > 12) return "User name is too log.";
-
-        // The following characters are allowed in user names
-        if (strspn(strtolower($username), "abcdefghijklmnopqrstuvwxyz0123456789_") != strlen($username))
-            return "Invalid characters in user names";
-
-        $count = PDO::createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
-            "username" => $username
-        ])->queryScalar();
-        if ($count > 0) return "The user name is already used";
-
-        return "";
-    }
-
+    // TODO move this function out of class User ,maybe in class site?
     public static function fetchUserCount()
     {
         return PDO::createCommand("SELECT COUNT(`id`) FROM `users`")->queryScalar();
