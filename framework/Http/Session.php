@@ -13,6 +13,7 @@ class Session extends Component
 {
 
     // 保存处理者
+    /** @var \Redis */
     public $saveHandler;
 
     // 保存的Key前缀
@@ -89,7 +90,7 @@ class Session extends Component
     // 赋值
     public function set($name, $value)
     {
-        $success = $this->saveHandler->hmset($this->_sessionKey, [$name => serialize($value)]);
+        $success = $this->saveHandler->hmset($this->_sessionKey, [$name => $value]);
         $this->saveHandler->expire($this->_sessionKey, $this->maxLifetime);
         $success and \Mix::app()->response->setCookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
         return $success ? true : false;
@@ -100,13 +101,10 @@ class Session extends Component
     {
         if (is_null($name)) {
             $result = $this->saveHandler->hgetall($this->_sessionKey);
-            foreach ($result as $key => $item) {
-                $result[$key] = unserialize($item);
-            }
             return $result ?: [];
         }
         $value = $this->saveHandler->hget($this->_sessionKey, $name);
-        return $value === false ? null : unserialize($value);
+        return $value === false ? null : $value;
     }
 
     // 判断是否存在

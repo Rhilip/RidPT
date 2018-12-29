@@ -13,6 +13,7 @@ class Token extends Component
 {
 
     // 保存处理者
+    /** @var \Redis */
     public $saveHandler;
 
     // 保存的Key前缀
@@ -86,7 +87,7 @@ class Token extends Component
     // 赋值
     public function set($name, $value)
     {
-        $success = $this->saveHandler->hmset($this->_tokenKey, [$name => serialize($value)]);
+        $success = $this->saveHandler->hmset($this->_tokenKey, [$name => $value]);
         $this->saveHandler->expire($this->_tokenKey, $this->expiresIn);
         return $success ? true : false;
     }
@@ -97,13 +98,10 @@ class Token extends Component
         if (is_null($name)) {
             $result = $this->saveHandler->hgetall($this->_tokenKey);
             unset($result['__uidx__']);
-            foreach ($result as $key => $item) {
-                $result[$key] = unserialize($item);
-            }
             return $result ?: [];
         }
         $value = $this->saveHandler->hget($this->_tokenKey, $name);
-        return $value === false ? null : unserialize($value);
+        return $value === false ? null : $value;
     }
 
     // 判断是否存在
