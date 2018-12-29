@@ -6,7 +6,7 @@
  * Time: 21:45
  */
 
-namespace apps\httpd\models;
+namespace apps\httpd\models\form;
 
 use Mix\Facades\Config;
 use Mix\Facades\PDO;

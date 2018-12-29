@@ -6,10 +6,12 @@
  * Time: 18:57
  */
 
-namespace apps\httpd\models;
+namespace apps\httpd\models\form;
 
 use apps\common\libraries\SiteLog;
 use apps\common\libraries\SitePM;
+
+use apps\httpd\models\User;
 use Mix\Facades\Config;
 use Mix\Facades\PDO;
 use Mix\Facades\Request;

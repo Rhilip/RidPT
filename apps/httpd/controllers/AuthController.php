@@ -16,7 +16,7 @@ use Mix\Facades\Request;
 use Mix\Facades\Config;
 
 use apps\httpd\models\User;
-use apps\httpd\models\UserRegisterForm;
+use apps\httpd\models\form\UserRegisterForm;
 
 use Mix\Http\Controller;
 use RobThree\Auth\TwoFactorAuth;

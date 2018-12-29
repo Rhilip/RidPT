@@ -8,11 +8,12 @@
 
 namespace apps\httpd\controllers;
 
+use Mix\Facades\PDO;
 use Mix\Facades\Request;
 use Mix\Facades\Response;
 use Mix\Http\Controller;
 
-use apps\httpd\models\TorrentUploadForm;
+use apps\httpd\models\form\TorrentUploadForm;
 
 
 class TorrentsController extends Controller
@@ -53,6 +54,17 @@ class TorrentsController extends Controller
 
     public function actionSearch()
     {
+
+    }
+
+    public function actionDetail()
+    {
+        $tid = Request::get('id');
+
+        $data = PDO::createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
+            'id' => $tid
+        ])->queryOne();
+
 
     }
 }
