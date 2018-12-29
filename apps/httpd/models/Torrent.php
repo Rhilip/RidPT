@@ -102,6 +102,4 @@ class Torrent
     public static function TorrentFileLoc($id = 0) {
         return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $id . ".torrent";
     }
-
-
 }

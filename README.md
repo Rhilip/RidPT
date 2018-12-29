@@ -65,3 +65,21 @@ So that tracker can record the peer's ip address.
 ## Basie Environment in `.env`
 
 TODO
+
+
+
+
+
+## Copyright
+
+### This project
+
+Apache License 2.0
+
+### our dependency
+
+ - [MixPHP](https://github.com/mix-php/mix-framework) : Apache License 2.0
+ - [Symfony Components](https://symfony.com/) , Like [twig](https://twig.symfony.com), [swiftmailer](https://swiftmailer.symfony.com) : MIT
+ - [sandfoxme/bencode](https://github.com/sandfoxme/bencode) : MIT
+ - [RobThree/TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth) : MIT
+

@@ -67,10 +67,4 @@ class User
 
     public $id;
     public $username;
-
-    // TODO move this function out of class User ,maybe in class site?
-    public static function fetchUserCount()
-    {
-        return PDO::createCommand("SELECT COUNT(`id`) FROM `users`")->queryScalar();
-    }
 }

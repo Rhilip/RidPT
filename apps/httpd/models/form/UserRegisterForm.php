@@ -8,8 +8,7 @@
 
 namespace apps\httpd\models\form;
 
-use apps\common\libraries\SiteLog;
-use apps\common\libraries\SitePM;
+use apps\common\libraries\Site;
 
 use apps\httpd\models\User;
 use Mix\Facades\Config;
@@ -125,7 +124,7 @@ class UserRegisterForm extends Validator
     public function isMaxUserReached(ExecutionContextInterface $context)
     {
         if (Config::get("register.max_user_check") &&
-            User::fetchUserCount() >= Config::get("base.max_user")) {
+            Site::fetchUserCount() >= Config::get("base.max_user")) {
             $context->buildViolation("Max user limit Reached")->addViolation();
         }
     }
@@ -227,7 +226,7 @@ class UserRegisterForm extends Validator
          * so that He needn't email (or other way) to confirm his account ,
          * and can access the (super)admin panel to change site config .
          */
-        if (User::fetchUserCount() == 0) {
+        if (Site::fetchUserCount() == 0) {
             $this->status = User::STATUS_CONFIRMED;
             $this->class = User::ROLE_STAFFLEADER;
             $this->confirm_way = "auto";
@@ -255,7 +254,7 @@ class UserRegisterForm extends Validator
             ])->execute();
 
             // FIXME Send PM to inviter
-            SitePM::send(0, $this->invite_by, "New Invitee Signup Successful", "New Invitee Signup Successful");
+            Site::sendPM(0, $this->invite_by, "New Invitee Signup Successful", "New Invitee Signup Successful");
         }
 
         if ($this->confirm_way == "email") {
@@ -263,8 +262,8 @@ class UserRegisterForm extends Validator
             SwiftMailer::send([$this->email], "Please confirm your accent", "Click this link to confirm.");
         }
 
-        SiteLog::write("User $this->username($this->id) is created now" . (
+        Site::writeLog("User $this->username($this->id) is created now" . (
             $this->type == "invite" ? ", Invite by " : ""
-            ), SiteLog::LEVEL_MOD);
+            ), Site::LOG_LEVEL_MOD);
     }
 }

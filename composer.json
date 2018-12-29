@@ -23,6 +23,7 @@
     "ext-json": "*",
     "ext-curl": "*",
     "ext-intl": "*",
+    "ext-pcntl": "*",
     "ext-redis": "*",
     "ext-libxml": "*",
     "ext-swoole": "*",

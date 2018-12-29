@@ -3,9 +3,6 @@
 namespace Mix\Base;
 
 /**
- * App类
- * @author 刘健 <coder.liu@qq.com>
- *
  * @property \Mix\Log\Log $log
  * @property \Mix\Console\Input $input
  * @property \Mix\Console\Output $output
@@ -18,6 +15,8 @@ namespace Mix\Base;
  * @property \Mix\Http\Cookie $cookie
  * @property \Mix\Database\PDOConnection $pdo
  * @property \Mix\Redis\RedisConnection $redis
+ * @property \Mix\Config\Config $config
+ * @property \Mix\Mailer\Mailer $swiftmailer
  * @property \Mix\Websocket\TokenReader $tokenReader
  * @property \Mix\Websocket\SessionReader $sessionReader
  * @property \Mix\Websocket\MessageHandler $messageHandler
@@ -45,7 +44,7 @@ class Application extends BaseObject
         // 快捷引用
         \Mix::setApp($this);
         // 错误注册
-        \Mix\Base\Error::register();
+        Error::register();
         // 执行初始化回调
         foreach ($this->initialize as $callback) {
             call_user_func($callback);
