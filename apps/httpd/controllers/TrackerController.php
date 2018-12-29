@@ -549,10 +549,6 @@ class TrackerController
         $this->checkPortFields($queries["port"]);
         if ($queries['port'] == 0 && strtolower($queries['event']) != 'stopped')
             throw new TrackerException(137, [":event" => strtolower($queries['event'])]);
-
-        // Check peer's connect type
-        $queries["connect_type"] = ($queries["ipv6"] ? 2 : 0) + ($queries["ip"] ? 1 : 0);
-        var_dump($queries);
     }
 
     /** Check Port
@@ -701,14 +697,12 @@ class TrackerController
                 $trueDownloaded = max(0, $queries['downloaded']);
 
                 PDO::createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, 
-                        `agent`=:agent, {$ipField}
-                        `connect_type` = :connect_type, `seeder` = :seeder,
+                        `agent`=:agent, `seeder` = :seeder, {$ipField}
                         `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
                         `corrupt` = :corrupt , `key` = :key ;
                         ")->bindParams([
                         "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"],
                         "agent" => Request::header("user-agent"),
-                        "connect_type" => $queries["connect_type"],
                         "upload" => $trueUploaded, "download" => $trueDownloaded, "to_go" => $queries["left"],
                         "seeder" => $seeder, "corrupt" => $queries["corrupt"], "key" => $queries["key"],
                     ] + $ipBindField)->execute();
@@ -760,12 +754,11 @@ class TrackerController
             } else {
                 // if session is exist but event!=stopped , we should continue the old session
                 PDO::createCommand("UPDATE `peers` SET `agent`=:agent, {$ipField}," .
-                    "`seeder`=:seeder, `connect_type` = :connect_type, 
+                    "`seeder`=:seeder,
                     `uploaded`=`uploaded` + :uploaded, `downloaded`= `downloaded` + :download, `to_go` = :left,
                     `last_action_at`=NOW(), `corrupt`=:corrupt, `key`=:key 
                     WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
-                        "agent" => Request::header("user-agent"),
-                        "connect_type" => $queries["connect_type"], "seeder" => $seeder,
+                        "agent" => Request::header("user-agent"), "seeder" => $seeder,
                         "uploaded" => $trueUploaded, "download" => $trueDownloaded, "left" => $queries["left"],
                         "corrupt" => $queries["corrupt"], "key" => $queries["key"],
                         "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
@@ -893,7 +886,6 @@ class TrackerController
         }
 
         $limit = ($queries["numwant"] <= 50) ? $queries["numwant"] : 50;
-        $want_connect_type = [1 => "1", 2 => "2", 3 => "1,2,3"];
 
         $peers = PDO::createCommand("SELECT " .
             ($queries["ip"] ? " INET6_NTOA(`ip`) as `ip`,`port`, " : "") .
@@ -901,7 +893,6 @@ class TrackerController
             ($queries["no_peer_id"] == 0 ? " ,`peer_id` " : "") .
             " FROM `peers` WHERE torrent_id = :tid " .
             " AND peer_id != :pid " .    // Don't select user himself
-            " AND connect_type IN ({$want_connect_type[$queries["connect_type"]]})" .
             ($role != "no" ? " AND `seeder`='no' " : " ") .  // Don't report seeds to other seeders
             " ORDER BY RAND() LIMIT {$limit}")->bindParams([
             "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
@@ -913,7 +904,7 @@ class TrackerController
             if ($queries["compact"] == 0 && $queries["no_peer_id"] == 0)
                 $exchange_peer["peer_id"] = $peer["peer_id"];
 
-            if ($queries["ip"]) {
+            if ($queries["ip"] && $peer['ip']) {
                 if ($queries["compact"] == 1) {
                     // $peerList .= pack("Nn", sprintf("%d",ip2long($peer["ip"])), $peer['port']);
                     $rep_dict["peers"] .= inet_pton($peer["ip"]) . pack("n", $peer["port"]);
@@ -924,7 +915,7 @@ class TrackerController
                 }
             }
 
-            if ($queries["ipv6"]) {
+            if ($queries["ipv6"] && $peer['ipv6']) {
                 if ($queries["compact"] == 1) {
                     $rep_dict["peers6"] .= inet_pton($peer["ipv6"]) . pack("n", $peer["ipv6_port"]);
                 } else {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 29, 2018 at 11:52 PM
+-- Generation Time: Dec 30, 2018 at 12:13 AM
 -- Server version: 5.7.22-log
 -- PHP Version: 7.2.6
 
@@ -219,7 +219,6 @@ CREATE TABLE IF NOT EXISTS `peers` (
   `port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `ipv6` varbinary(16) DEFAULT NULL,
   `ipv6_port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
-  `connect_type` tinyint(1) UNSIGNED NOT NULL DEFAULT '1',
   `seeder` enum('yes','partial','no') NOT NULL DEFAULT 'no',
   `uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -236,8 +235,7 @@ CREATE TABLE IF NOT EXISTS `peers` (
   KEY `role` (`seeder`),
   KEY `user_id` (`user_id`) USING HASH,
   KEY `torrent_id` (`torrent_id`),
-  KEY `peer_id` (`peer_id`),
-  KEY `connect_type` (`connect_type`)
+  KEY `peer_id` (`peer_id`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
