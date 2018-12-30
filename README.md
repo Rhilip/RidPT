@@ -11,6 +11,7 @@ A Private Torrent Project based on `MixPHP` framework.
  - PHP 7.2.6 (With other extension which your can see in `composer.json`)
  - Swoole 4.2.9
  - Redis 4.0.9 Stable
+ - Bower 1.8.4 (A package manager for the web)
  
 2. After you prepare those base environment well, 
  - run below command to clone this repo or you can download from our release.
@@ -19,7 +20,8 @@ git clone https://github.com/Rhilip/RidPT.git /home/wwwroot/your.domain.com
 cd /home/wwwroot/your.domain.com/
 composer install
 ```
- - And use `composer install` Install dependency.
+ - Use `composer install` to install PHP dependency.
+ - Use `bower install` to install our web dependency (like js,css,font)
  - If you don't run RidPT apps in `root` user, you should give enough permission to `apps/httpd/{runtime,private}`.
 
 3. Import Database from our `migration/ridpt.sql`, and **disable Mysql strict mode `NO_ZERO_IN_DATE` and `NO_ZERO_DATE`**.

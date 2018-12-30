@@ -1,0 +1,22 @@
+{
+  "name": "ridpt",
+  "homepage": "https://github.com/Rhilip/ridpt",
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "apps/httpd/public/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "3.3.7",
+    "jquery": "1.12.4",
+    "html5shiv": "3.7.3",
+    "respond": "1.4.2"
+  }
+}
