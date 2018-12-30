@@ -15,7 +15,7 @@
     <!-- Custom styles for this template -->
     <link href="/static/css/main.css" rel="stylesheet">
 
-    {% block css %}{% endblock %}
+    {% block css %}{% endblock %} <!-- Other css field -->
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -37,7 +37,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">{{ config["base.site_name"] }}</a>
+            <a class="navbar-brand" href="#">{{ config.get("base.site_name") }}</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -48,8 +48,8 @@
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <form class="nav navbar-form navbar-right">
-                        <input type="text" class="form-control" placeholder="Search...">
+                    <form class="nav navbar-form navbar-right" method="get" action="/torrents/search">
+                        <input type="text" class="form-control" placeholder="Search..." name="key">
                     </form>
                 </li>
                 {% if user %}
@@ -73,15 +73,11 @@
 </nav>
 <!-- Page Content -->
 <div class="container">
-    {% block container %}
-
-    {% endblock %}
+    {% block container %}{% endblock %}
 </div> <!-- /container -->
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/lib/jquery/dist/jquery.min.js"></script>
 <script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-{% block script %}
-    <!-- Other script field -->
-{% endblock %}
+{% block script %}{% endblock %}<!-- Other script field -->
 </body>
 </html>

@@ -3,8 +3,34 @@
 {% block title %}Torrents List{% endblock %}
 
 {% block container %}
-    {% for torrent in torrents %}
-        <li><a href="/torrents/details?id={{ torrent.getId() }}" target="_blank">{{ torrent.getTitle() }}</a>
-            seeder: {{ torrent.getComplete() }} leecher: {{ torrent.getIncomplete() }} completed: {{ torrent.getDownloaded() }}</li>
-    {% endfor %}
+
+    <table class="table table-striped table-bordered table-hover">
+        <thead>
+        <tr>
+            <th>Torrent</th>
+            <th class="text-center" style="width: 70px">Link</th>
+            <th class="text-center" style="width: 100px">Size</th>
+            <th class="text-center" style="width: 140px">Date</th>
+            <th class="text-center" style="width: 50px"><span class="glyphicon glyphicon-arrow-up" title="Seeders"></span></th>
+            <th class="text-center" style="width: 50px"><span class="glyphicon glyphicon-arrow-down" title="Leechers"></span></th>
+            <th class="text-center" style="width: 50px"><span class="glyphicon glyphicon-ok" title="Completed"></span></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for torrent in torrents %}
+            <tr>
+                <td>
+                    <a href="/torrents/details?id={{ torrent.getId() }}" target="_blank">{{ torrent.getTitle() }}</a>
+                </td>
+                <td class="text-center"><a href="/torrents/download?id={{ torrent.getId() }}"><span
+                            class="glyphicon glyphicon-save" aria-hidden="true"></span></a></td>
+                <td class="text-center">{{ torrent.getTorrentSize() | format_bytes }}</td>
+                <td class="text-center ">{{ torrent.getAddedAt() | date("Y-m-d h:i") }}</td>
+                <td class="text-center">{{ torrent.getComplete() }}</td>
+                <td class="text-center">{{ torrent.getIncomplete() }}</td>
+                <td class="text-center">{{ torrent.getDownloaded() }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

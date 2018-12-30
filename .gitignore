@@ -1,7 +1,6 @@
 ### RidPT
 # Environment File
 .env
-/apps/httpd/public/lib
 
 ### MixPHP included
 # zend studio for eclipse project files

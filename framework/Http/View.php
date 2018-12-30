@@ -34,6 +34,7 @@ class View
         $this->twig->addExtension(new Twig_Extensions_Extension_Intl());
         $this->twig->addExtension(new Twig_Extensions_Extension_Array());
         $this->twig->addExtension(new Twig_Extensions_Extension_Date());
+        $this->twig->addExtension(new Twig\ByteConversionTwigExtension());
 
         $this->twig->addGlobal("config", app()->config);
 
