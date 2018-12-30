@@ -1,9 +1,9 @@
 {
   "name": "ridpt",
   "homepage": "https://github.com/Rhilip/ridpt",
-  "description": "",
+  "description": "A Private Tracker project based on MixPHP",
   "main": "",
-  "license": "MIT",
+  "license": "Apache License 2.0",
   "private": true,
   "ignore": [
     "**/.*",
