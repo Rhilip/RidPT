@@ -62,6 +62,10 @@ Config      File:      /home/wwwroot/ridpt.rhilip.info/apps/httpd/config/http_pe
 If your service is behind the CDN like Cloudflare, You must follow [How do I restore original visitor IP with Nginx?](https://support.cloudflare.com/hc/en-us/articles/200170706-How-do-I-restore-original-visitor-IP-with-Nginx)
 So that tracker can record the peer's ip address.
 
+7. Use the default `php mix-httpd service start -d` to let *RidPT* RUN in the background. Or you can use other daemon work like:
+ - Systemctl: [ridpt.service](migration/ridpt.service)
+
+
 ## Basie Environment in `.env`
 
 TODO

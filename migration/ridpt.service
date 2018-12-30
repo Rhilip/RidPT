@@ -1,0 +1,23 @@
+# This is sample systemctl script to run ridpt
+# You should change some value to work properly
+
+[Unit]
+Description=The systemctl manage script of RidPT
+Documentation=https://github.com/Rhilip/RidPT/wiki
+After=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/home/wwwroot/ridpt.rhilip.info
+ExecStart=/usr/bin/php bin/mix-httpd service start
+ExecReload=/usr/bin/php bin/mix-httpd service reload
+ExecStop=/usr/bin/php bin/mix-httpd service stop
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
