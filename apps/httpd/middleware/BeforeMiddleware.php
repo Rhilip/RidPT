@@ -2,11 +2,6 @@
 
 namespace apps\httpd\middleware;
 
-use Mix\Facades\PDO;
-use Mix\Facades\Request;
-use Mix\Facades\Session;
-use Mix\Facades\Response;
-
 /**
  * 前置中间件
  * @author 刘健 <coder.liu@qq.com>
@@ -19,23 +14,23 @@ class BeforeMiddleware
         list($controller, $action) = $callable;
         $controllerName = get_class($controller);
 
-        $userInfo = Session::get('userInfo');
+        $userInfo = app()->session->get('userInfo');
 
         if ($controllerName === "apps\httpd\controllers\AuthController") {
             if ($userInfo && in_array($action, ["actionLogin", "actionRegister"])) {
-                return Response::redirect("/index");
+                return app()->response->redirect("/index");
             } elseif ($action !== "actionLogout") {
                 return $next();
             }
         }
 
         if (empty($userInfo)) {
-            return Response::redirect("/auth/login");
+            return app()->response->redirect("/auth/login");
         }
 
         // Update user status
-        PDO::createCommand("UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id")->bindParams([
-            "ip" => Request::getClientIp(), "id" => $userInfo["uid"]
+        app()->pdo->createCommand("UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id")->bindParams([
+            "ip" => app()->request->getClientIp(), "id" => $userInfo["uid"]
         ])->execute();
 
         // 执行下一个中间件

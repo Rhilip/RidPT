@@ -221,7 +221,6 @@ class BaseRequest extends Component
      *
      * @see getClientIps()
      * @see http://en.wikipedia.org/wiki/X-Forwarded-For
-     * @throws \Exception
      */
     public function getClientIp() {
         $ipAddresses = $this->getClientIps();
@@ -240,7 +239,6 @@ class BaseRequest extends Component
      * @return array The client IP addresses
      *
      * @see getClientIp()
-     * @throws \Exception
      */
     public function getClientIps()
     {
@@ -263,7 +261,6 @@ class BaseRequest extends Component
      * @param $type
      * @param null $ip
      * @return array
-     * @throws \Exception
      */
     private function getTrustedValues($type, $ip = null)
     {
@@ -302,18 +299,10 @@ class BaseRequest extends Component
         if (!$forwardedValues) {
             return $clientValues;
         }
-        if (!$this->isForwardedValid) {
-            return null !== $ip ? array('0.0.0.0', $ip) : array();
-        }
         $this->isForwardedValid = false;
-        throw new \Exception(sprintf('The request has both a trusted "%s" header and a trusted "%s" header, conflicting with each other. You should either configure your proxy to remove one of them, or configure your project to distrust the offending one.', self::$trustedHeaders[self::HEADER_FORWARDED], self::$trustedHeaders[$type]));
-
+        return null !== $ip ? array('0.0.0.0', $ip) : array();
     }
 
-    /**
-     * @return bool
-     * @throws \Exception
-     */
     public function isSecure()
     {
         if ($this->isFromTrustedProxy() && $proto = $this->getTrustedValues(self::HEADER_X_FORWARDED_PROTO)) {

@@ -8,13 +8,6 @@
 
 namespace apps\httpd\controllers;
 
-use Mix\Facades\PDO;
-use Mix\Facades\Response;
-use Mix\Facades\Session;
-use Mix\Facades\Request;
-
-use Mix\Facades\Config;
-
 use apps\httpd\models\User;
 use apps\httpd\models\form\UserRegisterForm;
 
@@ -27,9 +20,9 @@ class AuthController extends Controller
 
     public function actionRegister()
     {
-        if (Request::isPost()) {
+        if (app()->requests->isPost()) {
             $user = new UserRegisterForm();
-            $user->importAttributes(Request::post());
+            $user->importAttributes(app()->requests->post());
             $error = $user->validate();
             if (count($error) > 0) {
                 return $this->render("auth/register_fail.html.twig", [
@@ -39,18 +32,18 @@ class AuthController extends Controller
                 $user->flush();  // Save this user in our database and do clean work~
 
                 if ($user->status == User::STATUS_CONFIRMED) {
-                    return Response::redirect("/index");
+                    return app()->response->redirect("/index");
                 } else {
                     return $this->render('auth/register_pending.html.twig', [
-                        "confirm_way" => Config::get("register.user_confirm_way"),
+                        "confirm_way" => app()->config->get("register.user_confirm_way"),
                         "email" => $user->email
                     ]);
                 }
             }
         } else {
             return $this->render("auth/register.html.twig", [
-                "register_type" => Request::get("type") ?? "open",
-                "invite_hash" => Request::get("invite_hash")
+                "register_type" => app()->requests->get("type") ?? "open",
+                "invite_hash" => app()->requests->get("invite_hash")
             ]);
         }
     }
@@ -67,9 +60,9 @@ class AuthController extends Controller
 
     public function actionLogin()
     {
-        if (Request::isPost()) {
-            $username = Request::post("username");
-            $self = PDO::createCommand("SELECT `id`,`username`,`password`,`status`,`opt` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
+        if (app()->requests->isPost()) {
+            $username = app()->requests->post("username");
+            $self = app()->pdo->createCommand("SELECT `id`,`username`,`password`,`status`,`opt` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
                 "uname" => $username, "email" => $username,
             ])->queryOne();
 
@@ -78,13 +71,13 @@ class AuthController extends Controller
                 if (!$self) throw new \Exception("Invalid username/password");
 
                 // User's password is not correct
-                if (!password_verify(Request::post("password"), $self["password"]))
+                if (!password_verify(app()->requests->post("password"), $self["password"]))
                     throw new \Exception("Invalid username/password");
 
                 // User enable 2FA but it's code is wrong
                 if ($self["opt"]) {
-                    $tfa = new TwoFactorAuth(Config::get("base.site_name"));
-                    if ($tfa->verifyCode($self["opt"], Request::post("opt")) == false)
+                    $tfa = new TwoFactorAuth(app()->config->get("base.site_name"));
+                    if ($tfa->verifyCode($self["opt"], app()->requests->post("opt")) == false)
                         throw new \Exception("2FA Validation failed");
                 }
 
@@ -96,18 +89,18 @@ class AuthController extends Controller
                 return $this->render("auth/login.html.twig", ["username" => $username, "error_msg" => $e->getMessage()]);
             }
 
-            Session::createSessionId();
-            Session::set('userInfo', [
+            app()->session->createSessionId();
+            app()->session->set('userInfo', [
                 'uid' => $self["id"],
                 'username' => $self["username"],
                 'status' => $self["status"]
             ]);
 
-            PDO::createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
-                "ip" => Request::getClientIp(), "id" => $self["id"]
+            app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
+                "ip" => app()->requests->getClientIp(), "id" => $self["id"]
             ])->execute();
 
-            return Response::redirect('/index');
+            return app()->response->redirect('/index');
         } else {
             return $this->render("auth/login.html.twig");
         }
@@ -116,8 +109,8 @@ class AuthController extends Controller
     public function actionLogout()
     {
         // TODO add CSRF protect
-        Session::delete('userInfo');
-        return Response::redirect('/auth/login');
+        app()->session->delete('userInfo');
+        return app()->response->redirect('/auth/login');
     }
 
     private function isMaxLoginIpReached()

@@ -4,7 +4,6 @@ namespace apps\httpd\commands;
 
 use Mix\Console\Command;
 use Mix\Console\ExitCode;
-use Mix\Facades\Output;
 use Mix\Helpers\ProcessHelper;
 
 /**
@@ -47,7 +46,7 @@ class ServiceCommand extends Command
     public function actionStart()
     {
         if ($pid = ProcessHelper::readPidFile($this->pidFile)) {
-            Output::writeln("mix-httpd is running, PID : {$pid}.");
+            app()->output->writeln("mix-httpd is running, PID : {$pid}.");
             return ExitCode::UNSPECIFIED_ERROR;
         }
         $server = \Mix\Http\HttpServer::newInstanceByConfig('libraries.httpServer');
@@ -55,7 +54,7 @@ class ServiceCommand extends Command
             $server->settings['max_request'] = 1;
         }
         $server->settings['daemonize'] = $this->daemon;
-        $server->settings['pid_file']  = $this->pidFile;
+        $server->settings['pid_file'] = $this->pidFile;
         $server->start();
         // 返回退出码
         return ExitCode::OK;
@@ -70,9 +69,9 @@ class ServiceCommand extends Command
                 // 等待进程退出
                 usleep(100000);
             }
-            Output::writeln('mix-httpd stop completed.');
+            app()->output->writeln('mix-httpd stop completed.');
         } else {
-            Output::writeln('mix-httpd is not running.');
+            app()->output->writeln('mix-httpd is not running.');
         }
         // 返回退出码
         return ExitCode::OK;
@@ -94,10 +93,10 @@ class ServiceCommand extends Command
             ProcessHelper::kill($pid, SIGUSR1);
         }
         if (!$pid) {
-            Output::writeln('mix-httpd is not running.');
+            app()->output->writeln('mix-httpd is not running.');
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        Output::writeln('mix-httpd worker process restart completed.');
+        app()->output->writeln('mix-httpd worker process restart completed.');
         // 返回退出码
         return ExitCode::OK;
     }
@@ -106,9 +105,9 @@ class ServiceCommand extends Command
     public function actionStatus()
     {
         if ($pid = ProcessHelper::readPidFile($this->pidFile)) {
-            Output::writeln("mix-httpd is running, PID : {$pid}.");
+            app()->output->writeln("mix-httpd is running, PID : {$pid}.");
         } else {
-            Output::writeln('mix-httpd is not running.');
+            app()->output->writeln('mix-httpd is not running.');
         }
         // 返回退出码
         return ExitCode::OK;

@@ -4,8 +4,6 @@ namespace apps\websocketd\commands;
 
 use mix\Console\Command;
 use mix\Console\ExitCode;
-use mix\Facades\Error;
-use mix\Facades\Output;
 use mix\helpers\ProcessHelper;
 
 /**
@@ -46,11 +44,11 @@ class ServiceCommand extends Command
     {
         // 重复启动处理
         if ($pid = ProcessHelper::readPidFile($this->pidFile)) {
-            Output::writeln("mix-websocketd is running, PID : {$pid}.");
+            app()->output->writeln("mix-websocketd is running, PID : {$pid}.");
             return ExitCode::UNSPECIFIED_ERROR;
         }
         // 启动提示
-        Output::writeln('mix-websocketd start successed.');
+        app()->output->writeln('mix-websocketd start successed.');
         // 蜕变为守护进程
         if ($this->daemon) {
             ProcessHelper::daemon();
@@ -75,9 +73,9 @@ class ServiceCommand extends Command
                 // 等待进程退出
                 usleep(100000);
             }
-            Output::writeln('mix-websocketd stop completed.');
+            app()->output->writeln('mix-websocketd stop completed.');
         } else {
-            Output::writeln('mix-websocketd is not running.');
+            app()->output->writeln('mix-websocketd is not running.');
         }
         // 返回退出码
         return ExitCode::OK;
@@ -96,9 +94,9 @@ class ServiceCommand extends Command
     public function actionStatus()
     {
         if ($pid = ProcessHelper::readPidFile($this->pidFile)) {
-            Output::writeln("mix-websocketd is running, PID : {$pid}.");
+            app()->output->writeln("mix-websocketd is running, PID : {$pid}.");
         } else {
-            Output::writeln('mix-websocketd is not running.');
+            app()->output->writeln('mix-websocketd is not running.');
         }
         // 返回退出码
         return ExitCode::OK;
@@ -137,6 +135,7 @@ class ServiceCommand extends Command
         ];
 
         // 异步订阅
+        /**  @var \Mix\Redis\Async\RedisConnection $redis */
         $redis = \mix\Redis\RedisConnection::newInstanceByConfig('libraries.[async.redis]');
         $redis->on('Message', function (\Swoole\Redis $client, $result) use ($webSocket, $fd) {
             try {
@@ -152,7 +151,7 @@ class ServiceCommand extends Command
                 }
             } catch (\Throwable $e) {
                 // 处理异常
-                Error::handleException($e);
+                app()->error->handleException($e);
             }
         });
         $redis->on('Close', function (\Swoole\Redis $client) use ($webSocket, $fd) {
@@ -172,7 +171,7 @@ class ServiceCommand extends Command
                 call_user_func_array([$client, 'subscribe'], $channels);
             } catch (\Throwable $e) {
                 // 处理异常
-                Error::handleException($e);
+                app()->error->handleException($e);
                 // 关闭 WS 连接
                 $webSocket->close($fd);
             }

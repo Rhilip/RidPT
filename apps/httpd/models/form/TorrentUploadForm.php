@@ -9,9 +9,7 @@
 namespace apps\httpd\models\form;
 
 use apps\httpd\models\Torrent;
-use Mix\Facades\Config;
-use Mix\Facades\PDO;
-use Mix\Facades\Session;
+
 use Mix\Validators\Validator;
 
 use SandFoxMe\Bencode\Bencode;
@@ -65,7 +63,7 @@ class TorrentUploadForm extends Validator
         }
         $metadata->addConstraint(new Assert\Callback([
             'callback' => 'isValidTorrent',
-            'payload' => ["name" => "file", "maxSize" => Config::get("torrent.max_file_size"), "mimeTypes" => "application/x-bittorrent"]
+            'payload' => ["name" => "file", "maxSize" => app()->config->get("torrent.max_file_size"), "mimeTypes" => "application/x-bittorrent"]
         ]));
     }
 
@@ -121,7 +119,7 @@ class TorrentUploadForm extends Validator
 
     public function makePrivateTorrent()
     {
-        $this->torrent_dict['announce'] = Config::get("base.site_tracker_url") . "/announce";
+        $this->torrent_dict['announce'] = app()->config->get("base.site_tracker_url") . "/announce";
 
         // Remove un-need field in private torrents
         unset($this->torrent_dict['announce-list']); // remove multi-tracker capability
@@ -130,7 +128,7 @@ class TorrentUploadForm extends Validator
         // The following line requires uploader to re-download torrents after uploading **Since info_hash change**
         // even the torrent is set as private and with uploader's passkey in it.
         $this->torrent_dict['info']['private'] = 1;  // add private tracker flag
-        $this->torrent_dict['info']['source'] = "Powered by [" . Config::get("base.site_url") . "] " . Config::get("base.site_name");
+        $this->torrent_dict['info']['source'] = "Powered by [" . app()->config->get("base.site_url") . "] " . app()->config->get("base.site_name");
 
         // Get info_hash on new torrent content dict['info']
         $this->info_hash = pack("H*", sha1(Bencode::encode($this->torrent_dict['info'])));
@@ -145,10 +143,10 @@ class TorrentUploadForm extends Validator
 
         // TODO update torrent status based on user class or their owned torrents count
 
-        PDO::beginTransaction();
+        app()->pdo->beginTransaction();
         try {
-            PDO::insert('torrents', [
-                'owner_id' => Session::get('userInfo')['uid'],  // FIXME it's not good to get user by this way!!!!!
+            app()->pdo->insert('torrents', [
+                'owner_id' => app()->session->get('userInfo')['uid'],  // FIXME it's not good to get user by this way!!!!!
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
                 'title' => $this->title,
@@ -160,11 +158,11 @@ class TorrentUploadForm extends Validator
                 'descr' => $this->descr,
                 'uplver' => $this->uplver,
             ])->execute();
-            $this->id = PDO::getLastInsertId();
+            $this->id = app()->pdo->getLastInsertId();
 
             // Insert files table
-            PDO::delete('files', [['torrent_id', '=', $this->id]])->execute();
-            PDO::batchInsert('files', $this->torrent_list)->execute();
+            app()->pdo->delete('files', [['torrent_id', '=', $this->id]])->execute();
+            app()->pdo->batchInsert('files', $this->torrent_list)->execute();
 
             $this->setBuff();
 
@@ -174,9 +172,9 @@ class TorrentUploadForm extends Validator
                 throw new \Exception('std_torrent_cannot_save');
             }
 
-            PDO::commit();
+            app()->pdo->commit();
         } catch (\Exception $e) {
-            PDO::rollback();
+            app()->pdo->rollback();
             if ($this->id != 0) {
                 unlink(Torrent::TorrentFileLoc($this->id));
             }
@@ -191,10 +189,10 @@ class TorrentUploadForm extends Validator
     private function setBuff()
     {
         // Add Large Buff and Random Buff
-        if (Config::get("buff.enable_large") && $this->file->getSize() > Config::get("buff.large_size")) {
-            // TODO PDO::createCommand();
-        } elseif (Config::get("buff.enable_random")) {
-            // TODO PDO::createCommand();
+        if (app()->config->get("buff.enable_large") && $this->file->getSize() > app()->config->get("buff.large_size")) {
+            // TODO app()->pdo->createCommand();
+        } elseif (app()->config->get("buff.enable_random")) {
+            // TODO app()->pdo->createCommand();
         }
 
         // TODO get uploader (or you can say torrents owner) buff

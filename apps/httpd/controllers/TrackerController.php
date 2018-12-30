@@ -8,13 +8,6 @@
 
 namespace apps\httpd\controllers;
 
-use Mix\Facades\PDO;
-use Mix\Facades\Redis;
-use Mix\Facades\Request;
-use Mix\Facades\Response;
-
-use Mix\Facades\Config;
-
 use Mix\Utils\IpUtils;
 use SandFoxMe\Bencode\Bencode;
 
@@ -50,24 +43,24 @@ class TrackerController
     public function actionIndex()
     {
         // Set Response Header ( Format, HTTP Cache )
-        Response::setHeader("Content-Type", "text/plain; charset=utf-8");
-        Response::setHeader("Connection", "close");
-        Response::setHeader("Pragma", "no-cache");
+        app()->response->setHeader("Content-Type", "text/plain; charset=utf-8");
+        app()->response->setHeader("Connection", "close");
+        app()->response->setHeader("Pragma", "no-cache");
 
         $userInfo = null;
         $torrentInfo = null;
 
         try {
             // Block NON-GET requests (Though non-GET request will not match this Route )
-            if (!Request::isGet())
-                throw new TrackerException(110, [":method" => Request::method()]);
+            if (!app()->request->isGet())
+                throw new TrackerException(110, [":method" => app()->request->method()]);
 
-            if (!Config::get("base.enable_tracker_system"))
+            if (!app()->config->get("base.enable_tracker_system"))
                 throw new TrackerException(100);
 
             $this->blockClient();
 
-            $action = strtolower(Request::route("{tracker_action}"));
+            $action = strtolower(app()->request->route("{tracker_action}"));
             $this->checkUserAgent($action == 'scrape');
 
             $this->checkPasskey($userInfo);
@@ -76,7 +69,7 @@ class TrackerController
                 // Tracker Protocol Extension: Scrape - http://www.bittorrent.org/beps/bep_0048.html
                 case 'scrape':
                     {
-                        if (!Config::get("tracker.enable_scrape")) throw new TrackerException(101);
+                        if (!app()->config->get("tracker.enable_scrape")) throw new TrackerException(101);
 
                         $this->checkScrapeFields($info_hash_array);
                         $this->generateScrapeResponse($info_hash_array, $rep_dict);
@@ -86,7 +79,7 @@ class TrackerController
 
                 case 'announce':
                     {
-                        if (!Config::get("tracker.enable_announce")) throw new TrackerException(102);
+                        if (!app()->config->get("tracker.enable_announce")) throw new TrackerException(102);
 
                         $this->checkAnnounceFields($queries);
                         $this->lockAnnounceDuration($queries);  // Lock min announce before User Data update to avoid flood
@@ -118,15 +111,15 @@ class TrackerController
 
                         // Start Database Transaction for below CRUD Action
                         // TODO 2018.12.12 Check Muti-Tracker behaviour when a Transaction begin
-                        PDO::beginTransaction();
+                        app()->pdo->beginTransaction();
                         try {
                             $this->processAnnounceRequest($queries, $role, $userInfo, $torrentInfo);
-                            PDO::commit();
+                            app()->pdo->commit();
                         } catch (TrackerException $e) {
-                            PDO::rollback();
+                            app()->pdo->rollback();
                             throw $e;
                         } catch (\Exception $e) {
-                            PDO::rollback();
+                            app()->pdo->rollback();
                             throw new TrackerException(998, [":msg" => $e->getMessage()]);
                         }
 
@@ -141,20 +134,20 @@ class TrackerController
             // Record agent deny log in Table `agent_deny_log`
             if ($e->getCode() >= 120) {
                 $raw_header = "";
-                foreach (Request::header() as $key => $value) {
+                foreach (app()->request->header() as $key => $value) {
                     $raw_header .= "$key : $value \n";
                 }
-                $req_info = Request::server('query_string') . "\n\n" . $raw_header;
+                $req_info = app()->request->server('query_string') . "\n\n" . $raw_header;
 
-                PDO::createCommand("INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`, `msg`) 
+                app()->pdo->createCommand("INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`, `msg`) 
                 VALUES (:tid,:uid,:ua,:peer_id,:req_info,:msg) 
                 ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
                                         `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`), 
                                         `last_action_at` = NOW();")->bindParams([
                     "tid" => $torrentInfo ? $torrentInfo["id"] : 0,
                     'uid' => $userInfo ? $userInfo["id"] : 0,
-                    'ua' => Request::header("user-agent") ?: "",
-                    'peer_id' => Request::get("peer_id") ?: "",
+                    'ua' => app()->request->header("user-agent") ?: "",
+                    'peer_id' => app()->request->get("peer_id") ?: "",
                     'req_info' => $req_info,
                     'msg' => $e->getMessage()
                 ])->execute();
@@ -172,23 +165,23 @@ class TrackerController
     private function blockClient()
     {
         // Miss Header User-Agent is not allowed.
-        if (!Request::header("user-agent"))
+        if (!app()->request->header("user-agent"))
             throw new TrackerException(120);
 
         // Block Browser by check it's User-Agent
-        if (preg_match('/(^Mozilla|Browser|AppleWebKit|^Opera|^Links|^Lynx|[Bb]ot)/', Request::header("user-agent"))) {
+        if (preg_match('/(^Mozilla|Browser|AppleWebKit|^Opera|^Links|^Lynx|[Bb]ot)/', app()->request->header("user-agent"))) {
             throw new TrackerException(121);
         }
 
         // Block Other Browser, Crawler (, May Cheater or Faker Client) by check Requests headers
-        if (Request::header("accept-language") || Request::header('referer')
-            || Request::header("accept-charset")
+        if (app()->request->header("accept-language") || app()->request->header('referer')
+            || app()->request->header("accept-charset")
 
             /**
              * This header check may block Non-bittorrent client `Aria2` to access tracker,
              * Because they always add this header which other clients don't have.
              */
-            || Request::header("want-digest")
+            || app()->request->header("want-digest")
 
             /**
              * If your tracker is behind the Cloudflare or other CDN (proxy) Server,
@@ -204,12 +197,12 @@ class TrackerController
              * See more on : https://support.cloudflare.com/hc/en-us/articles/200170156
              *
              */
-            //|| Request::header("cookie")
+            //|| app()->request->header("cookie")
         )
             throw new TrackerException(122);
 
         // Should also Block those too long User-Agent. ( For Database reason
-        if (strlen(Request::header("user-agent")) > 64)
+        if (strlen(app()->request->header("user-agent")) > 64)
             throw new TrackerException(123);
     }
 
@@ -219,7 +212,7 @@ class TrackerController
      */
     private function checkPasskey(&$userInfo)
     {
-        $passkey = Request::get("passkey");
+        $passkey = app()->request->get("passkey");
 
         // First Check The param `passkey` is exist and valid
         if (is_null($passkey))
@@ -230,13 +223,13 @@ class TrackerController
             throw new TrackerException(131, [":attribute" => "passkey", ":reason" => "The format of passkey isn't correct"]);
 
         // Get userInfo from RedisConnection Cache and then Database
-        $userInfo = Redis::get("user_passkey_" . $passkey . "_content");
+        $userInfo = app()->redis->get("user_passkey_" . $passkey . "_content");
         if ($userInfo === false) {
             // If Cache breakdown , We will get User info from Database and then cache it
             // Notice: if this passkey is not find in Database , a null will be cached.
-            $userInfo = PDO::createCommand("SELECT `id`,`status`,`passkey`,`downloadpos`,`class`,`uploaded`,`downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1")
+            $userInfo = app()->pdo->createCommand("SELECT `id`,`status`,`passkey`,`downloadpos`,`class`,`uploaded`,`downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1")
                 ->bindParams(["passkey" => $passkey])->queryOne() ?: null;
-            Redis::setex("user_passkey_" . $passkey . "_content", 3600, $userInfo);
+            app()->redis->setex("user_passkey_" . $passkey . "_content", 3600, $userInfo);
         }
 
         /**
@@ -257,7 +250,7 @@ class TrackerController
      */
     private function checkScrapeFields(&$info_hash_array)
     {
-        preg_match_all('/info_hash=([^&]*)/i', urldecode(Request::server('query_string')), $info_hash_match);
+        preg_match_all('/info_hash=([^&]*)/i', urldecode(app()->request->server('query_string')), $info_hash_match);
 
         $info_hash_array = $info_hash_match[1];
         if (count($info_hash_array) < 1) {
@@ -274,11 +267,11 @@ class TrackerController
     {
         $torrent_details = [];
         foreach ($info_hash_array as $item) {
-            $metadata = Redis::get("torrent_hash_" . $item . "_scrape_content");
+            $metadata = app()->redis->get("torrent_hash_" . $item . "_scrape_content");
             if ($metadata === false) {
-                $metadata = PDO::createCommand("SELECT incomplete, complete , downloaded FROM torrents WHERE info_hash = :info LIMIT 1")
+                $metadata = app()->pdo->createCommand("SELECT incomplete, complete , downloaded FROM torrents WHERE info_hash = :info LIMIT 1")
                     ->bindParams(["info" => $item])->queryOne() ?: null;
-                Redis::setex("torrent_hash_" . $item . "_scrape_content", 350, $metadata);
+                app()->redis->setex("torrent_hash_" . $item . "_scrape_content", 350, $metadata);
             }
             if (!is_null($metadata)) $torrent_details[$item] = $metadata;  // Append it to tmp array only it exist.
         }
@@ -293,21 +286,21 @@ class TrackerController
     private function checkUserAgent(bool $onlyCheckUA = false)
     {
         // Get Client White-And-Exception List From Database and storage it in RedisConnection Cache
-        $allowedFamily = Redis::get("allowed_client_list");
+        $allowedFamily = app()->redis->get("allowed_client_list");
         if ($allowedFamily === false) {
-            $allowedFamily = PDO::createCommand("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();
-            Redis::set("allowed_client_list", $allowedFamily);
+            $allowedFamily = app()->pdo->createCommand("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();
+            app()->redis->set("allowed_client_list", $allowedFamily);
         }
 
-        $allowedFamilyException = Redis::get("allowed_client_exception_list");
+        $allowedFamilyException = app()->redis->get("allowed_client_exception_list");
         if ($allowedFamilyException === false) {
-            $allowedFamilyException = PDO::createCommand("SELECT * FROM `agent_allowed_exception`")->queryAll();
-            Redis::set("allowed_client_exception_list", $allowedFamilyException);
+            $allowedFamilyException = app()->pdo->createCommand("SELECT * FROM `agent_allowed_exception`")->queryAll();
+            app()->redis->set("allowed_client_exception_list", $allowedFamilyException);
         }
 
         // Start Check Client by `User-Agent` and `peer_id`
-        $userAgent = Request::header("user-agent");
-        $peer_id = Request::get("peer_id") ?? "";
+        $userAgent = app()->request->header("user-agent");
+        $peer_id = app()->request->get("peer_id") ?? "";
 
         $agentAccepted = null;
         $peerIdAccepted = null;
@@ -438,7 +431,7 @@ class TrackerController
         // Part.1 check Announce **Need** Fields
         // Notice: param `passkey` is not require in BEP , but is required in our private torrent tracker system
         foreach (['info_hash', 'peer_id', 'port', 'uploaded', 'downloaded', 'left', "passkey"] as $item) {
-            $item_data = Request::get($item);
+            $item_data = app()->request->get($item);
             if (!is_null($item_data)) {
                 $queries[$item] = $item_data;
             } else {
@@ -463,7 +456,7 @@ class TrackerController
                      'numwant' => 50, 'corrupt' => 0, 'key' => '',
                      'ip' => '', 'ipv4' => '', 'ipv6' => '',
                  ] as $item => $value) {
-            $queries[$item] = Request::get($item) ?? $value;
+            $queries[$item] = app()->request->get($item) ?? $value;
         }
 
         foreach (['numwant', 'corrupt', 'no_peer_id', 'compact'] as $item) {
@@ -497,7 +490,7 @@ class TrackerController
          * See more: http://www.bittorrent.org/beps/bep_0007.html
          */
 
-        $remote_ip = Request::getClientIp();  // IP address from Request Header (Which is NexusPHP used)
+        $remote_ip = app()->request->getClientIp();  // IP address from Request Header (Which is NexusPHP used)
         $queries["ipv6_port"] = $queries["port"];
 
         if ($queries["ipv6"]) {
@@ -574,11 +567,11 @@ class TrackerController
     {
         $info_hash = $queries["info_hash"];
 
-        $torrentInfo = Redis::get('torrent_hash_' . $info_hash . '_content');
+        $torrentInfo = app()->redis->get('torrent_hash_' . $info_hash . '_content');
         if ($torrentInfo === false) {
-            $torrentInfo = PDO::createCommand("SELECT id , info_hash , owner_id , status , incomplete , complete , added_at FROM torrents WHERE info_hash = :info LIMIT 1")
+            $torrentInfo = app()->pdo->createCommand("SELECT id , info_hash , owner_id , status , incomplete , complete , added_at FROM torrents WHERE info_hash = :info LIMIT 1")
                 ->bindParams(["info" => $info_hash])->queryOne() ?: null;
-            Redis::setex('torrent_hash_' . $info_hash . '_content', 350, $torrentInfo);
+            app()->redis->setex('torrent_hash_' . $info_hash . '_content', 350, $torrentInfo);
         }
         if (is_null($torrentInfo)) throw new TrackerException(150);
 
@@ -589,14 +582,14 @@ class TrackerController
                 {
                     // For Pending torrent , we just allow it's owner and other user who's class great than your config set to connect
                     if ($torrentInfo["owner_id"] != $userInfo["id"]
-                        || $userInfo["class"] < Config::get("authority.see_pending_torrent"))
+                        || $userInfo["class"] < app()->config->get("authority.see_pending_torrent"))
                         throw new TrackerException(151, [":status" => $torrentInfo["status"]]);
                     break;
                 }
             case 'banned' :
                 {
                     // For Banned Torrent , we just allow the user who's class great than your config set to connect
-                    if ($userInfo["class"] < Config::get("authority.see_banned_torrent"))
+                    if ($userInfo["class"] < app()->config->get("authority.see_banned_torrent"))
                         throw new TrackerException(151, [":status" => $torrentInfo["status"]]);
                     break;
                 }
@@ -626,7 +619,7 @@ class TrackerController
         [$ipField, $ipBindField] = $this->getIpField($queries);
 
         // Try to fetch session from Table `peers`
-        $self = PDO::createCommand("SELECT `uploaded`,`downloaded`,(NOW() - `last_action_at`) as `duration` 
+        $self = app()->pdo->createCommand("SELECT `uploaded`,`downloaded`,(NOW() - `last_action_at`) as `duration` 
         FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid LIMIT 1;")->bindParams([
             "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
         ])->queryOne();
@@ -635,18 +628,18 @@ class TrackerController
             // If session is not exist and &event!=stopped, a new session should start
             if ($queries['event'] != 'stopped') {
                 // First check if this peer can open this NEW session then create it
-                $selfCount = PDO::createCommand("SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;")->bindParams([
+                $selfCount = app()->pdo->createCommand("SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;")->bindParams([
                     "uid" => $userInfo["id"],
                     "tid" => $torrentInfo["id"]
                 ])->queryScalar();
 
                 // Ban one torrent seeding/leech at muti-location due to your site config
                 if ($seeder == 'yes') { // if this peer's role is seeder
-                    if ($selfCount >= (Config::get('tracker.user_max_seed')))
-                        throw new TrackerException(160, [":count" => Config::get('tracker.user_max_seed')]);
+                    if ($selfCount >= (app()->config->get('tracker.user_max_seed')))
+                        throw new TrackerException(160, [":count" => app()->config->get('tracker.user_max_seed')]);
                 } else {
-                    if ($selfCount >= (Config::get('tracker.user_max_leech')))
-                        throw new TrackerException(161, [":count" => Config::get('tracker.user_max_leech')]);
+                    if ($selfCount >= (app()->config->get('tracker.user_max_leech')))
+                        throw new TrackerException(161, [":count" => app()->config->get('tracker.user_max_leech')]);
                 }
 
                 if ($userInfo["class"] < User::ROLE_VIP) {
@@ -654,7 +647,7 @@ class TrackerController
                     $gigs = $userInfo["downloaded"] / (1024 * 1024 * 1024);
 
                     // FIXME Wait System
-                    if (Config::get("tracker.enable_waitsystem")) {
+                    if (app()->config->get("tracker.enable_waitsystem")) {
                         if ($gigs > 10) {
                             if ($ratio < 0.4) $wait = 24;
                             elseif ($ratio < 0.5) $wait = 12;
@@ -669,7 +662,7 @@ class TrackerController
                     }
 
                     // FIXME Max SLots System
-                    if (Config::get("tracker.enable_maxdlsystem")) {
+                    if (app()->config->get("tracker.enable_maxdlsystem")) {
                         $max = 0;
                         if ($gigs > 10) {
                             if ($ratio < 0.5) $max = 1;
@@ -678,7 +671,7 @@ class TrackerController
                             elseif ($ratio < 0.95) $max = 4;
                         }
                         if ($max > 0) {
-                            $count = PDO::createCommand("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
+                            $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
                                 "uid" => $userInfo["id"]
                             ])->queryScalar();
                             if ($count >= $max)
@@ -689,35 +682,35 @@ class TrackerController
 
                 // Then create new session in database
                 // Update `torrents`, if peer's role is a seeder ,so complete +1 , elseif  he is a leecher , so incomplete +1
-                PDO::createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
+                app()->pdo->createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
                     "tid" => $torrentInfo["id"]
                 ])->execute();
 
                 $trueUploaded = max(0, $queries['uploaded']);
                 $trueDownloaded = max(0, $queries['downloaded']);
 
-                PDO::createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, 
+                app()->pdo->createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, 
                         `agent`=:agent, `seeder` = :seeder, {$ipField}
                         `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
                         `corrupt` = :corrupt , `key` = :key ;
                         ")->bindParams([
                         "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"],
-                        "agent" => Request::header("user-agent"),
+                        "agent" => app()->request->header("user-agent"),
                         "upload" => $trueUploaded, "download" => $trueDownloaded, "to_go" => $queries["left"],
                         "seeder" => $seeder, "corrupt" => $queries["corrupt"], "key" => $queries["key"],
                     ] + $ipBindField)->execute();
 
                 // Search history record, and create new record if not exist.
-                $selfRecordCount = PDO::createCommand("SELECT COUNT(`id`) FROM snatched WHERE user_id=:uid AND torrent_id = :tid")->bindParams([
+                $selfRecordCount = app()->pdo->createCommand("SELECT COUNT(`id`) FROM snatched WHERE user_id=:uid AND torrent_id = :tid")->bindParams([
                     "uid" => $userInfo["id"],
                     "tid" => $torrentInfo["id"]
                 ])->queryScalar();
 
                 if ($selfRecordCount == 0) {
-                    PDO::createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`) 
+                    app()->pdo->createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`) 
                         VALUES (:uid,:tid,:agent,:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,NOW(),NOW())")->bindParams([
                         "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
-                        "agent" => Request::header("user-agent"), "port" => $queries["port"],
+                        "agent" => app()->request->header("user-agent"), "port" => $queries["port"],
                         "true_up" => 0, "true_dl" => 0,
                         "this_up" => 0, "this_dl" => 0,
                         "to_go" => $queries["left"], "time" => 0
@@ -730,8 +723,8 @@ class TrackerController
             $trueDownloaded = max(0, $queries['downloaded'] - $self['downloaded']);
             $duration = max(0, $self['duration']);
 
-            if (Config::get("tracker.enable_upspeed_check")) {
-                if ($userInfo["class"] < Config::get("authority.pass_tracker_upspeed_check") && $duration > 0)
+            if (app()->config->get("tracker.enable_upspeed_check")) {
+                if ($userInfo["class"] < app()->config->get("authority.pass_tracker_upspeed_check") && $duration > 0)
                     $this->checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration);
             }
 
@@ -741,35 +734,35 @@ class TrackerController
             // Notice : there MUST have history record in Table `snatched` if session is exist !!!!!!!!
             if ($queries["event"] === "stopped") {
                 // Update `torrents`, if peer's role is a seeder ,so complete -1 , elseif  he is a leecher , so incomplete -1
-                PDO::createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` -1 WHERE id=:tid")->bindParams([
+                app()->pdo->createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` -1 WHERE id=:tid")->bindParams([
                     "tid" => $torrentInfo["id"]
                 ])->execute();
 
                 // Peer stop seeding or leeching and should remove this peer from our peer list and update his data.
-                PDO::createCommand("DELETE FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id` = :pid")->bindParams([
+                app()->pdo->createCommand("DELETE FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id` = :pid")->bindParams([
                     "uid" => $userInfo["id"],
                     "tid" => $torrentInfo["id"],
                     "pid" => $queries["peer_id"]
                 ])->execute();
             } else {
                 // if session is exist but event!=stopped , we should continue the old session
-                PDO::createCommand("UPDATE `peers` SET `agent`=:agent, {$ipField}," .
+                app()->pdo->createCommand("UPDATE `peers` SET `agent`=:agent, {$ipField}," .
                     "`seeder`=:seeder,
                     `uploaded`=`uploaded` + :uploaded, `downloaded`= `downloaded` + :download, `to_go` = :left,
                     `last_action_at`=NOW(), `corrupt`=:corrupt, `key`=:key 
                     WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
-                        "agent" => Request::header("user-agent"), "seeder" => $seeder,
+                        "agent" => app()->request->header("user-agent"), "seeder" => $seeder,
                         "uploaded" => $trueUploaded, "download" => $trueDownloaded, "left" => $queries["left"],
                         "corrupt" => $queries["corrupt"], "key" => $queries["key"],
                         "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
                     ] + $ipBindField)->execute();
             }
-            if (PDO::getRowCount() > 0) {   // It means that the delete or update query affected so we can safety update `snatched` table
-                PDO::createCommand("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
+            if (app()->pdo->getRowCount() > 0) {   // It means that the delete or update query affected so we can safety update `snatched` table
+                app()->pdo->createCommand("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
                     `this_uploaded` = `this_uploaded` + :this_up, `this_download` = `this_download` + :this_dl, `to_go` = :left, `{$timeKey}`=`{$timeKey}` + :duration,
                     `agent` = :agent WHERE `torrent_id` = :tid AND `user_id` = :uid")->bindParams([
                     "true_up" => $trueUploaded, "true_dl" => $trueDownloaded, "this_up" => $thisUploaded, "this_dl" => $thisDownloaded,
-                    "left" => $queries["left"], "duration" => $duration, "agent" => Request::header("user-agent"),
+                    "left" => $queries["left"], "duration" => $duration, "agent" => app()->request->header("user-agent"),
                     "tid" => $torrentInfo["id"], "uid" => $userInfo["id"]
                 ])->execute();
             }
@@ -777,22 +770,22 @@ class TrackerController
 
         // Deal with completed event
         if ($queries["event"] === "completed") {
-            PDO::createCommand("UPDATE `snatched` SET `finished` = 'yes' , finish_ip = INET6_ATON(:ip) , finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
-                "ip" => Request::getClientIp(),
+            app()->pdo->createCommand("UPDATE `snatched` SET `finished` = 'yes' , finish_ip = INET6_ATON(:ip) , finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
+                "ip" => app()->request->getClientIp(),
                 "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
             ]);
             // Update `torrents`, with complete +1  incomplete -1 downloaded +1
-            PDO::createCommand("UPDATE `torrents` SET `complete` = `complete` + 1, `incomplete` = `incomplete` -1 , `downloaded` = `downloaded` + 1 WHERE `id`=:tid")->bindParams([
+            app()->pdo->createCommand("UPDATE `torrents` SET `complete` = `complete` + 1, `incomplete` = `incomplete` -1 , `downloaded` = `downloaded` + 1 WHERE `id`=:tid")->bindParams([
                 "tid" => $torrentInfo["id"]
             ])->execute();
         }
 
         // Update Table `users` , record his upload and download data and connect time information
-        PDO::createCommand("UPDATE `users` SET uploaded = uploaded + :upload, downloaded = downloaded + :download, "
+        app()->pdo->createCommand("UPDATE `users` SET uploaded = uploaded + :upload, downloaded = downloaded + :download, "
             . ($trueUploaded > 0 ? "last_upload_at=NOW()," : "") . ($trueDownloaded > 0 ? "last_download_at=NOW()," : "") .
             "`last_connect_at`=NOW() , `last_tracker_ip`= INET6_ATON(:ip) WHERE id = :uid")->bindParams([
             "upload" => $thisUploaded, "download" => $thisDownloaded,
-            "uid" => $userInfo["id"], "ip" => Request::getClientIp()
+            "uid" => $userInfo["id"], "ip" => app()->request->getClientIp()
         ])->execute();
     }
 
@@ -812,7 +805,7 @@ class TrackerController
         $upspeed = (($trueUploaded > 0 && $duration > 0) ? $trueUploaded / $duration : 0);
 
         $logCheater = function ($commit) use ($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration) {
-            PDO::createCommand("INSERT INTO `cheaters`(`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`) 
+            app()->pdo->createCommand("INSERT INTO `cheaters`(`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`) 
             VALUES (:uid, :tid, :uploaded, :downloaded, :anctime, :seeders, :leechers, :hit, :msg, :reviewed, :reviewed_by)  
             ON DUPLICATE KEY UPDATE `hit` = `hit` + 1, `reviewed` = 0,`reviewed_by` = '',`commit` = VALUES(`commit`)")->bindParams([
                 "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
@@ -827,11 +820,11 @@ class TrackerController
         if ($trueUploaded > 1 * (1024 ** 3) && $upspeed > 100 * (1024 ** 2)) {
             $logCheater("User account was automatically disabled by system");
             // Disable users and Delete user content in cache , so that user cannot get any data when next announce.
-            PDO::createCommand("UPDATE users SET status = 'banned' WHERE id = :uid;")->bindParams([
+            app()->pdo->createCommand("UPDATE users SET status = 'banned' WHERE id = :uid;")->bindParams([
                 "uid" => $userInfo["id"],
             ])->execute();
 
-            Redis::del("user_passkey_" . $userInfo["passkey"] . "_content");
+            app()->redis->del("user_passkey_" . $userInfo["passkey"] . "_content");
             throw new TrackerException(170);
         }
 
@@ -850,14 +843,14 @@ class TrackerController
 
     private function getTorrentBuff($userid, $torrentid, $trueUploaded, $trueDownloaded, &$thisUploaded, &$thisDownloaded)
     {
-        $buff = Redis::get("user_" . $userid . "_torrent_" . $torrentid . "_buff");
+        $buff = app()->redis->get("user_" . $userid . "_torrent_" . $torrentid . "_buff");
         if ($buff === false) {
-            $buff = PDO::createCommand("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrents_buff` 
+            $buff = app()->pdo->createCommand("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrents_buff` 
             WHERE start_at < NOW() AND NOW() < expired_at AND (torrentid = :tid OR torrentid = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 "tid" => $torrentid,
                 "bid" => $userid
             ])->queryOne();
-            Redis::setex("user_" . $userid . "_torrent_" . $torrentid . "_buff", 350, $buff);
+            app()->redis->setex("user_" . $userid . "_torrent_" . $torrentid . "_buff", 350, $buff);
         }
         $thisUploaded = $trueUploaded * ($buff["up_ratio"] ?: 1);
         $thisDownloaded = $trueDownloaded * ($buff["dl_ratio"] ?: 1);
@@ -866,8 +859,8 @@ class TrackerController
     private function generateAnnounceResponse($queries, $role, $torrentInfo, &$rep_dict)
     {
         $rep_dict = [
-            "interval" => Config::get("tracker.interval") + rand(5, 20),   // random interval to avoid BOOM
-            "min interval" => Config::get("tracker.min_interval") + rand(1, 10),
+            "interval" => app()->config->get("tracker.interval") + rand(5, 20),   // random interval to avoid BOOM
+            "min interval" => app()->config->get("tracker.min_interval") + rand(1, 10),
             "complete" => $torrentInfo["complete"],
             "incomplete" => $torrentInfo["incomplete"],
             "peers" => []  // By default it is a array object, only when `&compact=1` then it should be a string
@@ -887,7 +880,7 @@ class TrackerController
 
         $limit = ($queries["numwant"] <= 50) ? $queries["numwant"] : 50;
 
-        $peers = PDO::createCommand("SELECT " .
+        $peers = app()->pdo->createCommand("SELECT " .
             ($queries["ip"] ? " INET6_NTOA(`ip`) as `ip`,`port`, " : "") .
             ($queries["ipv6"] ? " INET6_NTOA(`ipv6`) as `ipv6`,`ipv6_port` " : "") .
             ($queries["no_peer_id"] == 0 ? " ,`peer_id` " : "") .
@@ -955,11 +948,11 @@ class TrackerController
     private function lockAnnounceDuration($queries)
     {
         $lock_name = "tracker_announce_" . $queries["passkey"] . "_torrent_" . $queries["info_hash"] . "_peer_" . $queries["peer_id"] . "_lock";
-        $lock = Redis::get($lock_name);
+        $lock = app()->redis->get($lock_name);
         if ($lock === false) {
-            Redis::setex($lock_name, Config::get("tracker.min_interval"), true);
+            app()->redis->setex($lock_name, app()->config->get("tracker.min_interval"), true);
         } else {
-            throw new TrackerException(162, [":min" => Config::get("tracker.min_interval")]);
+            throw new TrackerException(162, [":min" => app()->config->get("tracker.min_interval")]);
         }
     }
 }

@@ -36,7 +36,7 @@ class Torrent
 
     public function __construct($id = null)
     {
-        $fetch = PDO::createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
+        $fetch = app()->pdo->createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
             "id" => $id
         ])->queryOne();
         if ($fetch) {

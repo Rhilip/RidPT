@@ -11,10 +11,7 @@ namespace apps\httpd\models\form;
 use apps\common\libraries\Site;
 
 use apps\httpd\models\User;
-use Mix\Facades\Config;
-use Mix\Facades\PDO;
-use Mix\Facades\Request;
-use Mix\Facades\SwiftMailer;
+
 use Mix\Helpers\StringHelper;
 use Mix\Validators\Validator;
 
@@ -58,15 +55,15 @@ class UserRegisterForm extends Validator
 
     public function buildDefaultValue()
     {
-        $this->status = Config::get("register.user_default_status") ?? User::STATUS_PENDING;
-        $this->class = Config::get("register.user_default_class") ?? User::ROLE_USER;
-        $this->uploadpos = Config::get("register.user_default_uploadpos") ?? 1;
-        $this->downloadpos = Config::get("register.user_default_downloadpos") ?? 1;
-        $this->uploaded = Config::get("register.user_default_uploaded") ?? 1;
-        $this->downloaded = Config::get("register.user_default_downloaded") ?? 1;
-        $this->seedtime = Config::get("register.user_default_seedtime") ?? 0;
-        $this->leechtime = Config::get("register.user_default_leechtime") ?? 0;
-        $this->bonus = Config::get("register.user_default_bonus") ?? 0;
+        $this->status = app()->config->get("register.user_default_status") ?? User::STATUS_PENDING;
+        $this->class = app()->config->get("register.user_default_class") ?? User::ROLE_USER;
+        $this->uploadpos = app()->config->get("register.user_default_uploadpos") ?? 1;
+        $this->downloadpos = app()->config->get("register.user_default_downloadpos") ?? 1;
+        $this->uploaded = app()->config->get("register.user_default_uploaded") ?? 1;
+        $this->downloaded = app()->config->get("register.user_default_downloaded") ?? 1;
+        $this->seedtime = app()->config->get("register.user_default_seedtime") ?? 0;
+        $this->leechtime = app()->config->get("register.user_default_leechtime") ?? 0;
+        $this->bonus = app()->config->get("register.user_default_bonus") ?? 0;
     }
 
     public static function rules()
@@ -115,27 +112,27 @@ class UserRegisterForm extends Validator
 
     public function isRegisterSystemOpen(ExecutionContextInterface $context)
     {
-        if (Config::get("base.enable_register_system") != true)
+        if (app()->config->get("base.enable_register_system") != true)
             $context->buildViolation("The register isn't open in this site.")->addViolation();
-        if (Config::get("register.by_" . $this->type) != true)
+        if (app()->config->get("register.by_" . $this->type) != true)
             $context->buildViolation("The register by {$this->type} ways isn't open in this site.")->addViolation();
     }
 
     public function isMaxUserReached(ExecutionContextInterface $context)
     {
-        if (Config::get("register.max_user_check") &&
-            Site::fetchUserCount() >= Config::get("base.max_user")) {
+        if (app()->config->get("register.max_user_check") &&
+            Site::fetchUserCount() >= app()->config->get("base.max_user")) {
             $context->buildViolation("Max user limit Reached")->addViolation();
         }
     }
 
     public function isMaxRegisterIpReached(ExecutionContextInterface $context)
     {
-        if (Config::get("register.max_ip_check")) {
-            $client_ip = Request::getClientIp();
+        if (app()->config->get("register.max_ip_check")) {
+            $client_ip = app()->request->getClientIp();
 
-            $max_user_per_ip = Config::get("register.per_ip_user") ?: 5;
-            $user_ip_count = PDO::createCommand("SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)")->bindParams([
+            $max_user_per_ip = app()->config->get("register.per_ip_user") ?: 5;
+            $user_ip_count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)")->bindParams([
                 "ip" => $client_ip
             ])->queryScalar();
 
@@ -151,7 +148,7 @@ class UserRegisterForm extends Validator
         if (strspn(strtolower($username), "abcdefghijklmnopqrstuvwxyz0123456789_") != strlen($username))
             $context->buildViolation("Invalid characters in user names.")->addViolation();
 
-        $count = PDO::createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
+        $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
             "username" => $username
         ])->queryScalar();
         if ($count > 0)
@@ -162,20 +159,20 @@ class UserRegisterForm extends Validator
     {
         $email = $this->email;
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
-        if (Config::get("register.enabled_email_black_list") &&
-            Config::get("register.email_black_list")) {
-            $email_black_list = explode(",", Config::get("register.email_black_list"));
+        if (app()->config->get("register.enabled_email_black_list") &&
+            app()->config->get("register.email_black_list")) {
+            $email_black_list = explode(",", app()->config->get("register.email_black_list"));
             if (in_array($email_suffix, $email_black_list))
                 $context->buildViolation("The email suffix `$email_suffix` is not allowed.")->addViolation();
         }
-        if (Config::get("register.enabled_email_white_list") &&
-            Config::get("register.email_white_list")) {
-            $email_white_list = explode(",", Config::get("register.email_white_list"));
+        if (app()->config->get("register.enabled_email_white_list") &&
+            app()->config->get("register.email_white_list")) {
+            $email_white_list = explode(",", app()->config->get("register.email_white_list"));
             if (!in_array($email_suffix, $email_white_list))
                 $context->buildViolation("The email suffix `$email_suffix` is not allowed.")->addViolation();
         }
 
-        $email_check = PDO::createCommand("SELECT COUNT(`id`) FROM `users` WHERE `email` = :email")->bindParams([
+        $email_check = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `email` = :email")->bindParams([
             "email" => $email
         ])->queryScalar();
         if ($email_check > 0)
@@ -188,7 +185,7 @@ class UserRegisterForm extends Validator
             if (strlen($this->invite_hash) != 32) {
                 $context->buildViolation("This invite hash : `$this->invite_hash` is not valid")->addViolation();
             } else {
-                $inviteInfo = PDO::createCommand("SELECT * FROM `invite` WHERE `hash`=:invite_hash")->bindParams([
+                $inviteInfo = app()->pdo->createCommand("SELECT * FROM `invite` WHERE `hash`=:invite_hash")->bindParams([
                     "invite_hash" => $this->invite_hash
                 ])->queryOne();
                 if (!$inviteInfo) {
@@ -219,7 +216,7 @@ class UserRegisterForm extends Validator
     public function flush()
     {
         $this->passkey = StringHelper::md5($this->username . date("Y-m-d H:i:s"), 10);
-        $this->confirm_way = Config::get("register.user_confirm_way");
+        $this->confirm_way = app()->config->get("register.user_confirm_way");
 
         /**
          * Set The First User enough privilege ,
@@ -236,20 +233,20 @@ class UserRegisterForm extends Validator
             $this->status = User::STATUS_CONFIRMED;
         }
 
-        PDO::createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`) 
+        app()->pdo->createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`) 
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus)")->bindParams(array(
             "name" => $this->username, "passhash" => password_hash($this->password, PASSWORD_DEFAULT), "email" => $this->email,
             "status" => $this->status, "class" => $this->class, "passkey" => $this->passkey,
-            "invite_by" => $this->invite_by, "ip" => Request::getClientIp(),
+            "invite_by" => $this->invite_by, "ip" => app()->request->getClientIp(),
             "uploadpos" => $this->uploadpos, "downloadpos" => $this->downloadpos,
             "uploaded" => $this->uploaded, "downloaded" => $this->downloaded,
             "seedtime" => $this->seedtime, "leechtime" => $this->leechtime,
             "bonus" => $this->bonus
         ))->execute();
-        $this->id = PDO::getLastInsertId();
+        $this->id = app()->pdo->getLastInsertId();
 
         if ($this->type == 'invite') {
-            PDO::createCommand("DELETE from `invite` WHERE `hash` = :invite_hash")->bindParams([
+            app()->pdo->createCommand("DELETE from `invite` WHERE `hash` = :invite_hash")->bindParams([
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 
@@ -259,7 +256,7 @@ class UserRegisterForm extends Validator
 
         if ($this->confirm_way == "email") {
             // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
-            SwiftMailer::send([$this->email], "Please confirm your accent", "Click this link to confirm.");
+            app()->swiftmailer->send([$this->email], "Please confirm your accent", "Click this link to confirm.");
         }
 
         Site::writeLog("User $this->username($this->id) is created now" . (

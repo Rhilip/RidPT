@@ -11,12 +11,7 @@ return [
 
     // 命令
     'commands'         => [
-
-        'assemblyline exec' => ['AssemblyLine', 'Exec'],
-        'push exec'         => ['Push', 'Exec'],
-        'clear exec'        => ['Clear', 'Exec'],
-        'coroutine exec'    => ['Coroutine', 'Exec'],
-
+        'timer exec'        => ['Timer','Exec']
     ],
 
     // 组件配置

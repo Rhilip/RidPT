@@ -8,9 +8,6 @@
 
 namespace Mix\Config;
 
-use Mix\Facades\PDO;
-use Mix\Facades\Redis;
-
 use Mix\Base\Component;
 
 class Config extends Component
@@ -24,15 +21,15 @@ class Config extends Component
     public function __construct(array $config = [])
     {
         parent::__construct($config);
-        $configs = PDO::createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
+        $configs = app()->pdo->createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
         foreach ($configs as $config) {
-            Redis::hset($this->cacheField, $config["name"], $config["value"]);
+            app()->redis->hset($this->cacheField, $config["name"], $config["value"]);
         }
     }
 
     public function getAll()
     {
-        return Redis::hgetall($this->cacheField);
+        return app()->redis->hgetall($this->cacheField);
     }
 
     public function getSection($prefix = null)
@@ -45,24 +42,24 @@ class Config extends Component
     public function get(string $name)
     {
         // First Check config stored in RedisConnection Cache, If it exist , then just return the cached key
-        $setting = Redis::hget($this->cacheField, $name);
+        $setting = app()->redis->hget($this->cacheField, $name);
         if (!is_null($setting)) return $setting;
 
         // Get config From Database
-        $setting = PDO::createCommand("SELECT `value` from `site_config` WHERE `name` = :name")
+        $setting = app()->pdo->createCommand("SELECT `value` from `site_config` WHERE `name` = :name")
             ->bindParams(["name" => $name])->queryScalar();
 
         // In this case (Load config From Database Failed) , A Exception should throw
         if ($setting === false) throw $this->createNotFoundException($name);
 
         // Cache it in RedisConnection and return
-        Redis::hset($this->cacheField, $name, $setting);
+        app()->redis->hset($this->cacheField, $name, $setting);
         return $setting;
     }
 
     public function set(string $name, $value)
     {
-        PDO::createCommand("UPDATE `site_config` SET `value` = :val WHERE `name` = :name")->bindParams([
+        app()->pdo->createCommand("UPDATE `site_config` SET `value` = :val WHERE `name` = :name")->bindParams([
             "val" => $value, "name" => $name
         ])->execute();
         return $this->flush($name);
@@ -70,7 +67,7 @@ class Config extends Component
 
     public function flush($name)
     {
-        Redis::hdel($this->cacheField, $name);
+        app()->redis->hdel($this->cacheField, $name);
         return $this->get($name);
     }
 

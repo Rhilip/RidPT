@@ -2,7 +2,6 @@
 
 namespace Mix\Http;
 
-use Mix\Facades\Config;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 
@@ -36,9 +35,9 @@ class View
         $this->twig->addExtension(new Twig_Extensions_Extension_Array());
         $this->twig->addExtension(new Twig_Extensions_Extension_Date());
 
-        $this->twig->addGlobal("config", Config::getInstance());
+        $this->twig->addGlobal("config", app()->config);
 
-        if ($user = \Mix\Facades\Session::get("userInfo"))
+        if ($user = app()->session->get("userInfo"))
             $this->twig->addGlobal('user',$user);
     }
 

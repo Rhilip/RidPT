@@ -3,7 +3,7 @@
 namespace Mix\Http;
 
 use Mix\Base\BaseObject;
-use Mix\Facades\Output;
+
 use Mix\Helpers\ProcessHelper;
 
 /**
@@ -24,20 +24,21 @@ class HttpServer extends BaseObject
         // 开启协程
         'enable_coroutine' => false,
         // 进程的最大任务数
-        'max_request'      => 10000,
+        'max_request' => 10000,
         // 异步安全重启
-        'reload_async'     => true,
+        'reload_async' => true,
         // 退出等待时间
-        'max_wait_time'    => 60,
+        'max_wait_time' => 60,
         // PID 文件
-        'pid_file'         => '/var/run/mix-httpd.pid',
+        'pid_file' => '/var/run/mix-httpd.pid',
         // 日志文件路径
-        'log_file'         => '/tmp/mix-httpd.log',
+        'log_file' => '/tmp/mix-httpd.log',
         // 开启后，PDOConnection 协程多次 prepare 才不会有 40ms 延迟
         'open_tcp_nodelay' => true,
     ];
 
     // 服务器
+    /** @var \Swoole\Http\Server */
     protected $_server;
 
     // 主机
@@ -50,8 +51,8 @@ class HttpServer extends BaseObject
     protected function initialize()
     {
         // 初始化参数
-        $this->_host    = $this->virtualHost['host'];
-        $this->_port    = $this->virtualHost['port'];
+        $this->_host = $this->virtualHost['host'];
+        $this->_port = $this->virtualHost['port'];
         $this->settings += $this->_settings;
         // 实例化服务器
         $this->_server = new \Swoole\Http\Server($this->_host, $this->_port);
@@ -100,7 +101,7 @@ class HttpServer extends BaseObject
             }
             // 实例化App
             $config = require $this->virtualHost['configFile'];
-            $app    = new Application($config);
+            $app = new Application($config);
             $app->loadAllComponents();
         });
     }
@@ -123,8 +124,6 @@ class HttpServer extends BaseObject
     // 欢迎信息
     protected function welcome()
     {
-        $swooleVersion = swoole_version();
-        $phpVersion    = PHP_VERSION;
         echo <<<EOL
                            _____
 _______ ___ _____ ___ _____  / /_  ____
@@ -133,17 +132,16 @@ _/ / / / / / / /\ \/ / /_/ / / / / /_/ /
 /_/ /_/ /_/_/ /_/\_\/ .___/_/ /_/ .___/
                    /_/         /_/
 
-
 EOL;
-        Output::writeln('Server      Name:      mix-httpd');
-        Output::writeln('Framework   Version:   ' . \Mix::VERSION);
-        Output::writeln("PHP         Version:   {$phpVersion}");
-        Output::writeln("Swoole      Version:   {$swooleVersion}");
-        Output::writeln("Listen      Addr:      {$this->_host}");
-        Output::writeln("Listen      Port:      {$this->_port}");
-        Output::writeln('Hot         Update:    ' . ($this->settings['max_request'] == 1 ? 'enabled' : 'disabled'));
-        Output::writeln('Coroutine   Mode:      ' . ($this->settings['enable_coroutine'] ? 'enabled' : 'disabled'));
-        Output::writeln("Config      File:      {$this->virtualHost['configFile']}");
+        app()->output->writeln('Server      Name:      mix-httpd');
+        app()->output->writeln('Framework   Version:   ' . \Mix::VERSION);
+        app()->output->writeln("PHP         Version:   " . PHP_VERSION);
+        app()->output->writeln("Swoole      Version:   " . swoole_version());
+        app()->output->writeln("Listen      Addr:      {$this->_host}");
+        app()->output->writeln("Listen      Port:      {$this->_port}");
+        app()->output->writeln('Hot         Update:    ' . ($this->settings['max_request'] == 1 ? 'enabled' : 'disabled'));
+        app()->output->writeln('Coroutine   Mode:      ' . ($this->settings['enable_coroutine'] ? 'enabled' : 'disabled'));
+        app()->output->writeln("Config      File:      {$this->virtualHost['configFile']}");
     }
 
 }
