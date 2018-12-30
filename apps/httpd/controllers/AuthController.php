@@ -20,9 +20,9 @@ class AuthController extends Controller
 
     public function actionRegister()
     {
-        if (app()->requests->isPost()) {
+        if (app()->request->isPost()) {
             $user = new UserRegisterForm();
-            $user->importAttributes(app()->requests->post());
+            $user->importAttributes(app()->request->post());
             $error = $user->validate();
             if (count($error) > 0) {
                 return $this->render("auth/register_fail.html.twig", [
@@ -42,8 +42,8 @@ class AuthController extends Controller
             }
         } else {
             return $this->render("auth/register.html.twig", [
-                "register_type" => app()->requests->get("type") ?? "open",
-                "invite_hash" => app()->requests->get("invite_hash")
+                "register_type" => app()->request->get("type") ?? "open",
+                "invite_hash" => app()->request->get("invite_hash")
             ]);
         }
     }
@@ -60,8 +60,8 @@ class AuthController extends Controller
 
     public function actionLogin()
     {
-        if (app()->requests->isPost()) {
-            $username = app()->requests->post("username");
+        if (app()->request->isPost()) {
+            $username = app()->request->post("username");
             $self = app()->pdo->createCommand("SELECT `id`,`username`,`password`,`status`,`opt` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
                 "uname" => $username, "email" => $username,
             ])->queryOne();
@@ -71,13 +71,13 @@ class AuthController extends Controller
                 if (!$self) throw new \Exception("Invalid username/password");
 
                 // User's password is not correct
-                if (!password_verify(app()->requests->post("password"), $self["password"]))
+                if (!password_verify(app()->request->post("password"), $self["password"]))
                     throw new \Exception("Invalid username/password");
 
                 // User enable 2FA but it's code is wrong
                 if ($self["opt"]) {
                     $tfa = new TwoFactorAuth(app()->config->get("base.site_name"));
-                    if ($tfa->verifyCode($self["opt"], app()->requests->post("opt")) == false)
+                    if ($tfa->verifyCode($self["opt"], app()->request->post("opt")) == false)
                         throw new \Exception("2FA Validation failed");
                 }
 
@@ -97,7 +97,7 @@ class AuthController extends Controller
             ]);
 
             app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
-                "ip" => app()->requests->getClientIp(), "id" => $self["id"]
+                "ip" => app()->request->getClientIp(), "id" => $self["id"]
             ])->execute();
 
             return app()->response->redirect('/index');
