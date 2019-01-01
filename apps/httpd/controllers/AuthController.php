@@ -35,16 +35,13 @@ class AuthController extends Controller
                     return app()->response->redirect("/index");
                 } else {
                     return $this->render('auth/register_pending.html.twig', [
-                        "confirm_way" => app()->config->get("register.user_confirm_way"),
+                        "confirm_way" => $user->confirm_way,
                         "email" => $user->email
                     ]);
                 }
             }
         } else {
-            return $this->render("auth/register.html.twig", [
-                "register_type" => app()->request->get("type") ?? "open",
-                "invite_hash" => app()->request->get("invite_hash")
-            ]);
+            return $this->render("auth/register.html.twig");
         }
     }
 
@@ -62,7 +59,7 @@ class AuthController extends Controller
     {
         if (app()->request->isPost()) {
             $username = app()->request->post("username");
-            $self = app()->pdo->createCommand("SELECT `id`,`username`,`password`,`status`,`opt` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
+            $self = app()->pdo->createCommand("SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
                 "uname" => $username, "email" => $username,
             ])->queryOne();
 
@@ -90,11 +87,7 @@ class AuthController extends Controller
             }
 
             app()->session->createSessionId();
-            app()->session->set('userInfo', [
-                'uid' => $self["id"],
-                'username' => $self["username"],
-                'status' => $self["status"]
-            ]);
+            app()->session->set('user', $self);
 
             app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
                 "ip" => app()->request->getClientIp(), "id" => $self["id"]
@@ -109,7 +102,7 @@ class AuthController extends Controller
     public function actionLogout()
     {
         // TODO add CSRF protect
-        app()->session->delete('userInfo');
+        app()->session->delete('user');
         return app()->response->redirect('/auth/login');
     }
 

@@ -37,9 +37,8 @@ class View
         $this->twig->addExtension(new Twig\ByteConversionTwigExtension());
 
         $this->twig->addGlobal("config", app()->config);
-
-        if ($user = app()->session->get("userInfo"))
-            $this->twig->addGlobal('user',$user);
+        $this->twig->addGlobal("request", app()->request);
+        $this->twig->addGlobal('session', app()->session);
     }
 
     public function render($__template__, $__data__)

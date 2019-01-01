@@ -64,6 +64,7 @@ class UserRegisterForm extends Validator
         $this->seedtime = app()->config->get("register.user_default_seedtime") ?? 0;
         $this->leechtime = app()->config->get("register.user_default_leechtime") ?? 0;
         $this->bonus = app()->config->get("register.user_default_bonus") ?? 0;
+        $this->confirm_way = app()->config->get("register.user_confirm_way") ?? "auto";
     }
 
     public static function rules()
@@ -216,7 +217,6 @@ class UserRegisterForm extends Validator
     public function flush()
     {
         $this->passkey = StringHelper::md5($this->username . date("Y-m-d H:i:s"), 10);
-        $this->confirm_way = app()->config->get("register.user_confirm_way");
 
         /**
          * Set The First User enough privilege ,

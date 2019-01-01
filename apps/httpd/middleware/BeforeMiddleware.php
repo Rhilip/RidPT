@@ -14,7 +14,7 @@ class BeforeMiddleware
         list($controller, $action) = $callable;
         $controllerName = get_class($controller);
 
-        $userInfo = app()->session->get('userInfo');
+        $userInfo = app()->session->get('user');
 
         if ($controllerName === "apps\httpd\controllers\AuthController") {
             if ($userInfo && in_array($action, ["actionLogin", "actionRegister"])) {
@@ -30,7 +30,7 @@ class BeforeMiddleware
 
         // Update user status
         app()->pdo->createCommand("UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id")->bindParams([
-            "ip" => app()->request->getClientIp(), "id" => $userInfo["uid"]
+            "ip" => app()->request->getClientIp(), "id" => $userInfo["id"]
         ])->execute();
 
         // 执行下一个中间件

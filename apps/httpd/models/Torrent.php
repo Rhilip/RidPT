@@ -8,7 +8,6 @@
 
 namespace apps\httpd\models;
 
-use Mix\Facades\PDO;
 use Mix\Exceptions\NotFoundException;
 
 class Torrent
