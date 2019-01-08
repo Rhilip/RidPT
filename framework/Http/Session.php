@@ -13,7 +13,7 @@ class Session extends Component
 {
 
     // 保存处理者
-    /** @var \Redis */
+    /** @var \Mix\Redis\BaseRedisConnection */
     public $saveHandler;
 
     // 保存的Key前缀

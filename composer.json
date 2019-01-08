@@ -25,6 +25,7 @@
     "ext-intl": "*",
     "ext-pcntl": "*",
     "ext-redis": "*",
+    "ext-iconv": "*",
     "ext-libxml": "*",
     "ext-swoole": "*",
     "ext-mbstring": "*",

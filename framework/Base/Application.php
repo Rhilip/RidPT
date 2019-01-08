@@ -17,9 +17,6 @@ namespace Mix\Base;
  * @property \Mix\Redis\RedisConnection $redis
  * @property \Mix\Config\Config $config
  * @property \Mix\Mailer\Mailer $swiftmailer
- * @property \Mix\Websocket\TokenReader $tokenReader
- * @property \Mix\Websocket\SessionReader $sessionReader
- * @property \Mix\Websocket\MessageHandler $messageHandler
  * @property \Mix\Pool\ConnectionPool $connectionPool
  */
 class Application extends BaseObject

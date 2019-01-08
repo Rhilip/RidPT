@@ -9,6 +9,7 @@
 namespace Mix\Config;
 
 use Mix\Base\Component;
+use Mix\Exceptions\ConfigException;
 
 class Config extends Component
 {
@@ -83,7 +84,7 @@ class Config extends Component
      */
     protected function createNotFoundException($name)
     {
-        return new \RuntimeException(sprintf("Setting \"%s\" couldn't be found.", $name));
+        return new ConfigException(sprintf("Dynamic Setting \"%s\" couldn't be found.", $name));
     }
 
 }
