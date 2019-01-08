@@ -16,7 +16,7 @@ class BeforeMiddleware
 
         $userInfo = app()->session->get('user');
 
-        if ($controllerName === "apps\httpd\controllers\AuthController") {
+        if ($controllerName === \apps\controllers\AuthController::class) {
             if ($userInfo && in_array($action, ["actionLogin", "actionRegister"])) {
                 return app()->response->redirect("/index");
             } elseif ($action !== "actionLogout") {
@@ -29,7 +29,7 @@ class BeforeMiddleware
         }
 
         // Update user status
-        app()->pdo->createCommand("UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id")->bindParams([
+        app()->pdo->createCommand("UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;")->bindParams([
             "ip" => app()->request->getClientIp(), "id" => $userInfo["id"]
         ])->execute();
 
