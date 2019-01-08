@@ -1,0 +1,79 @@
+{% extends "layout/base.html.twig" %}
+
+{% block title %}{{ torrent.getTitle() }}{% endblock %}
+
+{% block container %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ torrent.getTitle() }}</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-1">Information:</div>
+                <div class="col-md-11">
+                    {% if torrent.getSubtitle() %}{{ torrent.getSubtitle() }}
+                    {% else %}No information.
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-1">Date:</div>
+                <div class="col-md-5" data-timestamp="{{ torrent.getAddedAt() }}">{{ torrent.getAddedAt() | date("Y-m-d h:i:s") }}</div>
+
+                <div class="col-md-1">File size:</div>
+                <div class="col-md-5">{{ torrent.getTorrentSize() | format_bytes }}</div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-1">Submitter:</div>
+                <div class="col-md-5">
+                    {% if torrent.getUplver() == "yes" %}
+
+                    {% else %}
+                        <a class="text-default" href="/user/panel/{{ torrent.getOwnerId() }}" data-toggle="tooltip" title="User">{{ (torrent.getOwner()).getUsername() }}</a></div>
+                    {% endif %}
+
+
+                <div class="col-md-1">Seeders:</div>
+                <div class="col-md-5"><span style="color: green;">{{ torrent.getComplete() }}</span></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-1">Leechers:</div>
+                <div class="col-md-5"><span style="color: red;">{{ torrent.getIncomplete() }}</span></div>
+
+                <div class="col-md-1">Completed:</div>
+                <div class="col-md-5">{{ torrent.getDownloaded() }}</div>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-6 col-md-1">Info hash:</div>
+                <div class="col-md-5"><kbd>26130d7be07b73ef5dc92d5a518d85276dcc8cc7</kbd></div>
+            </div>
+        </div><!--/.panel-body -->
+
+        <div class="panel-footer clearfix"><a href="/torrents/download?id={{ torrent.getId() }}"><i
+                    class="fa fa-download fa-fw"></i>Download Torrent</a></div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body" id="torrent-description">
+            {% if torrent.getDescr() %}{{ torrent.getDescr() }}
+            {% else %}<h4>No description.</h4>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">File list</h3>
+        </div>
+        <div class="torrent-file-list panel-body">
+            <ul>
+                {% for file in torrent.getFileList() %}
+                    <li><i class="fa fa-file"></i>{{ file.filename }} <span class="file-size">({{ file.size | format_bytes }})</span></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
