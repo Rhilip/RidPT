@@ -8,9 +8,9 @@ A Private Torrent Project based on `MixPHP` framework.
 
     - Nginx
     - MySQL 5.7.22 (With InnoDB Storage Engine)
-    - PHP 7.2.6 (With other extension which your can see in `composer.json`)
-    - Swoole 4.2.9
-    - Redis 4.0.9 Stable
+    - PHP 7.2.14 (With other extension which your can see in `composer.json`)
+    - Swoole 4.2.12
+    - Redis 5.0.3 Stable
     - Bower 1.8.4 (A package manager for the web)
  
 2. After you prepare those base environment well
@@ -39,7 +39,7 @@ edit in Admin Panel.
     vi .env
     ```
 
-5. Run Test by `php mix-httpd service start -u` , And Congratulation If you see those output **without error throwout**.
+5. Run Test by `php bin/mix-httpd service start -u` , And Congratulation If you see those output **without error throwout**.
 
     ```bash
     root@ubuntu-s-4vcpu-8gb-nyc1-01:/home/wwwroot/ridpt.rhilip.info# php bin/mix-httpd service start -u

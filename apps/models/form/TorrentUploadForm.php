@@ -123,6 +123,9 @@ class TorrentUploadForm extends Validator
         unset($this->torrent_dict['announce-list']); // remove multi-tracker capability
         unset($this->torrent_dict['nodes']); // remove cached peers (Bitcomet & Azareus)
 
+        // Some other change if you need
+        //$this->torrent_dict['commit'] = "";
+
         // The following line requires uploader to re-download torrents after uploading **Since info_hash change**
         // even the torrent is set as private and with uploader's passkey in it.
         $this->torrent_dict['info']['private'] = 1;  // add private tracker flag

@@ -2,21 +2,15 @@
 -- version 4.8.4
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Dec 30, 2018 at 12:13 AM
--- Server version: 5.7.22-log
--- PHP Version: 7.2.6
+-- Host: 127.0.0.1
+-- Generation Time: Jan 18, 2019 at 02:45 PM
+-- Server version: 5.7.24-log
+-- PHP Version: 7.2.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `ridpt`
@@ -39,6 +33,10 @@ CREATE TABLE IF NOT EXISTS `agent_allowed_exception` (
   `comment` varchar(200) CHARACTER SET utf8 NOT NULL DEFAULT '',
   KEY `family_id` (`family_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `agent_allowed_exception`:
+--
 
 --
 -- Truncate table before insert `agent_allowed_exception`
@@ -70,6 +68,10 @@ CREATE TABLE IF NOT EXISTS `agent_allowed_family` (
   `hits` mediumint(8) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `agent_allowed_family`:
+--
 
 --
 -- Truncate table before insert `agent_allowed_family`
@@ -122,6 +124,10 @@ CREATE TABLE IF NOT EXISTS `agent_deny_log` (
   UNIQUE KEY `one_peer` (`tid`,`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
+--
+-- RELATIONSHIPS FOR TABLE `agent_deny_log`:
+--
+
 -- --------------------------------------------------------
 
 --
@@ -147,6 +153,10 @@ CREATE TABLE IF NOT EXISTS `cheaters` (
   UNIQUE KEY `UNIQ_user_torrent_id` (`userid`,`torrentid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- RELATIONSHIPS FOR TABLE `cheaters`:
+--
+
 -- --------------------------------------------------------
 
 --
@@ -162,6 +172,12 @@ CREATE TABLE IF NOT EXISTS `files` (
   PRIMARY KEY (`id`),
   KEY `torrent_id` (`torrent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `files`:
+--   `torrent_id`
+--       `torrents` -> `id`
+--
 
 -- --------------------------------------------------------
 
@@ -179,6 +195,34 @@ CREATE TABLE IF NOT EXISTS `invite` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `invite`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ip_bans`
+--
+
+DROP TABLE IF EXISTS `ip_bans`;
+CREATE TABLE IF NOT EXISTS `ip_bans` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(255) NOT NULL,
+  `add_by` int(10) UNSIGNED NOT NULL,
+  `add_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `commit` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ip` (`ip`),
+  KEY `ban_operator` (`add_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `ip_bans`:
+--   `add_by`
+--       `users` -> `id`
+--
 
 -- --------------------------------------------------------
 
@@ -202,6 +246,10 @@ CREATE TABLE IF NOT EXISTS `messages` (
   KEY `receiver_read_status` (`receiver`,`unread`),
   KEY `receiver` (`receiver`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `messages`:
+--
 
 -- --------------------------------------------------------
 
@@ -238,6 +286,10 @@ CREATE TABLE IF NOT EXISTS `peers` (
   KEY `peer_id` (`peer_id`)
 ) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
 
+--
+-- RELATIONSHIPS FOR TABLE `peers`:
+--
+
 -- --------------------------------------------------------
 
 --
@@ -251,6 +303,10 @@ CREATE TABLE IF NOT EXISTS `site_config` (
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='The site Config Table';
+
+--
+-- RELATIONSHIPS FOR TABLE `site_config`:
+--
 
 --
 -- Truncate table before insert `site_config`
@@ -269,7 +325,7 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('base.enable_register_system', '1', '2018-11-28 16:05:12'),
 ('base.enable_tracker_system', '1', '2018-11-22 14:30:50'),
 ('base.max_user', '5000', '2018-11-28 16:00:15'),
-('base.site_author', 'Rhilip', '2018-12-13 01:57:18'),
+('base.site_author', 'Rhilip', '2019-01-18 14:38:20'),
 ('base.site_description', 'A Private Tracker Site', '2018-12-13 01:57:18'),
 ('base.site_muti_tracker_url', '', '2018-12-29 15:52:06'),
 ('base.site_name', 'RidPT', '2018-11-22 07:16:42'),
@@ -335,6 +391,10 @@ CREATE TABLE IF NOT EXISTS `site_log` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 
+--
+-- RELATIONSHIPS FOR TABLE `site_log`:
+--
+
 -- --------------------------------------------------------
 
 --
@@ -364,6 +424,10 @@ CREATE TABLE IF NOT EXISTS `snatched` (
   UNIQUE KEY `one_snatched` (`user_id`,`torrent_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- RELATIONSHIPS FOR TABLE `snatched`:
+--
+
 -- --------------------------------------------------------
 
 --
@@ -392,6 +456,10 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   UNIQUE KEY `info_hash` (`info_hash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- RELATIONSHIPS FOR TABLE `torrents`:
+--
+
 -- --------------------------------------------------------
 
 --
@@ -414,6 +482,10 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
   PRIMARY KEY (`id`),
   KEY `t_buff_index` (`beneficiary_id`,`torrentid`,`start_at`,`expired_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `torrents_buff`:
+--
 
 -- --------------------------------------------------------
 
@@ -458,6 +530,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- RELATIONSHIPS FOR TABLE `users`:
+--
+
+--
 -- Indexes for dumped tables
 --
 
@@ -481,8 +557,10 @@ ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
 --
 ALTER TABLE `files`
   ADD CONSTRAINT `files_torrents_id_fk` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`);
-COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Constraints for table `ip_bans`
+--
+ALTER TABLE `ip_bans`
+  ADD CONSTRAINT `ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+COMMIT;

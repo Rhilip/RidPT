@@ -57,6 +57,15 @@ class BaseResponse extends Component
         $this->headers[$key] = $value;
     }
 
+    public function setStatusCode($code)
+    {
+        $this->statusCode = $code;
+    }
+
+    public function setContent($content) {
+        $this->content = $content;
+    }
+
     // 预处理
     protected function prepare()
     {

@@ -18,7 +18,7 @@ return [
     'middlewareNamespace' => 'apps\middleware',
 
     // 全局中间件
-    'middleware'          => [],
+    'middleware'          => ["IpBan"],
 
     // 组件配置
     'components'          => [
