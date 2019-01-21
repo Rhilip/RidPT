@@ -2,6 +2,49 @@
 
 {% block title %}{{ torrent.getTitle() }}{% endblock %}
 
+{% block css %}
+    <style>
+        /* Torrent file list */
+        .torrent-file-list ul {
+            padding: 5px 20px 0 20px;
+            list-style: none;
+            display: none;
+        }
+
+        .torrent-file-list > ul {
+            display: block; /* First level always visible */
+            padding: 0;
+            margin: 0;
+        }
+
+        .torrent-file-list ul[data-show] {
+            /* Used to show first level's items based on amount */
+            display: block;
+        }
+
+        .torrent-file-list li:not(:last-of-type) {
+            margin-bottom: 5px;
+        }
+
+        .torrent-file-list i.fa {
+            padding-right: 5px;
+        }
+
+        .torrent-file-list i.fa-folder-open {
+            padding-right: 3px;
+        }
+
+        .torrent-file-list a.folder {
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .torrent-file-list .file-size {
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+
 {% block container %}
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -27,7 +70,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-1">Submitter:</div>
+                <div class="col-md-1">Submitter:</div>  {# TODO #}
                 <div class="col-md-5">
                     {% if torrent.getUplver() == "yes" %}
 
@@ -49,7 +92,7 @@
             </div>
             <div class="row">
                 <div class="col-md-offset-6 col-md-1">Info hash:</div>
-                <div class="col-md-5"><kbd>26130d7be07b73ef5dc92d5a518d85276dcc8cc7</kbd></div>
+                <div class="col-md-5"><kbd>26130d7be07b73ef5dc92d5a518d85276dcc8cc7</kbd></div> {# TODO #}
             </div>
         </div><!--/.panel-body -->
 
@@ -70,10 +113,42 @@
         </div>
         <div class="torrent-file-list panel-body">
             <ul>
-                {% for file in torrent.getFileList() %}
-                    <li><i class="fa fa-file"></i>{{ file.filename }} <span class="file-size">({{ file.size | format_bytes }})</span></li>
-                {% endfor %}
+                {# User Like list render #}
+                {#
+                    {% for file in torrent.getFileList() %}
+                        <li><i class="fa fa-file"></i>{{ file.filename }} <span class="file-size">({{ file.size | format_bytes }})</span></li>
+                    {% endfor %}
+                #}
+
+                {# User Like Tree Render #}
+                {% macro recursive(tree) %}
+                    {% import _self as self %}
+                    {% for key, value in tree %}
+                        {% if value is iterable %}
+                            <li>
+                                <a href="#" class="folder"><i class="fa fa-folder"></i>{{ key }}</a>
+                                <ul>{{ self.recursive(value) | raw }}</ul>
+                            </li>
+                        {% else %}
+                            <li><i class="fa fa-file"></i>{{ key }} <span class="file-size">({{ value | format_bytes }})</span></li>
+                        {% endif %}
+                    {% endfor %}
+                {% endmacro %}
+
+                {% from _self import recursive %}
+
+                {{ recursive(torrent.getFileList('tree')) }}
             </ul>
         </div>
     </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    $('.torrent-file-list a.folder').click(function(e) {
+        e.preventDefault();
+        $(this).blur().children('i').toggleClass('fa-folder-open fa-folder');
+        $(this).next().stop().slideToggle(250);
+    });
+</script>
 {% endblock %}
