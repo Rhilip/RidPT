@@ -1,28 +1,31 @@
-{% macro input(name, value , label , placeholder ,notice, type , requried) %}
-    <div class="form-group">
-        <label class="control-label" for="{{ name }}">{{ label }}</label>
-        <input autofocus="" class="form-control" id="{{ name }}" name="{{ name }}" placeholder="{{ placeholder }}"
-               title="" type="{{ type|default('text') }}" value="{{ value|e }}"
-               {% if requried %}required="required"{% endif %}>
-        {% if  notice|e %}
-            <small>{{ notice|raw }}</small>{% endif %}
-    </div>
-{% endmacro %}
+{% macro register_form(type) %}
+    {% macro input(name, value , label , placeholder ,notice, type , requried) %}
+        <div class="form-group">
+            <label class="control-label" for="{{ name }}">{{ label }}</label>
+            <input autofocus="" class="form-control" id="{{ name }}" name="{{ name }}" placeholder="{{ placeholder }}"
+                   title="" type="{{ type|default('text') }}" value="{{ value|e }}"
+                   {% if requried %}required="required"{% endif %}>
+            {% if  notice|e %}
+                <small>{{ notice|raw }}</small>{% endif %}
+        </div>
+    {% endmacro %}
 
-{% macro register_form(type, invite_hash) %}
+    {% from _self import input %}
+
     <form method="post">
         <label>
             <input name="type" value="{{ type }}" style="display: none">
         </label>
         <div class="row">
             <div class="form-group col-md-4">
-                {{ _self.input('username', '' , 'Username' , 'Username',"Max Lengh 12 with those character: <code>A-Za-z0-9_</code>") }}
-                {{ _self.input('email','','Email','','We only allow those Email: <code>' ~ config.get('register.email_white_list') ~ '</code>','email') }}
-                {{ _self.input('password','','Password','',null,'password') }}
-                {{ _self.input('password_again','','Retype Password Again','',null,'password') }}
+                {{ input('username', '' , 'Username' , 'Username',"Max Lengh 12 with those character: <code>A-Za-z0-9_</code>") }}
+                {{ input('email','','Email','','We only allow those Email: <code>' ~ config.get('register.email_white_list') ~ '</code>','email') }}
+                {{ input('password','','Password','',null,'password') }}
+                {{ input('password_again','','Retype Password Again','',null,'password') }}
 
                 {% if type == 'invite' %}
-                    {{ _self.input('invite_hash', invite_hash ,'Invite Code','',null,true) }}
+                    {% set invite_hash = request.get('invite_hash') %}
+                    {{ input('invite_hash', invite_hash ,'Invite Code','',null,true) }}
                 {% endif %}
 
                 <div class="form-group">
@@ -39,16 +42,9 @@
             </div>
         </div>
     </form>
-
 {% endmacro %}
 
-{% macro nav(register_type,type) %}
-    <li role="presentation"
-        class="{% if register_type == type %}active{% endif %} {% if config.get('register.by_' ~ type) == false %}disabled{% endif %}">
-        <a href="#{{ type }}" id="{{ type }}-tab" role="tab" data-toggle="tab"
-           aria-controls="{{ type }}" aria-expanded="{% if register_type == type %}true{% endif %}">{{ type|upper }}</a>
-    </li>
-{% endmacro %}
+{% from _self import register_form %}
 
 {% extends "layout/base.html.twig" %}
 
@@ -65,7 +61,7 @@
             </p>
         </div>
     {% else %}
-        {% set register_type = request.get('type') %}
+        {% set register_type = request.get('type') ?? "open" %}
         {% if register_type == 'invite' %}
             {% if config.get('register.by_invite') != true %}
                 <div class="jumbotron">
@@ -73,8 +69,7 @@
                     <p>Invites registration is currently disabled. </p>
                 </div>
             {% else %}
-                {% set invite_hash = request.get('invite_hash') %}
-                {{ _self.register_form('invite',invite_hash) }}
+                {{ register_form('invite') }}
             {% endif %}
         {% elseif  register_type == 'green' %}
             {% if config.get('register.by_green') != true %}
@@ -89,6 +84,7 @@
                 </div>
             {% endif %}
         {% else %}
+            {{ config.get('register.by_open') != true }}
             {# By default We think user use `open` register #}
             {% if config.get('register.by_open') != true %}
                 <div class="jumbotron">
@@ -104,7 +100,7 @@
                     </p>
                 </div>
             {% else %}
-                {{ _self.register_form('open') }}
+                {{ register_form('open') }}
             {% endif %}
         {% endif %}
     {% endif %}

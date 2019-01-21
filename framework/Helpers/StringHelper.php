@@ -9,7 +9,10 @@ namespace Mix\Helpers;
 class StringHelper
 {
 
-    // 获取随机字符
+    /** Get RandomString
+     * @param $length
+     * @return string
+     */
     public static function getRandomString($length)
     {
         $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
