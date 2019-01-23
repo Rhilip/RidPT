@@ -117,7 +117,7 @@ class TorrentUploadForm extends Validator
 
     public function makePrivateTorrent()
     {
-        $this->torrent_dict['announce'] = app()->config->get("base.site_tracker_url") . "/announce";
+        $this->torrent_dict['announce'] = "https://" . app()->config->get("base.site_tracker_url") . "/announce";
 
         // Remove un-need field in private torrents
         unset($this->torrent_dict['announce-list']); // remove multi-tracker capability

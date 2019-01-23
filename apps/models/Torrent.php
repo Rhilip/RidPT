@@ -8,6 +8,8 @@
 
 namespace apps\models;
 
+use SandFoxMe\Bencode\Bencode;
+
 use Mix\Exceptions\NotFoundException;
 
 class Torrent
@@ -39,10 +41,12 @@ class Torrent
 
     public function __construct($id = null)
     {
+        # TODO Add redis hash type cache
         $fetch = app()->pdo->createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
             "id" => $id
         ])->queryOne();
         if ($fetch) {
+            # TODO Only allow admins see deleted torrents
             foreach ($fetch as $key => $value)
                 $this->$key = $value;
         } else {
@@ -140,12 +144,60 @@ class Torrent
         return $this->descr;
     }
 
+    public function getRawDict() {
+        $file = self::TorrentFileLoc($this->id);
+        $dict = Bencode::load($file);
+        return $dict;
+    }
+
+    public function getDownloadDict($encode = true) {
+        $userInfo = app()->session->get('userInfo');  // FIXME add remote download by &passkey=  (Add change our BeforeMiddle) or token ?
+
+        $scheme = "http://";
+        if (filter_var(app()->request->get("https"), FILTER_VALIDATE_BOOLEAN))
+            $scheme = "https://";
+        else if (filter_var(app()->request->get("https"), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))
+            $scheme = "http://";
+        else if (app()->request->isSecure())
+            $scheme = "https://";
+
+        // FIXME bad code
+        $passkey = app()->pdo->createCommand("SELECT `passkey` FROM `users` WHERE id=:id LIMIT 1;")->bindParams([
+            "id" => $userInfo["uid"]
+        ])->queryScalar();
+
+        $announce_suffix = "/announce?passkey=" . $passkey;
+        $dict["announce"] = $scheme . app()->config->get("base.site_tracker_url") . $announce_suffix;
+
+        /** BEP 0012 Multitracker Metadata Extension
+         * See more on : http://www.bittorrent.org/beps/bep_0012.html
+         */
+        if ($muti_tracker = app()->config->get("base.site_muti_tracker_url")) {
+            $dict["announce-list"] = [];
+
+            // Add our main tracker into muti_tracker_list to avoid lost error....
+            $muti_tracker = app()->config->get("base.site_tracker_url") . "," . $muti_tracker;
+
+            $muti_tracker_list = explode(",", $muti_tracker);
+            foreach (array_unique($muti_tracker_list) as $tracker) {  // use array_unique to remove dupe tracker
+                $dict["announce-list"][] = [$scheme . $tracker . $announce_suffix];
+            }
+        }
+
+        return $encode ? Bencode::encode($dict) : $dict;
+    }
+
     /**
+     * @param bool $raw
      * @return mixed
      */
-    public function getInfoHash()
+    public function getInfoHash($raw=false)
     {
-        return $this->info_hash;
+        if ($raw) {
+            return $this->info_hash;
+        } else {
+            return bin2hex($this->info_hash);
+        }
     }
 
     /**
@@ -188,7 +240,15 @@ class Torrent
      *    ["filename" => "f1/f3.text" , "size" => 2234],
      * ]
      *
-     * elseif $type is "tree" , the return array is like this by using the private static function getFileTree($array, $delimiter = '/')
+     * elseif $type is "tree" , the return array is like this when it's `single` torrent
+     *
+     * [
+     *    "f1.text" => 1234
+     * ]
+     *
+     * And will convert to `tree` like this when it's `multi` torrent by using the
+     * private static function getFileTree($array, $delimiter = '/')
+     *
      * [
      *    "f1" => [
      *        "f2.text" => 1234,
@@ -196,7 +256,7 @@ class Torrent
      *     ]
      * ]
      *
-     * Each result will be cached since it will never change.
+     * Each result will be cached in redis since it will never change.
      *
      * @param string $type enum("list","tree") The format of fileList
      * @return array|bool|string
@@ -217,21 +277,11 @@ class Torrent
         if ($type == "tree") {
             $tree = app()->redis->get("TORRENT:" . $this->id . ":file_list_tree");
             if ($tree === false) {
-                /**
-                 * Sort $list to this sample by using array_column()
-                 * So that getFileTree() can use this Array()
-                 *
-                 * [
-                 *    "f1/f2.text" => 1234,
-                 *    "f1/f3.text" => 2234
-                 * ]
-                 */
-                $list = array_column($list, 'size', 'filename');
+                $tree = array_column($list, 'size', 'filename');
 
                 // Only when Torrent Type is "multi" , We need to use `getFileTree` to convert file list to tree
                 if ($this->getTorrentType() == self::TORRENT_TYPE_MULTI) {
-                    $tree = self::getFileTree($list);
-                    $tree = [$this->getTorrentName() => $tree];
+                    $tree = [$this->getTorrentName() => self::getFileTree($tree)];
                 }
 
                 app()->redis->set("TORRENT:" . $this->id . ":file_list_tree", $tree);

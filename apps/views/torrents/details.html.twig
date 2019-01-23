@@ -1,3 +1,19 @@
+{% macro recursive(tree) %}
+    {% import _self as self %}
+    {% for key, value in tree %}
+        {% if value is iterable %}
+            <li>
+                <a href="#" class="folder"><i class="fa fa-folder"></i>{{ key }}</a>
+                <ul>{{ self.recursive(value) | raw }}</ul>
+            </li>
+        {% else %}
+            <li><i class="fa fa-file"></i>{{ key }} <span class="file-size">({{ value | format_bytes }})</span></li>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% from _self import recursive %}
+
 {% extends "layout/base.html.twig" %}
 
 {% block title %}{{ torrent.getTitle() }}{% endblock %}
@@ -15,11 +31,6 @@
             display: block; /* First level always visible */
             padding: 0;
             margin: 0;
-        }
-
-        .torrent-file-list ul[data-show] {
-            /* Used to show first level's items based on amount */
-            display: block;
         }
 
         .torrent-file-list li:not(:last-of-type) {
@@ -46,23 +57,24 @@
 {% endblock %}
 
 {% block container %}
+    <h2 class="text-center">{{ torrent.getTitle() }}</h2>
+
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">{{ torrent.getTitle() }}</h3>
+            <h3 class="panel-title">Torrent Information</h3>
         </div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-1">Information:</div>
+                <div class="col-md-1"><b>Subtitle: </b></div>
                 <div class="col-md-11">
                     {% if torrent.getSubtitle() %}{{ torrent.getSubtitle() }}
-                    {% else %}No information.
+                    {% else %}No Subtitle.
                     {% endif %}
                 </div>
-
             </div>
 
             <div class="row">
-                <div class="col-md-1">Date:</div>
+                <div class="col-md-1"><b>Date: </b></div>
                 <div class="col-md-5" data-timestamp="{{ torrent.getAddedAt() }}">{{ torrent.getAddedAt() | date("Y-m-d h:i:s") }}</div>
 
                 <div class="col-md-1">File size:</div>
@@ -70,10 +82,11 @@
             </div>
 
             <div class="row">
-                <div class="col-md-1">Submitter:</div>  {# TODO #}
+                <div class="col-md-1">Uploader: </div>  {# TODO #}
                 <div class="col-md-5">
                     {% if torrent.getUplver() == "yes" %}
-
+                        <i>Anonymous</i>
+                        {# TODO Add priviledge for Admin to see Anonymous uploader #}
                     {% else %}
                         <a class="text-default" href="/user/panel/{{ torrent.getOwnerId() }}" data-toggle="tooltip" title="User">{{ (torrent.getOwner()).getUsername() }}</a></div>
                     {% endif %}
@@ -92,12 +105,15 @@
             </div>
             <div class="row">
                 <div class="col-md-offset-6 col-md-1">Info hash:</div>
-                <div class="col-md-5"><kbd>26130d7be07b73ef5dc92d5a518d85276dcc8cc7</kbd></div> {# TODO #}
+                <div class="col-md-5"><kbd>{{ torrent.getInfoHash() }}</kbd></div> {# TODO #}
             </div>
         </div><!--/.panel-body -->
 
-        <div class="panel-footer clearfix"><a href="/torrents/download?id={{ torrent.getId() }}"><i
-                    class="fa fa-download fa-fw"></i>Download Torrent</a></div>
+        <div class="panel-footer clearfix">
+            <a href="/torrents/download?id={{ torrent.getId() }}"><i class="fa fa-download fa-fw"></i>Download Torrent</a> |
+            <a href="/torrents/favour?id={{ torrent.getId() }}"><i class="fa fa-star fa-fw"></i>Add to Favour</a> | {# TODO add remove from Favour #}
+            <a href="/report?type=torrent&id={{ torrent.getId() }}"><i class="fa fa-bug fa-fw"></i>Report this Torrent</a>
+        </div>
     </div>
     <div class="panel panel-default">
         <div class="panel-body" id="torrent-description">
@@ -121,22 +137,6 @@
                 #}
 
                 {# User Like Tree Render #}
-                {% macro recursive(tree) %}
-                    {% import _self as self %}
-                    {% for key, value in tree %}
-                        {% if value is iterable %}
-                            <li>
-                                <a href="#" class="folder"><i class="fa fa-folder"></i>{{ key }}</a>
-                                <ul>{{ self.recursive(value) | raw }}</ul>
-                            </li>
-                        {% else %}
-                            <li><i class="fa fa-file"></i>{{ key }} <span class="file-size">({{ value | format_bytes }})</span></li>
-                        {% endif %}
-                    {% endfor %}
-                {% endmacro %}
-
-                {% from _self import recursive %}
-
                 {{ recursive(torrent.getFileList('tree')) }}
             </ul>
         </div>
@@ -150,5 +150,6 @@
         $(this).blur().children('i').toggleClass('fa-folder-open fa-folder');
         $(this).next().stop().slideToggle(250);
     });
+    $('.torrent-file-list a.folder:eq(0)').click();
 </script>
 {% endblock %}
