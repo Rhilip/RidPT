@@ -92,7 +92,8 @@ class AuthController extends Controller
                 "ip" => app()->request->getClientIp(), "id" => $self["id"]
             ])->execute();
 
-            return app()->response->redirect('/index');
+            $return_to = app()->session->pop('login_return_to') ?? '/index';
+            return app()->response->redirect($return_to);
         } else {
             return $this->render("auth/login.html.twig");
         }

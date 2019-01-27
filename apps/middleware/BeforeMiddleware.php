@@ -22,6 +22,8 @@ class BeforeMiddleware
         }
 
         if ($isAnonymousUser) {
+            $to = app()->request->server('path_info') . '?' . app()->request->server('query_string');
+            app()->session->set('login_return_to', $to);
             return app()->response->redirect("/auth/login");
         }
 

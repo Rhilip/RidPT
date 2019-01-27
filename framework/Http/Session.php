@@ -121,6 +121,13 @@ class Session extends Component
         return $success ? true : false;
     }
 
+    // 取值后删除
+    public function pop($name) {
+        $value = $this->get($name);
+        $this->delete($name);
+        return $value;
+    }
+
     // 清除session
     public function clear()
     {
