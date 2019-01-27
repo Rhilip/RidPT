@@ -13,6 +13,7 @@
 {% endmacro %}
 
 {% from _self import recursive %}
+{% from 'torrents/helper.html.twig' import get_torrent_uploader %}
 
 {% extends "layout/base.html.twig" %}
 
@@ -83,15 +84,7 @@
 
             <div class="row">
                 <div class="col-md-1">Uploader: </div>  {# TODO #}
-                <div class="col-md-5">
-                    {% if torrent.getUplver() == "yes" %}
-                        <i>Anonymous</i>
-                        {# TODO Add priviledge for Admin to see Anonymous uploader #}
-                    {% else %}
-                        <a class="text-default" href="/user/panel/{{ torrent.getOwnerId() }}" data-toggle="tooltip" title="User">{{ (torrent.getOwner()).getUsername() }}</a></div>
-                    {% endif %}
-
-
+                <div class="col-md-5">{{ get_torrent_uploader(torrent) }}</div>
                 <div class="col-md-1">Seeders:</div>
                 <div class="col-md-5"><span style="color: green;">{{ torrent.getComplete() }}</span></div>
             </div>

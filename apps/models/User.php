@@ -11,7 +11,7 @@ class User implements UserInterface
 
     public function __construct($id = null)
     {
-        // Add cache
+        $this->loadUserContentById($id);
     }
 
 }

@@ -326,8 +326,16 @@ class Torrent
     /**
      * @return mixed
      */
-    public function getCategory()
+    public function getCategoryId()
     {
         return $this->category;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCategory()
+    {
+        return (new Category())->setId($this->category);
     }
 }

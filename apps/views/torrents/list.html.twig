@@ -1,3 +1,5 @@
+{% from 'torrents/helper.html.twig' import get_torrent_uploader %}
+
 {% extends "layout/base.html.twig" %}
 
 {% block title %}Torrents List{% endblock %}
@@ -7,6 +9,7 @@
     <table class="table table-striped table-bordered table-hover">
         <thead>
         <tr>
+            <th class="text-center" style="width: 70px">Category</th>
             <th>Torrent</th>
             <th class="text-center" style="width: 70px">Link</th>
             <th class="text-center" style="width: 100px">Size</th>
@@ -14,21 +17,24 @@
             <th class="text-center" style="width: 50px"><span class="glyphicon glyphicon-arrow-up" title="Seeders"></span></th>
             <th class="text-center" style="width: 50px"><span class="glyphicon glyphicon-arrow-down" title="Leechers"></span></th>
             <th class="text-center" style="width: 50px"><span class="glyphicon glyphicon-ok" title="Completed"></span></th>
+            <th class="text-center" style="width: 70px"><span class="glyphicon glyphicon-user" title="Owner"></span></th>
         </tr>
         </thead>
         <tbody>
         {% for torrent in torrents %}
             <tr>
+                <td class="text-center">{{ (torrent.getCategory()).getName() }}</td>
                 <td>
                     <a href="/torrents/details?id={{ torrent.getId() }}" target="_blank">{{ torrent.getTitle() }}</a>
                 </td>
                 <td class="text-center"><a href="/torrents/download?id={{ torrent.getId() }}"><span
                             class="glyphicon glyphicon-save" aria-hidden="true"></span></a></td>
                 <td class="text-center">{{ torrent.getTorrentSize() | format_bytes }}</td>
-                <td class="text-center ">{{ torrent.getAddedAt() | date("Y-m-d h:i") }}</td>
+                <td class="text-center">{{ torrent.getAddedAt() | date("Y-m-d h:i") }}</td>
                 <td class="text-center">{{ torrent.getComplete() }}</td>
                 <td class="text-center">{{ torrent.getIncomplete() }}</td>
                 <td class="text-center">{{ torrent.getDownloaded() }}</td>
+                <td class="text-center">{{ get_torrent_uploader(torrent) }}</td>
             </tr>
         {% endfor %}
         </tbody>

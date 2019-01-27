@@ -32,12 +32,14 @@ trait UserTrait
                 "id" => $id
             ])->queryOne();
             app()->redis->hMset($this->infoSaveKeyPrefix . $id, $self);
+            app()->redis->expire($this->infoSaveKeyPrefix . $id, 3 * 60);
         }
         $this->importAttributes($self);
     }
 
-    public function loadUserContentByName($name) {
-
+    public function loadUserContentByName($name)
+    {
+        // TODO
     }
 
     /**

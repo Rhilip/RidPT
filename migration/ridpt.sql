@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 18, 2019 at 02:45 PM
+-- Generation Time: Jan 27, 2019 at 06:30 AM
 -- Server version: 5.7.24-log
 -- PHP Version: 7.2.14
 
@@ -188,16 +188,19 @@ CREATE TABLE IF NOT EXISTS `files` (
 DROP TABLE IF EXISTS `invite`;
 CREATE TABLE IF NOT EXISTS `invite` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `inviter_id` int(10) UNSIGNED NOT NULL,
+  `inviter_id` int(11) UNSIGNED NOT NULL,
   `hash` varchar(32) NOT NULL,
   `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expire_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `hash` (`hash`)
+  UNIQUE KEY `hash` (`hash`),
+  KEY `TK_inviter_id` (`inviter_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- RELATIONSHIPS FOR TABLE `invite`:
+--   `inviter_id`
+--       `users` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -319,6 +322,7 @@ TRUNCATE TABLE `site_config`;
 
 INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('authority.pass_tracker_upspeed_check', '60', '2018-11-27 15:18:37'),
+('authority.see_anonymous_uploader', '40', '2019-01-27 05:41:35'),
 ('authority.see_banned_torrent', '40', '2018-11-23 14:01:31'),
 ('authority.see_pending_torrent', '40', '2018-11-23 14:01:31'),
 ('authority.upload_anonymous', '5', '2018-12-13 08:48:00'),
@@ -404,8 +408,8 @@ CREATE TABLE IF NOT EXISTS `site_log` (
 DROP TABLE IF EXISTS `snatched`;
 CREATE TABLE IF NOT EXISTS `snatched` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `torrent_id` int(11) NOT NULL,
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `torrent_id` int(11) UNSIGNED NOT NULL,
   `agent` varchar(60) CHARACTER SET utf8 NOT NULL,
   `port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `true_uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -421,11 +425,16 @@ CREATE TABLE IF NOT EXISTS `snatched` (
   `last_action_at` timestamp NULL DEFAULT NULL,
   `finish_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `one_snatched` (`user_id`,`torrent_id`) USING BTREE
+  UNIQUE KEY `one_snatched` (`user_id`,`torrent_id`) USING BTREE,
+  KEY `TK_torrentid` (`torrent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- RELATIONSHIPS FOR TABLE `snatched`:
+--   `torrent_id`
+--       `torrents` -> `id`
+--   `user_id`
+--       `users` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -446,6 +455,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `downloaded` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of peers that have ever completed downloading.',
   `title` varchar(255) NOT NULL DEFAULT '',
   `subtitle` varchar(255) NOT NULL DEFAULT '',
+  `category` mediumint(5) UNSIGNED NOT NULL,
   `filename` varchar(255) NOT NULL DEFAULT '',
   `torrent_name` varchar(255) NOT NULL DEFAULT '',
   `torrent_type` enum('single','multi') NOT NULL DEFAULT 'multi',
@@ -453,11 +463,17 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `descr` text,
   `uplver` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `info_hash` (`info_hash`)
+  UNIQUE KEY `info_hash` (`info_hash`),
+  KEY `TK_categories` (`category`),
+  KEY `TK_user` (`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- RELATIONSHIPS FOR TABLE `torrents`:
+--   `category`
+--       `torrents_categories` -> `id`
+--   `owner_id`
+--       `users` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -486,6 +502,35 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
 --
 -- RELATIONSHIPS FOR TABLE `torrents_buff`:
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `torrents_categories`
+--
+
+DROP TABLE IF EXISTS `torrents_categories`;
+CREATE TABLE IF NOT EXISTS `torrents_categories` (
+  `id` mediumint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `torrents_categories`:
+--
+
+--
+-- Truncate table before insert `torrents_categories`
+--
+
+TRUNCATE TABLE `torrents_categories`;
+--
+-- Dumping data for table `torrents_categories`
+--
+
+INSERT INTO `torrents_categories` (`id`, `name`) VALUES
+(1, 'Movie');
 
 -- --------------------------------------------------------
 
@@ -559,8 +604,28 @@ ALTER TABLE `files`
   ADD CONSTRAINT `files_torrents_id_fk` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`);
 
 --
+-- Constraints for table `invite`
+--
+ALTER TABLE `invite`
+  ADD CONSTRAINT `TK_inviter_id` FOREIGN KEY (`inviter_id`) REFERENCES `users` (`id`);
+
+--
 -- Constraints for table `ip_bans`
 --
 ALTER TABLE `ip_bans`
   ADD CONSTRAINT `ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+
+--
+-- Constraints for table `snatched`
+--
+ALTER TABLE `snatched`
+  ADD CONSTRAINT `TK_torrentid` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`),
+  ADD CONSTRAINT `TK_userid` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `torrents`
+--
+ALTER TABLE `torrents`
+  ADD CONSTRAINT `TK_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`) ON DELETE NO ACTION,
+  ADD CONSTRAINT `TK_user` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
 COMMIT;
