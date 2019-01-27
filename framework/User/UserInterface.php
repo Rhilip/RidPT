@@ -6,8 +6,7 @@
  * Time: 11:39
  */
 
-namespace apps\models;
-
+namespace Mix\User;
 
 interface UserInterface
 {
@@ -39,8 +38,40 @@ interface UserInterface
     public const ROLE_SYSOP = 90;
     public const ROLE_STAFFLEADER = 100;
 
+    public const ROLE = [
+        self::ROLE_PEASANT => 'PEASANT',
+        self::ROLE_USER => 'USER',
+        self::ROLE_POWER_USER => 'POWER_USER',
+        self::ROLE_ELITE_USER => 'ELITE_USER',
+        self::ROLE_CRAZY_USER => 'CRAZY_USER',
+        self::ROLE_INSANE_USER => 'INSANE_USER',
+        self::ROLE_VETERAN_USER => 'VETERAN_USER',
+        self::ROLE_EXTREME_USER => 'EXTREME_USER',
+        self::ROLE_ULTIMATE_USER => 'ULTIMATE_USER',
+        self::ROLE_MASTER_USER => 'MASTER_USER',
+        self::ROLE_TEMP_VIP => 'TEMP_VIP',
+
+        self::ROLE_VIP => 'VIP',
+        self::ROLE_RETIREE => 'RETIREE',
+
+        self::ROLE_UPLOADER => 'UPLOADER',
+        self::ROLE_HELPER => 'HELPER',
+
+        self::ROLE_FORUM_MODERATOR => 'FORUM_MODERATOR',
+        self::ROLE_MODERATOR => 'MODERATOR',
+        self::ROLE_ADMINISTRATOR => 'ADMINISTRATOR',
+        self::ROLE_SYSOP => 'SYSOP',
+        self::ROLE_STAFFLEADER => 'STAFFLEADER'
+    ];
+
+    // User Status
     public const STATUS_BANNED = 'banned';
     public const STATUS_PENDING = 'pending';
     public const STATUS_PARKED = 'parked';
     public const STATUS_CONFIRMED = 'confirmed';
+
+    public function getId();
+    public function getUserName();
+    public function getEmail();
+    public function getClass();
 }

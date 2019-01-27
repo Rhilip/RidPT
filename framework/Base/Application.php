@@ -18,6 +18,7 @@ namespace Mix\Base;
  * @property \Mix\Config\Config $config
  * @property \Mix\Mailer\Mailer $swiftmailer
  * @property \Mix\Pool\ConnectionPool $connectionPool
+ * @property \Mix\User\User $user
  */
 class Application extends BaseObject
 {

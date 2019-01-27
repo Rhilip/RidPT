@@ -86,10 +86,7 @@ class AuthController extends Controller
                 return $this->render("auth/login.html.twig", ["username" => $username, "error_msg" => $e->getMessage()]);
             }
 
-            app()->session->createSessionId();
-            app()->session->set('user', $self);
-
-            // TODO record user login session
+            app()->user->createUserSessionId($self["id"]);
 
             app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
                 "ip" => app()->request->getClientIp(), "id" => $self["id"]
@@ -104,7 +101,7 @@ class AuthController extends Controller
     public function actionLogout()
     {
         // TODO add CSRF protect
-        app()->session->delete('user');
+        app()->user->deleteUserThisSession();
         return app()->response->redirect('/auth/login');
     }
 

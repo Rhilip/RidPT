@@ -214,6 +214,10 @@ return [
             'from'    => env('MAILER_FROM'),
             'nikename'=> env('MAILER_FROM_NICKNAME'),
         ],
+
+        'user' => [
+            'class' => Mix\User\User::class,
+        ]
     ],
 
     // 类库配置

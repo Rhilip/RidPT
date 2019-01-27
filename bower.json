@@ -9,7 +9,7 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "apps/httpd/public/lib",
+    "apps/public/lib",
     "test",
     "tests"
   ],
