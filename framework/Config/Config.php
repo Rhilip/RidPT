@@ -13,48 +13,38 @@ use Mix\Exceptions\ConfigException;
 
 class Config extends Component
 {
-
-    /** Config key prefix in Cache
-     * @var string
-     */
-    public $cacheField = "CONFIG:site_config";
+    /** @var \swoole_table */
+    private $cacheTable;
+    private $valueField = 'data';
 
     public function __construct(array $config = [])
     {
         parent::__construct($config);
+
+        $this->cacheTable = new \Swoole\Table(2048);
+
+        $this->cacheTable->column($this->valueField, \Swoole\Table::TYPE_STRING, 256);
+        $this->cacheTable->create();
+
         $configs = app()->pdo->createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
         foreach ($configs as $config) {
-            app()->redis->hset($this->cacheField, $config["name"], $config["value"]);
+            $this->cacheTable->set($config["name"], [$this->valueField => $config["value"]]);
         }
-    }
-
-    public function getAll()
-    {
-        return app()->redis->hgetall($this->cacheField);
-    }
-
-    public function getSection($prefix = null)
-    {
-        return array_filter($this->getAll(), function ($k) use ($prefix) {
-            return strpos($k, $prefix) === 0;
-        }, ARRAY_FILTER_USE_KEY);
     }
 
     public function get(string $name)
     {
+        $setting = $this->cacheTable->get($name, $this->valueField);
         // First Check config stored in RedisConnection Cache, If it exist , then just return the cached key
-        $setting = app()->redis->hget($this->cacheField, $name);
-        if (!is_null($setting)) return $setting;
+        if (false === $setting) {
+            // Get config From Database
+            $setting = app()->pdo->createCommand("SELECT `value` from `site_config` WHERE `name` = :name")
+                ->bindParams(["name" => $name])->queryScalar();
+            // In this case (Load config From Database Failed) , A Exception should throw
+            if ($setting === false) throw $this->createNotFoundException($name);
 
-        // Get config From Database
-        $setting = app()->pdo->createCommand("SELECT `value` from `site_config` WHERE `name` = :name")
-            ->bindParams(["name" => $name])->queryScalar();
-
-        // In this case (Load config From Database Failed) , A Exception should throw
-        if ($setting === false) throw $this->createNotFoundException($name);
-
-        // Cache it in RedisConnection and return
-        app()->redis->hset($this->cacheField, $name, $setting);
+            $this->cacheTable->set($name, [$this->valueField => $setting]);
+        }
         return $setting;
     }
 
@@ -68,7 +58,7 @@ class Config extends Component
 
     public function flush($name)
     {
-        app()->redis->hdel($this->cacheField, $name);
+        $this->cacheTable->del($name);
         return $this->get($name);
     }
 
@@ -80,7 +70,7 @@ class Config extends Component
 
     /**
      * @param string $name Name of the setting.
-     * @return \RuntimeException
+     * @return ConfigException
      */
     protected function createNotFoundException($name)
     {
