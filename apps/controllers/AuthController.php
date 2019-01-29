@@ -25,8 +25,9 @@ class AuthController extends Controller
             $user->importAttributes(app()->request->post());
             $error = $user->validate();
             if (count($error) > 0) {
-                return $this->render("auth/register_fail.html.twig", [
-                    "msg" => $error->get(0)
+                return $this->render("errors/action_fail.html.twig", [
+                    'title' => 'Register Failed',
+                    'msg' => $error->get(0)
                 ]);
             } else {
                 $user->flush();  // Save this user in our database and do clean work~
