@@ -42,7 +42,7 @@
                     <label class="control-label" for="descr">Description</label>
                     <textarea class="form-control" id="descr" name="descr" required="required" rows="10"></textarea>
                 </div>
-                {% if user["class"] > config.get("authority.upload_anonymous") %}
+                {% if curuser.getClass() > config.get("authority.upload_anonymous") %}
                     <div class="form-group">
                         <label>
                             <input type="checkbox" name="uplver" value="yes"> Upload Anonymous

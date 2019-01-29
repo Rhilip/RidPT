@@ -53,18 +53,18 @@
                         <input type="text" class="form-control" placeholder="Search..." name="key">
                     </form>
                 </li>
-                {% if user.isAnonymous() %}
+                {% if curuser.isAnonymous() %}
                     <li><a href="/auth/login">Login</a></li>
                     <li><a href="/auth/register">Register</a></li>
                 {% else %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">{{ user.getUsername() }}<span class="caret"></span></a>
+                           aria-expanded="false">{{ curuser.getUsername() }}<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="/user">User Info Panel</a></li>
                             <li><a href="/user/setting">User Setting</a></li>
                             <li role="separator" class="divider"></li>
-                            {% if user.getClass() > constant('ROLE_FORUM_MODERATOR', user) %}
+                            {% if curuser.getClass() > constant('ROLE_FORUM_MODERATOR', curuser) %}
                                 <li><a href="/admin">Admin Panel</a></li>
                                 <li role="separator" class="divider"></li>
                             {% endif %}

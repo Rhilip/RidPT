@@ -38,7 +38,7 @@ class View
 
         $this->twig->addGlobal("config", app()->config);
         $this->twig->addGlobal("request", app()->request);
-        $this->twig->addGlobal('user', app()->user);
+        $this->twig->addGlobal('curuser', app()->user);
     }
 
     public function render($__template__, $__data__)

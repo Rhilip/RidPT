@@ -1,5 +1,5 @@
 {% macro get_torrent_uploader(torrent) %}
-    {% if torrent.getUplver() == "yes" and user.getClass() < config.get('authority.see_anonymous_uploader') %}
+    {% if torrent.getUplver() == "yes" and curuser.getClass() < config.get('authority.see_anonymous_uploader') %}
         <i>Anonymous</i>
     {% else %}
         <a class="text-default" href="/user/panel?id={{ torrent.getOwnerId() }}" data-toggle="tooltip" title="User">

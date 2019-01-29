@@ -8,6 +8,7 @@
 
 namespace apps\controllers;
 
+use apps\models\User;
 use Mix\Http\Controller;
 
 class UserController extends Controller
@@ -20,7 +21,13 @@ class UserController extends Controller
 
     public function actionPanel()
     {
-
+        $uid = app()->request->get('id');
+        if ($uid != app()->user->getId()) {
+            $user = new User($uid);
+        } else {
+            $user = app()->user;
+        }
+        return $this->render('user/panel.html.twig',['']);
     }
 
     public function actionSetting()
