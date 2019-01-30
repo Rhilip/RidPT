@@ -87,7 +87,11 @@ class AuthController extends Controller
                 return $this->render("auth/login.html.twig", ["username" => $username, "error_msg" => $e->getMessage()]);
             }
 
-            app()->user->createUserSessionId($self["id"]);
+            $success = app()->user->createUserSessionId($self["id"]);
+
+            if (!$success) {
+                return $this->render('errors/action_fail.html.twig',['title'=> 'Login Failed','msg' => 'Reach the limit of Max User Session.']);
+            }
 
             app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
                 "ip" => app()->request->getClientIp(), "id" => $self["id"]

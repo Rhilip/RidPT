@@ -65,8 +65,15 @@ class User extends Component implements UserInterface
     public function createUserSessionId($userId)
     {
         $this->_userSessionId = StringHelper::getRandomString($this->_userIdLength);
-        app()->redis->zAdd($this->sessionSaveKey, $userId, $this->_userSessionId);
-        app()->cookie->set($this->cookieName, $this->_userSessionId);
+
+        $exist_session_count = app()->redis->zCount($this->sessionSaveKey, $userId, $userId);
+        if ($exist_session_count < app()->config->get('base.max_per_user_session')) {
+            app()->redis->zAdd($this->sessionSaveKey, $userId, $this->_userSessionId);
+            app()->cookie->set($this->cookieName, $this->_userSessionId);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function deleteUserThisSession()

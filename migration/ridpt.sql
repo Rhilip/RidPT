@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 30, 2019 at 12:13 PM
+-- Generation Time: Jan 30, 2019 at 01:44 PM
 -- Server version: 5.7.24-log
 -- PHP Version: 7.2.14
 
@@ -328,6 +328,7 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('authority.upload_anonymous', '5', '2018-12-13 08:48:00'),
 ('base.enable_register_system', '1', '2018-11-28 16:05:12'),
 ('base.enable_tracker_system', '1', '2018-11-22 14:30:50'),
+('base.max_per_user_session', '10', '2019-01-30 13:41:45'),
 ('base.max_user', '5000', '2018-11-28 16:00:15'),
 ('base.site_author', 'Rhilip', '2019-01-18 14:38:20'),
 ('base.site_description', 'A Private Tracker Site', '2018-12-13 01:57:18'),
