@@ -1,0 +1,52 @@
+{#
+  Parameters:
+    * currentPage (int) : the current page you are in
+    * paginationPath (string) : the route name to use for links
+    * lastPage (int) : represents the total number of existing pages
+#}
+
+{% spaceless %}
+    {% if lastPage > 1 %}
+        {% set extremePagesLimit = 3 %} {# the number of first and last pages to be displayed #}
+        {% set nearbyPagesLimit = 2 %} {# the number of pages that are displayed around the active page #}
+        {% if paginationPath is not defined %}{% set paginationPath = app.request.attributes.get('_route') %}{% endif %} {# FIXME To get  #}
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if currentPage > 0 %}
+                    <li><a href="{{ paginationPath }}&offset={{ currentPage-1 }}">&larr;</a></li>
+
+                    {% for i in range(0, extremePagesLimit,1) if ( i < currentPage - nearbyPagesLimit ) %}
+                        <li><a href="{{ paginationPath }}&offset={{ i }}">{{ i }}</a></li>
+                    {% endfor %}
+
+                    {% if extremePagesLimit < currentPage - nearbyPagesLimit %}
+                        <li class="disabled"><a href="#">...</a></li>
+                    {% endif %}
+
+                    {% for i in range(currentPage-nearbyPagesLimit, currentPage-1,1) if ( i >= 0 ) %}
+                        <li><a href="{{ paginationPath }}&offset={{ i }}">{{ i }}</a></li>
+                    {% endfor %}
+                {% endif %}
+
+                <li class="active"><a href="#">{{ currentPage }}</a></li>
+
+                {% if currentPage < lastPage -1 %}
+                    {% for i in range(currentPage+1, currentPage + nearbyPagesLimit,1) if ( i < lastPage ) %}
+                        <li><a href="{{ paginationPath }}&offset={{ i }}">{{ i }}</a></li>
+                    {% endfor %}
+
+                    {% if  (lastPage - extremePagesLimit) > (currentPage + nearbyPagesLimit) %}
+                        <li class="disabled"><a href="#">...</a></li>
+                    {% endif %}
+
+                    {% for i in range(lastPage - extremePagesLimit+1, lastPage -1,1) if ( i > currentPage + nearbyPagesLimit ) %}
+                        <li><a href="{{ paginationPath }}&offset={{ i }}">{{ i }}</a></li>
+                    {% endfor %}
+
+                    <li><a href="{{ paginationPath }}&offset={{ currentPage+1 }}">&rarr;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% endspaceless %}
