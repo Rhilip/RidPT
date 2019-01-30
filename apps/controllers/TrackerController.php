@@ -690,7 +690,7 @@ class TrackerController
                 $trueDownloaded = max(0, $queries['downloaded']);
 
                 app()->pdo->createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, 
-                        `agent`=:agent, `seeder` = :seeder, {$ipField}
+                        `agent`=:agent, `seeder` = :seeder, {$ipField} , 
                         `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
                         `corrupt` = :corrupt , `key` = :key ;
                         ")->bindParams([
