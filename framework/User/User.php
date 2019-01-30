@@ -9,33 +9,25 @@
 namespace Mix\User;
 
 use Mix\Base\Component;
-use Mix\Helpers\StringHelper;
+
 
 class User extends Component implements UserInterface
 {
     use UserTrait;
 
-    public $sessionSaveKey = 'USER_SESSION';
-
     // Cookie
+    public $sessionSaveKey = 'SESSION:user_set';
     public $cookieName = 'rid';
-    public $cookieExpires = 0x7fffffff;
-    public $cookiePath = '/';
-    public $cookieDomain = '';
-    public $cookieSecure = false;
-    public $cookieHttpOnly = false;
 
     // Key of User Session
-    protected $_userKey;
     protected $_userSessionId;
-    protected $_userIdLength = 26;
 
     private $anonymous = false;
 
     public function onRequestBefore()
     {
         parent::onRequestBefore();
-        $this->loadUserFromCookies();
+        $this->loadUser();
     }
 
     public function onRequestAfter()
@@ -47,6 +39,11 @@ class User extends Component implements UserInterface
     public function isAnonymous()
     {
         return $this->anonymous;
+    }
+
+    public function loadUser() {
+        // TODO Load User From Passkey in some route , for example '/rss'
+        return $this->loadUserFromCookies();
     }
 
     public function loadUserFromCookies()
@@ -62,31 +59,10 @@ class User extends Component implements UserInterface
         }
     }
 
-    public function createUserSessionId($userId)
-    {
-        $this->_userSessionId = StringHelper::getRandomString($this->_userIdLength);
-
-        $exist_session_count = app()->redis->zCount($this->sessionSaveKey, $userId, $userId);
-        if ($exist_session_count < app()->config->get('base.max_per_user_session')) {
-            app()->redis->zAdd($this->sessionSaveKey, $userId, $this->_userSessionId);
-            app()->cookie->set($this->cookieName, $this->_userSessionId);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public function deleteUserThisSession()
     {
         $success = app()->redis->zRem($this->sessionSaveKey, $this->_userSessionId);
         app()->cookie->delete($this->cookieName);
-        return $success ? true : false;
-    }
-
-    // 删除
-    public function delete($name)
-    {
-        $success = app()->redis->zRem($this->sessionSaveKey, $name);
         return $success ? true : false;
     }
 

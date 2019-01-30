@@ -9,10 +9,10 @@
 namespace apps\controllers;
 
 use apps\models\User;
+use apps\models\form\UserLoginForm;
 use apps\models\form\UserRegisterForm;
 
 use Mix\Http\Controller;
-use RobThree\Auth\TwoFactorAuth;
 
 
 class AuthController extends Controller
@@ -59,46 +59,22 @@ class AuthController extends Controller
     public function actionLogin()
     {
         if (app()->request->isPost()) {
-            $username = app()->request->post("username");
-            $self = app()->pdo->createCommand("SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
-                "uname" => $username, "email" => $username,
-            ])->queryOne();
+            $login = new UserLoginForm();
+            $login->importAttributes(app()->request->post());
+            $error = $login->validate();
 
-            try {
-                // User is not exist
-                if (!$self) throw new \Exception("Invalid username/password");
-
-                // User's password is not correct
-                if (!password_verify(app()->request->post("password"), $self["password"]))
-                    throw new \Exception("Invalid username/password");
-
-                // User enable 2FA but it's code is wrong
-                if ($self["opt"]) {
-                    $tfa = new TwoFactorAuth(app()->config->get("base.site_name"));
-                    if ($tfa->verifyCode($self["opt"], app()->request->post("opt")) == false)
-                        throw new \Exception("2FA Validation failed");
+            if (count($error) > 0) {
+                return $this->render("auth/login.html.twig", ["username" => $login->username, "error_msg" => $error->get(0)]);
+            } else {
+                $success = $login->createUserSession();
+                if ($success) {
+                    $login->updateUserLoginInfo();
+                    $return_to = app()->session->pop('login_return_to') ?? '/index';
+                    return app()->response->redirect($return_to);
+                } else {
+                    return $this->render('errors/action_fail.html.twig',['title'=> 'Login Failed','msg' => 'Reach the limit of Max User Session.']);
                 }
-
-                // User 's status is banned or pending~
-                if (in_array($self["status"], ["banned", "pending"])) {
-                    throw new \Exception("User account is not confirmed.");
-                }
-            } catch (\Exception $e) {
-                return $this->render("auth/login.html.twig", ["username" => $username, "error_msg" => $e->getMessage()]);
             }
-
-            $success = app()->user->createUserSessionId($self["id"]);
-
-            if (!$success) {
-                return $this->render('errors/action_fail.html.twig',['title'=> 'Login Failed','msg' => 'Reach the limit of Max User Session.']);
-            }
-
-            app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
-                "ip" => app()->request->getClientIp(), "id" => $self["id"]
-            ])->execute();
-
-            $return_to = app()->session->pop('login_return_to') ?? '/index';
-            return app()->response->redirect($return_to);
         } else {
             return $this->render("auth/login.html.twig");
         }
@@ -109,10 +85,5 @@ class AuthController extends Controller
         // TODO add CSRF protect
         app()->user->deleteUserThisSession();
         return app()->response->redirect('/auth/login');
-    }
-
-    private function isMaxLoginIpReached()
-    {
-
     }
 }
