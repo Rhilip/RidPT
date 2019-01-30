@@ -22,12 +22,12 @@ class UserController extends Controller
     public function actionPanel()
     {
         $uid = app()->request->get('id');
-        if ($uid != app()->user->getId()) {
+        if ($uid && $uid != app()->user->getId()) {
             $user = new User($uid);
         } else {
             $user = app()->user;
         }
-        return $this->render('user/panel.html.twig',['']);
+        return $this->render('user/panel.html.twig',['user' => $user]);
     }
 
     public function actionSetting()

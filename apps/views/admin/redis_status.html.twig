@@ -1,0 +1,80 @@
+{% extends "admin/layout.html.twig" %}
+
+{% block panel %}
+    <h1>Redis Server Status</h1>
+
+    <p>Used Memory: {{ info["used_memory_human"] }}, peak: {{ info["used_memory_peak_human"] }}</p>
+
+    <p><strong>{{ dbsize }} Keys available.</strong></p>
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul class="nav nav-tabs" role="tablist" id="serverstatus-tabs">
+                <li class="active"><a href="#overall">Overall Status</a></li>
+                <li><a href="#commands">Command Statistics</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="overall">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for key,value in info %}
+                            {% if "cmdstat_" not in key %}
+                                <tr>
+                                    <td><code>{{ key }}</code></td>
+                                    <td><code>{{ value }}</code></td>
+                                </tr>
+                            {% endif%}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="commands">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th class="text-right">Calls</th>
+                            <th class="text-right">Call Share</th>
+                            <th class="text-right">Duration (Microseconds)</th>
+                            <th class="text-right">Duration/Call</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for key,value in cmdstat %}
+                            <tr>
+                                <td><code>{{ key|replace({"cmdstat_": ""}) }}</code></td>
+                                <td class="text-right">{{ value["calls"] }}</td>
+                                <td class="text-right">{{ "%.2f"|format(value["calls"] / info["total_commands_processed"] * 100) }} %</td>
+                                <td class="text-right">{{ value["usec"] }}</td>
+                                <td class="text-right">{{ "%.1f"|format(value["usec_per_call"]) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+<script>
+    $('ul#serverstatus-tabs a').click(function (e) {
+        e.preventDefault();
+        $(this).tab('show')
+    })
+</script>
+
+
+{% endblock %}

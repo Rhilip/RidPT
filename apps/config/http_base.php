@@ -135,7 +135,7 @@ return [
             // 保存的Key前缀
             'saveKeyPrefix'  => 'SESSION:',
             // 生存时间
-            'maxLifetime'    => 172800,
+            'maxLifetime'    => 7200,
             // session键名
             'name'           => 'session_id',
             // 过期时间

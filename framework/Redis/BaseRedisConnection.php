@@ -118,7 +118,7 @@ use Mix\Base\Component;
  * @method bool flushDB()
  * @method bool flushAll()
  * @method array sort($key, $option = null)
- * @method string info($option = null)
+ * @method array|string info($option = null)
  * @method bool resetStat()
  * @method int ttl($key)
  * @method int pttl($key)
@@ -266,4 +266,23 @@ class BaseRedisConnection extends Component
         return call_user_func_array([$this->_redis, $name], $arguments);
     }
 
+    // 扩展方法
+    public function typeof($key): ?string
+    {
+        switch ($this->type($key)) {
+            case \Redis::REDIS_STRING :
+                return "String";
+            case \Redis::REDIS_SET :
+                return "Set";
+            case \Redis::REDIS_LIST :
+                return "List";
+            case \Redis::REDIS_ZSET :
+                return "Sorted Set";
+            case \Redis::REDIS_HASH :
+                return "Hash";
+            case \Redis::REDIS_NOT_FOUND :
+            default:
+                return "Not Found";
+        }
+    }
 }
