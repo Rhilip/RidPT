@@ -846,7 +846,7 @@ class TrackerController
         $buff = app()->redis->get("user_" . $userid . "_torrent_" . $torrentid . "_buff");
         if ($buff === false) {
             $buff = app()->pdo->createCommand("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrents_buff` 
-            WHERE start_at < NOW() AND NOW() < expired_at AND (torrentid = :tid OR torrentid = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
+            WHERE start_at < NOW() AND NOW() < expired_at AND (torrent_id = :tid OR torrent_id = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 "tid" => $torrentid,
                 "bid" => $userid
             ])->queryOne();

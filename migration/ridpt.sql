@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 27, 2019 at 06:30 AM
+-- Generation Time: Jan 30, 2019 at 12:13 PM
 -- Server version: 5.7.24-log
 -- PHP Version: 7.2.14
 
@@ -485,18 +485,18 @@ CREATE TABLE IF NOT EXISTS `torrents` (
 DROP TABLE IF EXISTS `torrents_buff`;
 CREATE TABLE IF NOT EXISTS `torrents_buff` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `torrentid` mediumint(8) UNSIGNED NOT NULL COMMENT '`0` means all torrent',
+  `torrent_id` int(11) UNSIGNED NOT NULL COMMENT '`0` means all torrent',
   `operator_id` mediumint(8) UNSIGNED NOT NULL COMMENT '`0` means system',
   `beneficiary_id` mediumint(8) UNSIGNED NOT NULL COMMENT '`0` means all users',
   `buff_type` enum('random','large','mod','magic') NOT NULL DEFAULT 'magic',
   `ratio_type` enum('Normal','Free','2X','2X Free','50%','2X 50%','30%','Other') NOT NULL DEFAULT 'Normal',
-  `upload_ratio` double UNSIGNED NOT NULL DEFAULT '1',
-  `download_ratio` double UNSIGNED NOT NULL DEFAULT '1',
+  `upload_ratio` decimal(4,2) NOT NULL DEFAULT '1.00',
+  `download_ratio` decimal(4,2) NOT NULL DEFAULT '1.00',
   `add_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `start_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expired_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
-  KEY `t_buff_index` (`beneficiary_id`,`torrentid`,`start_at`,`expired_at`)
+  KEY `t_buff_index` (`beneficiary_id`,`torrent_id`,`start_at`,`expired_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -565,6 +565,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_login_ip` varbinary(16) DEFAULT NULL,
   `last_access_ip` varbinary(16) DEFAULT NULL,
   `last_tracker_ip` varbinary(16) DEFAULT NULL,
+  `avatar` varchar(255) NOT NULL DEFAULT '',
   `bonus_seeding` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `bonus_invite` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `bonus_other` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
