@@ -70,7 +70,50 @@ So that tracker can record the peer's ip address.
 
 ## Basie Environment in `.env`
 
-TODO
+### Section `APP`
+
+> Document: None
+
+| Key | Type | Note |
+|:--|:--:|:--|
+| ~~APP_ENV~~ | ENUM('local','staging') | Not use now. |
+| APP_DEBUG | Bool | Turn on or off the debug model. |
+| ~~APP_SECRET~~ | String | Not use now. |
+
+### Section `Database`
+
+> Document: [PHP: PDO::__construct - Manual](https://secure.php.net/manual/en/pdo.construct.php)
+
+| Key | Type | Note |
+|:--|:--:|:--|
+| DATABASE_DSN | DSN | The Data Source Name, or DSN, contains the information required to connect to the database. |
+| DATABASE_USERNAME | String | The user name for the DSN string. |
+| DATABASE_PASSWORD | String | The password for the DSN string. |
+
+### Section `Redis`
+
+> Document: [phpredis/phpredis](https://github.com/phpredis/phpredis#connection)
+
+| Key | Type | Note |
+|:--|:--:|:--|
+| REDIS_HOST | String | A host, or the path to a unix domain socket. |
+| REDIS_PORT | Int | Dy default 6379. |
+| REDIS_DATABASE | Int | dbindex, the database number to switch to. |
+| REDIS_PASSWORD | String | The password for the Redis server. |
+
+### Section `Swiftmailer`
+
+> Document: [Documentation – Swift Mailer](https://swiftmailer.symfony.com/docs/introduction.html#basic-usage)
+
+| Key | Type | Note |
+|:--|:--:|:--|
+| MAILER_HOST | String | The mailer host. |
+| MAILER_PORT | Int | The port to connect to. |
+| MAILER_ENCRYPTION | Enum('tls','ssl') | The encryption type. |
+| MAILER_USERNAME | String | The username to authenticate with. |
+| MAILER_PASSWORD | String | The password to authenticate with. |
+| MAILER_FROM | String | The from address of this message. |
+| ~~MAILER_FROM_NICKNAME~~ | String | Not use now. |
 
 ## Copyright
 
