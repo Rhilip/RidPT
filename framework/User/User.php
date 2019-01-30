@@ -56,6 +56,7 @@ class User extends Component implements UserInterface
 
         if ($userId) {
             $this->loadUserContentById($userId);
+            $this->anonymous = false;
         } else {
             $this->anonymous = true;
         }
@@ -71,6 +72,7 @@ class User extends Component implements UserInterface
     public function deleteUserThisSession()
     {
         $success = app()->redis->zRem($this->sessionSaveKey, $this->_userSessionId);
+        app()->cookie->delete($this->cookieName);
         return $success ? true : false;
     }
 
