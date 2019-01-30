@@ -18,7 +18,7 @@
         </label>
         <div class="row">
             <div class="form-group col-md-4">
-                {{ input('username', '' , 'Username' , 'Username',"Max Lengh 12 with those character: <code>A-Za-z0-9_</code>") }}
+                {{ input('username', '' , 'Username' , 'Username',"Max Length 12 with those character: <code>A-Za-z0-9_</code>") }}
                 {{ input('email','','Email','','We only allow those Email: <code>' ~ config.get('register.email_white_list') ~ '</code>','email') }}
                 {{ input('password','','Password','',null,'password') }}
                 {{ input('password_again','','Retype Password Again','',null,'password') }}

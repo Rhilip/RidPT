@@ -29,7 +29,6 @@ class AdminController extends Controller
             default:
                 return $this->render('errors/action_fail.html.twig', ['title' => 'Not Support Action', 'msg' => 'not support']);
         }
-
     }
 
     private function infoRedis()
@@ -52,7 +51,7 @@ class AdminController extends Controller
             $pattern = app()->request->get('pattern') ?? '*';
 
             $keys = app()->redis->keys($pattern);
-            ksort($keys);
+            sort($keys);
             $limited_keys = array_slice($keys, $offset * $perpage, $perpage);
 
             $types = [];

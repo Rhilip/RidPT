@@ -54,12 +54,6 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td>Max. concurrent connections</td>
-                            <td>{{ serverStatus['Connections'] | number_format(0,'.', ',') }}</td>
-                            <td>---</td>
-                            <td>---</td>
-                        </tr>
-                        <tr>
                             <td>Failed Attempts</td>
                             <td class="text-right">{{ serverStatus['Aborted connects'] | number_format(0,'.', ',') }}</td>
                             <td class="text-right">{{ (serverStatus['Aborted connects'] * 3600 / serverStatus['Uptime']) | number_format(2,'.',',') }}</td>
@@ -76,7 +70,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><b>Total</b></td>
+                            <td><b>Max. concurrent connections</b></td>
                             <td class="text-right">{{ serverStatus['Connections'] | number_format(0,'.', ',') }}</td>
                             <td class="text-right">{{ (serverStatus['Connections'] * 3600 / serverStatus['Uptime']) | number_format(2,'.', ',') }}</td>
                             <td class="text-right">{{ 100 | number_format(2,'.',',') }} %</td>

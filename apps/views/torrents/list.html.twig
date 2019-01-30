@@ -30,7 +30,7 @@
                 <td class="text-center"><a href="/torrents/download?id={{ torrent.getId() }}"><span
                             class="glyphicon glyphicon-save" aria-hidden="true"></span></a></td>
                 <td class="text-center">{{ torrent.getTorrentSize() | format_bytes }}</td>
-                <td class="text-center">{{ torrent.getAddedAt() | date("Y-m-d h:i") }}</td>
+                <td class="text-center">{{ torrent.getAddedAt() | date("Y-m-d H:i") }}</td>
                 <td class="text-center">{{ torrent.getComplete() }}</td>
                 <td class="text-center">{{ torrent.getIncomplete() }}</td>
                 <td class="text-center">{{ torrent.getDownloaded() }}</td>

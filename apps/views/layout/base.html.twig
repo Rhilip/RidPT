@@ -64,7 +64,7 @@
                             <li><a href="/user">User Info Panel</a></li>
                             <li><a href="/user/setting">User Setting</a></li>
                             <li role="separator" class="divider"></li>
-                            {% if curuser.getClass() > constant('ROLE_FORUM_MODERATOR', curuser) %}
+                            {% if curuser.getClass(true) > constant('ROLE_FORUM_MODERATOR', curuser) %}
                                 <li><a href="/admin">Admin Panel</a></li>
                                 <li role="separator" class="divider"></li>
                             {% endif %}

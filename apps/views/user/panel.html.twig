@@ -1,0 +1,69 @@
+{% extends "layout/base.html.twig" %}
+
+{% block container %}
+    <div class="row">
+
+        <div class="col-md-3">
+            <div class="thumbnail">
+                <img src="{{ user.getAvatar() }}" width="250" height="250" alt="" class="img-responsive img-rounded">
+                <div class="caption">
+                    <h3>{{ user.getUsername() }}</h3>
+                    <h5 class="label label-primary">{{ user.getClass() }}</h5>
+                    <h5>{{ user.getEmail() }}</h5>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Information</h3>
+                </div>
+                <div class="panel-body">
+                    <dl class="dl-horizontal text-overflow">
+                        <dt>Registration Time</dt><dd>{{ user.getCreateAt() | date('Y-m-d H:i:s') }} ({{ user.getCreateAt() | time_diff }})</dd>
+                        <dt>Last Login Time</dt><dd>{{ user.getLastLoginAt() | date('Y-m-d H:i:s') }} ({{ user.getLastLoginAt() | time_diff }})</dd>
+                        <dt>Last Access Time</dt><dd>{{ user.getLastAccessAt() | date('Y-m-d H:i:s') }} ({{ user.getLastAccessAt() | time_diff }})</dd>
+                        {% if (user.getLastUploadAt() > 0 or user.getLastDownloadAt() > 0 or user.getLastConnectAt() > 0) %}
+                        <dt>Last Tracker Time</dt><dd>
+                            {% if user.getLastUploadAt() > 0 %}Upload: {{ user.getLastUploadAt() | date('Y-m-d H:i:s') }} ({{ user.getLastUploadAt() | time_diff }}) <br>{% endif %}
+                            {% if user.getLastDownloadAt() > 0 %}Download: {{ user.getLastDownloadAt() | date('Y-m-d H:i:s') }} ({{ user.getLastDownloadAt() | time_diff }}) <br>{% endif %}
+                            {% if user.getLastConnectAt() > 0 %}Connect: {{ user.getLastConnectAt() | date('Y-m-d H:i:s') }} ({{ user.getLastConnectAt() | time_diff }}){% endif %}
+                        </dd>
+                        {% endif %}
+                    </dl>
+                    <hr>
+                    <dl class="dl-horizontal text-overflow">
+                        {% if user.getRegisterIp() %}<dt>Registration Ip</dt><dd>{{ user.getRegisterIp() }}</dd>{% endif %}
+                        {% if user.getLastLoginIp() %}<dt>Last Login Ip</dt><dd>{{ user.getLastLoginIp() }}</dd>{% endif %}
+                        {% if user.getLastAccessIp() %}<dt>Last Access Ip</dt><dd>{{ user.getLastAccessIp() }}</dd>{% endif %}
+                        {% if user.getLastTrackerIp() %}<dt>Last Tracker Ip</dt><dd>{{ user.getLastTrackerIp() }}</dd>{% endif %}
+                    </dl>
+                    <hr>
+                    <dl class="dl-horizontal text-overflow">
+                        <dt>BT Transport</dt>
+                        <dd>
+                            Ratio : {{ user.getRatio() | round(2) }} ( uploaded : {{ user.getUploaded() | format_bytes }} and downloaded : {{ user.getDownloaded() | format_bytes }}) <br>
+                            Real Ratio : {{ user.getRatio(true) | round(2) }} ( uploaded : {{ user.getUploaded(true) | format_bytes }} and downloaded : {{ user.getDownloaded(true) | format_bytes }}) <br>
+                        </dd>
+                        <dt>BT Time</dt>
+                        <dd>Ratio : {{ (user.getTimeRatio()) | round(2) }} ( Seeding Time: {{ user.getSeedtime() | date('%d days') }} , Leeching Time: {{ user.getLeechTime() | date('%d days') }})</dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">BT Activities</h3>
+                </div>
+                <div class="panel-body">
+                    TODO
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+{% endblock %}
