@@ -223,13 +223,13 @@ class TrackerController
             throw new TrackerException(131, [":attribute" => "passkey", ":reason" => "The format of passkey isn't correct"]);
 
         // Get userInfo from RedisConnection Cache and then Database
-        $userInfo = app()->redis->get("user_passkey_" . $passkey . "_content");
+        $userInfo = app()->redis->get("TRACKER:user_passkey_" . $passkey . "_content");
         if ($userInfo === false) {
             // If Cache breakdown , We will get User info from Database and then cache it
             // Notice: if this passkey is not find in Database , a null will be cached.
             $userInfo = app()->pdo->createCommand("SELECT `id`,`status`,`passkey`,`downloadpos`,`class`,`uploaded`,`downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1")
                 ->bindParams(["passkey" => $passkey])->queryOne() ?: null;
-            app()->redis->setex("user_passkey_" . $passkey . "_content", 3600, $userInfo);
+            app()->redis->setex("TRACKER:user_passkey_" . $passkey . "_content", 3600, $userInfo);
         }
 
         /**
@@ -267,11 +267,11 @@ class TrackerController
     {
         $torrent_details = [];
         foreach ($info_hash_array as $item) {
-            $metadata = app()->redis->get("torrent_hash_" . $item . "_scrape_content");
+            $metadata = app()->redis->get("TRACKER:torrent_hash_" . $item . "_scrape_content");
             if ($metadata === false) {
                 $metadata = app()->pdo->createCommand("SELECT incomplete, complete , downloaded FROM torrents WHERE info_hash = :info LIMIT 1")
                     ->bindParams(["info" => $item])->queryOne() ?: null;
-                app()->redis->setex("torrent_hash_" . $item . "_scrape_content", 350, $metadata);
+                app()->redis->setex("TRACKER:torrent_hash_" . $item . "_scrape_content", 350, $metadata);
             }
             if (!is_null($metadata)) $torrent_details[$item] = $metadata;  // Append it to tmp array only it exist.
         }
@@ -286,16 +286,16 @@ class TrackerController
     private function checkUserAgent(bool $onlyCheckUA = false)
     {
         // Get Client White-And-Exception List From Database and storage it in RedisConnection Cache
-        $allowedFamily = app()->redis->get("allowed_client_list");
+        $allowedFamily = app()->redis->get("TRACKER:allowed_client_list");
         if ($allowedFamily === false) {
             $allowedFamily = app()->pdo->createCommand("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();
-            app()->redis->set("allowed_client_list", $allowedFamily);
+            app()->redis->set("TRACKER:allowed_client_list", $allowedFamily);
         }
 
-        $allowedFamilyException = app()->redis->get("allowed_client_exception_list");
+        $allowedFamilyException = app()->redis->get("TRACKER:allowed_client_exception_list");
         if ($allowedFamilyException === false) {
             $allowedFamilyException = app()->pdo->createCommand("SELECT * FROM `agent_allowed_exception`")->queryAll();
-            app()->redis->set("allowed_client_exception_list", $allowedFamilyException);
+            app()->redis->set("TRACKER:allowed_client_exception_list", $allowedFamilyException);
         }
 
         // Start Check Client by `User-Agent` and `peer_id`
@@ -567,11 +567,11 @@ class TrackerController
     {
         $info_hash = $queries["info_hash"];
 
-        $torrentInfo = app()->redis->get('torrent_hash_' . $info_hash . '_content');
+        $torrentInfo = app()->redis->get('TRACKER:torrent_hash_' . $info_hash . '_content');
         if ($torrentInfo === false) {
             $torrentInfo = app()->pdo->createCommand("SELECT id , info_hash , owner_id , status , incomplete , complete , added_at FROM torrents WHERE info_hash = :info LIMIT 1")
                 ->bindParams(["info" => $info_hash])->queryOne() ?: null;
-            app()->redis->setex('torrent_hash_' . $info_hash . '_content', 350, $torrentInfo);
+            app()->redis->setex('TRACKER:torrent_hash_' . $info_hash . '_content', 350, $torrentInfo);
         }
         if (is_null($torrentInfo)) throw new TrackerException(150);
 
@@ -824,7 +824,7 @@ class TrackerController
                 "uid" => $userInfo["id"],
             ])->execute();
 
-            app()->redis->del("user_passkey_" . $userInfo["passkey"] . "_content");
+            app()->redis->del("TRACKER:user_passkey_" . $userInfo["passkey"] . "_content");
             throw new TrackerException(170);
         }
 
@@ -843,14 +843,14 @@ class TrackerController
 
     private function getTorrentBuff($userid, $torrentid, $trueUploaded, $trueDownloaded, &$thisUploaded, &$thisDownloaded)
     {
-        $buff = app()->redis->get("user_" . $userid . "_torrent_" . $torrentid . "_buff");
+        $buff = app()->redis->get("TRACKER:user_" . $userid . "_torrent_" . $torrentid . "_buff");
         if ($buff === false) {
             $buff = app()->pdo->createCommand("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrents_buff` 
             WHERE start_at < NOW() AND NOW() < expired_at AND (torrent_id = :tid OR torrent_id = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 "tid" => $torrentid,
                 "bid" => $userid
             ])->queryOne();
-            app()->redis->setex("user_" . $userid . "_torrent_" . $torrentid . "_buff", 350, $buff);
+            app()->redis->setex("TRACKER:user_" . $userid . "_torrent_" . $torrentid . "_buff", 350, $buff);
         }
         $thisUploaded = $trueUploaded * ($buff["up_ratio"] ?: 1);
         $thisDownloaded = $trueDownloaded * ($buff["dl_ratio"] ?: 1);
@@ -944,7 +944,7 @@ class TrackerController
      */
     private function lockAnnounceDuration($queries)
     {
-        $lock_name = "tracker_announce_" . $queries["passkey"] . "_torrent_" . $queries["info_hash"] . "_peer_" . $queries["peer_id"] . "_lock";
+        $lock_name = "TRACKER:tracker_announce_" . $queries["passkey"] . "_torrent_" . $queries["info_hash"] . "_peer_" . $queries["peer_id"] . "_lock";
         $lock = app()->redis->get($lock_name);
         if ($lock === false) {
             app()->redis->setex($lock_name, app()->config->get("tracker.min_interval"), true);
