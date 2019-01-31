@@ -48,7 +48,7 @@ class AdminController extends Controller
             }
             $offset = app()->request->get('offset') ?? null;
             $perpage = app()->request->get('perpage') ?? 50;
-            $pattern = app()->request->get('pattern') ?? '*';
+            $pattern = app()->request->get('pattern') ?? '';
 
             $keys = app()->redis->keys($pattern);
             sort($keys);
@@ -59,13 +59,15 @@ class AdminController extends Controller
                 $types[$key] = app()->redis->typeof($key);
             }
 
+            $dbsize = app()->redis->dbSize();
             return $this->render('admin/redis_keys.html.twig', [
                 'offset' => $offset,
                 'perpage' => $perpage,
                 'pattern' => $pattern,
                 'keys' => $limited_keys,
                 'types' => $types,
-                'num_keys' => count($keys)
+                'num_keys' => count($keys),
+                'dbsize' => $dbsize
             ]);
         } elseif ($panel === 'key') {
             $key = app()->request->get('key');
