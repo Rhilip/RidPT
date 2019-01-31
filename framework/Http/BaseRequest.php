@@ -7,6 +7,8 @@ use Mix\Base\Component;
 use Mix\Utils\HeaderUtils;
 use Mix\Utils\IpUtils;
 
+use DeviceDetector\DeviceDetector;
+
 /**
  * Request组件基类
  * @author 刘健 <coder.liu@qq.com>
@@ -206,6 +208,31 @@ class BaseRequest extends Component
     protected function scheme()
     {
         return $this->server('request_scheme') ?: $this->header('scheme');
+    }
+
+    /**
+     * Return the client Raw User-Agent
+     *
+     * This method can read the client User Agent info form the "User-Agent" header
+     * when set `$detector=true` ,it will return the DeviceDetector object to
+     * help user quick detects devices (desktop, tablet, mobile, tv, cars, console, etc.),
+     * clients (browsers, feed readers, media players, PIMs, ...), operating systems,
+     * brands and models.
+     *
+     * @see https://github.com/matomo-org/device-detector
+     *
+     * @param bool $detector
+     * @return DeviceDetector|string
+     */
+    public function getUserAgent($detector = false)
+    {
+        $userAgent = $this->header('user-agent') ?? '';
+        if ($detector) {
+            $dd = new DeviceDetector($userAgent);
+            $dd->parse();
+            return $dd;
+        }
+        return $userAgent;
     }
 
     /**
