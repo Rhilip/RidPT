@@ -16,11 +16,11 @@ class CaptchaController
     {
         app()->response->setHeader('Content-Type', 'image/png');
         $captcha = new Captcha([
-            'width'      => 100,
+            'width'      => 150,
             'height'     => 40,
             'fontFile'   => app()->basePath . '/fonts/Times New Roman.ttf',
             'fontSize'   => 20,
-            'wordNumber' => 4,
+            'wordNumber' => 6,
             'angleRand'  => [-20, 20],
             'xSpacing'   => 0.82,
             'yRand'      => [5, 15],

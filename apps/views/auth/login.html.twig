@@ -33,11 +33,26 @@
         <div class="row">
             <div class="form-group col-md-4">
                 <div class="form-group">
-                    <label class="control-label" for="username">2FA Code</label>
+                    <label class="control-label" for="opt">2FA Code</label>
                     <input autofocus="" class="form-control" id="opt" name="opt" placeholder="Google Authenticator key" tabindex="3" title="" type="text" value="" maxlength="6">
                     <small>Your Google 2FA code,And Left blank If you don't set.</small>
                 </div>
 
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-4">
+                <div class="form-group">
+                    <label class="control-label" for="captcha">Captcha</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input autofocus="" class="form-control" id="captcha" name="captcha" tabindex="4" title="" type="text" value="" maxlength="6">
+                        </div>
+                        <div class="col-md-6"><img src="/captcha" alt="captcha"></div>
+                    </div>
+                    <small>Not case sensitive.</small>
+                </div>
             </div>
         </div>
 

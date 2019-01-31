@@ -70,6 +70,7 @@ class UserLoginForm extends Validator
         foreach ($rules as $property => $constraints) {
             $metadata->addPropertyConstraints($property, $constraints);
         }
+        $metadata->addConstraint(new Assert\Callback('validateCaptcha'));
         $metadata->addConstraint(new Assert\Callback('loadUserFromPdo'));
         $metadata->addConstraint(new Assert\Callback('isMaxLoginIpReached'));
     }

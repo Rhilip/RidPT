@@ -28,6 +28,8 @@ class Validator extends BaseObject
         self::MIB_BYTES => 'MiB',
     );
 
+    public $captcha;
+
     /**  @var \Symfony\Component\Validator\ConstraintViolationListInterface */
     private $_errors;
 
@@ -80,6 +82,14 @@ class Validator extends BaseObject
         }
 
         return $errors->get(0);
+    }
+
+    public function validateCaptcha(ExecutionContextInterface $context, $payload)
+    {
+        $captchaText = app()->session->get('captchaText');
+        if (strcasecmp($this->captcha, $captchaText) != 0) {
+            $context->buildViolation("CAPTCHA verification failed")->addViolation();
+        }
     }
 
     public function validateFile(ExecutionContextInterface $context, $payload)
@@ -168,7 +178,6 @@ class Validator extends BaseObject
                 ->addViolation();
         }
     }
-
 
     private static function moreDecimalsThan($double, $numberOfDecimals)
     {

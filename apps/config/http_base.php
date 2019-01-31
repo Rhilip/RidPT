@@ -35,6 +35,7 @@ return [
             // 路由规则
             'rules'          => [
                 'GET tracker/{tracker_action}' => ['tracker','index'],
+                'GET captcha' => ['captcha', 'index'],
                 'api/v1/{controller}/{action}' => ['api/{controller}', '{action}', 'middleware' => ['Api']],
                 '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => ['Before']],
             ],
