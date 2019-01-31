@@ -25,6 +25,24 @@ class BeforeMiddleware
             $to = app()->request->server('path_info') . '?' . app()->request->server('query_string');
             app()->session->set('login_return_to', $to);
             return app()->response->redirect("/auth/login");
+        } else {
+            /** Check User Permission to this route
+             *
+             * When user visit - /admin -> Controller : \apps\controllers\AdminController  Action: actionIndex
+             * it will check the dynamic config key `authority.route_admin_index` and compare with curuser class ,
+             * if user don't have this permission to visit this route the http code 403 will throw out.
+             * if this config key is not exist , the default class 1 will be used to compare.
+             *
+             * Example of `Route - Controller - Config Key` Map:
+             * /admin          -> AdminController::actionIndex     ->  authority.route_admin_index
+             * /admin/service  -> AdminController::actionService   ->  authority.route_admin_service
+             */
+            $route = strtolower(str_replace(['apps\\controllers\\', 'Controller'], ['', ''], $controllerName)) .
+                "_" . strtolower(str_replace('action', '', $action));
+            $required_class = app()->config->get('authority.route_' . $route, false) ?: 1;
+            if (app()->user->getClass(true) < $required_class) {
+                return app()->response->setStatusCode(403);
+            }
         }
 
         // Update user status

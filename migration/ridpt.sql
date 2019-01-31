@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 31, 2019 at 03:21 AM
+-- Generation Time: Jan 31, 2019 at 11:42 AM
 -- Server version: 5.7.24-log
 -- PHP Version: 7.2.14
 
@@ -322,6 +322,8 @@ TRUNCATE TABLE `site_config`;
 
 INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('authority.pass_tracker_upspeed_check', '60', '2018-11-27 15:18:37'),
+('authority.route_admin_index', '60', '2019-01-31 11:42:29'),
+('authority.route_admin_service', '90', '2019-01-31 11:42:29'),
 ('authority.see_anonymous_uploader', '40', '2019-01-27 05:41:35'),
 ('authority.see_banned_torrent', '40', '2018-11-23 14:01:31'),
 ('authority.see_pending_torrent', '40', '2018-11-23 14:01:31'),
