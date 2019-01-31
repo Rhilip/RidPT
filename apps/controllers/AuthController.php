@@ -84,6 +84,7 @@ class AuthController extends Controller
     {
         // TODO add CSRF protect
         app()->user->deleteUserThisSession();
+        // TODO update this session status (set it expired) in database
         return app()->response->redirect('/auth/login');
     }
 }

@@ -23,9 +23,9 @@ A Private Torrent Project based on `MixPHP` framework.
         ```
     - Use `composer install` to install PHP dependency.
     - Use `bower install` to install our web dependency (like js,css,font)
-    - If you don't run RidPT apps in `root` user, you should give enough permission to `apps/httpd/{runtime,private}`.
+    - If you don't run RidPT apps in `root` user, you should give enough permission to `apps/{runtime,private}`.
 
-3. Import Database from our `migration/ridpt.sql`, and **disable Mysql strict mode `NO_ZERO_IN_DATE` and `NO_ZERO_DATE`**.
+3. Import Database Structure from our `migration/ridpt.sql`, and **disable Mysql strict mode `NO_ZERO_IN_DATE` and `NO_ZERO_DATE`**.
 
     ```bash
     mysql -u root -p < migration/ridpt.sql

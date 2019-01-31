@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 30, 2019 at 01:44 PM
+-- Generation Time: Jan 31, 2019 at 03:21 AM
 -- Server version: 5.7.24-log
 -- PHP Version: 7.2.14
 
@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `invite` (
   `expire_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`),
-  KEY `TK_inviter_id` (`inviter_id`)
+  KEY `FK_invite_inviter_id` (`inviter_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -218,7 +218,7 @@ CREATE TABLE IF NOT EXISTS `ip_bans` (
   `commit` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ip` (`ip`),
-  KEY `ban_operator` (`add_by`)
+  KEY `FK_ip_ban_operator` (`add_by`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -427,7 +427,7 @@ CREATE TABLE IF NOT EXISTS `snatched` (
   `finish_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `one_snatched` (`user_id`,`torrent_id`) USING BTREE,
-  KEY `TK_torrentid` (`torrent_id`)
+  KEY `FK_snatched_torrentid` (`torrent_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -465,8 +465,8 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `uplver` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`),
-  KEY `TK_categories` (`category`),
-  KEY `TK_user` (`owner_id`)
+  KEY `FK_torrent_categories` (`category`),
+  KEY `FK_torrent_owner` (`owner_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -580,6 +580,34 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- RELATIONSHIPS FOR TABLE `users`:
 --
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users_session_log`
+--
+
+DROP TABLE IF EXISTS `users_session_log`;
+CREATE TABLE IF NOT EXISTS `users_session_log` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` int(10) UNSIGNED NOT NULL,
+  `sid` varchar(64) NOT NULL,
+  `login_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `login_ip` varbinary(16) NOT NULL,
+  `browser` varchar(32) NOT NULL DEFAULT '',
+  `platform` varchar(32) NOT NULL DEFAULT '',
+  `last_access_at` timestamp NOT NULL,
+  `expired` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sid` (`sid`),
+  KEY `uid` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELATIONSHIPS FOR TABLE `users_session_log`:
+--   `uid`
+--       `users` -> `id`
+--
+
 --
 -- Indexes for dumped tables
 --
@@ -603,31 +631,37 @@ ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
 -- Constraints for table `files`
 --
 ALTER TABLE `files`
-  ADD CONSTRAINT `files_torrents_id_fk` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`);
+  ADD CONSTRAINT `FK_files_torrents_id` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`);
 
 --
 -- Constraints for table `invite`
 --
 ALTER TABLE `invite`
-  ADD CONSTRAINT `TK_inviter_id` FOREIGN KEY (`inviter_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `FK_invite_inviter_id` FOREIGN KEY (`inviter_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `ip_bans`
 --
 ALTER TABLE `ip_bans`
-  ADD CONSTRAINT `ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+  ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
 
 --
 -- Constraints for table `snatched`
 --
 ALTER TABLE `snatched`
-  ADD CONSTRAINT `TK_torrentid` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`),
-  ADD CONSTRAINT `TK_userid` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `FK_snatched_torrentid` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`),
+  ADD CONSTRAINT `FK_snatched_userid` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `torrents`
 --
 ALTER TABLE `torrents`
-  ADD CONSTRAINT `TK_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`) ON DELETE NO ACTION,
-  ADD CONSTRAINT `TK_user` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+  ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`) ON DELETE NO ACTION,
+  ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+
+--
+-- Constraints for table `users_session_log`
+--
+ALTER TABLE `users_session_log`
+  ADD CONSTRAINT `FK_session_user_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`);
 COMMIT;

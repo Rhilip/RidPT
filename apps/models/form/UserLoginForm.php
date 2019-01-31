@@ -28,7 +28,7 @@ class UserLoginForm extends Validator
     private $self;
 
     // Key Information of User Session
-    private $sessionLength = 26;
+    private $sessionLength = 64;
     private $sessionSaveKey = 'SESSION:user_set';
 
     // Cookie
@@ -36,7 +36,7 @@ class UserLoginForm extends Validator
     private $cookieExpires = 0x7fffffff;
     private $cookiePath = '/';
     private $cookieDomain = '';
-    private $cookieSecure = false;
+    private $cookieSecure = false;  // Notice : Only change this value when you first run !!!!
     private $cookieHttpOnly = true;
 
     public function __construct(array $config = [])
@@ -45,7 +45,6 @@ class UserLoginForm extends Validator
         $this->sessionSaveKey = app()->user->sessionSaveKey;
         $this->cookieName = app()->user->cookieName;
     }
-
 
     public static function rules()
     {
@@ -122,12 +121,31 @@ class UserLoginForm extends Validator
     public function createUserSession()
     {
         $userId = $this->self['id'];
-        $userSessionId = StringHelper::getRandomString($this->sessionLength);
 
         $exist_session_count = app()->redis->zCount($this->sessionSaveKey, $userId, $userId);
         if ($exist_session_count < app()->config->get('base.max_per_user_session')) {
+            do { // To make sure this session is unique!
+                $userSessionId = StringHelper::getRandomString($this->sessionLength);
+                $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users_session_log` WHERE sid = :sid')->bindParams([
+                    'sid' => $userSessionId
+                ])->queryScalar();
+            } while ($count != 0);
+
+            // store user login information , ( for example `login ip`,`platform`,`browser`,`last activity at` )
+            $ua = app()->request->getUserAgent(true);
+
+            app()->pdo->createCommand('INSERT INTO `users_session_log`(`uid`, `sid`, `login_ip`, `browser`, `platform` , `last_access_at`) ' .
+                'VALUES (:uid,:sid,INET6_ATON(:login_ip),:browser,:platform, NOW())')->bindParams([
+                'uid' => $userId, 'sid' => $userSessionId,
+                'login_ip' => app()->request->getClientIp(),
+                'browser' => $ua->getClient('name') . ' ' . $ua->getClient('version'),
+                'platform' => $ua->getOs('name') .' '. $ua->getOs('version') .' '. $ua->getOs('platform')
+            ])->execute();
+
+            // Add this session id in Redis Cache
             app()->redis->zAdd($this->sessionSaveKey, $userId, $userSessionId);
-            // TODO store user login information , ( for example `login ip`,`platform`,`browser`,`last activity at` )
+
+            // Set User Cookie
             app()->response->setCookie($this->cookieName, $userSessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
             return true;
         } else {
