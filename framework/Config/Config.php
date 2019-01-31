@@ -32,7 +32,7 @@ class Config extends Component
         }
     }
 
-    public function get(string $name)
+    public function get(string $name, $throw = true)
     {
         $setting = $this->cacheTable->get($name, $this->valueField);
         // First Check config stored in RedisConnection Cache, If it exist , then just return the cached key
@@ -41,11 +41,27 @@ class Config extends Component
             $setting = app()->pdo->createCommand("SELECT `value` from `site_config` WHERE `name` = :name")
                 ->bindParams(["name" => $name])->queryScalar();
             // In this case (Load config From Database Failed) , A Exception should throw
-            if ($setting === false) throw $this->createNotFoundException($name);
+            if ($setting === false && $throw) throw $this->createNotFoundException($name);
 
             $this->cacheTable->set($name, [$this->valueField => $setting]);
         }
         return $setting;
+    }
+
+    public function getAll()
+    {
+        $settings = [];
+        foreach ($this->cacheTable as $k => $v) {
+            $settings[$k] = $v[$this->valueField];
+        }
+        return $settings;
+    }
+
+    public function getSection($prefix = null)
+    {
+        return array_filter($this->getAll(), function ($k) use ($prefix) {
+            return strpos($k, $prefix) === 0;
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     public function set(string $name, $value)
