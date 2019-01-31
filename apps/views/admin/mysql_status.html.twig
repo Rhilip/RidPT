@@ -26,18 +26,18 @@
                         <tbody>
                         <tr>
                             <td>Received</td>
-                            <td class="text-right">{{ serverStatus['Bytes received'] | format_bytes }}</td>
-                            <td class="text-right">{{ (serverStatus['Bytes received'] * 3600 / serverStatus['Uptime']) | format_bytes }}</td>
+                            <td class="text-right">{{ serverStatus['Bytes_received'] | format_bytes }}</td>
+                            <td class="text-right">{{ (serverStatus['Bytes_received'] * 3600 / serverStatus['Uptime']) | format_bytes }}</td>
                         </tr>
                         <tr>
                             <td>Sent</td>
-                            <td class="text-right">{{ serverStatus['Bytes sent'] | format_bytes }}</td>
-                            <td class="text-right">{{ (serverStatus['Bytes sent'] * 3600 / serverStatus['Uptime']) | format_bytes }}</td>
+                            <td class="text-right">{{ serverStatus['Bytes_sent'] | format_bytes }}</td>
+                            <td class="text-right">{{ (serverStatus['Bytes_sent'] * 3600 / serverStatus['Uptime']) | format_bytes }}</td>
                         </tr>
                         <tr>
                             <td><b>Total</b></td>
-                            <td class="text-right">{{ (serverStatus['Bytes received'] + serverStatus['Bytes sent']) | format_bytes }}</td>
-                            <td class="text-right">{{ ((serverStatus['Bytes sent'] + serverStatus['Bytes sent']) * 3600 / serverStatus['Uptime']) | format_bytes }}</td>
+                            <td class="text-right">{{ (serverStatus['Bytes_received'] + serverStatus['Bytes_sent']) | format_bytes }}</td>
+                            <td class="text-right">{{ ((serverStatus['Bytes_sent'] + serverStatus['Bytes_sent']) * 3600 / serverStatus['Uptime']) | format_bytes }}</td>
                         </tr>
                         </tbody>
                     </table>
@@ -55,18 +55,18 @@
                         <tbody>
                         <tr>
                             <td>Failed Attempts</td>
-                            <td class="text-right">{{ serverStatus['Aborted connects'] | number_format(0,'.', ',') }}</td>
-                            <td class="text-right">{{ (serverStatus['Aborted connects'] * 3600 / serverStatus['Uptime']) | number_format(2,'.',',') }}</td>
+                            <td class="text-right">{{ serverStatus['Aborted_connects'] | number_format(0,'.', ',') }}</td>
+                            <td class="text-right">{{ (serverStatus['Aborted_connects'] * 3600 / serverStatus['Uptime']) | number_format(2,'.',',') }}</td>
                             <td class="text-right">
-                                {% if serverStatus['Connections'] > 0 %}{{ (serverStatus['Aborted connects'] * 100 / serverStatus['Connections']) | number_format(2,'.',',') }} %{% else %}---{% endif %}
+                                {% if serverStatus['Connections'] > 0 %}{{ (serverStatus['Aborted_connects'] * 100 / serverStatus['Connections']) | number_format(2,'.',',') }} %{% else %}---{% endif %}
                             </td>
                         </tr>
                         <tr>
                             <td>Aborted Clients</td>
-                            <td class="text-right">{{ serverStatus['Aborted clients'] | number_format(0,'.', ',') }}</td>
-                            <td class="text-right">{{ (serverStatus['Aborted clients'] * 3600 / serverStatus['Uptime']) | number_format(2,'.',',') }}</td>
+                            <td class="text-right">{{ serverStatus['Aborted_clients'] | number_format(0,'.', ',') }}</td>
+                            <td class="text-right">{{ (serverStatus['Aborted_clients'] * 3600 / serverStatus['Uptime']) | number_format(2,'.',',') }}</td>
                             <td class="text-right">
-                                {% if serverStatus['Connections'] > 0 %}{{ (serverStatus['Aborted clients'] * 100 / serverStatus['Connections']) | number_format(2,'.',',') }} %{% else %}---{% endif %}
+                                {% if serverStatus['Connections'] > 0 %}{{ (serverStatus['Aborted_clients'] * 100 / serverStatus['Connections']) | number_format(2,'.',',') }} %{% else %}---{% endif %}
                             </td>
                         </tr>
                         <tr>
@@ -108,7 +108,7 @@
                         <tbody>
                         {% for key, value in rows %}
                         <tr>
-                            <td>{{ key }}</td>
+                            <td>{{ key|replace({'_':' '}) }}</td>
                             <td class="text-right">{{ value | number_format(0,'.',',') }}</td>
                             <td class="text-right">{{ (value * 3600 / serverStatus['Uptime']) | number_format(2,'.',',') }}</td>
                             <td class="text-right">{{ (value * 100 / (serverStatus['Questions'] - serverStatus['Connections'])) | number_format(2,'.',',') }}</td>
@@ -139,7 +139,7 @@
                         <tbody>
                         {% for key,value in serverStatus %}
                             <tr>
-                                <td>{{ key }}</td>
+                                <td>{{ key|replace({'_':' '}) }}</td>
                                 <td>{{ value }}</td>
                             </tr>
                         {% endfor %}

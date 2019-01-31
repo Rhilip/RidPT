@@ -116,10 +116,6 @@ class AdminController extends Controller
     private function infoMysql()
     {
         $res = app()->pdo->createCommand('SHOW GLOBAL STATUS')->queryAll();
-        $res = array_map(function ($s) {
-            $s['Variable_name'] = str_replace('_', ' ', $s['Variable_name']);
-            return $s;
-        }, $res);
         $serverStatus = array_column($res, 'Value', 'Variable_name');
         $startAt = app()->pdo->createCommand('SELECT UNIX_TIMESTAMP() - :uptime')->bindParams([
             'uptime' => $serverStatus['Uptime']
@@ -127,7 +123,7 @@ class AdminController extends Controller
         $queryStats = [];
         $tmp_array = $serverStatus;
         foreach ($tmp_array AS $name => $value) {
-            if (substr($name, 0, 4) == 'Com ') {
+            if (substr($name, 0, 4) == 'Com_') {
                 $queryStats[substr($name, 4)] = $value;
                 unset($serverStatus[$name]);
             }
