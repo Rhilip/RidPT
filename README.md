@@ -1,4 +1,10 @@
-## RidPT
+<p align="center">
+<img src="https://github.com/Rhilip/RidPT/raw/master/docs/RidPT.png" width='256px'><br/>
+A Private Torrent Project framework.<br/>
+<a href="https://github.com/Rhilip/RidPT/releases" title="GitHub Releases"><img src="https://img.shields.io/github/release/Rhilip/RidPT.svg"></a>
+<img src="https://img.shields.io/badge/used-Swoole-blue.svg">
+<a href="https://github.com/Rhilip/RidPT/LICENSE" title="GitHub license"><img src="https://img.shields.io/github/license/Rhilip/RidPT.svg"></a>
+</p>
 
 A Private Torrent Project framework.
 
