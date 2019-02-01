@@ -85,51 +85,51 @@ class BaseRequest extends Component
     }
 
     // 提取 GET 值
-    public function get($name = null)
+    public function get($name = null, $default = null)
     {
-        return self::fetch($name, $this->_get);
+        return self::fetch($name, $default, $this->_get);
     }
 
     // 提取 POST 值
-    public function post($name = null)
+    public function post($name = null, $default = null)
     {
-        return self::fetch($name, $this->_post);
+        return self::fetch($name, $default, $this->_post);
     }
 
     // 提取 FILES 值
-    public function files($name = null)
+    public function files($name = null, $default = null)
     {
-        return self::fetch($name, $this->_files);
+        return self::fetch($name, $default, $this->_files);
     }
 
     // 提取 ROUTE 值
-    public function route($name = null)
+    public function route($name = null, $default = null)
     {
-        return self::fetch($name, $this->_route);
+        return self::fetch($name, $default, $this->_route);
     }
 
     // 提取 COOKIE 值
-    public function cookie($name = null)
+    public function cookie($name = null, $default = null)
     {
-        return self::fetch($name, $this->_cookie);
+        return self::fetch($name, $default, $this->_cookie);
     }
 
     // 提取 SERVER 值
-    public function server($name = null)
+    public function server($name = null, $default = null)
     {
-        return self::fetch($name, $this->_server);
+        return self::fetch($name, $default, $this->_server);
     }
 
     // 提取 HEADER 值
-    public function header($name = null)
+    public function header($name = null, $default = null)
     {
-        return self::fetch($name, $this->_header);
+        return self::fetch($name, $default, $this->_header);
     }
 
     // 提取数据
-    protected static function fetch($name, $container)
+    protected static function fetch($name, $default, $container)
     {
-        return is_null($name) ? $container : (isset($container[$name]) ? $container[$name] : null);
+        return is_null($name) ? $container : (isset($container[$name]) ? $container[$name] : $default);
     }
 
     // 是否为 GET 请求

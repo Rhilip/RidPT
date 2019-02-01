@@ -146,8 +146,8 @@ class TrackerController
                                         `last_action_at` = NOW();")->bindParams([
                     "tid" => $torrentInfo ? $torrentInfo["id"] : 0,
                     'uid' => $userInfo ? $userInfo["id"] : 0,
-                    'ua' => app()->request->header("user-agent") ?: "",
-                    'peer_id' => app()->request->get("peer_id") ?: "",
+                    'ua' => app()->request->header("user-agent", ""),
+                    'peer_id' => app()->request->get("peer_id", ""),
                     'req_info' => $req_info,
                     'msg' => $e->getMessage()
                 ])->execute();
@@ -300,7 +300,7 @@ class TrackerController
 
         // Start Check Client by `User-Agent` and `peer_id`
         $userAgent = app()->request->header("user-agent");
-        $peer_id = app()->request->get("peer_id") ?? "";
+        $peer_id = app()->request->get("peer_id", "");
 
         $agentAccepted = null;
         $peerIdAccepted = null;
@@ -456,7 +456,7 @@ class TrackerController
                      'numwant' => 50, 'corrupt' => 0, 'key' => '',
                      'ip' => '', 'ipv4' => '', 'ipv6' => '',
                  ] as $item => $value) {
-            $queries[$item] = app()->request->get($item) ?? $value;
+            $queries[$item] = app()->request->get($item, $value);
         }
 
         foreach (['numwant', 'corrupt', 'no_peer_id', 'compact'] as $item) {

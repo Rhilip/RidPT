@@ -23,6 +23,12 @@ class HttpServer extends BaseObject
     protected $_settings = [
         // 开启协程
         'enable_coroutine' => false,
+        // 主进程事件处理线程数
+        'reactor_num'      => 8,
+        // 工作进程数
+        'worker_num'       => 8,
+        // 任务进程数
+        'task_worker_num'  => 0,
         // 进程的最大任务数
         'max_request' => 10000,
         // 异步安全重启
@@ -134,11 +140,14 @@ _/ / / / / / / /\ \/ / /_/ / / / / /_/ /
 
 EOL;
         app()->output->writeln('Server      Name:      mix-httpd');
+        app()->output->writeln('System      Name:      ' . strtolower(PHP_OS));
         app()->output->writeln('Framework   Version:   ' . \Mix::VERSION);
         app()->output->writeln("PHP         Version:   " . PHP_VERSION);
         app()->output->writeln("Swoole      Version:   " . swoole_version());
         app()->output->writeln("Listen      Addr:      {$this->_host}");
         app()->output->writeln("Listen      Port:      {$this->_port}");
+        app()->output->writeln('Reactor     Num:       ' . $this->settings['reactor_num']);
+        app()->output->writeln('Worker      Num:       ' . $this->settings['worker_num']);
         app()->output->writeln('Hot         Update:    ' . ($this->settings['max_request'] == 1 ? 'enabled' : 'disabled'));
         app()->output->writeln('Coroutine   Mode:      ' . ($this->settings['enable_coroutine'] ? 'enabled' : 'disabled'));
         app()->output->writeln("Config      File:      {$this->virtualHost['configFile']}");

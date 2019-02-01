@@ -1,6 +1,6 @@
 <?php
 
-namespace Mix\Base;
+namespace Mix\Config;
 
 /**
  * 环境类
@@ -23,15 +23,15 @@ class Env
     }
 
     // 获取配置
-    public static function get($name = null)
+    public static function get($name = null, $default = '')
     {
         if (is_null($name)) {
             return self::$_env;
         }
 
-        $current   = self::$_env;
+        $current = self::$_env;
         if (!isset($current[$name])) {
-            throw new \Mix\Exceptions\EnvException("Environment config does not exist: {$name}.");
+            return $default;
         }
         $current = $current[$name];
         return $current;

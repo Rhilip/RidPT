@@ -80,9 +80,9 @@ class Application extends BaseObject
     }
 
     // 获取配置
-    public function config($name)
+    public function env($name)
     {
-        $message = "Config does not exist: {$name}.";
+        $message = "Environment key {$name} does not exist.";
         // 处理带前缀的名称
         preg_match('/(\[[\w.]+\])/', $name, $matches);
         $subname = array_pop($matches);

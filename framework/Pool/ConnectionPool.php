@@ -17,7 +17,7 @@ class ConnectionPool extends Component
     // 最大连接数
     public $max;
 
-    // 队列
+    /** @var \Swoole\Coroutine\Channel */
     protected $_queue;
 
     // 活跃连接数

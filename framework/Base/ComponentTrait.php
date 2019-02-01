@@ -3,7 +3,7 @@
 namespace Mix\Base;
 
 /**
- * 组件基类Trait
+ * Trait ComponentTrait
  * @author 刘健 <coder.liu@qq.com>
  */
 trait ComponentTrait

@@ -3,7 +3,7 @@
 namespace Mix\Base;
 
 /**
- * Interface InstanceInterface
+ * Interface StaticInstanceInterface
  * @author 刘健 <coder.liu@qq.com>
  */
 interface StaticInstanceInterface

@@ -33,7 +33,7 @@ class AdminController extends Controller
 
     private function infoRedis()
     {
-        $panel = app()->request->get('panel') ?? 'status';
+        $panel = app()->request->get('panel', 'status');
 
         if ($panel === 'keys') {
             if (app()->request->isPost()) {
@@ -46,9 +46,9 @@ class AdminController extends Controller
                     app()->redis->del(app()->redis->keys($pattern));
                 }
             }
-            $offset = app()->request->get('offset') ?? null;
-            $perpage = app()->request->get('perpage') ?? 50;
-            $pattern = app()->request->get('pattern') ?? '';
+            $offset = app()->request->get('offset', 0);
+            $perpage = app()->request->get('perpage', 50);
+            $pattern = app()->request->get('pattern', '');
 
             $keys = app()->redis->keys($pattern);
             sort($keys);

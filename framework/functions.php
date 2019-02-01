@@ -6,7 +6,10 @@
  */
 
 if (!function_exists('app')) {
-    // 返回当前 App 实例
+    /** 返回当前 App 实例
+     * @param null $prefix
+     * @return \Mix\Console\Application|\Mix\Http\Application
+     */
     function app($prefix = null)
     {
         return \Mix::app($prefix);
@@ -14,15 +17,22 @@ if (!function_exists('app')) {
 }
 
 if (!function_exists('env')) {
-    // 获取一个环境变量的值
-    function env($name = null)
+    /** 获取一个环境变量的值
+     * @param null $name
+     * @param string $default
+     * @return array|mixed|string
+     */
+    function env($name = null, $default = '')
     {
-        return \Mix\Base\Env::get($name);
+        return \Mix\Config\Env::get($name, $default);
     }
 }
 
 if (!function_exists('tgo')) {
-    // 创建一个带异常捕获的协程
+
+    /** 创建一个带异常捕获的协程
+     * @param $closure
+     */
     function tgo($closure)
     {
         go(function () use ($closure) {

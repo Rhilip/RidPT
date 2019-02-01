@@ -3,7 +3,7 @@
 namespace Mix\Base;
 
 /**
- * 组件基类Interface
+ * Interface ComponentInterface
  * @author 刘健 <coder.liu@qq.com>
  */
 interface ComponentInterface
