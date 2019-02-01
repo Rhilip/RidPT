@@ -22,8 +22,8 @@ class BeforeMiddleware
                     if ($test_count > app()->config->get('security.max_login_attempts')) {
                         return app()->response->setStatusCode(403);
                     }
-                    return $next();
                 }
+                return $next();
             }
         }
 
