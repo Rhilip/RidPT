@@ -6,7 +6,15 @@ A Private Torrent Project framework.<br/>
 <a href="https://github.com/Rhilip/RidPT/LICENSE" title="GitHub license"><img src="https://img.shields.io/github/license/Rhilip/RidPT.svg"></a>
 </p>
 
-A Private Torrent Project framework.
+--------------------------------------
+
+## Demo Site
+
+Demo Url: http://ridpt.rhilip.info/
+
+Test Account Information:
+ - Username : `Admin`
+ - Password : `123456`
 
 ## Installation Guide
 
