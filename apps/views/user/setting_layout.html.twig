@@ -1,0 +1,27 @@
+{% extends "layout/base.html.twig" %}
+
+{% block title %}User setting{% endblock %}
+
+{% block container %}
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Personal settings</h3>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills nav-stacked">
+                        <li><a href="/user/sessions">Sessions</a></li>
+                    </ul>
+                </div><!--/.panel-body -->
+            </div>
+
+        </div>
+        <div class="col-md-9">
+            {% block panel %}{% endblock %}
+        </div>
+    </div>
+
+
+
+{% endblock %}

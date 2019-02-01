@@ -62,6 +62,9 @@ class User extends Component implements UserInterface
     public function deleteUserThisSession()
     {
         $success = app()->redis->zRem($this->sessionSaveKey, $this->_userSessionId);
+        app()->pdo->createCommand('UPDATE `users_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
+            'sid' => $this->_userSessionId
+        ])->execute();
         app()->cookie->delete($this->cookieName);
         return $success ? true : false;
     }
