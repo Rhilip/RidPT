@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Base;
+namespace Rid\Base;
 
 /**
  * Error类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Error
 {
@@ -21,7 +20,7 @@ class Error
         }
         self::$registered = true;
         // 注册错误处理
-        $level = \Mix::app()->error->level;
+        $level = \Rid::app()->error->level;
         error_reporting($level);
         set_error_handler([__CLASS__, 'appError']);
         set_exception_handler([__CLASS__, 'appException']); // swoole 不支持该函数
@@ -31,21 +30,21 @@ class Error
     // 错误处理
     public static function appError($errno, $errstr, $errfile = '', $errline = 0)
     {
-        throw new \Mix\Exceptions\ErrorException($errno, $errstr, $errfile, $errline);
+        throw new \Rid\Exceptions\ErrorException($errno, $errstr, $errfile, $errline);
     }
 
     // 停止处理
     public static function appShutdown()
     {
         if ($error = error_get_last()) {
-            self::appException(new \Mix\Exceptions\ErrorException($error['type'], $error['message'], $error['file'], $error['line']));
+            self::appException(new \Rid\Exceptions\ErrorException($error['type'], $error['message'], $error['file'], $error['line']));
         }
     }
 
     // 异常处理
     public static function appException($e)
     {
-        \Mix::app()->error->handleException($e, true);
+        \Rid::app()->error->handleException($e, true);
     }
 
 }

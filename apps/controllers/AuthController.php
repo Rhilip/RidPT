@@ -12,7 +12,7 @@ use apps\models\User;
 use apps\models\form\UserLoginForm;
 use apps\models\form\UserRegisterForm;
 
-use Mix\Http\Controller;
+use Rid\Http\Controller;
 
 
 class AuthController extends Controller
@@ -48,6 +48,7 @@ class AuthController extends Controller
 
     public function actionConfirm()
     {
+
         // TODO User Confirm Action
     }
 

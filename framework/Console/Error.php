@@ -1,15 +1,14 @@
 <?php
 
-namespace Mix\Console;
+namespace Rid\Console;
 
-use Mix\Base\Component;
-use Mix\Helpers\CoroutineHelper;
-use Mix\Helpers\PhpInfoHelper;
-use Mix\Helpers\ProcessHelper;
+use Rid\Base\Component;
+use Rid\Helpers\CoroutineHelper;
+use Rid\Helpers\PhpInfoHelper;
+use Rid\Helpers\ProcessHelper;
 
 /**
  * Error类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Error extends Component
 {
@@ -21,13 +20,13 @@ class Error extends Component
     public function handleException($e, $exit = false)
     {
         // debug处理
-        if ($e instanceof \Mix\Exceptions\DebugException) {
+        if ($e instanceof \Rid\Exceptions\DebugException) {
             $content = $e->getMessage();
             echo $content;
             $this->exit(ExitCode::OK);
         }
         // exit处理
-        if ($e instanceof \Mix\Exceptions\EndException) {
+        if ($e instanceof \Rid\Exceptions\EndException) {
             $exitCode = (int)$e->getMessage();
             $this->exit($exitCode);
         }
@@ -42,18 +41,18 @@ class Error extends Component
         ];
         $time   = date('Y-m-d H:i:s');
         // 日志处理
-        if (!($e instanceof \Mix\Exceptions\NotFoundException)) {
+        if (!($e instanceof \Rid\Exceptions\NotFoundException)) {
             $message = "{$errors['message']}" . PHP_EOL;
             $message .= "[type] {$errors['type']} [code] {$errors['code']}" . PHP_EOL;
             $message .= "[file] {$errors['file']} [line] {$errors['line']}" . PHP_EOL;
             $message .= "[trace] {$errors['trace']}" . PHP_EOL;
             $message .= '$_SERVER' . substr(print_r($_SERVER, true), 5, -1);
-            \Mix::app()->log->error($message);
+            \Rid::app()->log->error($message);
         }
         // 清空系统错误
         ob_get_contents() and ob_clean();
         // 格式化输出
-        $output  = \Mix::app()->output;
+        $output  = \Rid::app()->output;
         $message = $output->ansiFormat($errors['message'], Output::BG_RED) . PHP_EOL;
         $message .= "{$errors['type']} code {$errors['code']}" . PHP_EOL;
         $message .= $output->ansiFormat($errors['file'], Output::BG_RED) . ' line ' . $output->ansiFormat($errors['line'], Output::BG_RED) . PHP_EOL;

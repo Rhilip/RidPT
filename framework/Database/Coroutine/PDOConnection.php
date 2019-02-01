@@ -1,19 +1,18 @@
 <?php
 
-namespace Mix\Database\Coroutine;
+namespace Rid\Database\Coroutine;
 
-use Mix\Helpers\CoroutineHelper;
+use Rid\Helpers\CoroutineHelper;
 
 /**
  * PDOCoroutine组件
- * @author 刘健 <coder.liu@qq.com>
  */
-class PDOConnection extends \Mix\Database\Persistent\PDOConnection
+class PDOConnection extends \Rid\Database\Persistent\PDOConnection
 {
 
     /**
      * 连接池
-     * @var \Mix\Pool\ConnectionPool
+     * @var \Rid\Pool\ConnectionPool
      */
     public $connectionPool;
 

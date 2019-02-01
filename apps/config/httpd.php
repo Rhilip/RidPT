@@ -12,11 +12,11 @@ return [
     // 命令
     'commands'         => [
 
-        'service start'   => ['Service', 'Start', 'description' => 'Start the mix-httpd service.'],
-        'service stop'    => ['Service', 'Stop', 'description' => 'Stop the mix-httpd service.'],
-        'service restart' => ['Service', 'Restart', 'description' => 'Restart the mix-httpd service.'],
-        'service reload'  => ['Service', 'Reload', 'description' => 'Reload the worker process of the mix-httpd service.'],
-        'service status'  => ['Service', 'Status', 'description' => 'Check the status of the mix-httpd service.'],
+        'service start'   => ['Service', 'Start', 'description' => 'Start the rid-httpd service.'],
+        'service stop'    => ['Service', 'Stop', 'description' => 'Stop the rid-httpd service.'],
+        'service restart' => ['Service', 'Restart', 'description' => 'Restart the rid-httpd service.'],
+        'service reload'  => ['Service', 'Reload', 'description' => 'Reload the worker process of the rid-httpd service.'],
+        'service status'  => ['Service', 'Status', 'description' => 'Check the status of the rid-httpd service.'],
 
     ],
 
@@ -24,23 +24,23 @@ return [
     'components'       => [
 
         'input'  => [
-            'class' => Mix\Console\Input::class,
+            'class' => Rid\Console\Input::class,
         ],
 
         'output' => [
-            'class' => Mix\Console\Output::class,
+            'class' => Rid\Console\Output::class,
         ],
 
         'error'  => [
-            'class' => Mix\Console\Error::class,
+            'class' => Rid\Console\Error::class,
             'level' => E_ALL,
         ],
 
         'log'    => [
-            'class'       => Mix\Log\Log::class,
+            'class'       => Rid\Log\Log::class,
             'level'       => ['error', 'info', 'debug'],
             'logDir'      => 'logs',
-            'logRotate'   => Mix\Log\Log::ROTATE_DAY,
+            'logRotate'   => Rid\Log\Log::ROTATE_DAY,
             'maxFileSize' => 1024,   // bytes
         ],
 
@@ -53,7 +53,7 @@ return [
         'httpServer' => [
 
             // 类路径
-            'class'       => Mix\Http\HttpServer::class,
+            'class'       => Rid\Http\HttpServer::class,
 
             // 虚拟主机：运行在服务器内的 HTTP 服务
             'virtualHost' => [
@@ -71,9 +71,9 @@ return [
                 // 工作进程数
                 'worker_num'       => 8,
                 // PID 文件
-                'pid_file'         => '/var/run/mix-httpd.pid',
+                'pid_file'         => '/var/run/rid-httpd.pid',
                 // 日志文件路径
-                'log_file'         => '/tmp/mix-httpd.log',
+                'log_file'         => '/tmp/rid-httpd.log',
                 // 进程的最大任务数
                 'max_request'      => 10000,
                 // 退出等待时间

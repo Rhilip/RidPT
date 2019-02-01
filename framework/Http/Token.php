@@ -1,19 +1,18 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\Component;
-use Mix\Helpers\StringHelper;
+use Rid\Base\Component;
+use Rid\Helpers\StringHelper;
 
 /**
  * Token组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class Token extends Component
 {
 
     // 保存处理者
-    /** @var \Mix\Redis\BaseRedisConnection */
+    /** @var \Rid\Redis\BaseRedisConnection */
     public $saveHandler;
 
     // 保存的Key前缀
@@ -53,9 +52,9 @@ class Token extends Component
     // 载入TokenID
     public function loadTokenId()
     {
-        $this->_tokenId = \Mix::app()->request->get($this->name) or
-        $this->_tokenId = \Mix::app()->request->header($this->name) or
-        $this->_tokenId = \Mix::app()->request->post($this->name);
+        $this->_tokenId = \Rid::app()->request->get($this->name) or
+        $this->_tokenId = \Rid::app()->request->header($this->name) or
+        $this->_tokenId = \Rid::app()->request->post($this->name);
         $this->_tokenKey = $this->saveKeyPrefix . $this->_tokenId;
     }
 

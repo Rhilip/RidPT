@@ -1,18 +1,14 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
 /**
  * Response组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class Response extends BaseResponse
 {
 
-    /**
-     * 响应者
-     * @var \Swoole\Http\Response
-     */
+    /** @var \Swoole\Http\Response */
     protected $_responder;
 
     // 设置响应者
@@ -52,7 +48,7 @@ class Response extends BaseResponse
         // 预处理
         $this->prepare();
         // 清扫组件容器
-        \Mix::app()->cleanComponents();
+        \Rid::app()->cleanComponents();
         // 发送
         $this->sendStatusCode();
         $this->sendHeaders();

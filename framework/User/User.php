@@ -6,9 +6,9 @@
  * Time: 19:30
  */
 
-namespace Mix\User;
+namespace Rid\User;
 
-use Mix\Base\Component;
+use Rid\Base\Component;
 
 
 class User extends Component implements UserInterface
@@ -48,7 +48,7 @@ class User extends Component implements UserInterface
 
     public function loadUserFromCookies()
     {
-        $this->_userSessionId = \Mix::app()->request->cookie($this->cookieName);
+        $this->_userSessionId = \Rid::app()->request->cookie($this->cookieName);
         $userId = app()->redis->zScore($this->sessionSaveKey, $this->_userSessionId);
 
         if ($userId) {

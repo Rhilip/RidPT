@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\Component;
+use Rid\Base\Component;
 
 /**
  * Route组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class Route extends Component
 {

@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\Component;
+use Rid\Base\Component;
 
 /**
  * Cookie组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class Cookie extends Component
 {
@@ -37,13 +36,13 @@ class Cookie extends Component
     // 取值
     public function get($name = null)
     {
-        return \Mix::app()->request->cookie($name);
+        return \Rid::app()->request->cookie($name);
     }
 
     // 赋值
     public function set($name, $value, $expires = null)
     {
-        return \Mix::app()->response->setCookie($name, $value, time() + (is_null($expires) ? $this->expires : $expires), $this->path, $this->domain, $this->secure, $this->httpOnly);
+        return \Rid::app()->response->setCookie($name, $value, time() + (is_null($expires) ? $this->expires : $expires), $this->path, $this->domain, $this->secure, $this->httpOnly);
     }
 
     // 判断是否存在
@@ -61,7 +60,7 @@ class Cookie extends Component
     // 清空当前域所有cookie
     public function clear()
     {
-        foreach (\Mix::app()->request->cookie() as $name => $value) {
+        foreach (\Rid::app()->request->cookie() as $name => $value) {
             $this->set($name, null, 0);
         }
         return true;

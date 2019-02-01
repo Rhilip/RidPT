@@ -1,14 +1,13 @@
 <?php
 
-namespace Mix\Task;
+namespace Rid\Task;
 
-use Mix\Base\BaseObject;
-use Mix\helpers\CoroutineHelper;
-use Mix\helpers\ProcessHelper;
+use Rid\Base\BaseObject;
+use Rid\helpers\CoroutineHelper;
+use Rid\helpers\ProcessHelper;
 
 /**
  * 进程池任务执行器类
- * @author 刘健 <coder.liu@qq.com>
  */
 class ProcessPoolTaskExecutor extends BaseObject
 {
@@ -245,7 +244,7 @@ class ProcessPoolTaskExecutor extends BaseObject
                     throw $e;
                 }
             } catch (\Throwable $e) {
-                \Mix::app()->error->handleException($e);
+                \Rid::app()->error->handleException($e);
             }
         }, false, false);
         return $process;
@@ -290,7 +289,7 @@ class ProcessPoolTaskExecutor extends BaseObject
                     }
                 }
             } catch (\Throwable $e) {
-                \Mix::app()->error->handleException($e);
+                \Rid::app()->error->handleException($e);
             }
         }, false, false);
         return $process;
@@ -336,7 +335,7 @@ class ProcessPoolTaskExecutor extends BaseObject
                     }
                 }
             } catch (\Throwable $e) {
-                \Mix::app()->error->handleException($e);
+                \Rid::app()->error->handleException($e);
             }
         }, false, false);
         return $process;
@@ -347,7 +346,7 @@ class ProcessPoolTaskExecutor extends BaseObject
     {
         // 取出进程信息
         if (!isset($this->_processPool[$workerPid])) {
-            throw new \Mix\Exceptions\TaskException('RebootProcess Error: no pid.');
+            throw new \Rid\Exceptions\TaskException('RebootProcess Error: no pid.');
         }
         list($processType, $workerId) = $this->_processPool[$workerPid];
         // 删除旧引用

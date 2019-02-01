@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Config;
+namespace Rid\Config;
 
 /**
  * 环境类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Env
 {
@@ -16,7 +15,7 @@ class Env
     public static function load($envFile)
     {
         if (!is_file($envFile)) {
-            throw new \Mix\Exceptions\EnvException('Environment file does not exist.');
+            throw new \Rid\Exceptions\EnvException('Environment file does not exist.');
         }
         $env        = parse_ini_file($envFile);
         self::$_env = array_merge($env, $_SERVER, $_ENV);

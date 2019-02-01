@@ -15,7 +15,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Mix\Utils;
+namespace Rid\Utils;
 
 /**
  * HTTP header utility functions.

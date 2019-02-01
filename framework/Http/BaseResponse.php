@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\Component;
+use Rid\Base\Component;
 
 /**
  * Response组件基类
- * @author 刘健 <coder.liu@qq.com>
  */
 class BaseResponse extends Component
 {

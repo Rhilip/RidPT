@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Helpers;
+namespace Rid\Helpers;
 
 /**
- * JsonHelper类
- * @author 刘健 <coder.liu@qq.com>
+ * JsonHelper
  */
 class JsonHelper
 {

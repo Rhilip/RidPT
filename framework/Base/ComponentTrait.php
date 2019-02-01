@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Base;
+namespace Rid\Base;
 
 /**
  * Trait ComponentTrait
- * @author 刘健 <coder.liu@qq.com>
  */
 trait ComponentTrait
 {

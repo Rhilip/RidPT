@@ -6,7 +6,7 @@
  * Time: 23:34
  */
 
-namespace Mix\Http\Twig;
+namespace Rid\Http\Twig;
 
 
 class ByteConversionTwigExtension extends \Twig_Extension

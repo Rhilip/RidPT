@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Redis\Async;
+namespace Rid\Redis\Async;
 
-use Mix\Base\BaseObject;
+use Rid\Base\BaseObject;
 
 /**
  * RedisAsync类
- * @author 刘健 <coder.liu@qq.com>
  */
 class RedisConnection extends BaseObject
 {

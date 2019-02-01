@@ -9,7 +9,7 @@
 namespace apps\middleware;
 
 
-use Mix\Utils\IpUtils;
+use Rid\Utils\IpUtils;
 
 class IpBanMiddleware
 {

@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Database\Persistent;
+namespace Rid\Database\Persistent;
 
 /**
  * BasePdoPersistent组件
- * @author 刘健 <coder.liu@qq.com>
  */
-class BasePDOConnection extends \Mix\Database\BasePDOConnection
+class BasePDOConnection extends \Rid\Database\BasePDOConnection
 {
 
     // 重新连接

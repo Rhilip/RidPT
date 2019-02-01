@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Base;
+namespace Rid\Base;
 
 /**
  * 通道钩子类
- * @author 刘健 <coder.liu@qq.com>
  */
 class ChannelHook
 {

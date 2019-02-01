@@ -10,7 +10,7 @@ namespace apps\models\form;
 
 use apps\models\Torrent;
 
-use Mix\Validators\Validator;
+use Rid\Validators\Validator;
 
 use SandFoxMe\Bencode\Bencode;
 use SandFoxMe\Bencode\Exceptions\ParseErrorException;

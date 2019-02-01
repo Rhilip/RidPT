@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Redis;
+namespace Rid\Redis;
 
 /**
  * redis组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class RedisConnection extends BaseRedisConnection
 {

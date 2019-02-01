@@ -6,7 +6,7 @@
  * Time: 11:39
  */
 
-namespace Mix\User;
+namespace Rid\User;
 
 interface UserInterface
 {

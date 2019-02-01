@@ -1,12 +1,10 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * EndException类
- * @author 刘健 <coder.liu@qq.com>
+ * EndException
  */
 class EndException extends \RuntimeException
 {
-
 }

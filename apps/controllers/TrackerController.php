@@ -8,7 +8,7 @@
 
 namespace apps\controllers;
 
-use Mix\Utils\IpUtils;
+use Rid\Utils\IpUtils;
 use SandFoxMe\Bencode\Bencode;
 
 use apps\models\User;

@@ -1,19 +1,18 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\Component;
-use Mix\Helpers\StringHelper;
+use Rid\Base\Component;
+use Rid\Helpers\StringHelper;
 
 /**
  * Session组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class Session extends Component
 {
 
     // 保存处理者
-    /** @var \Mix\Redis\BaseRedisConnection */
+    /** @var \Rid\Redis\BaseRedisConnection */
     public $saveHandler;
 
     // 保存的Key前缀
@@ -68,7 +67,7 @@ class Session extends Component
     // 载入session_id
     public function loadSessionId()
     {
-        $this->_sessionId = \Mix::app()->request->cookie($this->name);
+        $this->_sessionId = \Rid::app()->request->cookie($this->name);
         if (is_null($this->_sessionId)) {
             // 创建session_id
             $this->_sessionId = StringHelper::getRandomString($this->_sessionIdLength);
@@ -92,7 +91,7 @@ class Session extends Component
     {
         $success = $this->saveHandler->hmset($this->_sessionKey, [$name => $value]);
         $this->saveHandler->expire($this->_sessionKey, $this->maxLifetime);
-        $success and \Mix::app()->response->setCookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
+        $success and \Rid::app()->response->setCookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
         return $success ? true : false;
     }
 

@@ -6,7 +6,7 @@
  * Time: 10:37
  */
 
-namespace Mix\Utils;
+namespace Rid\Utils;
 
 /**
  * Http utility functions.

@@ -6,12 +6,12 @@
  * Time: 15:24
  */
 
-namespace Mix\Base;
+namespace Rid\Base;
 
 
 /**
  * Class Timer
- * @package Mix\Core
+ * @package Rid\Core
  */
 class Timer implements StaticInstanceInterface
 {
@@ -39,7 +39,7 @@ class Timer implements StaticInstanceInterface
                 call_user_func($callback);
             } catch (\Throwable $e) {
                 // 输出错误
-                \Mix::app()->error->handleException($e);
+                \Rid::app()->error->handleException($e);
             }
         });
         // 保存id
@@ -65,7 +65,7 @@ class Timer implements StaticInstanceInterface
                 call_user_func($callback);
             } catch (\Throwable $e) {
                 // 输出错误
-                \Mix::app()->error->handleException($e);
+                \Rid::app()->error->handleException($e);
             }
         });
         // 保存id

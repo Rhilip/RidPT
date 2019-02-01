@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Base;
+namespace Rid\Base;
 
 /**
  * Interface ComponentInterface
- * @author 刘健 <coder.liu@qq.com>
  */
 interface ComponentInterface
 {

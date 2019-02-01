@@ -1,12 +1,10 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * ConnectionException类
- * @author 刘健 <coder.liu@qq.com>
+ * ConnectionException
  */
 class ConnectionException extends \RuntimeException
 {
-
 }

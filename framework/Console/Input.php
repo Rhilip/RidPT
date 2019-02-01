@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Console;
+namespace Rid\Console;
 
-use mix\Base\Component;
+use Rid\Base\Component;
 
 /**
  * Input组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class Input extends Component
 {

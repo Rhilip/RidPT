@@ -25,7 +25,7 @@ return [
         // 路由
         'route'    => [
             // 类路径
-            'class'          => Mix\Http\Route::class,
+            'class'          => Rid\Http\Route::class,
             // 默认变量规则
             'defaultPattern' => '[\w-]+',
             // 路由变量规则
@@ -43,50 +43,50 @@ return [
 
         // 请求
         'request'  => [
-            'class' => Mix\Http\Request::class,
+            'class' => Rid\Http\Request::class,
         ],
 
         // 响应
         'response' => [
             // 类路径
-            'class'         => mix\Http\Response::class,
+            'class'         => Rid\Http\Response::class,
             // 默认输出格式
-            'defaultFormat' => Mix\Http\Response::FORMAT_HTML,
+            'defaultFormat' => Rid\Http\Response::FORMAT_HTML,
             // json
             'json'          => [
                 // 类路径
-                'class' => Mix\Http\Json::class,
+                'class' => Rid\Http\Json::class,
             ],
             // jsonp
             'jsonp'         => [
                 // 类路径
-                'class' => Mix\Http\Jsonp::class,
+                'class' => Rid\Http\Jsonp::class,
                 // callback键名
                 'name'  => 'callback',
             ],
             // xml
             'xml'           => [
                 // 类路径
-                'class' => Mix\Http\Xml::class,
+                'class' => Rid\Http\Xml::class,
             ],
         ],
 
         // 错误
         'error'    => [
-            'class'  => Mix\Http\Error::class,
-            'format' => Mix\Http\Error::FORMAT_HTML,
+            'class'  => Rid\Http\Error::class,
+            'format' => Rid\Http\Error::FORMAT_HTML,
         ],
 
         // 日志
         'log'      => [
             // 类路径
-            'class'       => Mix\Log\Log::class,
+            'class'       => Rid\Log\Log::class,
             // 日志记录级别
             'level'       => ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'],
             // 日志目录
             'dir'         => 'logs',
             // 日志轮转类型
-            'rotate'      => Mix\Log\Log::ROTATE_DAY,
+            'rotate'      => Rid\Log\Log::ROTATE_DAY,
             // 最大文件尺寸
             'maxFileSize' => 0,
         ],
@@ -94,11 +94,11 @@ return [
         // Token
         'token'    => [
             // 类路径
-            'class'         => Mix\Http\Token::class,
+            'class'         => Rid\Http\Token::class,
             // 保存处理者
             'saveHandler'   => [
                 // 类路径
-                'class'    => Mix\Redis\RedisConnection::class,
+                'class'    => Rid\Redis\RedisConnection::class,
                 // 主机
                 'host'     => env('REDIS_HOST'),
                 // 端口
@@ -119,11 +119,11 @@ return [
         // Session
         'session'  => [
             // 类路径
-            'class'          => Mix\Http\Session::class,
+            'class'          => Rid\Http\Session::class,
             // 保存处理者
             'saveHandler'    => [
                 // 类路径
-                'class'    => Mix\Redis\RedisConnection::class,
+                'class'    => Rid\Redis\RedisConnection::class,
                 // 主机
                 'host'     => env('REDIS_HOST'),
                 // 端口
@@ -154,7 +154,7 @@ return [
         // Cookie
         'cookie'   => [
             // 类路径
-            'class'    => Mix\Http\Cookie::class,
+            'class'    => Rid\Http\Cookie::class,
             // 过期时间
             'expires'  => 31536000,
             // 有效的服务器路径
@@ -170,7 +170,7 @@ return [
         // 数据库
         'pdo'      => [
             // 类路径
-            'class'         => Mix\Database\PDOConnection::class,
+            'class'         => Rid\Database\PDOConnection::class,
             // 数据源格式
             'dsn'           => env('DATABASE_DSN'),
             // 数据库用户名
@@ -187,7 +187,7 @@ return [
         // redis
         'redis'    => [
             // 类路径
-            'class'    => Mix\Redis\RedisConnection::class,
+            'class'    => Rid\Redis\RedisConnection::class,
             // 主机
             'host'     => env('REDIS_HOST'),
             // 端口
@@ -202,11 +202,11 @@ return [
         ],
 
         'config' => [
-            'class'   => Mix\Config\Config::class,
+            'class'   => Rid\Config\Config::class,
         ],
 
         'swiftmailer' => [
-            'class'   => Mix\Mailer\Mailer::class,
+            'class'   => Rid\Mailer\Mailer::class,
             'host'    => env('MAILER_HOST'),
             'port'    => env('MAILER_PORT'),
             'encryption' => env('MAILER_ENCRYPTION'),
@@ -217,7 +217,7 @@ return [
         ],
 
         'user' => [
-            'class' => Mix\User\User::class,
+            'class' => Rid\User\User::class,
         ]
     ],
 

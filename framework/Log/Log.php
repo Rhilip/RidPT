@@ -1,13 +1,12 @@
 <?php
 
-namespace Mix\Log;
+namespace Rid\Log;
 
-use Mix\Base\Component;
-use Mix\Helpers\JsonHelper;
+use Rid\Base\Component;
+use Rid\Helpers\JsonHelper;
 
 /**
  * Log组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class Log extends Component
 {
@@ -108,7 +107,7 @@ class Log extends Component
         // 生成文件名
         $logDir = $this->dir;
         if (pathinfo($this->dir)['dirname'] == '.') {
-            $logDir = \Mix::app()->getRuntimePath() . DIRECTORY_SEPARATOR . $this->dir;
+            $logDir = \Rid::app()->getRuntimePath() . DIRECTORY_SEPARATOR . $this->dir;
         }
         switch ($this->rotate) {
             case self::ROTATE_HOUR:

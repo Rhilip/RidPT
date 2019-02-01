@@ -8,8 +8,8 @@
 
 namespace apps\commands;
 
-use Mix\Console\Command;
-use Mix\Base\Timer;
+use Rid\Console\Command;
+use Rid\Base\Timer;
 
 /**
  * 定时器范例

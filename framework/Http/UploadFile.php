@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
 use SplFileInfo;
 
 /**
  * UploadFile类
- * @author 刘健 <coder.liu@qq.com>
  */
 class UploadFile extends SplFileInfo
 {
@@ -27,7 +26,7 @@ class UploadFile extends SplFileInfo
      */
     public static function newInstanceByName($name)
     {
-        $file = \Mix::app()->request->files($name);
+        $file = \Rid::app()->request->files($name);
         return is_null($file) ? $file : new self($file);
     }
 

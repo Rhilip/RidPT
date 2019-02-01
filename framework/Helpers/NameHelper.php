@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Helpers;
+namespace Rid\Helpers;
 
 /**
- * NameHelper类
- * @author 刘健 <coder.liu@qq.com>
+ * NameHelper
  */
 class NameHelper
 {

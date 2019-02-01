@@ -9,7 +9,7 @@
 namespace apps\controllers;
 
 use apps\models\User;
-use Mix\Http\Controller;
+use Rid\Http\Controller;
 
 class UserController extends Controller
 {

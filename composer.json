@@ -1,9 +1,8 @@
 {
   "name": "Rhilip/RidPT",
-  "description": "基于 MixPHP 的Private Torrent源码",
+  "description": "基于 swoole 的Private Torrent源码",
   "type": "project",
   "keywords": [
-    "mixphp",
     "swoole",
     "bittorrent",
     "private torrent"
@@ -41,11 +40,11 @@
   },
   "autoload": {
     "psr-4": {
-      "Mix\\": "framework/",
+      "Rid\\": "framework/",
       "apps\\": "apps/"
     },
     "files": [
-      "framework/Mix.php",
+      "framework/Rid.php",
       "framework/functions.php"
     ]
   },

@@ -1,19 +1,18 @@
 <?php
 
-namespace Mix\Redis\Coroutine;
+namespace Rid\Redis\Coroutine;
 
-use Mix\Helpers\CoroutineHelper;
+use Rid\Helpers\CoroutineHelper;
 
 /**
  * RedisCoroutine组件
- * @author 刘健 <coder.liu@qq.com>
  */
-class RedisConnection extends \Mix\Redis\Persistent\RedisConnection
+class RedisConnection extends \Rid\Redis\Persistent\RedisConnection
 {
 
     /**
      * 连接池
-     * @var \Mix\Pool\ConnectionPool
+     * @var \Rid\Pool\ConnectionPool
      */
     public $connectionPool;
 

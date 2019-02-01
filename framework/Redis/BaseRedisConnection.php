@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Redis;
+namespace Rid\Redis;
 
-use Mix\Base\Component;
+use Rid\Base\Component;
 
 /**
  * BaseRedis组件
- * @author 刘健 <coder.liu@qq.com>
  *
  * @method bool psetex($key, $ttl, $value)
  * @method array|bool sScan($key, $iterator, $pattern = '', $count = 0)
@@ -225,7 +224,7 @@ class BaseRedisConnection extends Component
         $redis = new \Redis();
         // connect 这里如果设置timeout，是全局有效的，执行brPop时会受影响
         if (!$redis->connect($this->host, $this->port)) {
-            throw new \Mix\Exceptions\ConnectionException('redis connection failed.');
+            throw new \Rid\Exceptions\ConnectionException('redis connection failed.');
         }
         $redis->auth($this->password);
         $redis->select($this->database);

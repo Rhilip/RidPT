@@ -8,7 +8,7 @@
 
 namespace apps\controllers;
 
-use Mix\Http\Controller;
+use Rid\Http\Controller;
 
 use apps\models\Torrent;
 use apps\models\form\TorrentUploadForm;

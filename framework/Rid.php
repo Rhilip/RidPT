@@ -1,14 +1,13 @@
 <?php
 
 /**
- * Mix类
- * @author 刘健 <coder.liu@qq.com>
+ * Rid类
  */
-class Mix
+class Rid
 {
 
     // 版本号
-    const VERSION = '1.1.1';
+    const VERSION = 'v0.1.2-alpha';
 
     // App实例
     protected static $_app;
@@ -16,7 +15,7 @@ class Mix
     /**
      * 返回App，并设置组件命名空间
      *
-     * @return \Mix\Http\Application|\Mix\Console\Application
+     * @return \Rid\Http\Application|\Rid\Console\Application
      */
     public static function app($prefix = null)
     {
@@ -31,7 +30,7 @@ class Mix
     /**
      * 获取App
      *
-     * @return \Mix\Http\Application|\Mix\Console\Application
+     * @return \Rid\Http\Application|\Rid\Console\Application
      */
     protected static function getApp()
     {

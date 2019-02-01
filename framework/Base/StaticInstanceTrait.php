@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Base;
+namespace Rid\Base;
 
 /**
  * Trait StaticInstanceTrait
- * @author 刘健 <coder.liu@qq.com>
  */
 trait StaticInstanceTrait
 {
@@ -27,10 +26,10 @@ trait StaticInstanceTrait
     public static function newInstanceByConfig($name)
     {
         $class  = get_called_class();
-        $config = \Mix::app()->env($name);
-        $object = \Mix::createObject($config);
+        $config = \Rid::app()->env($name);
+        $object = \Rid::createObject($config);
         if (get_class($object) != $class) {
-            throw new \Mix\Exceptions\ConfigException('实例化类型与配置类型不符');
+            throw new \Rid\Exceptions\ConfigException('实例化类型与配置类型不符');
         }
         return $object;
     }

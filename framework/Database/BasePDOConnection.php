@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Database;
+namespace Rid\Database;
 
-use Mix\Base\Component;
+use Rid\Base\Component;
 
 /**
  * BasePdo组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class BasePDOConnection extends Component
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
 use Twig_Loader_Filesystem;
 use Twig_Environment;
@@ -23,10 +23,10 @@ class View
 
     public function __construct()
     {
-        $loader = new Twig_Loader_Filesystem(\Mix::app()->getViewPath());
+        $loader = new Twig_Loader_Filesystem(\Rid::app()->getViewPath());
         $this->twig = new Twig_Environment($loader, array(
             'debug' => env("APP_DEBUG"),
-            'cache' => \Mix::app()->getRuntimePath() . DIRECTORY_SEPARATOR . "view",
+            'cache' => \Rid::app()->getRuntimePath() . DIRECTORY_SEPARATOR . "view",
         ));
 
         $this->twig->addExtension(new Twig_Extensions_Extension_Text());

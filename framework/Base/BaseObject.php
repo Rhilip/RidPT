@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Base;
+namespace Rid\Base;
 
 /**
  * 对象基类
- * @author 刘健 <coder.liu@qq.com>
  */
 abstract class BaseObject implements StaticInstanceInterface
 {
@@ -17,9 +16,9 @@ abstract class BaseObject implements StaticInstanceInterface
         // 执行构造事件
         $this->onConstruct();
         // 构建配置
-        $config = \Mix::configure($config);
+        $config = \Rid::configure($config);
         // 导入属性
-        \Mix::importAttributes($this, $config);
+        \Rid::importAttributes($this, $config);
         // 执行初始化事件
         $this->onInitialize();
     }

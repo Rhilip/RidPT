@@ -12,8 +12,8 @@ use apps\libraries\Site;
 
 use apps\models\User;
 
-use Mix\Helpers\StringHelper;
-use Mix\Validators\Validator;
+use Rid\Helpers\StringHelper;
+use Rid\Validators\Validator;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;

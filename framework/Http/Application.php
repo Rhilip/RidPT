@@ -1,15 +1,14 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\Component;
-use Mix\Helpers\CoroutineHelper;
+use Rid\Base\Component;
+use Rid\Helpers\CoroutineHelper;
 
 /**
  * App类
- * @author 刘健 <coder.liu@qq.com>
  */
-class Application extends \Mix\Base\Application
+class Application extends \Rid\Base\Application
 {
 
     // 控制器命名空间
@@ -38,11 +37,11 @@ class Application extends \Mix\Base\Application
     // 执行功能
     public function run()
     {
-        $server                        = \Mix::app()->request->server();
+        $server                        = \Rid::app()->request->server();
         $method                        = strtoupper($server['request_method']);
         $action                        = empty($server['path_info']) ? '' : substr($server['path_info'], 1);
-        \Mix::app()->response->content = $this->runAction($method, $action);
-        \Mix::app()->response->send();
+        \Rid::app()->response->content = $this->runAction($method, $action);
+        \Rid::app()->response->send();
     }
 
     // 执行功能并返回
@@ -50,18 +49,18 @@ class Application extends \Mix\Base\Application
     {
         $action = "{$method} {$action}";
         // 路由匹配
-        $result = \Mix::app()->route->match($action);
+        $result = \Rid::app()->route->match($action);
         foreach ($result as $item) {
             list($route, $queryParams) = $item;
             // 路由参数导入请求类
-            \Mix::app()->request->setRoute($queryParams);
+            \Rid::app()->request->setRoute($queryParams);
             // 实例化控制器
             list($shortClass, $shortAction) = $route;
-            $controllerDir    = \Mix\Helpers\FileSystemHelper::dirname($shortClass);
+            $controllerDir    = \Rid\Helpers\FileSystemHelper::dirname($shortClass);
             $controllerDir    = $controllerDir == '.' ? '' : "$controllerDir\\";
-            $controllerName   = \Mix\Helpers\NameHelper::snakeToCamel(\Mix\Helpers\FileSystemHelper::basename($shortClass), true);
+            $controllerName   = \Rid\Helpers\NameHelper::snakeToCamel(\Rid\Helpers\FileSystemHelper::basename($shortClass), true);
             $controllerClass  = "{$this->controllerNamespace}\\{$controllerDir}{$controllerName}Controller";
-            $shortAction      = \Mix\Helpers\NameHelper::snakeToCamel($shortAction, true);
+            $shortAction      = \Rid\Helpers\NameHelper::snakeToCamel($shortAction, true);
             $controllerAction = "action{$shortAction}";
             // 判断类是否存在
             if (class_exists($controllerClass)) {
@@ -82,7 +81,7 @@ class Application extends \Mix\Base\Application
                 break;
             }
         }
-        throw new \Mix\Exceptions\NotFoundException('Not Found (#404)');
+        throw new \Rid\Exceptions\NotFoundException('Not Found (#404)');
     }
 
     // 执行中间件
@@ -226,16 +225,16 @@ class Application extends \Mix\Base\Application
         ob_start();
         var_dump($var);
         $dumpContent                   = ob_get_clean();
-        \Mix::app()->response->content .= $dumpContent;
+        \Rid::app()->response->content .= $dumpContent;
         if ($send) {
-            throw new \Mix\Exceptions\DebugException(\Mix::app()->response->content);
+            throw new \Rid\Exceptions\DebugException(\Rid::app()->response->content);
         }
     }
 
     // 终止程序
     public function end($content = '')
     {
-        throw new \Mix\Exceptions\EndException($content);
+        throw new \Rid\Exceptions\EndException($content);
     }
 
 }

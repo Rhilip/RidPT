@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Task;
+namespace Rid\Task;
 
-use Mix\Helpers\StringHelper;
+use Rid\Helpers\StringHelper;
 
 /**
  * 临时消息类
- * @author 刘健 <coder.liu@qq.com>
  */
 class TempMessage
 {

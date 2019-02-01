@@ -1,10 +1,10 @@
 <?php
 
-namespace Mix\Validators;
+namespace Rid\Validators;
 
-use Mix\Base\BaseObject;
+use Rid\Base\BaseObject;
 
-use Mix\Http\UploadFile;
+use Rid\Http\UploadFile;
 
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints\File;
@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * Docs: https://symfony.com/doc/current/reference/constraints.html
  *
  * Class Validator
- * @package Mix\Validators
+ * @package Rid\Validators
  */
 class Validator extends BaseObject
 {

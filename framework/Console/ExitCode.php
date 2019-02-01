@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Console;
+namespace Rid\Console;
 
 /**
  * ExitCode类
- * @author 刘健 <coder.liu@qq.com>
  */
 class ExitCode
 {

@@ -6,7 +6,7 @@
  * Time: 12:47
  */
 
-namespace Mix\Utils;
+namespace Rid\Utils;
 
 
 trait AttributesImportUtils

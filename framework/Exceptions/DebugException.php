@@ -1,12 +1,10 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * DebugException类
- * @author 刘健 <coder.liu@qq.com>
+ * DebugException
  */
 class DebugException extends \RuntimeException
 {
-
 }

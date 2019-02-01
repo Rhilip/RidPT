@@ -13,7 +13,7 @@ class ApiMiddleware
 {
     public function handle($callable, \Closure $next)
     {
-        app()->response->format = \Mix\Http\Response::FORMAT_JSON;
+        app()->response->format = \Rid\Http\Response::FORMAT_JSON;
         if (env("APP_DEBUG")) {
             app()->response->setHeader("access-control-allow-origin","*");
         }

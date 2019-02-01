@@ -2,17 +2,16 @@
 
 /**
  * 助手函数
- * @author 刘健 <coder.liu@qq.com>
  */
 
 if (!function_exists('app')) {
     /** 返回当前 App 实例
      * @param null $prefix
-     * @return \Mix\Console\Application|\Mix\Http\Application
+     * @return \Rid\Console\Application|\Rid\Http\Application
      */
     function app($prefix = null)
     {
-        return \Mix::app($prefix);
+        return \Rid::app($prefix);
     }
 }
 
@@ -24,7 +23,7 @@ if (!function_exists('env')) {
      */
     function env($name = null, $default = '')
     {
-        return \Mix\Config\Env::get($name, $default);
+        return \Rid\Config\Env::get($name, $default);
     }
 }
 
@@ -36,14 +35,14 @@ if (!function_exists('tgo')) {
     function tgo($closure)
     {
         go(function () use ($closure) {
-            $hook = new \Mix\Base\ChannelHook();
+            $hook = new \Rid\Base\ChannelHook();
             try {
                 $closure($hook);
             } catch (\Throwable $e) {
                 // 钩子处理
                 if (!$hook->handle($e)) {
                     // 输出错误
-                    \Mix::app()->error->handleException($e);
+                    \Rid::app()->error->handleException($e);
                 }
             }
         });

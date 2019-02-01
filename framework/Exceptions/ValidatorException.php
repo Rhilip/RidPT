@@ -1,12 +1,10 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * ModelException类
- * @author 刘健 <coder.liu@qq.com>
+ * ModelException
  */
 class ValidatorException extends \RuntimeException
 {
-
 }

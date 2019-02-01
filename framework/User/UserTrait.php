@@ -6,10 +6,10 @@
  * Time: 20:24
  */
 
-namespace Mix\User;
+namespace Rid\User;
 
-use Mix\Exceptions\NotFoundException;
-use Mix\Utils\AttributesImportUtils;
+use Rid\Exceptions\NotFoundException;
+use Rid\Utils\AttributesImportUtils;
 
 trait UserTrait
 {

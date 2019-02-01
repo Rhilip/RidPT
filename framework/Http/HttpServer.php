@@ -1,14 +1,13 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\BaseObject;
+use Rid\Base\BaseObject;
 
-use Mix\Helpers\ProcessHelper;
+use Rid\Helpers\ProcessHelper;
 
 /**
  * Http服务器类
- * @author 刘健 <coder.liu@qq.com>
  */
 class HttpServer extends BaseObject
 {
@@ -36,9 +35,9 @@ class HttpServer extends BaseObject
         // 退出等待时间
         'max_wait_time' => 60,
         // PID 文件
-        'pid_file' => '/var/run/mix-httpd.pid',
+        'pid_file' => '/var/run/rid-httpd.pid',
         // 日志文件路径
-        'log_file' => '/tmp/mix-httpd.log',
+        'log_file' => '/tmp/rid-httpd.log',
         // 开启后，PDOConnection 协程多次 prepare 才不会有 40ms 延迟
         'open_tcp_nodelay' => true,
     ];
@@ -82,7 +81,7 @@ class HttpServer extends BaseObject
     {
         $this->_server->on('Start', function ($server) {
             // 进程命名
-            ProcessHelper::setTitle("mix-httpd: master {$this->_host}:{$this->_port}");
+            ProcessHelper::setTitle("rid-httpd: master {$this->_host}:{$this->_port}");
         });
     }
 
@@ -91,7 +90,7 @@ class HttpServer extends BaseObject
     {
         $this->_server->on('ManagerStart', function ($server) {
             // 进程命名
-            ProcessHelper::setTitle("mix-httpd: manager");
+            ProcessHelper::setTitle("rid-httpd: manager");
         });
     }
 
@@ -101,9 +100,9 @@ class HttpServer extends BaseObject
         $this->_server->on('WorkerStart', function ($server, $workerId) {
             // 进程命名
             if ($workerId < $server->setting['worker_num']) {
-                ProcessHelper::setTitle("mix-httpd: worker #{$workerId}");
+                ProcessHelper::setTitle("rid-httpd: worker #{$workerId}");
             } else {
-                ProcessHelper::setTitle("mix-httpd: task #{$workerId}");
+                ProcessHelper::setTitle("rid-httpd: task #{$workerId}");
             }
             // 实例化App
             $config = require $this->virtualHost['configFile'];
@@ -118,11 +117,11 @@ class HttpServer extends BaseObject
         $this->_server->on('request', function ($request, $response) {
             // 执行请求
             try {
-                \Mix::app()->request->setRequester($request);
-                \Mix::app()->response->setResponder($response);
-                \Mix::app()->run();
+                \Rid::app()->request->setRequester($request);
+                \Rid::app()->response->setResponder($response);
+                \Rid::app()->run();
             } catch (\Throwable $e) {
-                \Mix::app()->error->handleException($e);
+                \Rid::app()->error->handleException($e);
             }
         });
     }
@@ -131,17 +130,26 @@ class HttpServer extends BaseObject
     protected function welcome()
     {
         echo <<<EOL
-                           _____
-_______ ___ _____ ___ _____  / /_  ____
-__/ __ `__ \/ /\ \/ / / __ \/ __ \/ __ \
-_/ / / / / / / /\ \/ / /_/ / / / / /_/ /
-/_/ /_/ /_/_/ /_/\_\/ .___/_/ /_/ .___/
-                   /_/         /_/
+        
+────────────────────────────────────────────────────────────────────────────
+─████████████████───██████████─████████████───██████████████─██████████████─
+─██░░░░░░░░░░░░██───██░░░░░░██─██░░░░░░░░████─██░░░░░░░░░░██─██░░░░░░░░░░██─
+─██░░████████░░██───████░░████─██░░████░░░░██─██░░██████░░██─██████░░██████─
+─██░░██────██░░██─────██░░██───██░░██──██░░██─██░░██──██░░██─────██░░██─────
+─██░░████████░░██─────██░░██───██░░██──██░░██─██░░██████░░██─────██░░██─────
+─██░░░░░░░░░░░░██─────██░░██───██░░██──██░░██─██░░░░░░░░░░██─────██░░██─────
+─██░░██████░░████─────██░░██───██░░██──██░░██─██░░██████████─────██░░██─────
+─██░░██──██░░██───────██░░██───██░░██──██░░██─██░░██─────────────██░░██─────
+─██░░██──██░░██████─████░░████─██░░████░░░░██─██░░██─────────────██░░██─────
+─██░░██──██░░░░░░██─██░░░░░░██─██░░░░░░░░████─██░░██─────────────██░░██─────
+─██████──██████████─██████████─████████████───██████─────────────██████─────
+────────────────────────────────────────────────────────────────────────────
+
 
 EOL;
-        app()->output->writeln('Server      Name:      mix-httpd');
+        app()->output->writeln('Server      Name:      rid-httpd');
         app()->output->writeln('System      Name:      ' . strtolower(PHP_OS));
-        app()->output->writeln('Framework   Version:   ' . \Mix::VERSION);
+        app()->output->writeln('Framework   Version:   ' . \Rid::VERSION);
         app()->output->writeln("PHP         Version:   " . PHP_VERSION);
         app()->output->writeln("Swoole      Version:   " . swoole_version());
         app()->output->writeln("Listen      Addr:      {$this->_host}");

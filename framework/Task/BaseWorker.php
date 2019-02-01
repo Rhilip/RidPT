@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Task;
+namespace Rid\Task;
 
-use Mix\Base\BaseObject;
+use Rid\Base\BaseObject;
 
 /**
  * 工作者基类
- * @author 刘健 <coder.liu@qq.com>
  */
 class BaseWorker extends BaseObject
 {

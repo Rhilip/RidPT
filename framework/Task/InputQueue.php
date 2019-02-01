@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Task;
+namespace Rid\Task;
 
 /**
  * 输入消息队列
- * @author 刘健 <coder.liu@qq.com>
  */
 class InputQueue extends BaseQueue
 {

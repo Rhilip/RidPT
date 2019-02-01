@@ -8,9 +8,9 @@
 
 namespace apps\models\form;
 
-use Mix\Helpers\StringHelper;
-use Mix\User\UserInterface;
-use Mix\Validators\Validator;
+use Rid\Helpers\StringHelper;
+use Rid\User\UserInterface;
+use Rid\Validators\Validator;
 
 use RobThree\Auth\TwoFactorAuth;
 use RobThree\Auth\TwoFactorAuthException;

@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\BaseObject;
+use Rid\Base\BaseObject;
 
 /**
  * Controller类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Controller extends BaseObject
 {

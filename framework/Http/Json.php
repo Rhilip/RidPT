@@ -1,13 +1,12 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\BaseObject;
-use Mix\Helpers\JsonHelper;
+use Rid\Base\BaseObject;
+use Rid\Helpers\JsonHelper;
 
 /**
  * JSON 类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Json extends BaseObject
 {

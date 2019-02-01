@@ -1,6 +1,6 @@
 ## RidPT
 
-A Private Torrent Project based on `MixPHP` framework.
+A Private Torrent Project framework.
 
 ## Installation Guide
 
@@ -39,26 +39,38 @@ edit in Admin Panel.
     vi .env
     ```
 
-5. Run Test by `php bin/mix-httpd service start -u` , And Congratulation If you see those output **without error throwout**.
+5. Run Test by `php bin/rid-httpd service start -u` , And Congratulation If you see those output **without error throwout**.
 
     ```bash
-    root@ubuntu-s-4vcpu-8gb-nyc1-01:/home/wwwroot/ridpt.rhilip.info# php bin/mix-httpd service start -u
-                               _____
-    _______ ___ _____ ___ _____  / /_  ____
-    __/ __ `__ \/ /\ \/ / / __ \/ __ \/ __ \
-    _/ / / / / / / /\ \/ / /_/ / / / / /_/ /
-    /_/ /_/ /_/_/ /_/\_\/ .___/_/ /_/ .___/
-                       /_/         /_/
-    
-    Server      Name:      mix-httpd
-    Framework   Version:   1.1.1
-    PHP         Version:   7.2.6
-    Swoole      Version:   4.2.10
-    Listen      Addr:      ::
+    root@ridpt:/data/wwwroot/ridpt.rhilip.info# php bin/rid-httpd service start
+
+    ────────────────────────────────────────────────────────────────────────────
+    ─████████████████───██████████─████████████───██████████████─██████████████─
+    ─██░░░░░░░░░░░░██───██░░░░░░██─██░░░░░░░░████─██░░░░░░░░░░██─██░░░░░░░░░░██─
+    ─██░░████████░░██───████░░████─██░░████░░░░██─██░░██████░░██─██████░░██████─
+    ─██░░██────██░░██─────██░░██───██░░██──██░░██─██░░██──██░░██─────██░░██─────
+    ─██░░████████░░██─────██░░██───██░░██──██░░██─██░░██████░░██─────██░░██─────
+    ─██░░░░░░░░░░░░██─────██░░██───██░░██──██░░██─██░░░░░░░░░░██─────██░░██─────
+    ─██░░██████░░████─────██░░██───██░░██──██░░██─██░░██████████─────██░░██─────
+    ─██░░██──██░░██───────██░░██───██░░██──██░░██─██░░██─────────────██░░██─────
+    ─██░░██──██░░██████─████░░████─██░░████░░░░██─██░░██─────────────██░░██─────
+    ─██░░██──██░░░░░░██─██░░░░░░██─██░░░░░░░░████─██░░██─────────────██░░██─────
+    ─██████──██████████─██████████─████████████───██████─────────────██████─────
+    ────────────────────────────────────────────────────────────────────────────
+
+    Server      Name:      rid-httpd
+    System      Name:      linux
+    Framework   Version:   v0.1.2-alpha
+    PHP         Version:   7.2.14
+    Swoole      Version:   4.2.12
+    Listen      Addr:      127.0.0.1
     Listen      Port:      9501
-    Hot         Update:    enabled
+    Reactor     Num:       8
+    Worker      Num:       8
+    Hot         Update:    disabled
     Coroutine   Mode:      disabled
-    Config      File:      /home/wwwroot/ridpt.rhilip.info/apps/httpd/config/http_permanent.php
+    Config      File:      /data/wwwroot/ridpt.rhilip.info/apps/config/http_permanent.php
+
     ```
 
 6. Then you can safely add Nginx reserve proxy config like `migration/nginx.conf`.And Notice : 

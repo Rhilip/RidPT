@@ -1,12 +1,10 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * ViewException类
- * @author 刘健 <coder.liu@qq.com>
+ * ViewException
  */
 class ViewException extends \RuntimeException
 {
-
 }

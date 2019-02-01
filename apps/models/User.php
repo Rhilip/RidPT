@@ -2,8 +2,8 @@
 
 namespace apps\models;
 
-use \Mix\User\UserInterface;
-use \Mix\User\UserTrait;
+use \Rid\User\UserInterface;
+use \Rid\User\UserTrait;
 
 class User implements UserInterface
 {

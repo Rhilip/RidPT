@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\BaseObject;
+use Rid\Base\BaseObject;
 
 /**
  * Captcha类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Captcha extends BaseObject
 {

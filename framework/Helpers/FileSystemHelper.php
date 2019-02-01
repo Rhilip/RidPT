@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\helpers;
+namespace Rid\helpers;
 
 /**
  * FileSystemHelper类
- * @author 刘健 <coder.liu@qq.com>
  */
 class FileSystemHelper
 {

@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Helpers;
+namespace Rid\Helpers;
 
 /**
- * PhpInfoHelper类
- * @author 刘健 <coder.liu@qq.com>
+ * PhpInfoHelper
  */
 class PhpInfoHelper
 {

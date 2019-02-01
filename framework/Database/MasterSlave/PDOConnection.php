@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Database\MasterSlave;
+namespace Rid\Database\MasterSlave;
 
 /**
  * PdoMasterSlave组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class PDOConnection extends BasePDOConnection
 {

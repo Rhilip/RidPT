@@ -1,13 +1,12 @@
 <?php
 
-namespace Mix\Console;
+namespace Rid\Console;
 
-use Mix\Base\Component;
-use Mix\Helpers\PhpInfoHelper;
+use Rid\Base\Component;
+use Rid\Helpers\PhpInfoHelper;
 
 /**
  * Output组件
- * @author 刘健 <coder.liu@qq.com>
  */
 class Output extends Component
 {

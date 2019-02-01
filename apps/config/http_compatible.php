@@ -9,11 +9,11 @@ return array_replace_recursive($base, [
     // 组件配置
     'components' => [
         'request' => [
-            'class' => Mix\Http\Compatible\Request::class,
+            'class' => Rid\Http\Compatible\Request::class,
         ],
 
         'response' => [
-            'class' => Mix\Http\Compatible\Response::class,
+            'class' => Rid\Http\Compatible\Response::class,
         ],
 
         'error' => [

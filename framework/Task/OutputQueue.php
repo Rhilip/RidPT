@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Task;
+namespace Rid\Task;
 
 /**
  * 输出消息队列
- * @author 刘健 <coder.liu@qq.com>
  */
 class OutputQueue extends BaseQueue
 {

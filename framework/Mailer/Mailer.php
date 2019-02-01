@@ -6,9 +6,9 @@
  * Time: 17:30
  */
 
-namespace Mix\Mailer;
+namespace Rid\Mailer;
 
-use Mix\Base\Component;
+use Rid\Base\Component;
 
 use Swift_Mailer;
 use Swift_Message;

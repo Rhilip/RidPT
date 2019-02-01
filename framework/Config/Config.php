@@ -6,10 +6,10 @@
  * Time: 20:39
  */
 
-namespace Mix\Config;
+namespace Rid\Config;
 
-use Mix\Base\Component;
-use Mix\Exceptions\ConfigException;
+use Rid\Base\Component;
+use Rid\Exceptions\ConfigException;
 
 class Config extends Component
 {

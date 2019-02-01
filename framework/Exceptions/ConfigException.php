@@ -1,12 +1,10 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * ConfigException类
- * @author 刘健 <coder.liu@qq.com>
+ * ConfigException
  */
 class ConfigException extends \RuntimeException
 {
-
 }

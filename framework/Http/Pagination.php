@@ -2,11 +2,10 @@
 
 namespace mix\Http;
 
-use mix\Base\BaseObject;
+use Rid\Base\BaseObject;
 
 /**
  * Pagination类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Pagination extends BaseObject
 {

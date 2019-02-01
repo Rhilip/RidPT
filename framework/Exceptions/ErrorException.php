@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * ErrorException类
- * @author 刘健 <coder.liu@qq.com>
+ * ErrorException
  */
 class ErrorException extends \RuntimeException
 {

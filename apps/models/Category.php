@@ -9,7 +9,7 @@
 namespace apps\models;
 
 
-use Mix\Exceptions\NotFoundException;
+use Rid\Exceptions\NotFoundException;
 
 class Category
 {

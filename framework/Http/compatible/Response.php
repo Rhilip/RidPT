@@ -1,12 +1,11 @@
 <?php
 
-namespace Mix\Http\Compatible;
+namespace Rid\Http\Compatible;
 
 /**
  * Response组件
- * @author 刘健 <coder.liu@qq.com>
  */
-class Response extends \Mix\Http\BaseResponse
+class Response extends \Rid\Http\BaseResponse
 {
 
     // 请求前置事件
@@ -44,7 +43,7 @@ class Response extends \Mix\Http\BaseResponse
         // 预处理
         $this->prepare();
         // 清扫组件容器
-        \Mix::app()->cleanComponents();
+        \Rid::app()->cleanComponents();
         // 发送
         $this->sendStatusCode();
         $this->sendHeaders();

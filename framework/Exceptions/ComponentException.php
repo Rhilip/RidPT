@@ -1,12 +1,10 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * ComponentException类
- * @author 刘健 <coder.liu@qq.com>
+ * ComponentException
  */
 class ComponentException extends \RuntimeException
 {
-
 }

@@ -1,13 +1,12 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\BaseObject;
-use Mix\Helpers\XmlHelper;
+use Rid\Base\BaseObject;
+use Rid\Helpers\XmlHelper;
 
 /**
  * Xml类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Xml extends BaseObject
 {

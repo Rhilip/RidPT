@@ -1,13 +1,12 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\BaseObject;
-use Mix\Helpers\JsonHelper;
+use Rid\Base\BaseObject;
+use Rid\Helpers\JsonHelper;
 
 /**
  * JSONP 类
- * @author 刘健 <coder.liu@qq.com>
  */
 class Jsonp extends BaseObject
 {
@@ -20,7 +19,7 @@ class Jsonp extends BaseObject
     {
         // 不转义中文、斜杠
         $jsonString = JsonHelper::encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        $callback   = \Mix::app()->request->get($this->name);
+        $callback   = \Rid::app()->request->get($this->name);
         if (is_null($callback)) {
             return $jsonString;
         }

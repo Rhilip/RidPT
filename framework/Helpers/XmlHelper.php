@@ -1,10 +1,9 @@
 <?php
 
-namespace Mix\Helpers;
+namespace Rid\Helpers;
 
 /**
- * XmlHelper类
- * @author 刘健 <coder.liu@qq.com>
+ * XmlHelper
  */
 class XmlHelper
 {

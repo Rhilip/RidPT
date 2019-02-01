@@ -1,12 +1,10 @@
 <?php
 
-namespace Mix\Exceptions;
+namespace Rid\Exceptions;
 
 /**
- * RouteException类
- * @author 刘健 <coder.liu@qq.com>
+ * RouteException
  */
 class RouteException extends \RuntimeException
 {
-
 }

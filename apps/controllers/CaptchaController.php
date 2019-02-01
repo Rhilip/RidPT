@@ -8,7 +8,7 @@
 
 namespace apps\controllers;
 
-use Mix\Http\Captcha;
+use Rid\Http\Captcha;
 
 class CaptchaController
 {

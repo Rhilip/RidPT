@@ -1,17 +1,16 @@
 <?php
 
-namespace Mix\Http;
+namespace Rid\Http;
 
-use Mix\Base\Component;
+use Rid\Base\Component;
 
-use Mix\Utils\HeaderUtils;
-use Mix\Utils\IpUtils;
+use Rid\Utils\HeaderUtils;
+use Rid\Utils\IpUtils;
 
 use DeviceDetector\DeviceDetector;
 
 /**
  * Request组件基类
- * @author 刘健 <coder.liu@qq.com>
  */
 class BaseRequest extends Component
 {
