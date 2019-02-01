@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 31, 2019 at 11:42 AM
+-- Generation Time: Feb 01, 2019 at 08:34 AM
 -- Server version: 5.7.24-log
 -- PHP Version: 7.2.14
 
@@ -370,6 +370,7 @@ INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
 ('register.user_default_status', 'pending', '2018-12-05 13:56:19'),
 ('register.user_default_uploaded', '0', '2018-12-05 13:56:19'),
 ('register.user_default_uploadpos', '1', '2018-12-05 13:56:19'),
+('security.max_login_attempts', '10', '2019-02-01 08:06:51'),
 ('torrent.max_file_size', '3145728', '2018-12-13 02:04:45'),
 ('torrent.max_nfo_size', '65535', '2018-12-13 02:04:45'),
 ('tracker.cheater_check', '1', '2018-11-27 10:28:13'),

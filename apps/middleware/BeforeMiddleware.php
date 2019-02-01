@@ -16,6 +16,11 @@ class BeforeMiddleware
         if ($controllerName === \apps\controllers\AuthController::class) {
             if (!$isAnonymousUser && in_array($action, ["actionLogin", "actionRegister"])) {
                 return app()->response->redirect("/index");
+            } elseif ($action == 'actionLogin') {
+                $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
+                if ($test_count > app()->config->get('security.max_login_attempts')) {
+                    return app()->response->setStatusCode(403);
+                }
             } elseif ($action !== "actionLogout") {
                 return $next();
             }

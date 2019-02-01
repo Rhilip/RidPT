@@ -152,7 +152,7 @@ use Mix\Base\Component;
  * @method int zInter($Output, $ZSetKeys, array $Weights = null, $aggregateFunction = 'SUM')
  * @method int|bool hSet($key, $hashKey, $value)
  * @method bool hSetNx($key, $hashKey, $value)
- * @method string hGet($key, $hashKey)
+ * @method string|bool hGet($key, $hashKey)
  * @method int hLen($key)
  * @method int|bool hDel($key, $hashKey1, $hashKey2 = null, $hashKeyN = null)
  * @method array hKeys($key)

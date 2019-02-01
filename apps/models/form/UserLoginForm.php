@@ -113,11 +113,18 @@ class UserLoginForm extends Validator
         }
     }
 
-    public function isMaxLoginIpReached()
+    public function isMaxLoginIpReached(ExecutionContextInterface $context)
     {
-        // TODO Check User Fail Login Ip Count
+        $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
+        if ($test_count > app()->config->get('security.max_login_attempts')) {
+            $context->buildViolation("User Max Login Attempts Archived.")->addViolation();
+        }
     }
 
+    public function LoginFail() {
+        app()->redis->zAdd('SITE:fail_login_ip_zset', time(), app()->request->getClientIp());
+        app()->redis->hIncrBy('SITE:fail_login_ip_count', app()->request->getClientIp(), 1);
+    }
 
     public function createUserSession()
     {
