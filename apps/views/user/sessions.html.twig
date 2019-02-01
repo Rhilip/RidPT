@@ -11,8 +11,7 @@
         <tr>
             <td class="text-center">Login At</td>
             <td class="text-center">Login IP</td>
-            <td class="text-center">Platform</td>
-            <td class="text-center">Browser</td>
+            <td class="text-center">User Agent</td>
             <td class="text-center">Last access at</td>
             <td class="text-center">Action</td>
         </tr>
@@ -22,8 +21,7 @@
             <tr>
                 <td class="text-center">{{ s['login_at'] | date("Y-m-d H:i:s") }}</td>
                 <td class="text-center">{{ s['login_ip'] }}</td>
-                <td class="text-center">{{ s['platform'] }}</td>
-                <td class="text-center">{{ s['browser'] }}</td>
+                <td class="text-left">{{ s['user_agent'] }}</td>
                 <td class="text-center">{{ s['last_access_at'] |  date("Y-m-d H:i:s") }}</td>
                 <td class="text-center">
                     {% if s['sid'] == curuser.getSessionId() %}

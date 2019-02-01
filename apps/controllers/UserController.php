@@ -56,7 +56,7 @@ class UserController extends Controller
             }
         }
 
-        $sessions = app()->pdo->createCommand('SELECT sid,login_at,INET6_NTOA(login_ip) as login_ip,browser,platform,last_access_at FROM users_session_log WHERE uid=:uid and expired=0')->bindParams([
+        $sessions = app()->pdo->createCommand('SELECT sid,login_at,INET6_NTOA(login_ip) as login_ip,user_agent,last_access_at FROM users_session_log WHERE uid=:uid and expired=0')->bindParams([
             'uid' => app()->user->getId()
         ])->queryAll();
         return $this->render('user/sessions.html.twig', ['sessions' => $sessions]);

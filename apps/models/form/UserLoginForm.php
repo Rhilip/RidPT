@@ -139,15 +139,12 @@ class UserLoginForm extends Validator
                 ])->queryScalar();
             } while ($count != 0);
 
-            // store user login information , ( for example `login ip`,`platform`,`browser`,`last activity at` )
-            $ua = app()->request->getUserAgent(true);
-
-            app()->pdo->createCommand('INSERT INTO `users_session_log`(`uid`, `sid`, `login_ip`, `browser`, `platform` , `last_access_at`) ' .
-                'VALUES (:uid,:sid,INET6_ATON(:login_ip),:browser,:platform, NOW())')->bindParams([
+            // store user login information , ( for example `login ip`,`user_agent`,`last activity at` )
+            app()->pdo->createCommand('INSERT INTO `users_session_log`(`uid`, `sid`, `login_ip`, `user_agent` , `last_access_at`) ' .
+                'VALUES (:uid,:sid,INET6_ATON(:login_ip),:ua, NOW())')->bindParams([
                 'uid' => $userId, 'sid' => $userSessionId,
                 'login_ip' => app()->request->getClientIp(),
-                'browser' => $ua->getClient('name') . ' ' . $ua->getClient('version'),
-                'platform' => $ua->getOs('name') .' '. $ua->getOs('version') .' '. $ua->getOs('platform')
+                'ua' => app()->request->getUserAgent()
             ])->execute();
 
             // Add this session id in Redis Cache

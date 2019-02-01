@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 01, 2019 at 08:34 AM
+-- Generation Time: Feb 01, 2019 at 08:48 AM
 -- Server version: 5.7.24-log
 -- PHP Version: 7.2.14
 
@@ -596,8 +596,7 @@ CREATE TABLE IF NOT EXISTS `users_session_log` (
   `sid` varchar(64) NOT NULL,
   `login_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `login_ip` varbinary(16) NOT NULL,
-  `browser` varchar(32) NOT NULL DEFAULT '',
-  `platform` varchar(32) NOT NULL DEFAULT '',
+  `user_agent` varchar(512) NOT NULL DEFAULT '',
   `last_access_at` timestamp NOT NULL,
   `expired` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
