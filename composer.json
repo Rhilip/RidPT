@@ -29,7 +29,6 @@
     "ext-swoole": "*",
     "ext-mbstring": "*",
     "ext-simplexml": "*",
-    "sandfoxme/bencode": "^1.2",
     "robthree/twofactorauth": "^1.6",
     "swiftmailer/swiftmailer": "^6.1",
     "twig/twig": "^2.0",

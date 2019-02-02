@@ -8,8 +8,7 @@
 
 namespace apps\models;
 
-use SandFoxMe\Bencode\Bencode;
-
+use Rid\Bencode\Bencode;
 use Rid\Exceptions\NotFoundException;
 
 class Torrent

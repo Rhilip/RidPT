@@ -67,15 +67,15 @@ return [
                 // 开启协程
                 'enable_coroutine' => false,
                 // 连接处理线程数
-                'reactor_num'      => 8,
+                'reactor_num'      => 1,
                 // 工作进程数
-                'worker_num'       => 8,
+                'worker_num'       => 20,
                 // PID 文件
                 'pid_file'         => '/var/run/rid-httpd.pid',
                 // 日志文件路径
                 'log_file'         => '/tmp/rid-httpd.log',
                 // 进程的最大任务数
-                'max_request'      => 10000,
+                'max_request'      => 3000,
                 // 退出等待时间
                 'max_wait_time'    => 60,
                 // 异步安全重启

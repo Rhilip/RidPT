@@ -11,9 +11,8 @@ namespace apps\models\form;
 use apps\models\Torrent;
 
 use Rid\Validators\Validator;
-
-use SandFoxMe\Bencode\Bencode;
-use SandFoxMe\Bencode\Exceptions\ParseErrorException;
+use Rid\Bencode\Bencode;
+use Rid\Bencode\ParseErrorException;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;

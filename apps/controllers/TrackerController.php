@@ -9,7 +9,7 @@
 namespace apps\controllers;
 
 use Rid\Utils\IpUtils;
-use SandFoxMe\Bencode\Bencode;
+use Rid\Bencode\Bencode;
 
 use apps\models\User;
 use apps\exceptions\TrackerException;
