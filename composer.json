@@ -1,5 +1,5 @@
 {
-  "name": "Rhilip/RidPT",
+  "name": "rhilip/rid-pt",
   "description": "基于 swoole 的Private Torrent源码",
   "type": "project",
   "keywords": [
@@ -16,7 +16,7 @@
   ],
   "version": "0.0.1",
   "require": {
-    "php": ">=7.2.0",
+    "php": ">=7.3.0",
     "ext-gd": "*",
     "ext-pdo": "*",
     "ext-json": "*",

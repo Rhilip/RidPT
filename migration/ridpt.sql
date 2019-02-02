@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.4
+-- version 4.8.5
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 01, 2019 at 08:48 AM
--- Server version: 5.7.24-log
--- PHP Version: 7.2.14
+-- Generation Time: Feb 02, 2019 at 08:38 AM
+-- Server version: 8.0.14
+-- PHP Version: 7.3.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -15,7 +15,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `ridpt`
 --
-CREATE DATABASE IF NOT EXISTS `ridpt` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE IF NOT EXISTS `ridpt` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE `ridpt`;
 
 -- --------------------------------------------------------
@@ -27,12 +27,12 @@ USE `ridpt`;
 DROP TABLE IF EXISTS `agent_allowed_exception`;
 CREATE TABLE IF NOT EXISTS `agent_allowed_exception` (
   `family_id` tinyint(3) UNSIGNED NOT NULL,
-  `name` varchar(100) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `peer_id` varchar(20) CHARACTER SET utf8 NOT NULL,
-  `agent` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `comment` varchar(200) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `name` varchar(100) NOT NULL DEFAULT '',
+  `peer_id` varchar(20) NOT NULL,
+  `agent` varchar(100) NOT NULL,
+  `comment` varchar(200) NOT NULL DEFAULT '',
   KEY `family_id` (`family_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `agent_allowed_exception`:
@@ -52,22 +52,22 @@ TRUNCATE TABLE `agent_allowed_exception`;
 DROP TABLE IF EXISTS `agent_allowed_family`;
 CREATE TABLE IF NOT EXISTS `agent_allowed_family` (
   `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `family` varchar(50) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `start_name` varchar(100) CHARACTER SET utf8 NOT NULL DEFAULT '',
-  `peer_id_pattern` varchar(200) CHARACTER SET utf8 NOT NULL,
+  `family` varchar(50) NOT NULL DEFAULT '',
+  `start_name` varchar(100) NOT NULL DEFAULT '',
+  `peer_id_pattern` varchar(200) NOT NULL,
   `peer_id_match_num` tinyint(3) UNSIGNED NOT NULL,
-  `peer_id_matchtype` enum('dec','hex') CHARACTER SET utf8 NOT NULL DEFAULT 'dec',
-  `peer_id_start` varchar(20) CHARACTER SET utf8 NOT NULL,
-  `agent_pattern` varchar(200) CHARACTER SET utf8 NOT NULL,
+  `peer_id_matchtype` enum('dec','hex') NOT NULL DEFAULT 'dec',
+  `peer_id_start` varchar(20) NOT NULL,
+  `agent_pattern` varchar(200) NOT NULL,
   `agent_match_num` tinyint(3) UNSIGNED NOT NULL,
-  `agent_matchtype` enum('dec','hex') CHARACTER SET utf8 NOT NULL DEFAULT 'dec',
-  `agent_start` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `exception` enum('yes','no') CHARACTER SET utf8 NOT NULL DEFAULT 'no',
-  `enabled` enum('yes','no') CHARACTER SET utf8 NOT NULL DEFAULT 'yes',
-  `comment` varchar(200) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  `agent_matchtype` enum('dec','hex') NOT NULL DEFAULT 'dec',
+  `agent_start` varchar(100) NOT NULL,
+  `exception` enum('yes','no') NOT NULL DEFAULT 'no',
+  `enabled` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `comment` varchar(200) NOT NULL DEFAULT '',
   `hits` mediumint(8) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `agent_allowed_family`:
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS `agent_deny_log` (
   `last_action_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `one_peer` (`tid`,`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `agent_deny_log`:
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `cheaters` (
   `reviewed_by` mediumint(8) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQ_user_torrent_id` (`userid`,`torrentid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `cheaters`:
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS `files` (
   `size` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `torrent_id` (`torrent_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `files`:
@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS `invite` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`),
   KEY `FK_invite_inviter_id` (`inviter_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `invite`:
@@ -219,7 +219,7 @@ CREATE TABLE IF NOT EXISTS `ip_bans` (
   PRIMARY KEY (`id`),
   KEY `ip` (`ip`),
   KEY `FK_ip_ban_operator` (`add_by`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `ip_bans`:
@@ -248,7 +248,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
   KEY `sender` (`sender`),
   KEY `receiver_read_status` (`receiver`,`unread`),
   KEY `receiver` (`receiver`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `messages`:
@@ -287,7 +287,7 @@ CREATE TABLE IF NOT EXISTS `peers` (
   KEY `user_id` (`user_id`) USING HASH,
   KEY `torrent_id` (`torrent_id`),
   KEY `peer_id` (`peer_id`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4;
+) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `peers`:
@@ -305,7 +305,7 @@ CREATE TABLE IF NOT EXISTS `site_config` (
   `value` varchar(255) DEFAULT NULL,
   `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='The site Config Table';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='The site Config Table';
 
 --
 -- RELATIONSHIPS FOR TABLE `site_config`:
@@ -320,69 +320,88 @@ TRUNCATE TABLE `site_config`;
 -- Dumping data for table `site_config`
 --
 
-INSERT INTO `site_config` (`name`, `value`, `update_at`) VALUES
-('authority.pass_tracker_upspeed_check', '60', '2018-11-27 15:18:37'),
-('authority.route_admin_index', '60', '2019-01-31 11:42:29'),
-('authority.route_admin_service', '90', '2019-01-31 11:42:29'),
-('authority.see_anonymous_uploader', '40', '2019-01-27 05:41:35'),
-('authority.see_banned_torrent', '40', '2018-11-23 14:01:31'),
-('authority.see_pending_torrent', '40', '2018-11-23 14:01:31'),
-('authority.upload_anonymous', '5', '2018-12-13 08:48:00'),
-('base.enable_register_system', '1', '2018-11-28 16:05:12'),
-('base.enable_tracker_system', '1', '2018-11-22 14:30:50'),
-('base.max_per_user_session', '10', '2019-01-30 13:41:45'),
-('base.max_user', '5000', '2018-11-28 16:00:15'),
-('base.site_author', 'Rhilip', '2019-01-18 14:38:20'),
-('base.site_description', 'A Private Tracker Site', '2018-12-13 01:57:18'),
-('base.site_muti_tracker_url', '', '2018-12-29 15:52:06'),
-('base.site_name', 'RidPT', '2018-11-22 07:16:42'),
-('base.site_tracker_url', 'ridpt.rhilip.info/tracker', '2018-12-29 15:52:06'),
-('base.site_url', 'ridpt.rhilip.info', '2018-12-29 15:52:06'),
-('buff.enable_large', '1', '2018-12-09 10:33:35'),
-('buff.enable_magic', '1', '2018-12-09 10:33:35'),
-('buff.enable_mod', '1', '2018-12-09 10:33:35'),
-('buff.enable_random', '1', '2018-12-09 10:33:34'),
-('buff.large_size', '107374182400', '2018-12-09 10:33:35'),
-('buff.large_type', 'Free', '2018-12-09 10:33:35'),
-('buff.random_percent_2x', '2', '2018-12-09 10:33:35'),
-('buff.random_percent_2x50%', '0', '2018-12-09 10:33:35'),
-('buff.random_percent_2xfree', '1', '2018-12-09 10:33:35'),
-('buff.random_percent_30%', '0', '2018-12-09 10:33:35'),
-('buff.random_percent_50%', '5', '2018-12-09 10:33:35'),
-('buff.random_percent_free', '2', '2018-12-09 10:33:35'),
-('register.by_green', '0', '2018-12-12 13:50:41'),
-('register.by_invite', '1', '2018-11-29 11:43:57'),
-('register.by_open', '1', '2018-12-12 13:50:41'),
-('register.email_black_list', '@test.com', '2018-12-08 01:50:10'),
-('register.email_white_list', '@gmail.com', '2018-12-08 01:50:10'),
-('register.enabled_email_black_list', '1', '2018-12-08 01:50:10'),
-('register.enabled_email_white_list', '1', '2018-12-08 01:50:10'),
-('register.max_ip_check', '1', '2018-11-29 11:39:55'),
-('register.max_user_check', '1', '2018-11-28 16:04:23'),
-('register.per_ip_user', '5', '2018-11-29 11:40:50'),
-('register.user_confirm_way', 'auto', '2018-12-29 12:01:04'),
-('register.user_default_bonus', '0', '2018-12-05 14:52:12'),
-('register.user_default_class', '1', '2018-12-05 13:56:19'),
-('register.user_default_downloaded', '0', '2018-12-05 13:56:19'),
-('register.user_default_downloadpos', '1', '2018-12-05 13:56:19'),
-('register.user_default_leechtime', '0', '2018-12-05 13:56:19'),
-('register.user_default_seedtime', '0', '2018-12-05 13:56:19'),
-('register.user_default_status', 'pending', '2018-12-05 13:56:19'),
-('register.user_default_uploaded', '0', '2018-12-05 13:56:19'),
-('register.user_default_uploadpos', '1', '2018-12-05 13:56:19'),
-('security.max_login_attempts', '10', '2019-02-01 08:06:51'),
-('torrent.max_file_size', '3145728', '2018-12-13 02:04:45'),
-('torrent.max_nfo_size', '65535', '2018-12-13 02:04:45'),
-('tracker.cheater_check', '1', '2018-11-27 10:28:13'),
-('tracker.enable_announce', '1', '2018-11-23 13:37:35'),
-('tracker.enable_maxdlsystem', '1', '2018-12-09 10:47:16'),
-('tracker.enable_scrape', '1', '2018-11-23 03:04:26'),
-('tracker.enable_upspeed_check', '1', '2018-11-27 15:18:53'),
-('tracker.enable_waitsystem', '0', '2018-12-10 07:47:45'),
-('tracker.interval', '450', '2018-11-28 13:34:54'),
-('tracker.min_interval', '60', '2018-11-28 13:34:06'),
-('tracker.user_max_leech', '1', '2018-11-27 10:27:05'),
-('tracker.user_max_seed', '3', '2018-11-27 10:27:05');
+INSERT INTO `site_config` (`name`, `value`) VALUES
+('authority.pass_tracker_upspeed_check', '60'),
+('authority.route_admin_index', '60'),
+('authority.route_admin_service', '90'),
+('authority.see_anonymous_uploader', '40'),
+('authority.see_banned_torrent', '40'),
+('authority.see_pending_torrent', '40'),
+('authority.upload_anonymous', '5'),
+('base.enable_register_system', '1'),
+('base.enable_tracker_system', '1'),
+('base.max_per_user_session', '10'),
+('base.max_user', '5000'),
+('base.site_author', 'Rhilip'),
+('base.site_description', 'A Private Tracker Site'),
+('base.site_muti_tracker_url', ''),
+('base.site_name', 'RidPT'),
+('base.site_tracker_url', 'ridpt.rhilip.info/tracker'),
+('base.site_url', 'ridpt.rhilip.info'),
+('buff.enable_large', '1'),
+('buff.enable_magic', '1'),
+('buff.enable_mod', '1'),
+('buff.enable_random', '1'),
+('buff.large_size', '107374182400'),
+('buff.large_type', 'Free'),
+('buff.random_percent_2x', '2'),
+('buff.random_percent_2x50%', '0'),
+('buff.random_percent_2xfree', '1'),
+('buff.random_percent_30%', '0'),
+('buff.random_percent_50%', '5'),
+('buff.random_percent_free', '2'),
+('register.by_green', '0'),
+('register.by_invite', '1'),
+('register.by_open', '1'),
+('register.email_black_list', '@test.com'),
+('register.email_white_list', '@gmail.com'),
+('register.enabled_email_black_list', '1'),
+('register.enabled_email_white_list', '1'),
+('register.max_ip_check', '1'),
+('register.max_user_check', '1'),
+('register.per_ip_user', '5'),
+('register.user_confirm_way', 'auto'),
+('register.user_default_bonus', '0'),
+('register.user_default_class', '1'),
+('register.user_default_downloaded', '0'),
+('register.user_default_downloadpos', '1'),
+('register.user_default_leechtime', '0'),
+('register.user_default_seedtime', '0'),
+('register.user_default_status', 'pending'),
+('register.user_default_uploaded', '0'),
+('register.user_default_uploadpos', '1'),
+('security.max_login_attempts', '10'),
+('torrent.max_file_size', '3145728'),
+('torrent.max_nfo_size', '65535'),
+('tracker.cheater_check', '1'),
+('tracker.enable_announce', '1'),
+('tracker.enable_maxdlsystem', '1'),
+('tracker.enable_scrape', '1'),
+('tracker.enable_upspeed_check', '1'),
+('tracker.enable_waitsystem', '0'),
+('tracker.interval', '450'),
+('tracker.min_interval', '60'),
+('tracker.user_max_leech', '1'),
+('tracker.user_max_seed', '3');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `site_crontab`
+--
+
+DROP TABLE IF EXISTS `site_crontab`;
+CREATE TABLE IF NOT EXISTS `site_crontab` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `job` varchar(64) NOT NULL,
+  `job_interval` int(11) NOT NULL,
+  `last_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `next_run_at` timestamp NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `site_crontab`:
+--
 
 -- --------------------------------------------------------
 
@@ -394,10 +413,10 @@ DROP TABLE IF EXISTS `site_log`;
 CREATE TABLE IF NOT EXISTS `site_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `msg` text CHARACTER SET latin1 NOT NULL,
-  `level` enum('normal','mod','sysop','leader') CHARACTER SET latin1 NOT NULL DEFAULT 'normal',
+  `msg` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `level` enum('normal','mod','sysop','leader') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'normal',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `site_log`:
@@ -414,7 +433,7 @@ CREATE TABLE IF NOT EXISTS `snatched` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) UNSIGNED NOT NULL,
   `torrent_id` int(11) UNSIGNED NOT NULL,
-  `agent` varchar(60) CHARACTER SET utf8 NOT NULL,
+  `agent` varchar(60) NOT NULL,
   `port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `true_uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `true_downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -423,15 +442,15 @@ CREATE TABLE IF NOT EXISTS `snatched` (
   `to_go` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `seed_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `leech_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `finished` enum('yes','no') CHARACTER SET utf8 NOT NULL DEFAULT 'no',
-  `finish_ip` varchar(40) CHARACTER SET utf8 DEFAULT NULL,
+  `finished` enum('yes','no') NOT NULL DEFAULT 'no',
+  `finish_ip` varchar(40) DEFAULT NULL,
   `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `last_action_at` timestamp NULL DEFAULT NULL,
   `finish_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `one_snatched` (`user_id`,`torrent_id`) USING BTREE,
   KEY `FK_snatched_torrentid` (`torrent_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `snatched`:
@@ -470,7 +489,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `FK_torrent_categories` (`category`),
   KEY `FK_torrent_owner` (`owner_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `torrents`:
@@ -501,7 +520,7 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
   `expired_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   KEY `t_buff_index` (`beneficiary_id`,`torrent_id`,`start_at`,`expired_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `torrents_buff`:
@@ -518,7 +537,7 @@ CREATE TABLE IF NOT EXISTS `torrents_categories` (
   `id` mediumint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` varchar(30) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `torrents_categories`:
@@ -577,7 +596,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `passkey` (`passkey`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `users`:
@@ -602,7 +621,7 @@ CREATE TABLE IF NOT EXISTS `users_session_log` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `sid` (`sid`),
   KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `users_session_log`:
@@ -645,7 +664,7 @@ ALTER TABLE `invite`
 -- Constraints for table `ip_bans`
 --
 ALTER TABLE `ip_bans`
-  ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+  ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `snatched`
@@ -658,8 +677,8 @@ ALTER TABLE `snatched`
 -- Constraints for table `torrents`
 --
 ALTER TABLE `torrents`
-  ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`) ON DELETE NO ACTION,
-  ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION;
+  ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`),
+  ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `users_session_log`

@@ -1,6 +1,6 @@
 <p align="center">
 <img src="https://github.com/Rhilip/RidPT/raw/master/docs/RidPT.png" width='256px'><br/>
-A Private Torrent Project framework.<br/>
+A Private Torrent framework Project.<br/>
 <a href="https://github.com/Rhilip/RidPT/releases" title="GitHub Releases"><img src="https://img.shields.io/github/release/Rhilip/RidPT.svg"></a>
 <img src="https://img.shields.io/badge/used-Swoole-blue.svg">
 <a href="https://github.com/Rhilip/RidPT/LICENSE" title="GitHub license"><img src="https://img.shields.io/github/license/Rhilip/RidPT.svg"></a>
@@ -20,9 +20,9 @@ Test Account Information:
 
 1. We test our RidPT project on this environment :
 
-    - Nginx
-    - MySQL 5.7.22 (With InnoDB Storage Engine)
-    - PHP 7.2.14 (With other extension which your can see in `composer.json`)
+    - Nginx 1.14.2
+    - MySQL 8.0.14
+    - PHP 7.3.1 (With other extension which your can see in `composer.json`)
     - Swoole 4.2.12
     - Redis 5.0.3 Stable
     - Bower 1.8.4 (A package manager for the web)
@@ -33,10 +33,9 @@ Test Account Information:
          ```bash
         git clone https://github.com/Rhilip/RidPT.git /home/wwwroot/your.domain.com
         cd /home/wwwroot/your.domain.com/
-        composer install
         ```
     - Use `composer install` to install PHP dependency.
-    - Use `bower install` to install our web dependency (like js,css,font)
+    - Use `bower install` to install our front-end dependency (like js,css,font)
     - If you don't run RidPT apps in `root` user, you should give enough permission to `apps/{runtime,private}`.
 
 3. Import Database Structure from our `migration/ridpt.sql`, and **disable Mysql strict mode `NO_ZERO_IN_DATE` and `NO_ZERO_DATE`**.
@@ -91,7 +90,7 @@ edit in Admin Panel.
 If your service is behind the CDN like Cloudflare, You must follow [How do I restore original visitor IP with Nginx?](https://support.cloudflare.com/hc/en-us/articles/200170706-How-do-I-restore-original-visitor-IP-with-Nginx)
 So that tracker can record the peer's ip address.
 
-7. Use the default `php mix-httpd service start -d` to let *RidPT* RUN in the background. Or you can use other daemon work like:
+7. Use the default `php bin/rid-httpd service start -d` to let *RidPT* RUN in the background. Or you can use other daemon work like:
     - Systemctl: [ridpt.service](migration/ridpt.service)
 
 ## Basie Environment in `.env`
