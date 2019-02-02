@@ -24,7 +24,7 @@ class TorrentUploadForm extends Validator
 
     public $id = 0;
 
-    /**  @var \mix\Http\UploadFile */
+    /**  @var \Rid\Http\UploadFile */
     public $file;
 
     public $title;

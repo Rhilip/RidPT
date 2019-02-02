@@ -1,6 +1,6 @@
 <?php
 
-namespace mix\Http;
+namespace Rid\Http;
 
 use Rid\Base\BaseObject;
 

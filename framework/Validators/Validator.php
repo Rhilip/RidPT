@@ -96,7 +96,7 @@ class Validator extends BaseObject
     {
         $name = $payload['name'] ?? 'file';
 
-        /**  @var \mix\Http\UploadFile $file */
+        /**  @var \Rid\Http\UploadFile $file */
         $file = $this->$name;
 
         if ($file->error > 0) {

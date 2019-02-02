@@ -21,17 +21,17 @@ class BaseResponse extends Component
     public $defaultFormat = self::FORMAT_HTML;
 
     /**
-     * @var \mix\Http\Json
+     * @var \Rid\Http\Json
      */
     public $json;
 
     /**
-     * @var \mix\Http\Jsonp
+     * @var \Rid\Http\Jsonp
      */
     public $jsonp;
 
     /**
-     * @var \mix\Http\Xml
+     * @var \Rid\Http\Xml
      */
     public $xml;
 

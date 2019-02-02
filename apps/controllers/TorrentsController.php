@@ -41,12 +41,12 @@ class TorrentsController extends Controller
             $torrent->importFileAttributes(app()->request->files());
             $error = $torrent->validate();
             if (count($error) > 0) {
-                return $this->render("error/action_fail.html.twig", ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
+                return $this->render("errors/action_fail.html.twig", ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
             } else {
                 try {
                     $torrent->flush();
                 } catch (\Exception $e) {
-                    return $this->render("error/action_fail.html.twig", ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
+                    return $this->render("errors/action_fail.html.twig", ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
                 }
 
                 return app()->response->redirect("/torrents/details?id=" . $torrent->id);
