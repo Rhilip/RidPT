@@ -10,22 +10,22 @@
             <div class="form-group col-md-4">
                 {% if left_attempts < 3 %}
                     <div class="form-group">
-                        <p class="bg-danger">Left Login attempts: <strong class="text-center">{{ left_attempts }}</strong></p>
+                        <p class="bg-danger">Left login attempts: <strong class="text-center">{{ left_attempts }}</strong></p>
                     </div>
                 {% endif %}
                 <div class="form-group">
-                    <label class="control-label" for="username">Username or email address</label>
+                    <label class="control-label" for="username">Username / Email address</label>
                     <input autofocus="" class="form-control" id="username" name="username" placeholder="Username" tabindex="1" title="" type="text" value="{{ username }}">
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="password">Password</label>
-                    <small><a href="/auth/recover">Forgot your password?</a></small>
+                    <small class="float-right"><a href="/auth/recover">I have forgot my password</a></small>
                     <input class="form-control" id="password" name="password" tabindex="2" title="" type="password" value="">
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="opt">2FA Code</label>
-                    <input autofocus="" class="form-control" id="opt" name="opt" placeholder="Google Authenticator key" tabindex="3" title="" type="text" value="" maxlength="6">
-                    <small>Your Google 2FA code,And Left blank If you don't set.</small>
+                    <input autofocus="" class="form-control" id="opt" name="opt" placeholder="2FA Code" tabindex="3" title="" type="text" value="" maxlength="6">
+                    <small>Your 2FA code, leave it blank if you haven't enable 2FA.</small>
                 </div>
                 <div class="form-group">
                     <label class="control-label" for="captcha">Captcha</label>
@@ -35,7 +35,7 @@
                         </div>
                         <div class="col-md-6"><img src="/captcha" alt="captcha"></div>
                     </div>
-                    <small>Not case sensitive.</small>
+                    <small>Case insensitive.</small>
                 </div>
                 {% if error_msg %}
                     <div class="form-group">
