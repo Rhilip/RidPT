@@ -46,7 +46,7 @@ class TorrentsController extends Controller
                 try {
                     $torrent->flush();
                 } catch (\Exception $e) {
-                    return $this->render("errors/action_fail.html.twig", ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
+                    return $this->render("errors/action_fail.html.twig", ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
                 }
 
                 return app()->response->redirect("/torrents/details?id=" . $torrent->id);

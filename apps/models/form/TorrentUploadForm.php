@@ -147,7 +147,7 @@ class TorrentUploadForm extends Validator
         app()->pdo->beginTransaction();
         try {
             app()->pdo->insert('torrents', [
-                'owner_id' => app()->session->get('user')['id'],  // FIXME it's not good to get user by this way!!!!!
+                'owner_id' => app()->user->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
                 'title' => $this->title,
