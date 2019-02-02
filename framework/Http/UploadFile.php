@@ -16,8 +16,14 @@ class UploadFile extends SplFileInfo
     // MIME类型
     public $type;
 
+    // 临时文件名
+    public $tmpName;
+
     // 错误码
     public $error;
+
+    // 文件尺寸
+    public $size;
 
     /**
      * 创建实例，通过表单名称
@@ -36,7 +42,9 @@ class UploadFile extends SplFileInfo
         parent::__construct($file['tmp_name']);
         $this->name    = $file['name'];
         $this->type    = $file['type'];
+        $this->tmpName = $file['tmp_name'];
         $this->error   = $file['error'];
+        $this->size    = $file['size'];
     }
 
     // 文件另存为
@@ -46,7 +54,7 @@ class UploadFile extends SplFileInfo
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $bytes = file_put_contents($filename, file_get_contents($this->getPathname()));
+        $bytes = file_put_contents($filename, file_get_contents($this->tmpName));
         return $bytes ? true : false;
     }
 
@@ -60,5 +68,11 @@ class UploadFile extends SplFileInfo
     public function getExtension()
     {
         return pathinfo($this->name)['extension'];
+    }
+
+    // 获取文件内容
+    public function getFileContent()
+    {
+        return file_get_contents($this->tmpName);
     }
 }
