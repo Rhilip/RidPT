@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 02, 2019 at 08:38 AM
+-- Generation Time: Feb 03, 2019 at 08:50 AM
 -- Server version: 8.0.14
 -- PHP Version: 7.3.1
 
@@ -652,37 +652,37 @@ ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
 -- Constraints for table `files`
 --
 ALTER TABLE `files`
-  ADD CONSTRAINT `FK_files_torrents_id` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`);
+  ADD CONSTRAINT `FK_files_torrents_id` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `invite`
 --
 ALTER TABLE `invite`
-  ADD CONSTRAINT `FK_invite_inviter_id` FOREIGN KEY (`inviter_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `FK_invite_inviter_id` FOREIGN KEY (`inviter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `ip_bans`
 --
 ALTER TABLE `ip_bans`
-  ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `snatched`
 --
 ALTER TABLE `snatched`
-  ADD CONSTRAINT `FK_snatched_torrentid` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`),
-  ADD CONSTRAINT `FK_snatched_userid` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `FK_snatched_torrentid` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_snatched_userid` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `torrents`
 --
 ALTER TABLE `torrents`
-  ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`),
-  ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `users_session_log`
 --
 ALTER TABLE `users_session_log`
-  ADD CONSTRAINT `FK_session_user_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `FK_session_user_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
