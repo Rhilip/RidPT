@@ -1,6 +1,7 @@
 ### RidPT
 # Environment File
 .env
+!**/.gitkeep
 
 ### MixPHP included
 # zend studio for eclipse project files
