@@ -60,7 +60,7 @@ class TorrentUploadForm extends Validator
         }
         $metadata->addConstraint(new Assert\Callback([
             'callback' => 'isValidTorrent',
-            'payload' => ["name" => "file", "maxSize" => app()->config->get("torrent.max_file_size"), "mimeTypes" => "application/x-bittorrent"]
+            'payload' => ['name' => 'file', 'maxSize' => app()->config->get("torrent.max_file_size"), 'mimeTypes' => 'application/x-bittorrent']
         ]));
     }
 
@@ -81,17 +81,18 @@ class TorrentUploadForm extends Validator
 
                 if (isset($info['length'])) {
                     $this->torrent_size = $info['length'];
-                    $this->torrent_list[] = ["filename" => $dname, "size" => $info['length'], "torrent_id" => &$this->id];
-                    $this->torrent_type = "single";
+                    $this->torrent_list[] = ['filename' => $dname, 'size' => $info['length'], 'torrent_id' => &$this->id];
+                    $this->torrent_type = 'single';
                 } else {
-                    $f_list = $this->checkTorrentDict($info, "files", "array");
+                    $f_list = $this->checkTorrentDict($info, 'files', 'array');
                     if (!isset($f_list)) throw new ParseErrorException('std_missing_length_and_files');
                     if (!count($f_list)) throw new ParseErrorException('no files');
 
                     $this->torrent_size = 0;
                     foreach ($f_list as $fn) {
-                        $ll = $this->checkTorrentDict($fn, "length", "integer");
-                        $ff = $this->checkTorrentDict($fn, "path", "list");
+                        $ll = $this->checkTorrentDict($fn, 'length', 'integer');
+                        $path_key = isset($fn['path.utf-8']) ? 'path.utf-8' : 'path';
+                        $ff = $this->checkTorrentDict($fn, $path_key, 'list');
                         $this->torrent_size += $ll;
                         $ffa = [];
                         foreach ($ff as $ffe) {
@@ -100,9 +101,9 @@ class TorrentUploadForm extends Validator
                         }
                         if (!count($ffa)) throw new ParseErrorException('std_filename_errors');
                         $ffe = implode("/", $ffa);
-                        $this->torrent_list[] = ["filename" => $ffe, "size" => $ll, "torrent_id" => &$this->id];
+                        $this->torrent_list[] = ['filename' => $ffe, 'size' => $ll, 'torrent_id' => &$this->id];
                     }
-                    $this->torrent_type = "multi";
+                    $this->torrent_type = 'multi';
                 }
             }
         } catch (ParseErrorException $e) {
@@ -125,8 +126,24 @@ class TorrentUploadForm extends Validator
         // Some other change if you need
         //$this->torrent_dict['commit'] = "";
 
-        // The following line requires uploader to re-download torrents after uploading **Since info_hash change**
-        // even the torrent is set as private and with uploader's passkey in it.
+        /**
+         * The following line requires uploader to re-download torrents after uploading **Since info_hash change**
+         * even the torrent is set as private and with uploader's passkey in it.
+         */
+
+        // Clean The `info` dict
+        $allowed_keys = [
+            'files', 'name', 'piece length', 'pieces', 'private', 'length',
+            'name.utf8', 'name.utf-8', 'md5sum', 'sha1', 'source',
+            'file-duration', 'file-media', 'profiles'
+        ];
+        foreach ($this->torrent_dict['info'] as $key => $value) {
+            if (!in_array($key, $allowed_keys)) {
+                unset($this->torrent_dict['info'][$key]);
+            }
+        }
+
+        // Make it private and unique by add our source flag
         $this->torrent_dict['info']['private'] = 1;  // add private tracker flag
         $this->torrent_dict['info']['source'] = "Powered by [" . app()->config->get("base.site_url") . "] " . app()->config->get("base.site_name");
 
