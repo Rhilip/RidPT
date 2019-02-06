@@ -29,6 +29,7 @@ class Bencode
      */
     public static function decode(string $data, int &$pos = 0)
     {
+        $start_decode = ($pos === 0);
         if ($data[$pos] === 'd') {
             $pos++;
             $return = [];
@@ -66,8 +67,7 @@ class Bencode
                 $return = substr($return, 1);
             }
             if (!ctype_digit($return)) {
-                $msg = 'Cannot have non-digit values in integer number: ' . $return;
-                throw new ParseErrorException($msg);
+                throw new ParseErrorException('Cannot have non-digit values in integer number: ' . $return);
             }
             $return = $multiplier * ((int)$return);
             $pos += $digits + 1;
@@ -78,7 +78,11 @@ class Bencode
             $return = substr($data, $pos, $len);
             $pos += $len;
         }
-
+        if ($start_decode) {
+            if ($pos !== strlen($data)) {
+                throw new ParseErrorException('Could not fully decode bencode string');
+            }
+        }
         return $return;
     }
 
