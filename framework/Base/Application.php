@@ -15,7 +15,7 @@ namespace Rid\Base;
  * @property \Rid\Http\Cookie $cookie
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
- * @property \Rid\Config\Config $config
+ * @property \Rid\Config\ConfigBySwoole|\Rid\Config\ConfigByRedis $config
  * @property \Rid\Mailer\Mailer $swiftmailer
  * @property \Rid\Pool\ConnectionPool $connectionPool
  * @property \Rid\User\User $user

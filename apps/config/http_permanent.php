@@ -16,5 +16,9 @@ return array_replace_recursive($base, [
         'redis' => [
             'class' => Rid\Redis\Persistent\RedisConnection::class,
         ],
+
+        'config' => [
+            'class'   => Rid\Config\ConfigBySwoole::class,
+        ]
     ],
 ]);

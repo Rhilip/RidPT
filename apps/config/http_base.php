@@ -202,7 +202,7 @@ return [
         ],
 
         'config' => [
-            'class'   => Rid\Config\Config::class,
+            'class'   => Rid\Config\ConfigByRedis::class,
         ],
 
         'swiftmailer' => [

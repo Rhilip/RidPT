@@ -90,12 +90,15 @@ return array_replace_recursive($base, [
         // 连接池
         'redis.connectionPool' => [
             // 类路径
-            'class' => mix\pool\ConnectionPool::class,
+            'class' => Rid\pool\ConnectionPool::class,
             // 最小连接数
             'min' => 5,
             // 最大连接数
             'max' => 50,
         ],
 
+        'config' => [
+            'class'   => Rid\Config\ConfigBySwoole::class,
+        ]
     ],
 ]);

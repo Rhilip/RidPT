@@ -11,7 +11,7 @@ namespace Rid\Config;
 use Rid\Base\Component;
 use Rid\Exceptions\ConfigException;
 
-class Config extends Component
+class ConfigBySwoole extends Component implements DynamicConfigInterface
 {
     /** @var \swoole_table */
     private $cacheTable;
@@ -32,7 +32,7 @@ class Config extends Component
         }
     }
 
-    public function get(string $name, $throw = true)
+    public function get(string $name,bool $throw = true)
     {
         $setting = $this->cacheTable->get($name, $this->valueField);
         // First Check config stored in RedisConnection Cache, If it exist , then just return the cached key
@@ -41,7 +41,8 @@ class Config extends Component
             $setting = app()->pdo->createCommand("SELECT `value` from `site_config` WHERE `name` = :name")
                 ->bindParams(["name" => $name])->queryScalar();
             // In this case (Load config From Database Failed) , A Exception should throw
-            if ($setting === false && $throw) throw $this->createNotFoundException($name);
+            if ($setting === false && $throw)
+                throw new ConfigException(sprintf("Dynamic Setting \"%s\" couldn't be found.", $name));
 
             $this->cacheTable->set($name, [$this->valueField => $setting]);
         }
@@ -83,14 +84,4 @@ class Config extends Component
         foreach ($config_array as $key => $value)
             $this->set($key, $value);
     }
-
-    /**
-     * @param string $name Name of the setting.
-     * @return ConfigException
-     */
-    protected function createNotFoundException($name)
-    {
-        return new ConfigException(sprintf("Dynamic Setting \"%s\" couldn't be found.", $name));
-    }
-
 }
