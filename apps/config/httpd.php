@@ -27,10 +27,6 @@ return [
             'class' => Rid\Console\Input::class,
         ],
 
-        'output' => [
-            'class' => Rid\Console\Output::class,
-        ],
-
         'error'  => [
             'class' => Rid\Console\Error::class,
             'level' => E_ALL,

@@ -45,7 +45,7 @@ class ServiceCommand extends Command
     public function actionStart()
     {
         if ($pid = ProcessHelper::readPidFile($this->pidFile)) {
-            app()->output->writeln("rid-httpd is running, PID : {$pid}.");
+            println("rid-httpd is running, PID : {$pid}.");
             return ExitCode::UNSPECIFIED_ERROR;
         }
         $server = \Rid\Http\HttpServer::newInstanceByConfig('libraries.httpServer');
@@ -68,9 +68,9 @@ class ServiceCommand extends Command
                 // 等待进程退出
                 usleep(100000);
             }
-            app()->output->writeln('rid-httpd stop completed.');
+            println('rid-httpd stop completed.');
         } else {
-            app()->output->writeln('rid-httpd is not running.');
+            println('rid-httpd is not running.');
         }
         // 返回退出码
         return ExitCode::OK;
@@ -92,10 +92,10 @@ class ServiceCommand extends Command
             ProcessHelper::kill($pid, SIGUSR1);
         }
         if (!$pid) {
-            app()->output->writeln('rid-httpd is not running.');
+            println('rid-httpd is not running.');
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        app()->output->writeln('rid-httpd worker process restart completed.');
+        println('rid-httpd worker process restart completed.');
         // 返回退出码
         return ExitCode::OK;
     }
@@ -104,9 +104,9 @@ class ServiceCommand extends Command
     public function actionStatus()
     {
         if ($pid = ProcessHelper::readPidFile($this->pidFile)) {
-            app()->output->writeln("rid-httpd is running, PID : {$pid}.");
+            println("rid-httpd is running, PID : {$pid}.");
         } else {
-            app()->output->writeln('rid-httpd is not running.');
+            println('rid-httpd is not running.');
         }
         // 返回退出码
         return ExitCode::OK;

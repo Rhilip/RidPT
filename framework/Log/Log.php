@@ -88,7 +88,7 @@ class Log extends Component
     public function log($level, $message, array $context = [])
     {
         if (in_array($level, $this->level)) {
-            return $this->write($level, $message, $context);
+            return $this->println($level, $message, $context);  // FIXME method is not found
         }
         return false;
     }
@@ -119,6 +119,7 @@ class Log extends Component
                 $timeFormat = date('Ymd');
                 break;
             case self::ROTATE_WEEKLY:
+            default:
                 $subDir     = date('Y');
                 $timeFormat = date('YW');
                 break;

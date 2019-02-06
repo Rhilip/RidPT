@@ -38,47 +38,42 @@ class Application extends \Rid\Base\Application
     protected function help()
     {
         $input = \Rid::app()->input;
-        $output = \Rid::app()->output;
-        $output->writeln("Usage: {$input->getScriptFileName()} [OPTIONS] [COMMAND [OPTIONS]]");
+        println("Usage: {$input->getScriptFileName()} [OPTIONS] [COMMAND [OPTIONS]]");
         $this->printOptions();
         $this->printCommands();
-        $output->writeln('');
+        println('');
     }
 
     // 版本
     protected function version()
     {
-        $input = \Rid::app()->input;
-        $output = \Rid::app()->output;
         $version = \Rid::VERSION;
-        $output->writeln("RidPHP Framework Version {$version}");
+        println("RidPHP Framework Version {$version}");
     }
 
     // 打印选项列表
     protected function printOptions()
     {
-        $output = \Rid::app()->output;
-        $output->writeln('');
-        $output->writeln('Options:');
-        $output->writeln("  -h/--help\tPrint usage.");
-        $output->writeln("  -v/--version\tPrint version information.");
+        println('');
+        println('Options:');
+        println("  -h/--help\tPrint usage.");
+        println("  -v/--version\tPrint version information.");
     }
 
     // 打印命令列表
     protected function printCommands()
     {
-        $output = \Rid::app()->output;
-        $output->writeln('');
-        $output->writeln('Commands:');
+        println('');
+        println('Commands:');
         $prevPrefix = '';
         foreach ($this->commands as $command => $item) {
             $prefix = explode(' ', $command)[0];
             if ($prefix != $prevPrefix) {
                 $prevPrefix = $prefix;
-                $output->writeln('  ' . $prefix);
+                println('  ' . $prefix);
             }
-            $output->write(str_repeat(' ', 4) . $command, Output::FG_GREEN);
-            $output->writeln((isset($item['description']) ? "\t{$item['description']}" : ''), Output::NONE);
+            println(str_repeat(' ', 4) . $command);
+            println(isset($item['description']) ? "\t{$item['description']}" : '');
         }
     }
 

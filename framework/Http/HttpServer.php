@@ -129,8 +129,7 @@ class HttpServer extends BaseObject
     // 欢迎信息
     protected function welcome()
     {
-        echo <<<EOL
-        
+        println(<<<EOL
 ────────────────────────────────────────────────────────────────────────────
 ─████████████████───██████████─████████████───██████████████─██████████████─
 ─██░░░░░░░░░░░░██───██░░░░░░██─██░░░░░░░░████─██░░░░░░░░░░██─██░░░░░░░░░░██─
@@ -144,21 +143,22 @@ class HttpServer extends BaseObject
 ─██░░██──██░░░░░░██─██░░░░░░██─██░░░░░░░░████─██░░██─────────────██░░██─────
 ─██████──██████████─██████████─████████████───██████─────────────██████─────
 ────────────────────────────────────────────────────────────────────────────
-
-
-EOL;
-        app()->output->writeln('Server      Name:      rid-httpd');
-        app()->output->writeln('System      Name:      ' . strtolower(PHP_OS));
-        app()->output->writeln('Framework   Version:   ' . \Rid::VERSION);
-        app()->output->writeln("PHP         Version:   " . PHP_VERSION);
-        app()->output->writeln("Swoole      Version:   " . swoole_version());
-        app()->output->writeln("Listen      Addr:      {$this->_host}");
-        app()->output->writeln("Listen      Port:      {$this->_port}");
-        app()->output->writeln('Reactor     Num:       ' . $this->settings['reactor_num']);
-        app()->output->writeln('Worker      Num:       ' . $this->settings['worker_num']);
-        app()->output->writeln('Hot         Update:    ' . ($this->settings['max_request'] == 1 ? 'enabled' : 'disabled'));
-        app()->output->writeln('Coroutine   Mode:      ' . ($this->settings['enable_coroutine'] ? 'enabled' : 'disabled'));
-        app()->output->writeln("Config      File:      {$this->virtualHost['configFile']}");
+EOL
+        );
+        println('─────────────────────────────────────');
+        println('Server      Name:      rid-httpd');
+        println('System      Name:      ' . strtolower(PHP_OS));
+        println('Framework   Version:   ' . \Rid::VERSION);
+        println('PHP         Version:   ' . PHP_VERSION);
+        println('Swoole      Version:   ' . swoole_version());
+        println('Listen      Addr:      ' . $this->_host);
+        println('Listen      Port:      ' . $this->_port);
+        println('Reactor     Num:       ' . $this->settings['reactor_num']);
+        println('Worker      Num:       ' . $this->settings['worker_num']);
+        println('Hot         Update:    ' . ($this->settings['max_request'] == 1 ? 'enabled' : 'disabled'));
+        println('Coroutine   Mode:      ' . ($this->settings['enable_coroutine'] ? 'enabled' : 'disabled'));
+        println('Config      File:      ' . $this->virtualHost['configFile']);
+        println('─────────────────────────────────────');
     }
 
 }

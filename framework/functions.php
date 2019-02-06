@@ -48,3 +48,11 @@ if (!function_exists('tgo')) {
         });
     }
 }
+
+if (!function_exists('println')) {
+    // 输出字符串并换行
+    function println($expression)
+    {
+        echo $expression . PHP_EOL;
+    }
+}
