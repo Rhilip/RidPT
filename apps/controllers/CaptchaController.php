@@ -18,7 +18,7 @@ class CaptchaController
         $captcha = new Captcha([
             'width'      => 150,
             'height'     => 40,
-            'fontFile'   => app()->basePath . '/fonts/Times New Roman.ttf',
+            'fontFile'   => app()->getPublicPath() . '/static/fonts/Times New Roman.ttf',
             'fontSize'   => 20,
             'wordNumber' => 6,
             'angleRand'  => [-20, 20],
