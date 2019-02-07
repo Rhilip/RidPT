@@ -5,7 +5,6 @@ namespace Rid\Base;
 /**
  * @property \Rid\Log\Log $log
  * @property \Rid\Console\Input $input
- * @property \Rid\Console\Output $output
  * @property \Rid\Http\Route $route
  * @property \Rid\Http\Request|\Rid\Http\Compatible\Request $request
  * @property \Rid\Http\Response|\Rid\Http\Compatible\Response $response

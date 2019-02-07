@@ -164,6 +164,12 @@ class TorrentUploadForm extends Validator
     {
         $this->makePrivateTorrent();
 
+        // Check if this torrent is exist or not before insert.
+        $count = app()->pdo->createCommand('SELECT COUNT(*) FROM torrents WHERE info_hash = :info_hash')->bindParams([
+            'info_hash' => $this->info_hash
+        ])->queryScalar();
+        if ($count > 0) throw new \Exception('std_torrent_existed');
+
         // TODO update torrent status based on user class or their owned torrents count
 
         app()->pdo->beginTransaction();
@@ -198,15 +204,16 @@ class TorrentUploadForm extends Validator
 
             app()->pdo->commit();
         } catch (\Exception $e) {
-            app()->pdo->rollback();
-            if (isset($dump_status) && $dump_status == false) {
+            // Delete the saved torrent file when torrent save success but still get Exception on other side
+            if (isset($dump_status) && $dump_status == true) {
                 unlink(Torrent::TorrentFileLoc($this->id));
             }
 
-            //if ($e->getCode() == 23000)
-            //    throw new \Exception('std_torrent_existed');
+            app()->pdo->rollback();
 
             throw $e;
+        } finally {
+            unlink($this->file->getPathname());  // Remove temp file
         }
     }
 

@@ -88,7 +88,7 @@ class Log extends Component
     public function log($level, $message, array $context = [])
     {
         if (in_array($level, $this->level)) {
-            return $this->println($level, $message, $context);  // FIXME method is not found
+            return $this->write($level, $message, $context);  // FIXME method is not found
         }
         return false;
     }
