@@ -34,6 +34,7 @@ class Torrent
     private $torrent_name;
     private $torrent_type;
     private $torrent_size;
+    private $torrent_structure;
 
     const TORRENT_TYPE_SINGLE = 'single';
     const TORRENT_TYPE_MULTI = 'multi';
@@ -231,95 +232,24 @@ class Torrent
         return $this->uplver;
     }
 
-    /**
-     * if $type is "list" (Or other value not `tree`), we will return the default list like:
-     *
-     * [
-     *    ["filename" => "f1/f2.text" , "size" => 1234],
-     *    ["filename" => "f1/f3.text" , "size" => 2234],
-     * ]
-     *
-     * elseif $type is "tree" , the return array is like this when it's `single` torrent
-     *
-     * [
-     *    "f1.text" => 1234
-     * ]
-     *
-     * And will convert to `tree` like this when it's `multi` torrent by using the
-     * private static function getFileTree($array, $delimiter = '/')
-     *
-     * [
-     *    "f1" => [
-     *        "f2.text" => 1234,
-     *        "f3.text" => 2234
-     *     ]
-     * ]
-     *
-     * Each result will be cached in redis since it will never change.
-     *
-     * @param string $type enum("list","tree") The format of fileList
-     * @return array|bool|string
-     */
-    public function getFileList($type = "list")
+    public function getFileList($type = 'list')
     {
-        if (!in_array($type, ["list", "tree"]))
-            $type = "list";
+        if (!in_array($type, ['list', 'tree']))
+            $type = 'list';
 
-        $list = app()->redis->get("TORRENT:" . $this->id . ":file_list");
-        if ($list === false) {
-            $list = app()->pdo->createCommand("SELECT `filename`,`size` FROM `files` WHERE `torrent_id` = :tid ORDER BY `filename` ASC;")->bindParams([
-                "tid" => $this->id
-            ])->queryAll();
-            app()->redis->set("TORRENT:" . $this->id . ":file_list", $list);
-        }
-
-        if ($type == "tree") {
-            $tree = app()->redis->get("TORRENT:" . $this->id . ":file_list_tree");
-            if ($tree === false) {
-                $tree = array_column($list, 'size', 'filename');
-
-                // Only when Torrent Type is "multi" , We need to use `getFileTree` to convert file list to tree
-                if ($this->getTorrentType() == self::TORRENT_TYPE_MULTI) {
-                    $tree = [$this->getTorrentName() => self::getFileTree($tree)];
-                }
-
-                app()->redis->set("TORRENT:" . $this->id . ":file_list_tree", $tree);
-            }
-            return $tree;
-        }
-
-        return $list;
-    }
-
-    private static function getFileTree($array, $delimiter = '/')
-    {
-        if (!is_array($array)) return array();
-
-        $splitRE = '/' . preg_quote($delimiter, '/') . '/';
-        $returnArr = array();
-        foreach ($array as $key => $val) {
-            // Get parent parts and the current leaf
-            $parts = preg_split($splitRE, $key, -1, PREG_SPLIT_NO_EMPTY);
-            $leafPart = array_pop($parts);
-
-            // Build parent structure
-            // Might be slow for really deep and large structures
-            $parentArr = &$returnArr;
-            foreach ($parts as $part) {
-                if (!isset($parentArr[$part])) {
-                    $parentArr[$part] = array();
-                } elseif (!is_array($parentArr[$part])) {
-                    $parentArr[$part] = array();
-                }
-                $parentArr = &$parentArr[$part];
+        if ($type == 'tree') {
+            return json_decode($this->torrent_structure, true);
+        } else {
+            $list = app()->redis->get('TORRENT:' . $this->id . ':file_list');
+            if ($list === false) {
+                $list = app()->pdo->createCommand("SELECT `filename`,`size` FROM `files` WHERE `torrent_id` = :tid ORDER BY `filename` ASC;")->bindParams([
+                    "tid" => $this->id
+                ])->queryAll();
+                app()->redis->set('TORRENT:' . $this->id . ':file_list', $list);
             }
 
-            // Add the final part to the structure
-            if (empty($parentArr[$leafPart])) {
-                $parentArr[$leafPart] = $val;
-            }
+            return $list;
         }
-        return $returnArr;
     }
 
     /**

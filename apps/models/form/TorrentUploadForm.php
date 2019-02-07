@@ -38,8 +38,13 @@ class TorrentUploadForm extends Validator
     private $torrent_dict;
     private $torrent_name;    // the $torrent_dict['info']['name'] field
     private $torrent_list = [];  // the file list like ["filename" => "example.txt" , "size" => 12345]
+    private $torrent_structure = [];
     private $torrent_type = 'single'; // only in ['single','multi']
     private $torrent_size = 0;  // the count of torrent's content size
+
+    const TORRENT_TYPE_SINGLE = 'single';
+    const TORRENT_TYPE_MULTI = 'multi';
+
 
     // 规则
     public static function rules()
@@ -113,6 +118,7 @@ class TorrentUploadForm extends Validator
         }
 
         $this->torrent_name = $info['name'];
+        $this->torrent_structure = $this->getFileTree();
     }
 
     public function makePrivateTorrent()
@@ -168,17 +174,18 @@ class TorrentUploadForm extends Validator
                 'status' => $this->status,
                 'title' => $this->title,
                 'subtitle' => $this->subtitle,
+                'category' => 1,    // FIXME add category support
                 'filename' => $this->file->getBaseName(),
                 'torrent_name' => $this->torrent_name,
                 'torrent_type' => $this->torrent_type,
                 'torrent_size' => $this->torrent_size,
+                'torrent_structure' => $this->torrent_structure,
                 'descr' => $this->descr,
                 'uplver' => $this->uplver,
             ])->execute();
             $this->id = app()->pdo->getLastInsertId();
 
             // Insert files table
-            app()->pdo->delete('files', [['torrent_id', '=', $this->id]])->execute();
             app()->pdo->batchInsert('files', $this->torrent_list)->execute();
 
             $this->setBuff();
@@ -192,7 +199,7 @@ class TorrentUploadForm extends Validator
             app()->pdo->commit();
         } catch (\Exception $e) {
             app()->pdo->rollback();
-            if ($this->id != 0) {
+            if (isset($dump_status) && $dump_status == false) {
                 unlink(Torrent::TorrentFileLoc($this->id));
             }
 
@@ -216,6 +223,65 @@ class TorrentUploadForm extends Validator
 
     }
 
+    /**
+     * the return array is like this when it's `single` torrent
+     *
+     * [
+     *    "f1.text" => 1234
+     * ]
+     *
+     * And will convert to `tree` like this when it's `multi` torrent by using the
+     * private static function makeFileTree($array, $delimiter = '/')
+     *
+     * [
+     *    "f1" => [
+     *        "f2.text" => 1234,
+     *        "f3.text" => 2234
+     *     ]
+     * ]
+     *
+     * Each result will be cached in redis since it will never change.
+     *
+     * @return bool|string
+     */
+    private function getFileTree() {
+        $structure = array_column($this->torrent_list, 'size', 'filename');
+        if ($this->torrent_type == self::TORRENT_TYPE_MULTI) {
+            $structure = [$this->torrent_name => self::makeFileTree($structure)];
+        }
+        return json_encode($structure);
+    }
+
+    private static function makeFileTree($array, $delimiter = '/')
+    {
+        if (!is_array($array)) return array();
+
+        $splitRE = '/' . preg_quote($delimiter, '/') . '/';
+        $returnArr = array();
+        foreach ($array as $key => $val) {
+            // Get parent parts and the current leaf
+            $parts = preg_split($splitRE, $key, -1, PREG_SPLIT_NO_EMPTY);
+            $leafPart = array_pop($parts);
+
+            // Build parent structure
+            // Might be slow for really deep and large structures
+            $parentArr = &$returnArr;
+            foreach ($parts as $part) {
+                if (!isset($parentArr[$part])) {
+                    $parentArr[$part] = array();
+                } elseif (!is_array($parentArr[$part])) {
+                    $parentArr[$part] = array();
+                }
+                $parentArr = &$parentArr[$part];
+            }
+
+            // Add the final part to the structure
+            if (empty($parentArr[$leafPart])) {
+                $parentArr[$leafPart] = $val;
+            }
+        }
+        return $returnArr;
+    }
 
     /**
      * @param $dict

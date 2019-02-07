@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 03, 2019 at 08:50 AM
+-- Generation Time: Feb 07, 2019 at 08:27 AM
 -- Server version: 8.0.14
 -- PHP Version: 7.3.1
 
@@ -483,13 +483,14 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `torrent_name` varchar(255) NOT NULL DEFAULT '',
   `torrent_type` enum('single','multi') NOT NULL DEFAULT 'multi',
   `torrent_size` bigint(20) NOT NULL DEFAULT '0',
+  `torrent_structure` json NOT NULL,
   `descr` text,
   `uplver` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `FK_torrent_categories` (`category`),
   KEY `FK_torrent_owner` (`owner_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT;
 
 --
 -- RELATIONSHIPS FOR TABLE `torrents`:
