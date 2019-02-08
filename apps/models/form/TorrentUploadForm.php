@@ -61,10 +61,7 @@ class TorrentUploadForm extends Validator
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        $rules = self::rules();
-        foreach ($rules as $property => $constraints) {
-            $metadata->addPropertyConstraints($property, $constraints);
-        }
+        parent::loadValidatorMetadata($metadata);
         $metadata->addConstraint(new Assert\Callback([
             'callback' => 'isValidTorrent',
             'payload' => ['name' => 'file', 'maxSize' => app()->config->get("torrent.max_file_size"), 'mimeTypes' => 'application/x-bittorrent']

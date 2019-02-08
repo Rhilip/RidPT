@@ -25,7 +25,7 @@ class Validator extends BaseObject
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        $rules = self::rules();
+        $rules = static::rules();
         foreach ($rules as $property => $constraints) {
             $metadata->addPropertyConstraints($property, $constraints);
         }

@@ -69,11 +69,7 @@ class UserLoginForm extends Validator
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        // FIXME It will not add the rule in self::rule() when use parent::loadValidatorMetadata()
-        $rules = self::rules();
-        foreach ($rules as $property => $constraints) {
-            $metadata->addPropertyConstraints($property, $constraints);
-        }
+        parent::loadValidatorMetadata($metadata);
         $metadata->addConstraint(new Assert\Callback('validateCaptcha'));
         $metadata->addConstraint(new Assert\Callback('loadUserFromPdo'));
         $metadata->addConstraint(new Assert\Callback('isMaxLoginIpReached'));

@@ -97,12 +97,7 @@ class UserRegisterForm extends Validator
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
-        // FIXME It will not add the rule in self::rule() when use parent::loadValidatorMetadata()
-        $rules = self::rules();
-        foreach ($rules as $property => $constraints) {
-            $metadata->addPropertyConstraints($property, $constraints);
-        }
-
+        parent::loadValidatorMetadata($metadata);
         $metadata->addConstraint(new Assert\Callback('isRegisterSystemOpen'));
         $metadata->addConstraint(new Assert\Callback('isMaxUserReached'));
         $metadata->addConstraint(new Assert\Callback('isMaxRegisterIpReached'));
