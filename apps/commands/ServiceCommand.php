@@ -12,14 +12,10 @@ use Rid\Helpers\ProcessHelper;
 class ServiceCommand extends Command
 {
 
-    // 是否后台运行
-    public $daemon = false;
+    public $daemon = false; // 是否后台运行
+    public $update = false; // 是否热更新
 
-    // 是否热更新
-    public $update = false;
-
-    // PID 文件
-    protected $pidFile;
+    protected $pidFile;  // PID 文件
 
     // 选项配置
     public function options()
@@ -37,8 +33,7 @@ class ServiceCommand extends Command
     public function onInitialize()
     {
         parent::onInitialize();
-        // 设置pidfile
-        $this->pidFile = '/var/run/rid-httpd.pid';
+        $this->pidFile = '/var/run/rid-httpd.pid';  // 设置pidfile
     }
 
     // 启动服务
@@ -55,8 +50,7 @@ class ServiceCommand extends Command
         $server->settings['daemonize'] = $this->daemon;
         $server->settings['pid_file'] = $this->pidFile;
         $server->start();
-        // 返回退出码
-        return ExitCode::OK;
+        return ExitCode::OK;  // 返回退出码
     }
 
     // 停止服务
@@ -65,15 +59,13 @@ class ServiceCommand extends Command
         if ($pid = ProcessHelper::readPidFile($this->pidFile)) {
             ProcessHelper::kill($pid);
             while (ProcessHelper::isRunning($pid)) {
-                // 等待进程退出
-                usleep(100000);
+                usleep(100000);  // 等待进程退出
             }
             println('rid-httpd stop completed.');
         } else {
             println('rid-httpd is not running.');
         }
-        // 返回退出码
-        return ExitCode::OK;
+        return ExitCode::OK; // 返回退出码
     }
 
     // 重启服务
@@ -81,8 +73,7 @@ class ServiceCommand extends Command
     {
         $this->actionStop();
         $this->actionStart();
-        // 返回退出码
-        return ExitCode::OK;
+        return ExitCode::OK;  // 返回退出码
     }
 
     // 重启工作进程
@@ -96,8 +87,7 @@ class ServiceCommand extends Command
             return ExitCode::UNSPECIFIED_ERROR;
         }
         println('rid-httpd worker process restart completed.');
-        // 返回退出码
-        return ExitCode::OK;
+        return ExitCode::OK; // 返回退出码
     }
 
     // 查看服务状态
@@ -108,8 +98,7 @@ class ServiceCommand extends Command
         } else {
             println('rid-httpd is not running.');
         }
-        // 返回退出码
-        return ExitCode::OK;
+        return ExitCode::OK; // 返回退出码
     }
 
 }

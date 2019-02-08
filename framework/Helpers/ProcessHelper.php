@@ -11,7 +11,7 @@ class ProcessHelper
     // 使当前进程蜕变为一个守护进程
     public static function daemon($closeStandardInputOutput = true)
     {
-        return \Swoole\Process::daemon(true, !$closeStandardInputOutput);
+        \Swoole\Process::daemon(true, !$closeStandardInputOutput);
     }
 
     // 设置进程标题

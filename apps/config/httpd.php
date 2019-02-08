@@ -48,8 +48,7 @@ return [
         // HttpServer
         'httpServer' => [
 
-            // 类路径
-            'class'       => Rid\Http\HttpServer::class,
+            'class'       => Rid\Http\HttpServer::class,  // 类路径
 
             // 虚拟主机：运行在服务器内的 HTTP 服务
             'virtualHost' => [
@@ -60,24 +59,16 @@ return [
 
             // 运行参数：https://wiki.swoole.com/wiki/page/274.html
             'settings'    => [
-                // 开启协程
-                'enable_coroutine' => false,
-                // 连接处理线程数
-                'reactor_num'      => 1,
-                // 工作进程数
-                'worker_num'       => 20,
-                // PID 文件
-                'pid_file'         => '/var/run/rid-httpd.pid',
-                // 日志文件路径
-                'log_file'         => '/tmp/rid-httpd.log',
-                // 进程的最大任务数
-                'max_request'      => 3000,
-                // 退出等待时间
-                'max_wait_time'    => 60,
-                // 异步安全重启
-                'reload_async'     => true,
-                // 子进程运行用户
-                /* 'user'        => 'www', */
+                'enable_coroutine' => false,  // 开启协程
+                'reactor_num'      => 1,  // 连接处理线程数
+                'worker_num'       => 20,  // 工作进程数
+                'pid_file'         => '/var/run/rid-httpd.pid',  // PID 文件
+                'log_file'         => '/tmp/rid-httpd.log',  // 日志文件路径
+                'max_request'      => 3000, // 进程的最大任务数
+                'max_wait_time'    => 60, // 退出等待时间
+                'package_max_length' => 6242880, // 最大上传包大小，单位 Bytes
+                'reload_async'     => true, // 异步安全重启
+                /* 'user'        => 'www',  // 子进程运行用户  */
             ],
 
         ],

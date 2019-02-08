@@ -26,6 +26,9 @@ class Application extends \Rid\Base\Application
     // 是否为协程环境
     protected $_isCoroutine;
 
+    protected $_serv;
+    protected $_worker;
+
     // 初始化事件
     public function onInitialize()
     {
@@ -186,7 +189,9 @@ class Application extends \Rid\Base\Application
         }
     }
 
-    // 触发请求前置事件
+    /** 触发请求前置事件
+     * @param \Rid\Base\Component $component
+     */
     protected function triggerRequestBefore($component)
     {
         if ($component->getStatus() == Component::STATUS_READY) {
@@ -194,7 +199,9 @@ class Application extends \Rid\Base\Application
         }
     }
 
-    // 触发请求后置事件
+    /** 触发请求后置事件
+     * @param \Rid\Base\Component $component
+     */
     protected function triggerRequestAfter($component)
     {
         if ($component->getStatus() == Component::STATUS_RUNNING) {
@@ -235,6 +242,38 @@ class Application extends \Rid\Base\Application
     public function end($content = '')
     {
         throw new \Rid\Exceptions\EndException($content);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getServ()
+    {
+        return $this->_serv;
+    }
+
+    /**
+     * @param mixed $serv
+     */
+    public function setServ($serv): void
+    {
+        $this->_serv = $serv;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWorker()
+    {
+        return $this->_worker;
+    }
+
+    /**
+     * @param mixed $worker
+     */
+    public function setWorker($worker): void
+    {
+        $this->_worker = $worker;
     }
 
 }

@@ -17,18 +17,18 @@ class ConfigBySwoole extends Component implements DynamicConfigInterface
     private $cacheTable;
     private $valueField = 'data';
 
-    public function __construct(array $config = [])
+    public function onInitialize(array $config = [])
     {
-        parent::__construct($config);
+        // Get \Swoole\Table object From \Server, So that we can share same dynamic config
+        $this->cacheTable = app()->getServ()->configTable;
 
-        $this->cacheTable = new \Swoole\Table(2048);
-
-        $this->cacheTable->column($this->valueField, \Swoole\Table::TYPE_STRING, 256);
-        $this->cacheTable->create();
-
-        $configs = app()->pdo->createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
-        foreach ($configs as $config) {
-            $this->cacheTable->set($config["name"], [$this->valueField => $config["value"]]);
+        // If empty Config Table and this component get construct Lock
+        if ($this->cacheTable->count() == 0 && app()->getServ()->configTable_construct_lock->trylock()) {
+            $configs = app()->pdo->createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
+            foreach ($configs as $config) {
+                $this->cacheTable->set($config["name"], [$this->valueField => $config["value"]]);
+            }
+            app()->getServ()->configTable_construct_lock->unlock();
         }
     }
 

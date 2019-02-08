@@ -212,8 +212,6 @@ class TorrentUploadForm extends Validator
             app()->pdo->rollback();
 
             throw $e;
-        } finally {
-            unlink($this->file->getPathname());  // Remove temp file
         }
     }
 

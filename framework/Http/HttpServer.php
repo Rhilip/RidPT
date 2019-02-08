@@ -20,26 +20,16 @@ class HttpServer extends BaseObject
 
     // 默认运行参数
     protected $_settings = [
-        // 开启协程
-        'enable_coroutine' => false,
-        // 主进程事件处理线程数
-        'reactor_num'      => 8,
-        // 工作进程数
-        'worker_num'       => 8,
-        // 任务进程数
-        'task_worker_num'  => 0,
-        // 进程的最大任务数
-        'max_request' => 10000,
-        // 异步安全重启
-        'reload_async' => true,
-        // 退出等待时间
-        'max_wait_time' => 60,
-        // PID 文件
-        'pid_file' => '/var/run/rid-httpd.pid',
-        // 日志文件路径
-        'log_file' => '/tmp/rid-httpd.log',
-        // 开启后，PDOConnection 协程多次 prepare 才不会有 40ms 延迟
-        'open_tcp_nodelay' => true,
+        'enable_coroutine' => false,  // 开启协程
+        'reactor_num' => 8,   // 主进程事件处理线程数
+        'worker_num' => 8,  // 工作进程数
+        'task_worker_num' => 0,  // 任务进程数
+        'max_request' => 10000,      // 进程的最大任务数
+        'reload_async' => true,    // 异步安全重启
+        'max_wait_time' => 60,   // 退出等待时间
+        'pid_file' => '/var/run/rid-httpd.pid',  // PID 文件
+        'log_file' => '/tmp/rid-httpd.log',  // 日志文件路径
+        'open_tcp_nodelay' => true,  // 开启后，PDOConnection 协程多次 prepare 才不会有 40ms 延迟
     ];
 
     // 服务器
@@ -59,8 +49,7 @@ class HttpServer extends BaseObject
         $this->_host = $this->virtualHost['host'];
         $this->_port = $this->virtualHost['port'];
         $this->settings += $this->_settings;
-        // 实例化服务器
-        $this->_server = new \Swoole\Http\Server($this->_host, $this->_port);
+        $this->createSever();
     }
 
     // 启动服务
@@ -79,8 +68,7 @@ class HttpServer extends BaseObject
     // 主进程启动事件
     protected function onStart()
     {
-        $this->_server->on('Start', function ($server) {
-            // 进程命名
+        $this->_server->on('Start', function (\swoole_server $server) {
             ProcessHelper::setTitle("rid-httpd: master {$this->_host}:{$this->_port}");
         });
     }
@@ -88,7 +76,7 @@ class HttpServer extends BaseObject
     // 管理进程启动事件
     protected function onManagerStart()
     {
-        $this->_server->on('ManagerStart', function ($server) {
+        $this->_server->on('ManagerStart', function (\swoole_server $server) {
             // 进程命名
             ProcessHelper::setTitle("rid-httpd: manager");
         });
@@ -97,7 +85,7 @@ class HttpServer extends BaseObject
     // 工作进程启动事件
     protected function onWorkerStart()
     {
-        $this->_server->on('WorkerStart', function ($server, $workerId) {
+        $this->_server->on('WorkerStart', function (\swoole_server $server,int $workerId) {
             // 进程命名
             if ($workerId < $server->setting['worker_num']) {
                 ProcessHelper::setTitle("rid-httpd: worker #{$workerId}");
@@ -107,6 +95,8 @@ class HttpServer extends BaseObject
             // 实例化App
             $config = require $this->virtualHost['configFile'];
             $app = new Application($config);
+            $app->setServ($this->_server);
+            $app->setWorker($workerId);
             $app->loadAllComponents();
         });
     }
@@ -114,16 +104,30 @@ class HttpServer extends BaseObject
     // 请求事件
     protected function onRequest()
     {
-        $this->_server->on('request', function ($request, $response) {
+        $this->_server->on('request', function (\swoole_http_request $request,\swoole_http_response $response) {
             // 执行请求
             try {
-                \Rid::app()->request->setRequester($request);
-                \Rid::app()->response->setResponder($response);
-                \Rid::app()->run();
+                app()->request->setRequester($request);
+                app()->response->setResponder($response);
+                app()->run();
             } catch (\Throwable $e) {
-                \Rid::app()->error->handleException($e);
+                app()->error->handleException($e);
             }
         });
+    }
+
+    protected function createSever() {
+        // 实例化服务器
+        $this->_server = new \Swoole\Http\Server($this->_host, $this->_port);
+
+        // rid-httpd 模式下，ConfigHandler 一定为 \Swoole\Table ，在此处创建全局的 \Swoole\Table
+        $configTable = new \Swoole\Table(2048);
+        $configTable->column('data', \Swoole\Table::TYPE_STRING, 256);
+        $configTable->create();
+        $this->_server->configTable = $configTable;
+
+        // 为 Dynamic Config construct行为创建一个锁，防止不同Worker下的Config同时写入（虽然这种情况也没什么事）
+        $this->_server->configTable_construct_lock = new \Swoole\Lock(SWOOLE_MUTEX);
     }
 
     // 欢迎信息

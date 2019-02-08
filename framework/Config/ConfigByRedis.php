@@ -21,10 +21,8 @@ class ConfigByRedis extends Component implements DynamicConfigInterface
 
     public $cacheExpire = 86400;
 
-    public function __construct(array $config = [])
+    public function onInitialize(array $config = [])
     {
-        parent::__construct($config);
-
         if (!app()->redis->exists($this->cacheField)) {
             $configs_pdo = app()->pdo->createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
             $configs = array_column($configs_pdo, 'value', 'name');
