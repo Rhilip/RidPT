@@ -8,6 +8,7 @@
 
 namespace apps\controllers;
 
+use apps\models\form\UserConfirmForm;
 use apps\models\User;
 use apps\models\form\UserLoginForm;
 use apps\models\form\UserRegisterForm;
@@ -48,8 +49,18 @@ class AuthController extends Controller
 
     public function actionConfirm()
     {
-
-        // TODO User Confirm Action
+        $confirm = new UserConfirmForm();
+        $confirm->importAttributes(app()->request->get());
+        $error = $confirm->validate();
+        if (count($error) > 0) {
+            return $this->render("errors/action_fail.html.twig", [
+                'title' => 'Confirm Failed',
+                'msg' => $error->get(0)
+            ]);
+        } else {
+            $confirm->flush();
+            return $this->render('auth/confirm_success.html.twig');
+        }
     }
 
     public function actionRecover()

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 07, 2019 at 08:27 AM
+-- Generation Time: Feb 08, 2019 at 01:44 PM
 -- Server version: 8.0.14
 -- PHP Version: 7.3.1
 
@@ -606,6 +606,29 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `users_confirm`
+--
+
+DROP TABLE IF EXISTS `users_confirm`;
+CREATE TABLE IF NOT EXISTS `users_confirm` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) UNSIGNED NOT NULL,
+  `serect` varchar(64) NOT NULL,
+  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `serect` (`serect`),
+  KEY `FK_confirm_user_id` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `users_confirm`:
+--   `uid`
+--       `users` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users_session_log`
 --
 
@@ -680,6 +703,12 @@ ALTER TABLE `snatched`
 ALTER TABLE `torrents`
   ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `users_confirm`
+--
+ALTER TABLE `users_confirm`
+  ADD CONSTRAINT `FK_confirm_user_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `users_session_log`

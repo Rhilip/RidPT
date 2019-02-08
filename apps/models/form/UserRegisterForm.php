@@ -108,8 +108,11 @@ class UserRegisterForm extends Validator
 
     public function isRegisterSystemOpen(ExecutionContextInterface $context)
     {
-        if (app()->config->get("base.enable_register_system") != true)
+        if (app()->config->get("base.enable_register_system") != true) {
             $context->buildViolation("The register isn't open in this site.")->addViolation();
+            return;
+        }
+
         if (app()->config->get("register.by_" . $this->type) != true)
             $context->buildViolation("The register by {$this->type} ways isn't open in this site.")->addViolation();
     }
@@ -141,8 +144,10 @@ class UserRegisterForm extends Validator
     {
         $username = $this->username;
         // The following characters are allowed in user names
-        if (strspn(strtolower($username), "abcdefghijklmnopqrstuvwxyz0123456789_") != strlen($username))
+        if (strspn(strtolower($username), "abcdefghijklmnopqrstuvwxyz0123456789_") != strlen($username)) {
             $context->buildViolation("Invalid characters in user names.")->addViolation();
+            return;
+        }
 
         $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
             "username" => $username
@@ -158,21 +163,26 @@ class UserRegisterForm extends Validator
         if (app()->config->get("register.enabled_email_black_list") &&
             app()->config->get("register.email_black_list")) {
             $email_black_list = explode(",", app()->config->get("register.email_black_list"));
-            if (in_array($email_suffix, $email_black_list))
+            if (in_array($email_suffix, $email_black_list)) {
                 $context->buildViolation("The email suffix `$email_suffix` is not allowed.")->addViolation();
+            }
         }
         if (app()->config->get("register.enabled_email_white_list") &&
             app()->config->get("register.email_white_list")) {
             $email_white_list = explode(",", app()->config->get("register.email_white_list"));
-            if (!in_array($email_suffix, $email_white_list))
+            if (!in_array($email_suffix, $email_white_list)) {
                 $context->buildViolation("The email suffix `$email_suffix` is not allowed.")->addViolation();
+                return;
+            }
         }
 
         $email_check = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `email` = :email")->bindParams([
             "email" => $email
         ])->queryScalar();
-        if ($email_check > 0)
+        if ($email_check > 0) {
             $context->buildViolation("Email Address '$email' is already used.")->addViolation();
+            return;
+        }
     }
 
     public function checkRegisterType(ExecutionContextInterface $context)
@@ -180,15 +190,19 @@ class UserRegisterForm extends Validator
         if ($this->type == 'invite') {
             if (strlen($this->invite_hash) != 32) {
                 $context->buildViolation("This invite hash : `$this->invite_hash` is not valid")->addViolation();
+                return;
             } else {
                 $inviteInfo = app()->pdo->createCommand("SELECT * FROM `invite` WHERE `hash`=:invite_hash")->bindParams([
                     "invite_hash" => $this->invite_hash
                 ])->queryOne();
                 if (!$inviteInfo) {
                     $context->buildViolation("This invite hash : `$this->invite_hash` is not exist")->addViolation();
+                    return;
                 } else {
-                    if ($inviteInfo["expire_at"] < time())
+                    if ($inviteInfo["expire_at"] < time()) {
                         $context->buildViolation("This invite hash is expired at " . $inviteInfo["expire_at"] . ".")->addViolation();
+                        return;
+                    }
                 }
             }
         } elseif ($this->type == 'green') {
@@ -206,6 +220,7 @@ class UserRegisterForm extends Validator
              *
              */
             $context->buildViolation("The Green way to register in this site is not Implemented.")->addViolation();
+            return;
         }
     }
 
@@ -240,22 +255,28 @@ class UserRegisterForm extends Validator
         ))->execute();
         $this->id = app()->pdo->getLastInsertId();
 
+        $log_text = "User $this->username($this->id) is created now.";
+
         if ($this->type == 'invite') {
             app()->pdo->createCommand("DELETE from `invite` WHERE `hash` = :invite_hash")->bindParams([
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 
-            // FIXME Send PM to inviter
-            Site::sendPM(0, $this->invite_by, "New Invitee Signup Successful", "New Invitee Signup Successful");
+            $invitee = new User($this->invite_by);
+            $log_text .= '(Invite by ' . $invitee->getUsername() . '(' . $invitee->getId() . ')).';
+
+            Site::sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");
         }
 
-        if ($this->confirm_way == "email") {
-            // FIXME send mail or other confirm way to active this new user (change it's status to `confirmed`)
-            app()->swiftmailer->send([$this->email], "Please confirm your accent", "Click this link to confirm.");
+        if ($this->confirm_way == 'email') {
+            $confirm_key = StringHelper::getRandomString(32);
+            app()->pdo->createCommand('INSERT INTO `users_confirm` (uid,serect) VALUES (:uid,:serect)')->bindParams([
+                'uid' => $this->id, 'serect' => $confirm_key
+            ])->execute();
+            $confirm_url = app()->request->root() . '/auth/confirm?secret=' . urlencode($confirm_key);
+            app()->swiftmailer->send([$this->email], 'Please confirm your accent', "Click this link $confirm_url to confirm.");
         }
 
-        Site::writeLog("User $this->username($this->id) is created now" . (
-            $this->type == "invite" ? ", Invite by " : ""
-            ), Site::LOG_LEVEL_MOD);
+        Site::writeLog($log_text, Site::LOG_LEVEL_MOD);
     }
 }

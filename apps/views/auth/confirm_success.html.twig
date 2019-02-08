@@ -1,0 +1,19 @@
+{% extends "layout/base.html.twig" %}
+
+{% block title %}Confirm Success{% endblock %}
+
+
+{% block container %}
+    <div class="jumbotron">
+        <h1>Your account is success Confirmed.</h1>
+        <p>Click <a href="/auth/login">Login Page</a> to login</p>
+    </div>
+{% endblock %}
+
+{% block script %}
+<script>
+    window.setTimeout(function() {
+        location.href = '/auth/login';
+    }, 2000);
+</script>
+{% endblock %}

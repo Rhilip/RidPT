@@ -14,7 +14,7 @@ class BeforeMiddleware
         $isAnonymousUser = app()->user->isAnonymous();
 
         if ($controllerName === \apps\controllers\AuthController::class) {
-            if (!$isAnonymousUser && in_array($action, ["actionLogin", "actionRegister"])) {
+            if (!$isAnonymousUser && in_array($action, ['actionLogin', 'actionRegister','actionConfirm'])) {
                 return app()->response->redirect("/index");
             } elseif ($action !== "actionLogout") {
                 if ($action == 'actionLogin') {
