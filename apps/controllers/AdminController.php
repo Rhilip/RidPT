@@ -46,29 +46,34 @@ class AdminController extends Controller
                     app()->redis->del(app()->redis->keys($pattern));
                 }
             }
-            $offset = app()->request->get('offset', 0);
-            $perpage = app()->request->get('perpage', 50);
-            $pattern = app()->request->get('pattern', '');
 
-            $keys = app()->redis->keys($pattern);
-            sort($keys);
-            $limited_keys = array_slice($keys, $offset * $perpage, $perpage);
+            $render_data = [];
+            $pattern = app()->request->get('pattern');
+            if ($pattern) {
+                $offset = app()->request->get('offset', 0);
+                $perpage = app()->request->get('perpage', 50);
 
-            $types = [];
-            foreach ($limited_keys as $key) {
-                $types[$key] = app()->redis->typeof($key);
+                $keys = app()->redis->keys($pattern);
+                sort($keys);
+                $limited_keys = array_slice($keys, $offset * $perpage, $perpage);
+
+                $types = [];
+                foreach ($limited_keys as $key) {
+                    $types[$key] = app()->redis->typeof($key);
+                }
+
+                $dbsize = app()->redis->dbSize();
+                $render_data = [
+                    'offset' => $offset,
+                    'perpage' => $perpage,
+                    'pattern' => $pattern,
+                    'keys' => $limited_keys,
+                    'types' => $types,
+                    'num_keys' => count($keys),
+                    'dbsize' => $dbsize
+                ];
             }
-
-            $dbsize = app()->redis->dbSize();
-            return $this->render('admin/redis_keys.html.twig', [
-                'offset' => $offset,
-                'perpage' => $perpage,
-                'pattern' => $pattern,
-                'keys' => $limited_keys,
-                'types' => $types,
-                'num_keys' => count($keys),
-                'dbsize' => $dbsize
-            ]);
+            return $this->render('admin/redis_keys.html.twig', $render_data);
         } elseif ($panel === 'key') {
             $key = app()->request->get('key');
             $dump = app()->redis->dump($key);
