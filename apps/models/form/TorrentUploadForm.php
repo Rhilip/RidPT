@@ -10,6 +10,7 @@ namespace apps\models\form;
 
 use apps\models\Torrent;
 
+use Rid\Validators\FileTrait;
 use Rid\Validators\Validator;
 use Rid\Bencode\Bencode;
 use Rid\Bencode\ParseErrorException;
@@ -20,6 +21,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class TorrentUploadForm extends Validator
 {
+    use FileTrait;
 
     public $id = 0;
 
@@ -74,7 +76,7 @@ class TorrentUploadForm extends Validator
         $this->validateFile($context, $payload);
 
         try {
-            $this->torrent_dict = Bencode::load($this->file->getPathname());
+            $this->torrent_dict = Bencode::load($this->file->tmpName);
             $info = $this->checkTorrentDict($this->torrent_dict, 'info');
             if ($info) {
                 $this->checkTorrentDict($info, 'piece length', 'integer');  // Only Check without use
@@ -218,7 +220,7 @@ class TorrentUploadForm extends Validator
     private function setBuff()
     {
         // Add Large Buff and Random Buff
-        if (app()->config->get("buff.enable_large") && $this->file->getSize() > app()->config->get("buff.large_size")) {
+        if (app()->config->get("buff.enable_large") && $this->file->size > app()->config->get("buff.large_size")) {
             // TODO app()->pdo->createCommand();
         } elseif (app()->config->get("buff.enable_random")) {
             // TODO app()->pdo->createCommand();

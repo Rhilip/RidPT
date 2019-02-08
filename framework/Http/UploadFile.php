@@ -2,12 +2,11 @@
 
 namespace Rid\Http;
 
-use SplFileInfo;
 
 /**
  * UploadFile类
  */
-class UploadFile extends SplFileInfo
+class UploadFile
 {
 
     // 文件名
@@ -39,7 +38,6 @@ class UploadFile extends SplFileInfo
     // 构造
     public function __construct($file)
     {
-        parent::__construct($file['tmp_name']);
         $this->name    = $file['name'];
         $this->type    = $file['type'];
         $this->tmpName = $file['tmp_name'];

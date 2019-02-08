@@ -10,6 +10,8 @@ namespace apps\models\form;
 
 use Rid\Helpers\StringHelper;
 use Rid\User\UserInterface;
+
+use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 
 use RobThree\Auth\TwoFactorAuth;
@@ -21,6 +23,8 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class UserLoginForm extends Validator
 {
+    use CaptchaTrait;
+
     public $username;
     public $password;
     public $opt;
