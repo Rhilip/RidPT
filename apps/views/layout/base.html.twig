@@ -10,11 +10,11 @@
     <title>{{ config.get("base.site_name") }} :: {% block title %}{% endblock %} -- Powered by RidPT</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/lib/fontAwesome/css/all.css" rel="stylesheet">
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"> {# docs: https://getbootstrap.com/docs/3.3/ #}
+    <link href="/lib/fontAwesome/css/all.css" rel="stylesheet"> {# docs: https://fontawesome.com/icons?d=gallery #}
 
     <!-- Custom styles for this template -->
-    <link href="/static/css/main.css" rel="stylesheet">
+    <link href="/static/css/main.css?{{ css_tag }}" rel="stylesheet">
 
     {% block css %}{% endblock %} <!-- Other css field -->
 
@@ -26,63 +26,87 @@
     <![endif]-->
 </head>
 <body>
-<!-- Navigation -->
-<!-- Fixed navbar -->
-<nav class="navbar navbar-default navbar-fixed-top">
+<!--top menu-->
+<div id="top-menu"></div>
+
+<!--header-->
+<header id="header">
     <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
-                    aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">{{ config.get("base.site_name") }}</a>
+        <div class="row header-top">
+            <div class="span5 logo">
+                <a class="logo-img" href="/"><img src="/static/pic/logo.png" style="width: 135px" alt="Logo"/></a>
+                <p class="tagline">{{ config.get('base.site_description') }}</p>
+            </div>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="/index">Index</a></li>
-                <li><a href="/torrents">Torrents</a></li>
-                <li><a href="/torrents/upload">Upload</a></li>
-                <li><a href="/about">About</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <form class="nav navbar-form navbar-right" method="get" action="/torrents/search">
-                        <input type="text" class="form-control" placeholder="Search..." name="key">
-                    </form>
-                </li>
-                {% if curuser.isAnonymous() %}
-                    <li><a href="/auth/login">Login</a></li>
-                    <li><a href="/auth/register">Register</a></li>
-                {% else %}
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">{{ curuser.getUsername() }}<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/user">User Info Panel</a></li>
-                            <li><a href="/user/setting">User Setting</a></li>
-                            <li role="separator" class="divider"></li>
-                            {% if curuser.getClass(true) > constant('ROLE_FORUM_MODERATOR', curuser) %}
-                                <li><a href="/admin">Admin Panel</a></li>
-                                <li role="separator" class="divider"></li>
-                            {% endif %}
-                            <li><a href="/auth/logout">Logout</a></li>
-                        </ul>
-                    </li>
+        <div class="row header-nav" align="center">
+            <div>
+                <nav id="menu" class="clearfix">
+
+                    <ul>
+                        {# add  class="current" to actice nav #}
+                        <li><!--suppress HtmlUnknownTarget --><a href="/">Index</a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/forums">Forums</a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/torrents">Torrents</a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/torrents/request">Request</a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/torrents/upload">Upload</a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/subtitles">Subtitles</a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/site/topten">Top 10</a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/site/about">About</a></li>
+                        {# Make secondary list like this if you want
+                         <li><a href="./index.html"><span class="name">Home</span></a>
+                            <ul>
+                                <li><a href="./index.html">Home Page 1</a></li>
+                                <li><a href="./index2.html">Home Page 2</a></li>
+                                <li><a href="./index3.html">Home Page 3</a></li>
+                            </ul>
+                        </li>
+                        #}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        {% if not curuser.isAnonymous() %}
+        <div class="row header-info">
+            <div class="pull-left">
+                Welcome Back, <a href="/user">{{ curuser.username }}</a> &nbsp;
+                <span><!--suppress HtmlUnknownTarget --><a href="/auth/logout">[Logout]</a></span>&nbsp;
+                {% if curuser.getClass(true) > constant('ROLE_FORUM_MODERATOR', curuser) %}
+                    <span><!--suppress HtmlUnknownTarget --><a href="/admin">[Admin Panel]</a></span>&nbsp;
                 {% endif %}
-            </ul>
-        </div><!--/.nav-collapse -->
+                <span><!--suppress HtmlUnknownTarget --><a href="/user/favour">[Favour]</a></span>&nbsp;
+                <br>
+                <span>Ratio: {{ curuser.getRatio() }}</span>&nbsp;
+                <span>Uploaded: {{ curuser.getUploaded() | format_bytes }}</span>&nbsp;
+                <span>Downloaded: {{ curuser.getDownloaded() | format_bytes }}</span>&nbsp;
+                <span>BT Activity: <span class="fa fa-arrow-up"></span>&nbsp;up&nbsp;<span class="fa fa-arrow-down"></span>&nbsp;dl&nbsp;</span>&nbsp;
+            </div>
+            <div class="pull-right">
+                {# TODO right information #}
+            </div>
+        </div>
+        {% endif %}
     </div>
-</nav>
-<!-- Page Content -->
+</header>
 <div class="container">
+    <!-- Page Content -->
     {% block container %}{% endblock %}
 </div> <!-- /container -->
+
+<footer id="footer-menu">
+    <div class="container" align="center">
+        <div class="row">
+            <p class="copyright"><a href="/" target="_self">{{ config.get("base.site_name") }}</a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT">RidPT</a></p>
+            {# Notice: this count will not include the useage of Twig #}
+            <p class="create-info">[ Page created in <b>{{ cost_time|number_format(5) }}</b> sec with <b>{{ db_count }}</b> db queries, <b>{{ redis_count }}</b> calls of Redis ]</p>
+        </div>
+    </div>
+</footer>
+
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="/lib/jquery/dist/jquery.min.js"></script>
-<script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/lib/jquery/dist/jquery.min.js"></script> {# docs: https://api.jquery.com/ #}
+<script type="text/javascript" src="/lib/bootstrap/dist/js/bootstrap.min.js"></script> {# docs: https://getbootstrap.com/docs/3.3/ #}
+<script type="text/javascript" src="/lib/superfish/dist/js/superfish.min.js"></script> {# docs: https://superfish.joelbirch.co/options/ #}
+<script type="text/javascript" src="/static/js/main.js?{{ css_tag }}"></script>
 {% block script %}{% endblock %}<!-- Other script field -->
 </body>
 </html>
