@@ -2,13 +2,18 @@
 
 namespace Rid\Log;
 
+use Psr\Log\LogLevel;
+use Psr\Log\LoggerTrait;
+use Psr\Log\LoggerInterface;
+
 use Rid\Base\Component;
 
 /**
  * Log组件
  */
-class Log extends Component
+class Log extends Component implements LoggerInterface
 {
+    use LoggerTrait;
 
     // 轮转规则
     const ROTATE_HOUR = 0;
@@ -19,7 +24,10 @@ class Log extends Component
     public $dir = 'logs';
 
     // 日志记录级别
-    public $level = ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'];
+    public $level = [
+        LogLevel::EMERGENCY, LogLevel::ALERT, LogLevel::CRITICAL, LogLevel::ERROR,
+        LogLevel::WARNING, LogLevel::NOTICE, LogLevel::INFO, LogLevel::DEBUG
+    ];
 
     // 日志轮转类型
     public $rotate = self::ROTATE_DAY;
@@ -35,67 +43,19 @@ class Log extends Component
         $this->setCoroutineMode(Component::COROUTINE_MODE_REFERENCE);
     }
 
-    // emergency日志
-    public function emergency($message, array $context = [])
-    {
-        return $this->log(__FUNCTION__, $message, $context);
-    }
-
-    // alert日志
-    public function alert($message, array $context = [])
-    {
-        return $this->log(__FUNCTION__, $message, $context);
-    }
-
-    // critical日志
-    public function critical($message, array $context = [])
-    {
-        return $this->log(__FUNCTION__, $message, $context);
-    }
-
-    // error日志
-    public function error($message, array $context = [])
-    {
-        return $this->log(__FUNCTION__, $message, $context);
-    }
-
-    // warning日志
-    public function warning($message, array $context = [])
-    {
-        return $this->log(__FUNCTION__, $message, $context);
-    }
-
-    // notice日志
-    public function notice($message, array $context = [])
-    {
-        return $this->log(__FUNCTION__, $message, $context);
-    }
-
-    // info日志
-    public function info($message, array $context = [])
-    {
-        return $this->log(__FUNCTION__, $message, $context);
-    }
-
-    // debug日志
-    public function debug($message, array $context = [])
-    {
-        return $this->log(__FUNCTION__, $message, $context);
-    }
-
     // 记录日志
     public function log($level, $message, array $context = [])
     {
         if (in_array($level, $this->level)) {
             return $this->write($level, $message, $context);
         }
-        return false;
+        throw new \Psr\Log\InvalidArgumentException("Log level $level is not allowed.");
     }
 
     // 写入日志
     public function write($filePrefix, $message, array $context = [])
     {
-        $file    = $this->getFile($filePrefix);
+        $file = $this->getFile($filePrefix);
         $message = $this->getMessage($message, $context);
         return error_log($message . PHP_EOL, 3, $file);
     }
@@ -110,21 +70,21 @@ class Log extends Component
         }
         switch ($this->rotate) {
             case self::ROTATE_HOUR:
-                $subDir     = date('Ymd');
+                $subDir = date('Ymd');
                 $timeFormat = date('YmdH');
                 break;
             case self::ROTATE_DAY:
-                $subDir     = date('Ym');
+                $subDir = date('Ym');
                 $timeFormat = date('Ymd');
                 break;
             case self::ROTATE_WEEKLY:
             default:
-                $subDir     = date('Y');
+                $subDir = date('Y');
                 $timeFormat = date('YW');
                 break;
         }
         $filename = "{$logDir}/{$subDir}/{$filePrefix}_{$timeFormat}";
-        $file     = "{$filename}.log";
+        $file = "{$filename}.log";
         // 创建目录
         $dir = dirname($file);
         is_dir($dir) or mkdir($dir, 0777, true);
@@ -147,7 +107,7 @@ class Log extends Component
         }
         $message = strtr($message, $replace);
         // 增加时间
-        $time    = date('Y-m-d H:i:s');
+        $time = date('Y-m-d H:i:s');
         $message = "[time] {$time} [message] {$message}";
         return $message;
     }

@@ -78,17 +78,11 @@ return [
         ],
 
         // 日志
-        'log'      => [
-            // 类路径
-            'class'       => Rid\Log\Log::class,
-            // 日志记录级别
-            'level'       => ['emergency', 'alert', 'critical', 'error', 'warning', 'notice', 'info', 'debug'],
-            // 日志目录
-            'dir'         => 'logs',
-            // 日志轮转类型
-            'rotate'      => Rid\Log\Log::ROTATE_DAY,
-            // 最大文件尺寸
-            'maxFileSize' => 0,
+        'log' => [
+            'class'       => Rid\Log\Log::class,  // 类路径
+            'dir'         => 'logs',  // 日志目录
+            'rotate'      => Rid\Log\Log::ROTATE_DAY,  // 日志轮转类型
+            'maxFileSize' => 0,  // 最大文件尺寸
         ],
 
         // Token

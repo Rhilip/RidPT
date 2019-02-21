@@ -29,6 +29,7 @@
     "ext-swoole": "*",
     "ext-mbstring": "*",
     "ext-simplexml": "*",
+    "psr/log": "^1.1",
     "robthree/twofactorauth": "^1.6",
     "swiftmailer/swiftmailer": "^6.1",
     "twig/twig": "^2.0",

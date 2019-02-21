@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5f9855298bfe6db4ad5ebdf1a3e7b9f",
+    "content-hash": "c480423054d50d7c7ff18890f922cc75",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -247,6 +247,59 @@
             "time": "2018-12-26T22:52:19+00:00"
         },
         {
+            "name": "psr/log",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+                "reference": "6c001f1daafa3a3ac1d8ff69ee4db8e799a654dd",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2018-11-20T15:27:04+00:00"
+        },
+        {
             "name": "robthree/twofactorauth",
             "version": "1.6.5",
             "source": {
@@ -302,62 +355,6 @@
                 "tfa"
             ],
             "time": "2018-06-09T10:09:59+00:00"
-        },
-        {
-            "name": "sandfoxme/bencode",
-            "version": "1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sandfoxme/bencode.git",
-                "reference": "e827c34253024d84917f0f35935b2e1916311ecd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sandfoxme/bencode/zipball/e827c34253024d84917f0f35935b2e1916311ecd",
-                "reference": "e827c34253024d84917f0f35935b2e1916311ecd",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
-            },
-            "require": {
-                "php": ">= 7.0"
-            },
-            "require-dev": {
-                "codeclimate/php-test-reporter": "*",
-                "phpunit/phpunit": "^6.0.0",
-                "psy/psysh": "^0.8.3"
-            },
-            "suggest": {
-                "php-64bit": "Running 64 bit is recommended to prevent integer overflow"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "SandFoxMe\\Bencode\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Anton Smirnov",
-                    "email": "sandfox@sandfox.me"
-                }
-            ],
-            "description": "BitTorrent's Bencode encoder/decoder",
-            "keywords": [
-                "bencode",
-                "bittorrent",
-                "serialize",
-                "torrent"
-            ],
-            "time": "2018-02-14T19:16:21+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -1050,7 +1047,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2.0",
+        "php": ">=7.3.0",
         "ext-gd": "*",
         "ext-pdo": "*",
         "ext-json": "*",
