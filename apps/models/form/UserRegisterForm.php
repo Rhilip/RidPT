@@ -274,7 +274,9 @@ class UserRegisterForm extends Validator
                 'uid' => $this->id, 'serect' => $confirm_key
             ])->execute();
             $confirm_url = app()->request->root() . '/auth/confirm?secret=' . urlencode($confirm_key);
-            app()->swiftmailer->send([$this->email], 'Please confirm your accent', "Click this link $confirm_url to confirm.");
+
+            $mail_sender = \Rid\Libraries\Mailer::newInstanceByConfig('library.[swiftmailer]');
+            $mail_sender->send([$this->email], 'Please confirm your accent', "Click this link $confirm_url to confirm.");
         }
 
         Site::writeLog($log_text, Site::LOG_LEVEL_MOD);

@@ -15,7 +15,6 @@ namespace Rid\Base;
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Config\ConfigBySwoole|\Rid\Config\ConfigByRedis $config
- * @property \Rid\Mailer\Mailer $swiftmailer
  * @property \Rid\Pool\ConnectionPool $connectionPool
  * @property \Rid\User\User $user
  */
@@ -66,7 +65,7 @@ class Application extends BaseObject
             throw new \Rid\Exceptions\ComponentException("组件不存在：{$name}");
         }
         // 使用配置创建新对象
-        $object = \Rid::createObject($this->components[$name], $name);
+        $object = \Rid::createObject($this->components[$name]);
         // 组件效验
         if (!($object instanceof ComponentInterface)) {
             throw new \Rid\Exceptions\ComponentException("不是组件类型：{$this->components[$name]['class']}");

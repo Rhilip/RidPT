@@ -205,8 +205,15 @@ return [
             'class'   => Rid\Config\ConfigByRedis::class,
         ],
 
+        'user' => [
+            'class' => Rid\User\User::class,
+        ]
+    ],
+
+    // 类库配置
+    'libraries'           => [
         'swiftmailer' => [
-            'class'   => Rid\Mailer\Mailer::class,
+            'class'   => Rid\Libraries\Mailer::class,
             'host'    => env('MAILER_HOST'),
             'port'    => env('MAILER_PORT'),
             'encryption' => env('MAILER_ENCRYPTION'),
@@ -215,14 +222,5 @@ return [
             'from'    => env('MAILER_FROM'),
             'nikename'=> env('MAILER_FROM_NICKNAME'),
         ],
-
-        'user' => [
-            'class' => Rid\User\User::class,
-        ]
-    ],
-
-    // 类库配置
-    'libraries'           => [
-
     ],
 ];

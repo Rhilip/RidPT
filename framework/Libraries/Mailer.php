@@ -6,15 +6,15 @@
  * Time: 17:30
  */
 
-namespace Rid\Mailer;
+namespace Rid\Libraries;
 
-use Rid\Base\Component;
+use Rid\Base\BaseObject;
 
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SmtpTransport;
 
-class Mailer extends Component
+class Mailer extends BaseObject
 {
     public $host;
     public $port;
@@ -25,21 +25,22 @@ class Mailer extends Component
     public $from;
     public $nikename;
 
+    /** @var Swift_SmtpTransport */
     public $_transport;
+
+    /** @var Swift_Mailer */
     public $_mailer;
 
-    public function __construct(array $config = [])
+    public function onConstruct()
     {
-        parent::__construct($config);
-
-        $this->_transport = (new Swift_SmtpTransport($this->host, $this->port,$this->encryption))
+        $this->_transport = (new Swift_SmtpTransport($this->host, $this->port, $this->encryption))
             ->setUsername($this->username)
             ->setPassword($this->password);
 
         $this->_mailer = new Swift_Mailer($this->_transport);
     }
 
-    public function send(array $receiver,string $subject,string $body)
+    public function send(array $receiver, string $subject, string $body)
     {
         $message = (new Swift_Message($subject))
             ->setFrom([$this->from])
