@@ -11,7 +11,7 @@ namespace Rid\Config;
 use Rid\Base\Component;
 use Rid\Exceptions\ConfigException;
 
-class ConfigBySwoole extends Component implements DynamicConfigInterface
+class DynamicConfig extends Component implements DynamicConfigInterface
 {
     /** @var \swoole_table */
     private $cacheTable;
@@ -32,7 +32,7 @@ class ConfigBySwoole extends Component implements DynamicConfigInterface
         }
     }
 
-    public function get(string $name,bool $throw = true)
+    public function get(string $name, bool $throw = true)
     {
         $setting = $this->cacheTable->get($name, $this->valueField);
         // First Check config stored in RedisConnection Cache, If it exist , then just return the cached key

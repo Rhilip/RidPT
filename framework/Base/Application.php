@@ -6,15 +6,15 @@ namespace Rid\Base;
  * @property \Rid\Log\Log $log
  * @property \Rid\Console\Input $input
  * @property \Rid\Http\Route $route
- * @property \Rid\Http\Request|\Rid\Http\Compatible\Request $request
- * @property \Rid\Http\Response|\Rid\Http\Compatible\Response $response
+ * @property \Rid\Http\Request $request
+ * @property \Rid\Http\Response $response
  * @property \Rid\Http\Error|\Rid\Console\Error $error
  * @property \Rid\Http\Token $token
  * @property \Rid\Http\Session $session
  * @property \Rid\Http\Cookie $cookie
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
- * @property \Rid\Config\ConfigBySwoole|\Rid\Config\ConfigByRedis $config
+ * @property \Rid\Config\DynamicConfig $config
  * @property \Rid\Pool\ConnectionPool $connectionPool
  * @property \Rid\User\User $user
  */

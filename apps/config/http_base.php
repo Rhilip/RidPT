@@ -196,7 +196,7 @@ return [
         ],
 
         'config' => [
-            'class'   => Rid\Config\ConfigByRedis::class,
+            'class'   => Rid\Config\DynamicConfig::class,
         ],
 
         'user' => [
