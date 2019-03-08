@@ -1,5 +1,5 @@
 body{background-color:#2F3242}
-.message-img{position:absolute;top:50%;left:40%;margin-top:-250px;margin-left:-400px}
+.message-img{position:absolute;top:40%;left:40%;margin-top:-250px;margin-left:-400px}
 .message-box{width:600px;position:absolute;top:30%;left:40%;margin-top:-100px;margin-left:50px;color:#FFF;font-family:Roboto;font-weight:300}
 .message-box h1{font-size:60px;line-height:46px;margin-bottom:40px}
 .buttons-con .action-link-wrap{margin-top:40px}

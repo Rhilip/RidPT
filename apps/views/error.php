@@ -30,7 +30,7 @@ use Rid\Helpers\StringHelper;
     <title>Error Page</title>
 
     <!-- Custom stlylesheet -->
-    <link type="text/css" rel="stylesheet" href="/static/css/error.css?<?= time() // FIXME For debug  ?>"/>
+    <link type="text/css" rel="stylesheet" href="/static/css/error.css"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
