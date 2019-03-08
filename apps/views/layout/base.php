@@ -68,7 +68,10 @@
             <span>Ratio: <?= app()->user->getRatio() ?></span>&nbsp;
             <span>Uploaded: <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?></span>&nbsp;
             <span>Downloaded: <?= $this->e(app()->user->getDownloaded(), 'format_bytes') ?></span>&nbsp;
-            <span>BT Activity: <span class="fas fa-arrow-up icon-seeding"></span>&nbsp;up&nbsp;<span class="fas fa-arrow-down icon-leeching"></span>&nbsp;dl&nbsp;</span>&nbsp;
+            <span>BT Activity:
+                <span class="fas fa-arrow-up icon-seeding"></span>&nbsp;<?= app()->user->getActiveSeed() ?>&nbsp;
+                <span class="fas fa-arrow-down icon-leeching"></span>&nbsp;<?= app()->user->getActiveLeech() ?>&nbsp;
+            </span>&nbsp;
         </div>
         <div class="pull-right">
             <?php //TODO right information ?>

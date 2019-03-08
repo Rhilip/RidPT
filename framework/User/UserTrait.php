@@ -15,46 +15,48 @@ trait UserTrait
 {
     use AttributesImportUtils;
 
-    public $id;
-    public $username;
-    public $email;
-    public $status;
-    public $class;
+    private $id;
+    private $username;
+    private $email;
+    private $status;
+    private $class;
 
-    public $passkey;
+    private $passkey;
 
-    public $avatar;
+    private $avatar;
 
-    public $create_at;
-    public $last_login_at;
-    public $last_access_at;
-    public $last_upload_at;
-    public $last_download_at;
-    public $last_connect_at;
+    private $create_at;
+    private $last_login_at;
+    private $last_access_at;
+    private $last_upload_at;
+    private $last_download_at;
+    private $last_connect_at;
 
-    public $register_ip;
-    public $last_login_ip;
-    public $last_access_ip;
-    public $last_tracker_ip;
+    private $register_ip;
+    private $last_login_ip;
+    private $last_access_ip;
+    private $last_tracker_ip;
 
-    public $uploaded;
-    public $downloaded;
-    public $seedtime;
-    public $leechtime;
-
-    public $infoSaveKeyPrefix = 'USER:content_';
-
+    private $uploaded;
+    private $downloaded;
+    private $seedtime;
+    private $leechtime;
+    
+    protected $infoCacheKey;
+    
     public function loadUserContentById($id)
     {
-        $self = app()->redis->hGetAll($this->infoSaveKeyPrefix . $id);
+        $this->infoCacheKey = 'USER:id_' . $id . '_content';
+        $self = app()->redis->hGetAll($this->infoCacheKey);
         if (empty($self)) {
             $self = app()->pdo->createCommand("SELECT * FROM `users` WHERE id = :id;")->bindParams([
                 "id" => $id
             ])->queryOne();
-            app()->redis->hMset($this->infoSaveKeyPrefix . $id, $self);
-            app()->redis->expire($this->infoSaveKeyPrefix . $id, 3 * 60);
+            app()->redis->hMset($this->infoCacheKey, $self);
+            app()->redis->expire($this->infoCacheKey, 3 * 60);
         }
         $this->importAttributes($self);
+        
     }
 
     public function loadUserContentByName($name)
@@ -66,10 +68,10 @@ trait UserTrait
             ])->queryScalar();
             app()->redis->hSet('USER:map_name_to_id', $name, $uid);
         }
-        if (!$uid) {
-            throw new NotFoundException('');
+        if ($uid) {
+            $this->loadTorrentContentById($uid);
         }
-        // TODO
+        throw new NotFoundException('This user is not found');
     }
 
     /**
@@ -209,12 +211,12 @@ trait UserTrait
     public function getUploaded($real = false)
     {
         if ($real) {
-            $upload = app()->redis->hGet($this->infoSaveKeyPrefix . $this->id, 'true_uploaded');
+            $upload = app()->redis->hGet($this->infoCacheKey, 'true_uploaded');
             if (false === $upload) {
                 $upload = app()->pdo->createCommand('SELECT SUM(`true_uploaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
                         "uid" => $this->id
                     ])->queryScalar() ?? 0;
-                app()->redis->hSet($this->infoSaveKeyPrefix . $this->id, 'true_uploaded', $upload);
+                app()->redis->hSet($this->infoCacheKey, 'true_uploaded', $upload);
             }
             return $upload;
         }
@@ -228,12 +230,12 @@ trait UserTrait
     public function getDownloaded($real = false)
     {
         if ($real) {
-            $download = app()->redis->hGet($this->infoSaveKeyPrefix . $this->id, 'true_downloaded');
+            $download = app()->redis->hGet($this->infoCacheKey, 'true_downloaded');
             if (false === $download) {
                 $download = app()->pdo->createCommand('SELECT SUM(`true_downloaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
                         "uid" => $this->id
                     ])->queryScalar() ?? 0;
-                app()->redis->hSet($this->infoSaveKeyPrefix . $this->id, 'true_downloaded', $download);
+                app()->redis->hSet($this->infoCacheKey, 'true_downloaded', $download);
             }
             return $download;
         }
@@ -249,7 +251,6 @@ trait UserTrait
 
     public function getSeedtime()
     {
-        ;
         return $this->seedtime;
     }
 
@@ -261,5 +262,29 @@ trait UserTrait
     public function getTimeRatio()
     {
         return max(1, $this->seedtime) / max(1, $this->leechtime);
+    }
+
+    public function getActiveSeed()
+    {
+        $active_seed = app()->redis->hGet($this->infoCacheKey, 'active_seed_count');
+        if ($active_seed === false) {
+            $active_seed = app()->pdo->createCommand("SELECT COUNT(id) FROM `peers` WHERE `user_id` = :uid AND `seeder`='yes'")->bindParams([
+                'uid' => $this->id
+            ])->queryScalar() ?: 0;
+            app()->redis->hSet($this->infoCacheKey, 'active_seed_count', $active_seed);
+        }
+        return $active_seed;
+    }
+
+    public function getActiveLeech()
+    {
+        $active_leech = app()->redis->hGet($this->infoCacheKey, 'active_leech_count');
+        if ($active_leech === false) {
+            $active_leech = app()->pdo->createCommand("SELECT COUNT(id) FROM `peers` WHERE `user_id` = :uid AND `seeder`='no'")->bindParams([
+                'uid' => $this->id
+            ])->queryScalar() ?: 0;
+            app()->redis->hSet($this->infoCacheKey, 'active_leech_count', $active_leech);
+        }
+        return $active_leech;
     }
 }
