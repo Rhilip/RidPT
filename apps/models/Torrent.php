@@ -10,10 +10,14 @@ namespace apps\models;
 
 use Rid\Bencode\Bencode;
 use Rid\Exceptions\NotFoundException;
+use Rid\Utils\AttributesImportUtils;
 
 class Torrent
 {
-    private $id;
+    use AttributesImportUtils;
+
+    private $id = null;
+
     private $owner_id;
     private $info_hash;
 
@@ -41,17 +45,23 @@ class Torrent
 
     public function __construct($id = null)
     {
-        # TODO Add redis hash type cache
-        $fetch = app()->pdo->createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
-            "id" => $id
-        ])->queryOne();
-        if ($fetch) {
-            # TODO Only allow admins see deleted torrents
-            foreach ($fetch as $key => $value)
-                $this->$key = $value;
-        } else {
+        $this->loadTorrentContentById($id);
+        if ($this->id == null) {
             throw new NotFoundException("Not Found");
         }
+    }
+
+    public function loadTorrentContentById($id)
+    {
+        $self = app()->redis->hGetAll('Torrent:id_' . $id . '_content');
+        if (empty($self)) {
+            $self = app()->pdo->createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
+                    "id" => $id
+                ])->queryOne() ?? [];
+            app()->redis->hMset('Torrent:id_' . $id . '_content', $self);
+            app()->redis->expire('Torrent:id_' . $id . '_content', 3 * 60);
+        }
+        $this->importAttributes($self);
     }
 
     public static function TorrentFileLoc($id = 0)
@@ -144,13 +154,15 @@ class Torrent
         return $this->descr;
     }
 
-    public function getRawDict() {
+    public function getRawDict()
+    {
         $file = self::TorrentFileLoc($this->id);
         $dict = Bencode::load($file);
         return $dict;
     }
 
-    public function getDownloadDict($encode = true) {
+    public function getDownloadDict($encode = true)
+    {
         $userInfo = app()->session->get('userInfo');  // FIXME add remote download by &passkey=  (Add change our BeforeMiddle) or token ?
 
         $scheme = "http://";
@@ -191,7 +203,7 @@ class Torrent
      * @param bool $raw
      * @return mixed
      */
-    public function getInfoHash($raw=false)
+    public function getInfoHash($raw = false)
     {
         if ($raw) {
             return $this->info_hash;

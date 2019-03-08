@@ -20,7 +20,7 @@ class TorrentsController extends Controller
     public function actionIndex()
     {
         // TODO add pagination support
-        $fetch = app()->pdo->createCommand('SELECT `id` FROM torrents ORDER BY added_at DESC LIMIT 50;')->queryAll();
+        $fetch = app()->pdo->createCommand('SELECT `id` FROM torrents ORDER BY added_at DESC LIMIT 50;')->queryColumn();
 
         $torrents = array_map(function ($id) {
             return new Torrent($id);
