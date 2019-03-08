@@ -95,8 +95,9 @@ So that tracker can record the peer's ip address.
 | Key | Type | Note |
 |:--|:--:|:--|
 | ~~APP_ENV~~ | ENUM('local','staging') | Not use now. |
-| APP_DEBUG | Bool | Turn on or off the debug model. |
-| ~~APP_SECRET~~ | String | Not use now. |
+| APP_DEBUG | Bool | Turn on or off the debug model,Turn if off after success deploy ! |
+| APP_SECRET_KEY | String | The key used to encrypt and decrypt some data.**(Change it before deploy and don't Change it after Deploy)** |
+| APP_SECRET_IV | String | A non-NULL Initialization Vector.**(Change it before deploy and don't Change it after Deploy)** |
 
 ### Section `Database`
 

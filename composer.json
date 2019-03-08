@@ -27,6 +27,7 @@
     "ext-iconv": "*",
     "ext-libxml": "*",
     "ext-swoole": "*",
+    "ext-openssl": "*",
     "ext-mbstring": "*",
     "ext-simplexml": "*",
     "psr/log": "^1.1",
