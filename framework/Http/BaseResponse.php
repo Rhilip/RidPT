@@ -21,16 +21,6 @@ class BaseResponse extends Component
     public $defaultFormat = self::FORMAT_HTML;
 
     /**
-     * @var \Rid\Http\Json
-     */
-    public $json;
-
-    /**
-     * @var \Rid\Http\Jsonp
-     */
-    public $jsonp;
-
-    /**
      * @var \Rid\Http\Xml
      */
     public $xml;
@@ -92,11 +82,15 @@ class BaseResponse extends Component
         if (is_array($content) || is_object($content)) {
             switch ($this->format) {
                 case self::FORMAT_JSON:
-                    $content = $this->json->encode($content);
+                    $content = json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                     break;
                 case self::FORMAT_JSONP:
-                    $content = $this->jsonp->encode($content);
-                    break;
+                    {
+                        $callback_key = app()->request->get('callback', 'callback');
+                        $content = json_encode($content, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                        $content = $callback_key . '(' . $content . ')';
+                        break;
+                    }
                 case self::FORMAT_XML:
                     $content = $this->xml->encode($content);
                     break;

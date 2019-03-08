@@ -52,18 +52,6 @@ return [
             'class'         => Rid\Http\Response::class,
             // 默认输出格式
             'defaultFormat' => Rid\Http\Response::FORMAT_HTML,
-            // json
-            'json'          => [
-                // 类路径
-                'class' => Rid\Http\Json::class,
-            ],
-            // jsonp
-            'jsonp'         => [
-                // 类路径
-                'class' => Rid\Http\Jsonp::class,
-                // callback键名
-                'name'  => 'callback',
-            ],
             // xml
             'xml'           => [
                 // 类路径
