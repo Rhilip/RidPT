@@ -18,9 +18,6 @@ class Error extends Component
     // 输出格式
     public $format = self::FORMAT_HTML;
 
-    // 错误级别，只在 Apache/PHP-FPM 传统环境下有效
-    public $level = E_ALL;
-
     // 初始化事件
     public function onInitialize()
     {
@@ -62,40 +59,11 @@ class Error extends Component
         }
         // 清空系统错误
         ob_get_contents() and ob_clean();
-        // 错误响应
-        if (!env('APP_DEBUG')) {
-            if ($statusCode == 404) {
-                $errors = [
-                    'status'  => 404,
-                    'message' => $e->getMessage(),
-                ];
-            }
-            if ($statusCode == 500) {
-                $errors = [
-                    'status'  => 500,
-                    'message' => '服务器内部错误',
-                ];
-            }
-        }
-        $format                           = \Rid::app()->error->format;
-        $tpl                              = [
-            404 => "errors/not_found",
-            500 => "errors/internal_server_error",
-        ];
-        $content                          = (new View())->render($tpl[$statusCode], $errors);
+
         \Rid::app()->response->statusCode = $statusCode;
-        \Rid::app()->response->content    = $content;
-        switch ($format) {
-            case self::FORMAT_HTML:
-                \Rid::app()->response->format = Response::FORMAT_HTML;
-                break;
-            case self::FORMAT_JSON:
-                \Rid::app()->response->format = Response::FORMAT_JSON;
-                break;
-            case self::FORMAT_XML:
-                \Rid::app()->response->format = Response::FORMAT_XML;
-                break;
-        }
+        \Rid::app()->response->content    = (new View())->render('error', $errors);
+        \Rid::app()->response->format     = Response::FORMAT_HTML;
+
         \Rid::app()->response->send();
     }
 

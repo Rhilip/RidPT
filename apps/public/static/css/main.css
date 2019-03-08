@@ -43,7 +43,7 @@ body{background-color:#f6f6f6}
 /* Nav menu with User Info */
 .header-nav {margin-bottom:15px}
 nav#menu .layui-nav-item{line-height:45px}
-.header-info{background-color:#eee}
+.header-info{background-color:#eee;padding:5px}
 
 /* Footer Menu */
 #footer-menu{background-color:#383838;color:#C3C0B9;font-size:12px;margin-top:30px;padding-bottom:10px;padding-top:15px}

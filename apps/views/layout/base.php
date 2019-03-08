@@ -55,26 +55,26 @@
                 <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/site/about', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/site/about">About</a></li>
             </ul>
         </nav>
-        <div class="layui-row header-info">
-            <div class="pull-left">
-                Welcome Back, <a href="/user"><?= app()->user->getUsername() ?></a>&nbsp;
-                <span><!--suppress HtmlUnknownTarget --><a href="/auth/logout">[Logout]</a></span>&nbsp;
-                <?php if (app()->user->getClass(true) > \Rid\User\UserInterface::ROLE_FORUM_MODERATOR): ?>
-                    <span><!--suppress HtmlUnknownTarget --><a href="/admin">[Admin Panel]</a></span>&nbsp;
-                <?php endif; ?>
-                <span><!--suppress HtmlUnknownTarget --><a href="/torrents/favour">[Favour]</a></span>&nbsp;
-                <br>
-                <span>Ratio: <?= app()->user->getRatio() ?></span>&nbsp;
-                <span>Uploaded: <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?></span>&nbsp;
-                <span>Downloaded: <?= $this->e(app()->user->getDownloaded(), 'format_bytes') ?></span>&nbsp;
-                <span>BT Activity: <span class="fas fa-arrow-up icon-seeding"></span>&nbsp;up&nbsp;<span class="fas fa-arrow-down icon-leeching"></span>&nbsp;dl&nbsp;</span>&nbsp;
-            </div>
-            <div class="pull-right">
-                <?php //TODO right information ?>
-            </div>
+    </div>
+    <div class="layui-row header-info">
+        <div class="pull-left">
+            Welcome Back, <a href="/user"><?= app()->user->getUsername() ?></a>&nbsp;
+            <span><!--suppress HtmlUnknownTarget --><a href="/auth/logout">[Logout]</a></span>&nbsp;
+            <?php if (app()->user->getClass(true) > \Rid\User\UserInterface::ROLE_FORUM_MODERATOR): ?>
+                <span><!--suppress HtmlUnknownTarget --><a href="/admin">[Admin Panel]</a></span>&nbsp;
+            <?php endif; ?>
+            <span><!--suppress HtmlUnknownTarget --><a href="/torrents/favour">[Favour]</a></span>&nbsp;
+            <br>
+            <span>Ratio: <?= app()->user->getRatio() ?></span>&nbsp;
+            <span>Uploaded: <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?></span>&nbsp;
+            <span>Downloaded: <?= $this->e(app()->user->getDownloaded(), 'format_bytes') ?></span>&nbsp;
+            <span>BT Activity: <span class="fas fa-arrow-up icon-seeding"></span>&nbsp;up&nbsp;<span class="fas fa-arrow-down icon-leeching"></span>&nbsp;dl&nbsp;</span>&nbsp;
+        </div>
+        <div class="pull-right">
+            <?php //TODO right information ?>
         </div>
     </div>
-</nav> <!-- /container -->
+</nav> <!-- /nav -->
 
 
 <div id="container" class="layui-container">
