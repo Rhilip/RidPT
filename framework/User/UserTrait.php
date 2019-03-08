@@ -15,32 +15,32 @@ trait UserTrait
 {
     use AttributesImportUtils;
 
-    private $id;
-    private $username;
-    private $email;
-    private $status;
-    private $class;
+    public $id;
+    public $username;
+    public $email;
+    public $status;
+    public $class;
 
-    private $passkey;
+    public $passkey;
 
-    private $avatar;
+    public $avatar;
 
-    private $create_at;
-    private $last_login_at;
-    private $last_access_at;
-    private $last_upload_at;
-    private $last_download_at;
-    private $last_connect_at;
+    public $create_at;
+    public $last_login_at;
+    public $last_access_at;
+    public $last_upload_at;
+    public $last_download_at;
+    public $last_connect_at;
 
-    private $register_ip;
-    private $last_login_ip;
-    private $last_access_ip;
-    private $last_tracker_ip;
+    public $register_ip;
+    public $last_login_ip;
+    public $last_access_ip;
+    public $last_tracker_ip;
 
-    private $uploaded;
-    private $downloaded;
-    private $seedtime;
-    private $leechtime;
+    public $uploaded;
+    public $downloaded;
+    public $seedtime;
+    public $leechtime;
 
     public $infoSaveKeyPrefix = 'USER:content_';
 
@@ -247,25 +247,15 @@ trait UserTrait
         return $upload / $download;
     }
 
-    /**
-     * @param bool $interval
-     * @return \DateInterval|int
-     * @throws \Exception
-     */
-    public function getSeedtime($interval = true)
+    public function getSeedtime()
     {
         ;
-        return $interval ? new \DateInterval('PT' . $this->seedtime . 'S') : $this->seedtime;
+        return $this->seedtime;
     }
 
-    /**
-     * @param bool $interval
-     * @return \DateInterval|int
-     * @throws \Exception
-     */
-    public function getLeechtime($interval = true)
+    public function getLeechtime()
     {
-        return $interval ? new \DateInterval('PT' . $this->leechtime . 'S') : $this->leechtime;
+        return $this->leechtime;
     }
 
     public function getTimeRatio()

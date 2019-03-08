@@ -21,7 +21,7 @@ class UserController extends Controller
 
     public function actionSetting()
     {
-        return $this->render('user/setting.html.twig');
+        return $this->render('user/setting');
     }
 
     public function actionPanel()
@@ -32,7 +32,7 @@ class UserController extends Controller
         } else {
             $user = app()->user;
         }
-        return $this->render('user/panel.html.twig', ['user' => $user]);
+        return $this->render('user/panel', ['user' => $user]);
     }
 
     public function actionSessions()
@@ -51,14 +51,14 @@ class UserController extends Controller
                 if ($success > 0) {
                     app()->redis->zRem(app()->user->sessionSaveKey, $to_del_session);
                 } else {
-                    return $this->render('errors/action_fail.html.twig', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
+                    return $this->render('errors/action_fail', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
                 }
             }
         }
 
-        $sessions = app()->pdo->createCommand('SELECT sid,login_at,INET6_NTOA(login_ip) as login_ip,user_agent,last_access_at FROM users_session_log WHERE uid=:uid and expired=0')->bindParams([
+        $sessions = app()->pdo->createCommand('SELECT sid,login_at,login_ip,user_agent,last_access_at FROM users_session_log WHERE uid = :uid and expired = 0')->bindParams([
             'uid' => app()->user->getId()
         ])->queryAll();
-        return $this->render('user/sessions.html.twig', ['sessions' => $sessions]);
+        return $this->render('user/sessions', ['sessions' => $sessions]);
     }
 }

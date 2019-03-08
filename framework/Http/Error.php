@@ -79,8 +79,8 @@ class Error extends Component
         }
         $format                           = \Rid::app()->error->format;
         $tpl                              = [
-            404 => "errors/not_found.html.twig",
-            500 => "errors/internal_server_error.html.twig",
+            404 => "errors/not_found",
+            500 => "errors/internal_server_error",
         ];
         $content                          = (new View())->render($tpl[$statusCode], $errors);
         \Rid::app()->response->statusCode = $statusCode;

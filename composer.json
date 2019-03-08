@@ -32,11 +32,10 @@
     "psr/log": "^1.1",
     "robthree/twofactorauth": "^1.6",
     "swiftmailer/swiftmailer": "^6.1",
-    "twig/twig": "^2.0",
-    "twig/extensions": "^1.5",
     "symfony/validator": "^4.2",
     "symfony/property-access": "^4.2",
-    "piwik/device-detector": "^3.11"
+    "piwik/device-detector": "^3.11",
+    "league/plates": "^3.3"
   },
   "autoload": {
     "psr-4": {

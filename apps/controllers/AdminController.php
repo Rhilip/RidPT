@@ -15,7 +15,7 @@ class AdminController extends Controller
 {
     public function actionIndex()
     {
-        return $this->render('admin/index.html.twig');
+        return $this->render('admin/index');
     }
 
     public function actionService()
@@ -27,7 +27,7 @@ class AdminController extends Controller
             case 'redis':
                 return $this->infoRedis();
             default:
-                return $this->render('errors/action_fail.html.twig', ['title' => 'Not Support Action', 'msg' => 'not support']);
+                return $this->render('errors/action_fail', ['title' => 'Not Support Action', 'msg' => 'not support']);
         }
     }
 
@@ -36,6 +36,9 @@ class AdminController extends Controller
         $panel = app()->request->get('panel', 'status');
 
         if ($panel === 'keys') {
+            $offset = app()->request->get('offset', 0);
+            $perpage = app()->request->get('perpage', 50);
+
             if (app()->request->isPost()) {
                 $action = app()->request->post('action');
                 if ($action == 'delkey') {
@@ -46,34 +49,33 @@ class AdminController extends Controller
                     app()->redis->del(app()->redis->keys($pattern));
                 }
             }
-
-            $render_data = [];
+            $dbsize = app()->redis->dbSize();
             $pattern = app()->request->get('pattern');
-            if ($pattern) {
-                $offset = app()->request->get('offset', 0);
-                $perpage = app()->request->get('perpage', 50);
 
+            $render_data = [
+                'dbsize' => $dbsize,
+                'offset' => $offset,
+                'perpage' => $perpage,
+            ];
+
+            if ($pattern) {
                 $keys = app()->redis->keys($pattern);
                 sort($keys);
                 $limited_keys = array_slice($keys, $offset * $perpage, $perpage);
 
                 $types = [];
                 foreach ($limited_keys as $key) {
-                    $types[$key] = app()->redis->typeof($key);
+                    $types[$key] = app()->redis->type($key);
                 }
 
-                $dbsize = app()->redis->dbSize();
-                $render_data = [
-                    'offset' => $offset,
-                    'perpage' => $perpage,
+                $render_data = $render_data + [
                     'pattern' => $pattern,
                     'keys' => $limited_keys,
                     'types' => $types,
                     'num_keys' => count($keys),
-                    'dbsize' => $dbsize
                 ];
             }
-            return $this->render('admin/redis_keys.html.twig', $render_data);
+            return $this->render('admin/redis_keys', $render_data);
         } elseif ($panel === 'key') {
             $key = app()->request->get('key');
             $dump = app()->redis->dump($key);
@@ -81,22 +83,22 @@ class AdminController extends Controller
                 return app()->response->setStatusCode(404);
             }
             $size = strlen($dump);
-            $t = app()->redis->typeof($key);
+            $t = app()->redis->type($key);
             $ttl = app()->redis->ttl($key);
-            if ($t == 'String') {
+            if ($t == \Redis::REDIS_STRING) {
                 $val = app()->redis->get($key);
-            } elseif ($t == 'List') {
+            } elseif ($t == \Redis::REDIS_LIST) {
                 $val = app()->redis->lRange($key, 0, -1);
-            } elseif ($t == 'Hash') {
+            } elseif ($t == \Redis::REDIS_HASH) {
                 $val = app()->redis->hGetAll($key);
-            } elseif ($t == 'Set') {
+            } elseif ($t == \Redis::REDIS_SET) {
                 $val = app()->redis->sMembers($key);
-            } elseif ($t == 'Sorted Set') {
+            } elseif ($t == \Redis::REDIS_ZSET) {
                 $val = app()->redis->zRange($key, 0, -1, true);
             } else {
                 $val = '';
             }
-            return $this->render('admin/redis_key.html.twig', [
+            return $this->render('admin/redis_key', [
                 'key' => $key,
                 'value' => $val,
                 'type' => $t,
@@ -114,7 +116,7 @@ class AdminController extends Controller
                 return $m;
             }, $cmdstat_raw);
 
-            return $this->render('admin/redis_status.html.twig', ['info' => $info, 'dbsize' => $dbsize, 'cmdstat' => $cmdstat]);
+            return $this->render('admin/redis_status', ['info' => $info, 'dbsize' => $dbsize, 'cmdstat' => $cmdstat]);
         }
     }
 
@@ -134,7 +136,7 @@ class AdminController extends Controller
             }
         }
 
-        return $this->render('admin/mysql_status.html.twig', [
+        return $this->render('admin/mysql_status', [
             'serverStatus' => $serverStatus,
             'startAt' => $startAt,
             'queryStats' => $queryStats,

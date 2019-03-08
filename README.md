@@ -133,16 +133,4 @@ So that tracker can record the peer's ip address.
 | MAILER_FROM | String | The from address of this message. |
 | ~~MAILER_FROM_NICKNAME~~ | String | Not use now. |
 
-## Copyright
-
-### This project
-
-Apache License 2.0
-
-### our dependency
-
- - [MixPHP](https://github.com/mix-php/mix-framework) : Apache License 2.0
- - [Symfony Components](https://symfony.com/) , Like [twig](https://twig.symfony.com), [swiftmailer](https://swiftmailer.symfony.com) : MIT
- - [sandfoxme/bencode](https://github.com/sandfoxme/bencode) : MIT
- - [RobThree/TwoFactorAuth](https://github.com/RobThree/TwoFactorAuth) : MIT
 

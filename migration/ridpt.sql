@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 08, 2019 at 01:44 PM
+-- Generation Time: Mar 08, 2019 at 08:30 AM
 -- Server version: 8.0.14
 -- PHP Version: 7.3.1
 
@@ -333,7 +333,10 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('base.max_per_user_session', '10'),
 ('base.max_user', '5000'),
 ('base.site_author', 'Rhilip'),
-('base.site_description', 'A Private Tracker Site'),
+('base.site_copyright', 'RidPT Group'),
+('base.site_description', 'A Private Tracker Site Demo powered by RidPT'),
+('base.site_generator', 'RidPT'),
+('base.site_keywords', 'RidPT,Private Tracker'),
 ('base.site_muti_tracker_url', ''),
 ('base.site_name', 'RidPT'),
 ('base.site_tracker_url', 'ridpt.rhilip.info/tracker'),
