@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="/lib/layui/src/css/layui.css"> <?php /** https://www.layui.com/doc/ */ ?>
 
     <!-- Custom stlylesheet -->
-    <link rel="stylesheet" href="/static/css/main.css?<?= time() // FIXME For debug ?>"/>
+    <link rel="stylesheet" href="/static/css/main.css?<?= app()->config->get('base.site_css_update_date') ?>"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -58,6 +58,6 @@
 </div>
 
 <script src="/lib/layui/src/layui.js"></script>
-<script src="/static/js/main.js?<?= time() // FIXME For debug ?>"></script>
+<script src="/static/js/main.js?<?= app()->config->get('base.site_css_update_date') ?>"></script>
 </body><!-- This templates was made by Colorlib (https://colorlib.com) -->
 </html>

@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="/lib/fontAwesome/css/all.css"> <?php /** https://fontawesome.com/icons?d=gallery */ ?>
 
     <!-- Custom styles for this template -->
-    <link rel="stylesheet" href="/static/css/main.css?<?= time() // FIXME For debug ?>">
+    <link rel="stylesheet" href="/static/css/main.css?<?= app()->config->get('base.site_css_update_date') ?>">
 
     <?= $this->section('css') ?> <!-- Other temp CSS field -->
 </head>
@@ -93,7 +93,7 @@
 </footer>
 
 <script src="/lib/layui/src/layui.js"></script>
-<script src="/static/js/main.js?<?= time() // FIXME For debug ?>"></script>
+<script src="/static/js/main.js?<?= app()->config->get('base.site_css_update_date') ?>"></script>
 <?= $this->section('script') ?> <!-- Other temp script field -->
 
 </body>

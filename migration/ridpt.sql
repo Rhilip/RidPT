@@ -334,6 +334,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('base.max_user', '5000'),
 ('base.site_author', 'Rhilip'),
 ('base.site_copyright', 'RidPT Group'),
+('base.site_css_update_date', '201903100001'),
 ('base.site_description', 'A Private Tracker Site Demo powered by RidPT'),
 ('base.site_generator', 'RidPT'),
 ('base.site_keywords', 'RidPT,Private Tracker'),

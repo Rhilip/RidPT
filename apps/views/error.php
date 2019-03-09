@@ -30,7 +30,7 @@ use Rid\Helpers\StringHelper;
     <title><?= app()->config->get('base.site_name') ?> :: Error Page -- Powered by <?= app()->config->get('base.site_generator') ?></title>
 
     <!-- Custom stlylesheet -->
-    <link rel="stylesheet" href="/static/css/error.css"/>
+    <link rel="stylesheet" href="/static/css/error.css?<?= app()->config->get('base.site_css_update_date') ?>"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
