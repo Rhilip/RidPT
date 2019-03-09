@@ -48,12 +48,14 @@ class Session extends Component
     // SessionID长度
     protected $_sessionIdLength = 26;
 
+    protected $_isNewSession = false;
+
     // 请求前置事件
     public function onRequestBefore()
     {
         parent::onRequestBefore();
-        // 载入session_id
-        $this->loadSessionId();
+        $this->_isNewSession = false;
+        $this->loadSessionId();  // 载入session_id
     }
 
     // 请求后置事件
@@ -69,7 +71,7 @@ class Session extends Component
     {
         $this->_sessionId = \Rid::app()->request->cookie($this->name);
         if (is_null($this->_sessionId)) {
-            // 创建session_id
+            $this->_isNewSession = true;
             $this->_sessionId = StringHelper::getRandomString($this->_sessionIdLength);
         }
         $this->_sessionKey = $this->saveKeyPrefix . $this->_sessionId;
@@ -91,7 +93,7 @@ class Session extends Component
     {
         $success = $this->saveHandler->hmset($this->_sessionKey, [$name => $value]);
         $this->saveHandler->expire($this->_sessionKey, $this->maxLifetime);
-        $success and \Rid::app()->response->setCookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
+        $success and $this->_isNewSession and \Rid::app()->response->setCookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
         return $success ? true : false;
     }
 
