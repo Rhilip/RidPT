@@ -9,14 +9,12 @@
  */
 ?>
 
-<?= $this->layout('layout/base') ?>
+<?= $this->layout('auth/base') ?>
 
-<?php $this->start('title') ?>Confirm Success<?php $this->end(); ?>
-
-<?php $this->start('container') ?>
-<div class="jumbotron">
+<?php $this->start('panel') ?>
+<div class="auth-form">
     <h1>Your account is success Confirmed.</h1>
-    <p>Click <a href="/auth/login">Login Page</a> to login</p>
+    <p>Click <!--suppress HtmlUnknownTarget --><a href="/auth/login">Login Page</a> to login</p>
 </div>
 <?php $this->end(); ?>
 

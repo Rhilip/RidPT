@@ -1,4 +1,4 @@
-layui.use(['layer', 'form','element'], function(){
+;layui.use(['layer', 'form','element'], function(){
 
 
 });

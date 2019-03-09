@@ -6,54 +6,64 @@
  * Time: 19:32
  *
  * @var League\Plates\Template\Template $this
+ * @var int $left_attempts
  */
 ?>
 
-<?= $this->layout('layout/base') ?>
+<?= $this->layout('auth/base') ?>
 
-<?php $this->start('title') ?>Login<?php $this->end(); ?>
+<?php $this->start('panel') ?>
+<h1>Authenticate</h1>
 
-<?php $this->start('container') ?>
-    <h1>Login</h1>
-    <form method="post">
-        <div class="row">
-            <div class="form-group col-md-4">
-                <?php if (isset($left_attemps) && $left_attemps < 3): ?>
-                    <div class="form-group">
-                        <p class="bg-danger">Left login attempts: <strong class="text-center"><?= $left_attemps ?></strong></p>
-                    </div>
-                <?php endif; ?>
-                <div class="form-group">
-                    <label class="control-label" for="username">Username / Email address</label>
-                    <input autofocus="" class="form-control" id="username" name="username" placeholder="Username" tabindex="1" title="" type="text" value="<?= $username ?? '' ?>">
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="password">Password</label>
-                    <small class="float-right"><a href="/auth/recover">I have forgot my password</a></small>
-                    <input class="form-control" id="password" name="password" tabindex="2" title="" type="password" value="">
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="opt">2FA Code</label>
-                    <input autofocus="" class="form-control" id="opt" name="opt" placeholder="2FA Code" tabindex="3" title="" type="text" value="" maxlength="6">
-                    <small>Your 2FA code, leave it blank if you haven't enable 2FA.</small>
-                </div>
-                <div class="form-group">
-                    <label class="control-label" for="captcha">Captcha</label>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input autofocus="" class="form-control" id="captcha" name="captcha" tabindex="4" title="" type="text" value="" maxlength="6">
-                        </div>
-                        <div class="col-md-6"><img src="/captcha" alt="captcha"></div>
-                    </div>
-                    <small>Case insensitive.</small>
-                </div>
-                <?php if (isset($error_msg)): ?>
-                    <div class="form-group">
-                        <p class="bg-danger">Login failed: <strong class="text-center"><?= $error_msg ?></strong></p>
-                    </div>
-                <?php endif; ?>
-                <input type="submit" value="Login" class="btn btn-primary" tabindex="4">
-            </div>
+<form class="layui-form layui-form-pane auth-form" method="post">
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="username"><i class="layui-icon layui-icon-username"></i></label>
+        <div class="layui-input-block">
+            <input  type="text" class="layui-input" id="username" name="username" required  lay-verify="required" placeholder="Username / Email address" title="" value="<?= $username ?? '' ?>">
         </div>
-    </form>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="password"><i class="layui-icon layui-icon-password"></i></label>
+        <div class="layui-input-block">
+            <input type="password" class="layui-input" id="password" name="password" required lay-verify="required" placeholder="Password" autocomplete="off">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label" for="opt"><i class="layui-icon layui-icon-cellphone"></i></label>
+        <div class="layui-input-block">
+            <input type="text" class="layui-input" id="opt" name="opt" placeholder="2FA Code" maxlength="6" autocomplete="off">
+        </div>
+        <p class="auth-form-notify">Your 2FA code, leave it blank if you haven't enable 2FA.</p>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-inline">
+            <label class="layui-form-label" for="captcha"><i class="layui-icon layui-icon-vercode"></i></label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="captcha" name="captcha" placeholder="Captcha" autocomplete="off" maxlength="6">
+            </div>
+            <div class="layui-input-inline" style="width: 150px"><?= $this->insert('layout/captcha') ?></div>
+            <p class="auth-form-notify">Case insensitive.</p>
+        </div>
+    </div>
+    <div class="layui-form-item" align="center">
+        <label for="logout"></label><input type="checkbox" name="logout" id="logout" value="yes" title="Auto Logout">
+        <label for="securelogin"></label><input type="checkbox" name="securelogin" id="securelogin" value="yes" title="Lock Session IP">
+        <label for="ssl"></label><input type="checkbox" name="ssl" id="ssl" value="yes" title="Enable SSL">
+    </div>
+    <hr>
+
+    <div class="layui-form-item">
+        <button type="submit" value="Login" class="layui-btn layui-btn-normal layui-btn-fluid">Login</button>
+    </div>
+
+    <div class="auth-attempts-msg" align="center">
+        <strong>You have <?= $left_attempts > 3 ? $left_attempts : "<span style='color: #FF5722'>$left_attempts</span>" ?>/<?= app()->config->get('security.max_login_attempts') ?> attempts left, or your IP will be banned.</strong>
+    </div>
+
+    <?php if (isset($error_msg)): ?>
+        <div class="auth-error-msg">
+            <p style="color: #FF5722">Login failed: <strong class="text-center"><?= $error_msg ?></strong></p>
+        </div>
+    <?php endif; ?>
+</form>
 <?php $this->end(); ?>

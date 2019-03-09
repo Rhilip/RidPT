@@ -12,23 +12,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <meta name="referrer" content="same-origin" />
+    <?php $this->insert('layout/head'); ?>
 
-    <meta name="author" content="<?= app()->config->get('base.site_author') ?>">
-    <meta name="generator" content="<?= app()->config->get('base.site_generator') ?>">
-    <meta name="keywords" content="<?= app()->config->get('base.site_keywords') ?>">
-    <meta name="description" content="<?= app()->config->get('base.site_description') ?>">
-    <meta name="copyright" content="<?= app()->config->get('base.site_copyright') ?>">
-
-    <title><?= app()->config->get('base.site_name') ?> :: <?= $this->e($this->section('title') ?? '') ?> -- Powered by RidPT</title>
-
-    <!-- ICON of favicon.ico -->
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <title><?= app()->config->get('base.site_name') ?> :: <?= $this->e($this->section('title') ?? '') ?> -- Powered by <?= app()->config->get('base.site_generator') ?></title>
 
     <link rel="stylesheet" href="/lib/layui/src/css/layui.css"> <?php /** https://www.layui.com/doc/ */ ?>
     <link rel="stylesheet" href="/lib/fontAwesome/css/all.css"> <?php /** https://fontawesome.com/icons?d=gallery */ ?>
@@ -39,7 +25,18 @@
     <?= $this->section('css') ?> <!-- Other temp CSS field -->
 </head>
 <body>
-<?= $this->insert('layout/header') ?>
+<div id="top-menu"></div>
+
+<header id="header">
+    <div class="layui-container">
+        <div class="layui-row header-top">
+            <div class="span5 logo">
+                <a class="logo-img" href="/"><img src="/static/pic/logo.png" style="width: 135px" alt="Logo"/></a>
+                <p class="tagline"><?= app()->config->get('base.site_description') ?></p>
+            </div>
+        </div>
+    </div>
+</header>
 
 <nav id="nav" class="header-nav layui-container">
     <div class="layui-row" align="center">
@@ -84,7 +81,16 @@
     <?= $this->section('container') ?> <!-- Page Content -->
 </div> <!-- /container -->
 
-<?= $this->insert('layout/footer') ?>
+<footer id="footer-menu">
+    <div class="container" align="center">
+        <div class="row">
+            <p class="copyright">
+                <a href="/" target="_self"><?= app()->config->get('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT">RidPT</a>
+            </p>
+            <p class="create-info">[ Page created in <b>{{ cost_time|number_format(5) }}</b> sec with <b><?= count(app()->pdo->getExecuteData()) ?></b> db queries, <b><?= array_sum(app()->redis->getCalledData())?></b> calls of Redis ]</p>
+        </div>
+    </div>
+</footer>
 
 <script src="/lib/layui/src/layui.js"></script>
 <script src="/static/js/main.js?<?= time() // FIXME For debug ?>"></script>

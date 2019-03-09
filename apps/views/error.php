@@ -5,6 +5,10 @@
  * Date: 2019/2/22
  * Time: 21:46
  *
+ * This templates was made by Colorlib (https://colorlib.com)
+ * It's origin demo link: https://codepen.io/saransh/pen/aezht
+ * And Rewrite By Rhilip
+ *
  * @var League\Plates\Template\Template $this
  * @var string $status http status code
  * @var mixed|int $code the exception code as integer in
@@ -20,17 +24,13 @@ use Rid\Helpers\StringHelper;
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <?php $this->insert('layout/head'); ?>
 
-    <title>Error Page</title>
+    <title><?= app()->config->get('base.site_name') ?> :: Error Page -- Powered by <?= app()->config->get('base.site_generator') ?></title>
 
     <!-- Custom stlylesheet -->
-    <link type="text/css" rel="stylesheet" href="/static/css/error.css"/>
+    <link rel="stylesheet" href="/static/css/error.css"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -39,7 +39,6 @@ use Rid\Helpers\StringHelper;
     <script src="/lib/respond/dest/respond.min.js"></script>
     <![endif]-->
 </head>
-
 <body>
 <div class="message-img">
     <svg width="380px" height="500px" viewBox="0 0 837 1045" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -85,5 +84,5 @@ if (env('APP_DEBUG')) {
         </div>
     </div>
 </div>
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</body>
 </html>

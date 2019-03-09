@@ -11,12 +11,10 @@
  */
 ?>
 
-<?= $this->layout('layout/base') ?>
+<?= $this->layout('auth/base') ?>
 
-<?php $this->start('title') ?>Confirm Your Account<?php $this->end(); ?>
-
-<?php $this->start('container') ?>
-<div class="jumbotron">
+<?php $this->start('panel') ?>
+<div class="auth-form">
     <h1>One more Step</h1>
     <?php if ($confirm_way == 'email'): ?>
         <p>Check your email : <?= $email ?> to confirm your account.</p>

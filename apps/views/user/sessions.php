@@ -34,7 +34,7 @@ This is a list of devices that have logged into your account. Revoke any session
             <td class="text-center"><?= $s['login_at'] ?></td>
             <td class="text-center"><?= inet_ntop($s['login_ip']) ?></td>
             <td class="text-left"><?= $s['user_agent'] ?></td>
-            <td class="text-center">><?= $s['last_access_at'] ?></td>
+            <td class="text-center" data-timestamp="<?= strtotime($s['last_access_at']) ?>"><?= $s['last_access_at'] ?></td>
             <td class="text-center">
                 <?php if ($s['sid'] == app()->user->getSessionId()): ?>
                     Current
