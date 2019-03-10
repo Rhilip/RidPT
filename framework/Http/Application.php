@@ -241,7 +241,7 @@ class Application extends \Rid\Base\Application
     }
 
     /**
-     * @return mixed
+     * @return \Swoole\Http\Server
      */
     public function getServ()
     {
@@ -249,9 +249,9 @@ class Application extends \Rid\Base\Application
     }
 
     /**
-     * @param mixed $serv
+     * @param \Swoole\Http\Server $serv
      */
-    public function setServ($serv): void
+    public function setServ(\Swoole\Http\Server $serv): void
     {
         $this->_serv = $serv;
     }

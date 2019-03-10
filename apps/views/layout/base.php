@@ -87,7 +87,7 @@
             <p class="copyright">
                 <a href="/" target="_self"><?= app()->config->get('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT">RidPT</a>
             </p>
-            <p class="create-info">[ Page created in <b>{{ cost_time|number_format(5) }}</b> sec with <b><?= count(app()->pdo->getExecuteData()) ?></b> db queries, <b><?= array_sum(app()->redis->getCalledData())?></b> calls of Redis ]</p>
+            <p class="create-info">[ Page created in <b><?= number_format(microtime(true) - app()->request->start_at, 6) ?></b> sec with <b><?= count(app()->pdo->getExecuteData()) ?></b> db queries, <b><?= array_sum(app()->redis->getCalledData())?></b> calls of Redis ]</p>
         </div>
     </div>
 </footer>
