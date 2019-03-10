@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8674a2a70244b787b0b5d0ead4afeac2",
+    "content-hash": "a9d8460bf1a2980bb2719667495c44b5",
     "packages": [
         {
             "name": "doctrine/lexer",
@@ -248,16 +248,16 @@
         },
         {
             "name": "piwik/device-detector",
-            "version": "3.11.4",
+            "version": "3.11.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/matomo-org/device-detector.git",
-                "reference": "c136bf9147bd8f33746b1915331fba133d076ed5"
+                "reference": "cce3213e9b42deaacd21d33c02811c59b6e54099"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/c136bf9147bd8f33746b1915331fba133d076ed5",
-                "reference": "c136bf9147bd8f33746b1915331fba133d076ed5",
+                "url": "https://api.github.com/repos/matomo-org/device-detector/zipball/cce3213e9b42deaacd21d33c02811c59b6e54099",
+                "reference": "cce3213e9b42deaacd21d33c02811c59b6e54099",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -305,7 +305,7 @@
                 "parser",
                 "useragent"
             ],
-            "time": "2018-12-26T22:52:19+00:00"
+            "time": "2019-02-10T21:21:01+00:00"
         },
         {
             "name": "psr/log",
@@ -558,16 +558,16 @@
         },
         {
             "name": "symfony/inflector",
-            "version": "v4.2.2",
+            "version": "v4.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/inflector.git",
-                "reference": "9f64271222922ef1a10e43f77d88baf72bf22b0e"
+                "reference": "275e54941a4f17a471c68d2a00e2513fc1fd4a78"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/inflector/zipball/9f64271222922ef1a10e43f77d88baf72bf22b0e",
-                "reference": "9f64271222922ef1a10e43f77d88baf72bf22b0e",
+                "url": "https://api.github.com/repos/symfony/inflector/zipball/275e54941a4f17a471c68d2a00e2513fc1fd4a78",
+                "reference": "275e54941a4f17a471c68d2a00e2513fc1fd4a78",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -618,7 +618,7 @@
                 "symfony",
                 "words"
             ],
-            "time": "2019-01-03T09:07:35+00:00"
+            "time": "2019-01-16T20:31:39+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -751,16 +751,16 @@
         },
         {
             "name": "symfony/property-access",
-            "version": "v4.2.2",
+            "version": "v4.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/property-access.git",
-                "reference": "a21d40670000f61a1a4b90a607d54696aad914cd"
+                "reference": "d5e10532c51db0b657b1e25b2bd70acbcd13bbf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/property-access/zipball/a21d40670000f61a1a4b90a607d54696aad914cd",
-                "reference": "a21d40670000f61a1a4b90a607d54696aad914cd",
+                "url": "https://api.github.com/repos/symfony/property-access/zipball/d5e10532c51db0b657b1e25b2bd70acbcd13bbf9",
+                "reference": "d5e10532c51db0b657b1e25b2bd70acbcd13bbf9",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -820,20 +820,20 @@
                 "property path",
                 "reflection"
             ],
-            "time": "2019-01-05T16:37:49+00:00"
+            "time": "2019-02-23T15:17:42+00:00"
         },
         {
             "name": "symfony/validator",
-            "version": "v4.2.2",
+            "version": "v4.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/validator.git",
-                "reference": "f89d2fab883a6a20d0d0093537392763cf52f0ba"
+                "reference": "ba50866242d992f0dd818e2c34c5088f163c974d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/validator/zipball/f89d2fab883a6a20d0d0093537392763cf52f0ba",
-                "reference": "f89d2fab883a6a20d0d0093537392763cf52f0ba",
+                "url": "https://api.github.com/repos/symfony/validator/zipball/ba50866242d992f0dd818e2c34c5088f163c974d",
+                "reference": "ba50866242d992f0dd818e2c34c5088f163c974d",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -915,7 +915,7 @@
             ],
             "description": "Symfony Validator Component",
             "homepage": "https://symfony.com",
-            "time": "2019-01-06T14:13:54+00:00"
+            "time": "2019-03-03T18:11:24+00:00"
         }
     ],
     "packages-dev": [
@@ -925,12 +925,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/wudi/swoole-ide-helper.git",
-                "reference": "51672c1ea0c1a029b07f19113b2d84182647af8d"
+                "reference": "12c0a6b16c611ed14a5cff8970d7d80bfc5923ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wudi/swoole-ide-helper/zipball/51672c1ea0c1a029b07f19113b2d84182647af8d",
-                "reference": "51672c1ea0c1a029b07f19113b2d84182647af8d",
+                "url": "https://api.github.com/repos/wudi/swoole-ide-helper/zipball/12c0a6b16c611ed14a5cff8970d7d80bfc5923ad",
+                "reference": "12c0a6b16c611ed14a5cff8970d7d80bfc5923ad",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -963,7 +963,7 @@
                 "sublime",
                 "swoole"
             ],
-            "time": "2018-12-16T07:18:40+00:00"
+            "time": "2019-03-05T07:33:29+00:00"
         }
     ],
     "aliases": [],
@@ -983,10 +983,9 @@
         "ext-pcntl": "*",
         "ext-redis": "*",
         "ext-iconv": "*",
-        "ext-libxml": "*",
         "ext-swoole": "*",
-        "ext-mbstring": "*",
-        "ext-simplexml": "*"
+        "ext-openssl": "*",
+        "ext-mbstring": "*"
     },
     "platform-dev": []
 }

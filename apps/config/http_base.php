@@ -52,11 +52,6 @@ return [
             'class'         => Rid\Http\Response::class,
             // 默认输出格式
             'defaultFormat' => Rid\Http\Response::FORMAT_HTML,
-            // xml
-            'xml'           => [
-                // 类路径
-                'class' => Rid\Http\Xml::class,
-            ],
         ],
 
         // 错误
