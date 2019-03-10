@@ -10,7 +10,7 @@ A Private Torrent framework Project.<br/>
 
 ## Demo Site
 
-Demo Url: http://ridpt.rhilip.info/
+Demo Url: http://ridpt.top/
 
 Test Account Information:
  - Username : `Admin`
