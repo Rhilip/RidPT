@@ -3,7 +3,7 @@
 namespace apps\middleware;
 
 
-class BeforeMiddleware
+class AuthMiddleware
 {
 
     public function handle($callable, \Closure $next)

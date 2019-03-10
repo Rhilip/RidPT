@@ -86,7 +86,7 @@ class ServiceCommand extends Command
             println('rid-httpd is not running.');
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        println('rid-httpd worker process restart completed.');
+        println('rid-httpd worker process reload completed.');
         return ExitCode::OK; // 返回退出码
     }
 

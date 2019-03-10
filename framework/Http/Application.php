@@ -14,9 +14,6 @@ class Application extends \Rid\Base\Application
     // 控制器命名空间
     public $controllerNamespace = '';
 
-    // 中间件命名空间
-    public $middlewareNamespace = '';
-
     // 全局中间件
     public $middleware = [];
 
@@ -103,8 +100,7 @@ class Application extends \Rid\Base\Application
     protected function newMiddlewareInstance($routeMiddleware)
     {
         $middleware = [];
-        foreach (array_merge($this->middleware, $routeMiddleware) as $key => $name) {
-            $class            = "{$this->middlewareNamespace}\\{$name}Middleware";
+        foreach (array_merge($this->middleware, $routeMiddleware) as $key => $class) {
             $middleware[$key] = new $class();
         }
         return $middleware;

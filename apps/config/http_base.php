@@ -14,11 +14,11 @@ return [
     // 控制器命名空间
     'controllerNamespace' => 'apps\controllers',
 
-    // 中间件命名空间
-    'middlewareNamespace' => 'apps\middleware',
-
     // 全局中间件
-    'middleware'          => ["IpBan"],
+    'middleware'          => [
+        apps\middleware\IpBanMiddleware::class,
+        apps\middleware\DebugMiddleware::class
+    ],
 
     // 组件配置
     'components'          => [
@@ -36,8 +36,12 @@ return [
             'rules'          => [
                 'GET tracker/{tracker_action}' => ['tracker','index'],
                 'GET captcha' => ['captcha', 'index'],
-                'api/v1/{controller}/{action}' => ['api/{controller}', '{action}', 'middleware' => ['Api']],
-                '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => ['Before']],
+                'api/v1/{controller}/{action}' => ['api/{controller}', '{action}', 'middleware' => [
+                    apps\middleware\ApiMiddleware::class
+                ]],
+                '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => [
+                    apps\middleware\AuthMiddleware::class
+                ]],
             ],
         ],
 

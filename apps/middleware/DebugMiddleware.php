@@ -2,17 +2,12 @@
 
 namespace apps\middleware;
 
-/**
- * 后置中间件
- */
-class AfterMiddleware
+class DebugMiddleware
 {
 
     public function handle($callable, \Closure $next)
     {
-        // 添加中间件执行代码
         $response = $next();
-        list($controller, $action) = $callable;
 
         if (env('APP_DEBUG')) {
             println('NOW() :' . date('Y-m-d H:i:s')) ;
@@ -24,8 +19,6 @@ class AfterMiddleware
             var_dump(memory_get_usage());
         }
 
-        // ...
-        // 返回响应内容
         return $response;
     }
 
