@@ -16,24 +16,26 @@ class User extends Component implements UserInterface
     use UserTrait;
 
     // Cookie
-    public $sessionSaveKey = 'SESSION:user_set';
+    public $sessionSaveKey = 'User_Map:session_to_id';
     public $cookieName = 'rid';
 
     // Key of User Session
     protected $_userSessionId;
+
+    // Passkey
+    public $passkeyCacheKey = 'User_Map:passkey_to_id';
 
     private $anonymous = false;
 
     public function onRequestBefore()
     {
         parent::onRequestBefore();
-        $this->loadUser();
+        $this->anonymous = true;
     }
 
     public function onRequestAfter()
     {
         parent::onRequestAfter();
-        app()->redis->disconnect();
     }
 
     public function isAnonymous()
@@ -41,21 +43,30 @@ class User extends Component implements UserInterface
         return $this->anonymous;
     }
 
-    public function loadUser() {
-        // TODO Load User From Passkey in some route , for example '/rss'
-        return $this->loadUserFromCookies();
-    }
-
     public function loadUserFromCookies()
     {
-        $this->_userSessionId = \Rid::app()->request->cookie($this->cookieName);
+        $this->_userSessionId = app()->request->cookie($this->cookieName);
         $userId = app()->redis->zScore($this->sessionSaveKey, $this->_userSessionId);
 
         if ($userId) {
             $this->loadUserContentById($userId);
             $this->anonymous = false;
-        } else {
-            $this->anonymous = true;
+        }
+    }
+
+    public function loadUserFromPasskey()
+    {
+        $passkey = app()->request->get('passkey');
+        $userId = app()->redis->zScore($this->passkeyCacheKey, $passkey);
+        if ($userId == false) {
+            $userId = app()->pdo->createCommand('SELECT `id` FROM `users` WHERE `passkey` = :passkey LIMIT 1')->bindParams([
+                'passkey' => $passkey
+            ])->queryScalar() ?: 0;
+            app()->redis->zAdd($this->passkeyCacheKey, $userId, $passkey);
+        }
+        if ($userId !== 0) {
+            $this->loadUserContentById($userId);
+            $this->anonymous = false;
         }
     }
 

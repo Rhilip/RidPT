@@ -19,15 +19,15 @@
 <table class="layui-table">
     <thead>
     <tr>
-        <th class="text-center" style="width: 70px">Category</th>
+        <th class="text-center" style="width: 20px">Category</th>
         <th>Torrent</th>
-        <th class="text-center" style="width: 70px">Link</th>
-        <th class="text-center" style="width: 100px">Size</th>
-        <th class="text-center" style="width: 140px">Date</th>
-        <th class="text-center" style="width: 30px"><i class="fas fa-arrow-up" title="Seeders"></th>
-        <th class="text-center" style="width: 30px"><i class="fas fa-arrow-down" title="Leechers"></i></th>
-        <th class="text-center" style="width: 30px"><i class="fas fa-check" title="Completed"></th>
-        <th class="text-center" style="width: 70px"><i class="fas fa-user" title="Owner"></i></th>
+        <th class="text-center" style="width: 5px">Link</th>
+        <th class="text-center" style="width: 50px">Size</th>
+        <th class="text-center" style="width: 100px">Date</th>
+        <th class="text-center" style="width: 15px"><i class="fas fa-arrow-up" title="Seeders"></th>
+        <th class="text-center" style="width: 15px"><i class="fas fa-arrow-down" title="Leechers"></i></th>
+        <th class="text-center" style="width: 15px"><i class="fas fa-check" title="Completed"></th>
+        <th class="text-center" style="width: 50px"><i class="fas fa-user" title="Owner"></i></th>
     </tr>
     </thead>
     <tbody>

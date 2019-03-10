@@ -11,6 +11,7 @@ class AuthMiddleware
         list($controller, $action) = $callable;
         $controllerName = get_class($controller);
 
+        app()->user->loadUserFromCookies();
         $isAnonymousUser = app()->user->isAnonymous();
 
         if ($controllerName === \apps\controllers\AuthController::class) {

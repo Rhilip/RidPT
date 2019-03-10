@@ -46,7 +46,7 @@ trait UserTrait
     
     public function loadUserContentById($id)
     {
-        $this->infoCacheKey = 'USER:id_' . $id . '_content';
+        $this->infoCacheKey = 'User:id_' . $id . '_content';
         $self = app()->redis->hGetAll($this->infoCacheKey);
         if (empty($self)) {
             $self = app()->pdo->createCommand("SELECT * FROM `users` WHERE id = :id;")->bindParams([
@@ -61,12 +61,12 @@ trait UserTrait
 
     public function loadUserContentByName($name)
     {
-        $uid = app()->redis->hGet('USER:map_name_to_id', $name);
+        $uid = app()->redis->hGet('User_Map:name_to_id', $name);
         if (false === $uid) {
             $uid = app()->pdo->createCommand('SELECT id FROM `users` WHERE LOWER(`username`) = LOWER(:uname) LIMIT 1;')->bindParams([
                 'uname' => $name
             ])->queryScalar();
-            app()->redis->hSet('USER:map_name_to_id', $name, $uid);
+            app()->redis->hSet('User_Map:name_to_id', $name, $uid);
         }
         if ($uid) {
             $this->loadTorrentContentById($uid);

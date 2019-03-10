@@ -68,6 +68,6 @@ class UserConfirmForm extends Validator
         app()->pdo->createCommand('DELETE FROM `users_confirm` WHERE id = :id')->bindParams([
             'id' => $this->id
         ])->execute();
-        app()->redis->del('USER:content_' . $this->uid);
+        app()->redis->del('User:content_' . $this->uid);
     }
 }
