@@ -53,10 +53,10 @@
     <table class="layui-table">
         <thead>
         <tr>
-            <th class="text-right">#</th>
-            <th class="text-center">Type</th>
+            <th class="text-right" style="width: 5%">#</th>
+            <th class="text-center" style="width: 10%">Type</th>
             <th class="text-left">Key</th>
-            <th class=""></th>
+            <th class="" style="width: 5%"></th>
         </tr>
         </thead>
         <tbody>
@@ -72,7 +72,7 @@
         ?>
         <?php foreach ($keys as $key): ?>
             <tr>
-                <td class="text-right" style="width: 5%"><?= $index + ($offset * $perpage) ?></td>
+                <td class="text-right"><?= $index + ($offset * $perpage) ?></td>
                 <td class="text-center"><?= $type_dict[$types[$key]] ?></td>
                 <td class="text-left">
                     <a href="/admin/service?provider=redis&panel=key&key=<?= $this->e($key) ?>"><?= $key ?></a>
