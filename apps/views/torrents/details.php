@@ -8,6 +8,8 @@
  * @var League\Plates\Template\Template $this
  * @var \apps\models\Torrent $torrent
  */
+
+include 'helper.php';
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -37,14 +39,7 @@
 
         <div class="row">
             <div class="col-md-1">Uploader: </div>
-            <div class="col-md-5">
-                <?php if ($torrent->getUplver() == 'yes' and app()->user->getClass(true) < app()->config->get('authority.see_anonymous_uploader')): ?>
-                    <i>Anonymous</i>
-                <?php else: ?>
-                    <!--suppress HtmlUnknownTarget -->
-                    <a class="text-default" href="/user/panel?id=<?= $torrent->getOwnerId() ?>" data-toggle="tooltip" title="User"><?= $torrent->getOwner()->getUsername() ?></a>
-                <?php endif; ?>
-            </div>
+            <div class="col-md-5"><?= get_torrent_uploader($torrent) ?></div>
             <div class="col-md-1">Seeders:</div>
             <div class="col-md-5"><span style="color: green;"><?= $torrent->getComplete() ?></span></div>
         </div>

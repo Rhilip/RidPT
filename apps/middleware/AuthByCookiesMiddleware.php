@@ -3,7 +3,7 @@
 namespace apps\middleware;
 
 
-class AuthMiddleware
+class AuthByCookiesMiddleware
 {
 
     public function handle($callable, \Closure $next)

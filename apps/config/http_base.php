@@ -36,11 +36,14 @@ return [
             'rules'          => [
                 'GET tracker/{tracker_action}' => ['tracker','index'],
                 'GET captcha' => ['captcha', 'index'],
+                'GET rss' => ['rss', 'index','middleware' => [
+                    apps\middleware\AuthByPasskeyMiddleware::class
+                ]],
                 'api/v1/{controller}/{action}' => ['api/{controller}', '{action}', 'middleware' => [
                     apps\middleware\ApiMiddleware::class
                 ]],
                 '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => [
-                    apps\middleware\AuthMiddleware::class
+                    apps\middleware\AuthByCookiesMiddleware::class
                 ]],
             ],
         ],

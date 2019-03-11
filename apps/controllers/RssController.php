@@ -8,14 +8,21 @@
 
 namespace apps\controllers;
 
+use apps\models\Torrent;
 
-class RssController
+use Rid\Http\Controller;
+
+class RssController extends Controller
 {
-    public function actionIndex() {
-        app()->user->loadUserFromPasskey();
+    public function actionIndex()
+    {
+        // FIXME add torrent search
+        $fetch = app()->pdo->createCommand('SELECT `id` FROM torrents ORDER BY added_at DESC LIMIT 50;')->queryColumn();
 
+        $torrents = array_map(function ($id) {
+            return new Torrent($id);
+        }, $fetch);
 
-
-        return 'TODO';
+        return $this->render('rss_feed', ['torrents' => $torrents]);
     }
 }
