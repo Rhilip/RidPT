@@ -37,10 +37,10 @@ class TorrentsController extends Controller
         // TODO Check user upload pos
         if (app()->request->isPost()) {
             $torrent = new TorrentUploadForm();
-            $torrent->importAttributes(app()->request->post());
-            $torrent->importFileAttributes(app()->request->files());
-            $error = $torrent->validate();
-            if (count($error) > 0) {
+            $torrent->setData(app()->request->post());
+            $torrent->setFileData(app()->request->files());
+            $success = $torrent->validate();
+            if (!$success) {
                 return $this->render('errors/action_fail', ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
             } else {
                 try {
@@ -67,7 +67,6 @@ class TorrentsController extends Controller
     public function actionDetails()
     {
         $tid = app()->request->get('id');
-
         $torrent = new Torrent($tid);
 
         return $this->render('torrents/details', ['torrent' => $torrent]);

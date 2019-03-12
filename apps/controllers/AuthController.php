@@ -23,12 +23,12 @@ class AuthController extends Controller
     {
         if (app()->request->isPost()) {
             $user = new UserRegisterForm();
-            $user->importAttributes(app()->request->post());
-            $error = $user->validate();
-            if (count($error) > 0) {
+            $user->setData(app()->request->post());
+            $success = $user->validate();
+            if (!$success) {
                 return $this->render('errors/action_fail', [
                     'title' => 'Register Failed',
-                    'msg' => $error->get(0)
+                    'msg' => $user->getError()
                 ]);
             } else {
                 $user->flush();  // Save this user in our database and do clean work~
@@ -50,12 +50,13 @@ class AuthController extends Controller
     public function actionConfirm()
     {
         $confirm = new UserConfirmForm();
-        $confirm->importAttributes(app()->request->get());
-        $error = $confirm->validate();
-        if (count($error) > 0) {
+        $confirm->setData(app()->request->get());
+        $success = $confirm->validate();
+        if (!$success) {
+            // FIXME  'errors/action_fail' should not be touch in AuthController
             return $this->render('errors/action_fail', [
                 'title' => 'Confirm Failed',
-                'msg' => $error->get(0)
+                'msg' => $confirm->getError()
             ]);
         } else {
             $confirm->flush();
@@ -75,14 +76,14 @@ class AuthController extends Controller
 
         if (app()->request->isPost()) {
             $login = new UserLoginForm();
-            $login->importAttributes(app()->request->post());
-            $error = $login->validate();
+            $login->setData(app()->request->post());
+            $success = $login->validate();
 
-            if (count($error) > 0) {
+            if (!$success) {
                 $login->LoginFail();
                 return $this->render('auth/login', [
                     "username" => $login->username,
-                    "error_msg" => $error->get(0),
+                    "error_msg" => $login->getError(),
                     'left_attempts' => $left_attempts
                 ]);
             } else {

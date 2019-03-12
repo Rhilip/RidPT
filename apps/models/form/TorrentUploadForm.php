@@ -10,18 +10,13 @@ namespace apps\models\form;
 
 use apps\models\Torrent;
 
-use Rid\Validators\FileTrait;
 use Rid\Validators\Validator;
+
 use Rid\Bencode\Bencode;
 use Rid\Bencode\ParseErrorException;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
-
 class TorrentUploadForm extends Validator
 {
-    use FileTrait;
 
     public $id = 0;
 
@@ -49,29 +44,30 @@ class TorrentUploadForm extends Validator
 
 
     // 规则
-    public static function rules()
+    public static function inputRules()
     {
         return [
-            'title' => [new Assert\NotBlank(),],
-            'file' => [new Assert\NotBlank(),],  // We use Callback `isValidTorrent` since Assert\File() is broken in this project
-            'descr' => [new Assert\NotBlank(),],
-            'uplver' => [new Assert\Choice(['yes', 'no'])]
+            'title' => 'required',
+            'file' => [
+                ['required'],
+                ['Upload\Required'],
+                ['Upload\Extension', ['allowed' => 'torrent']],
+                ['Upload\Size', ['size' => app()->config->get("torrent.max_file_size") . 'B']]
+            ],
+            'descr' => 'required',
+            'uplver' => [
+                ['InList', ['list' => ['yes', 'no']]]
+            ],
         ];
     }
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    public static function callbackRules()
     {
-        parent::loadValidatorMetadata($metadata);
-        $metadata->addConstraint(new Assert\Callback([
-            'callback' => 'isValidTorrent',
-            'payload' => ['name' => 'file', 'maxSize' => app()->config->get("torrent.max_file_size"), 'mimeTypes' => 'application/x-bittorrent']
-        ]));
+        return ['isValidTorrent'];
     }
 
-    public function isValidTorrent(ExecutionContextInterface $context, $payload)
+    protected function isValidTorrent()
     {
-        $this->validateFile($context, $payload);
-
         try {
             $this->torrent_dict = Bencode::load($this->file->tmpName);
             $info = $this->checkTorrentDict($this->torrent_dict, 'info');
@@ -112,7 +108,7 @@ class TorrentUploadForm extends Validator
             }
         } catch (ParseErrorException $e) {
             // FIXME Fix message of ParseErrorException
-            $context->buildViolation($e->getMessage())->addViolation();
+            $this->buildCallbackFailMsg('Bencode', $e->getMessage());
             return;
         }
 

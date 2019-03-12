@@ -8,18 +8,17 @@
 
 namespace Rid\Validators;
 
-
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
 Trait CaptchaTrait
 {
     public $captcha;
 
-    public function validateCaptcha(ExecutionContextInterface $context, $payload)
+    protected function validateCaptcha()
     {
         $captchaText = app()->session->get('captchaText');
         if (strcasecmp($this->captcha, $captchaText) != 0) {
-            $context->buildViolation("CAPTCHA verification failed")->addViolation();
+            $this->_errors['CAPTCHA'] = 'CAPTCHA verification failed.';
+            $this->_success = false;
+            return;
         }
     }
 }

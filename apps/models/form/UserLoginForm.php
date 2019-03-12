@@ -17,9 +17,6 @@ use Rid\Validators\Validator;
 use RobThree\Auth\TwoFactorAuth;
 use RobThree\Auth\TwoFactorAuthException;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class UserLoginForm extends Validator
 {
@@ -50,45 +47,37 @@ class UserLoginForm extends Validator
         $this->cookieName = app()->user->cookieName;
     }
 
-    public static function rules()
+    public static function inputRules()
     {
         return [
-            'username' => [
-                new Assert\NotBlank(),
-            ],
+            'username' => 'required',
             'password' => [
-                new Assert\NotBlank(),
-                new Assert\Length([
-                    'min' => 6, 'minMessage' => "Password is too Short , should at least {{ limit }} characters",
-                    'max' => 40, 'maxMessage' => 'Password is too Long ( At most {{ limit }} characters )'
-                ]),
-                new Assert\NotEqualTo(['propertyPath' => 'username', 'message' => 'The password cannot match your username.'])
+                ['required'],
+                ['length', ['min' => 6, 'max' => 40]]
             ],
         ];
     }
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    public static function callbackRules()
     {
-        parent::loadValidatorMetadata($metadata);
-        $metadata->addConstraint(new Assert\Callback('validateCaptcha'));
-        $metadata->addConstraint(new Assert\Callback('loadUserFromPdo'));
-        $metadata->addConstraint(new Assert\Callback('isMaxLoginIpReached'));
+        return ['validateCaptcha', 'loadUserFromPdo', 'isMaxLoginIpReached'];
     }
 
-    public function loadUserFromPdo(ExecutionContextInterface $context)
+    protected function loadUserFromPdo()
     {
         $this->self = app()->pdo->createCommand("SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
             "uname" => $this->username, "email" => $this->username,
         ])->queryOne();
 
         if (!$this->self) {  // User is not exist
-            $context->buildViolation("This User is not exist in this site.")->addViolation();
+            /** Notice: We shouldn't tell `This User is not exist in this site.` for user information security. */
+            $this->buildCallbackFailMsg('User', 'Invalid username/password');
             return;
         }
 
         // User's password is not correct
         if (!password_verify($this->password, $this->self["password"])) {
-            $context->buildViolation("Invalid username/password")->addViolation();
+            $this->buildCallbackFailMsg('User', 'Invalid username/password');
             return;
         }
 
@@ -97,27 +86,28 @@ class UserLoginForm extends Validator
             try {
                 $tfa = new TwoFactorAuth(app()->config->get("base.site_name"));
                 if ($tfa->verifyCode($this->self["opt"], $this->opt) == false) {
-                    $context->buildViolation("2FA Validation failed")->addViolation();
+                    $this->buildCallbackFailMsg('2FA', '2FA Validation failed. Check your device time.');
                     return;
                 }
             } catch (TwoFactorAuthException $e) {
-                $context->buildViolation("2FA Validation failed")->addViolation();
+                $this->buildCallbackFailMsg('2FA', '2FA Validation failed. Tell our support team.');
                 return;
             }
         }
 
         // User 's status is banned or pending~
         if (in_array($this->self["status"], [UserInterface::STATUS_BANNED, UserInterface::STATUS_PENDING])) {
-            $context->buildViolation("User account is not confirmed.")->addViolation();
+            $this->buildCallbackFailMsg('Account', 'User account is not confirmed.');
             return;
         }
     }
 
-    public function isMaxLoginIpReached(ExecutionContextInterface $context)
+    protected function isMaxLoginIpReached()
     {
         $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
         if ($test_count > app()->config->get('security.max_login_attempts')) {
-            $context->buildViolation("User Max Login Attempts Archived.")->addViolation();
+            $this->buildCallbackFailMsg('Login Attempts', 'User Max Login Attempts Archived.');
+            return;
         }
     }
 

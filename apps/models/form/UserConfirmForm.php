@@ -11,9 +11,6 @@ namespace apps\models\form;
 use Rid\User\UserInterface;
 use Rid\Validators\Validator;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class UserConfirmForm extends Validator
 {
@@ -22,24 +19,20 @@ class UserConfirmForm extends Validator
     private $uid;
     public $secret;
 
-    public static function rules()
+    public static function inputRules()
     {
         return [
-            'secret' => [new Assert\NotBlank()]
+            'secret' => 'Required',
         ];
     }
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    public static function callbackRules()
     {
-        parent::loadValidatorMetadata($metadata);
-        $metadata->addConstraint(new Assert\Callback('validConfirmSecret'));
+        return ['validConfirmSecret'];
     }
 
-    public function validConfirmSecret(ExecutionContextInterface $context)
+    protected function validConfirmSecret()
     {
-        if (is_null($this->secret))
-            return;
-
         $record = app()->pdo->createCommand(
             'SELECT `users_confirm`.`id`,`users_confirm`.`uid`,`users`.`status` FROM `users_confirm` 
                   LEFT JOIN `users` ON `users`.`id` = `users_confirm`.`uid`
@@ -48,12 +41,12 @@ class UserConfirmForm extends Validator
         ])->queryOne();
 
         if ($record == false) {  // It means this confirm key is not exist
-            $context->buildViolation('This confirm key is not exist')->addViolation();
+            $this->buildCallbackFailMsg('confirm key', 'This confirm key is not exist');
             return;
         }
 
         if ($record['status'] !== UserInterface::STATUS_PENDING) {
-            $context->buildViolation('User Already Confirmed')->addViolation();
+            $this->buildCallbackFailMsg('User', 'User Already Confirmed');
             return;
         }
         $this->uid = $record['uid'];

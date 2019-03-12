@@ -15,10 +15,6 @@ use apps\models\User;
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
-
 class UserRegisterForm extends Validator
 {
     public $id;
@@ -47,9 +43,9 @@ class UserRegisterForm extends Validator
     private $leechtime;
     private $bonus;
 
-    public function importAttributes($config)
+    public function setData($config)
     {
-        parent::importAttributes($config);
+        parent::setData($config);
         $this->buildDefaultValue();
     }
 
@@ -67,65 +63,57 @@ class UserRegisterForm extends Validator
         $this->confirm_way = app()->config->get("register.user_confirm_way") ?? "auto";
     }
 
-    public static function rules()
+    public static function inputRules()
     {
         return [
             'type' => [
-                new Assert\NotBlank(),
-                new Assert\Choice(['choices' => ['open', 'invite', 'green'], 'message' => "The Register Type is not allowed"])
+                ['required'],
+                ['InList', ['list' => ['open', 'invite', 'green']], 'The Register Type is not allowed']
             ],
             'username' => [
-                new Assert\NotBlank(),
-                new Assert\Length(['max' => 12, 'maxMessage' => "User name is too log ({{ value }}/{{ limit }})."])
+                ['required'],
+                ['MaxLength', ['max' => 12], 'User name is too log, Max length {max}']
             ],
             'password' => [
-                new Assert\NotBlank(),
-                new Assert\Length([
-                    'min' => 6, 'minMessage' => "Password is too Short , should at least {{ limit }} characters",
-                    'max' => 40, 'maxMessage' => 'Password is too Long ( At most {{ limit }} characters )'
-                ]),
-                new Assert\NotEqualTo(['propertyPath' => 'username', 'message' => 'The password cannot match your username.'])
+                ['required'],
+                ['length', '6,40'],
+                // TODO The password cannot match your username.
             ],
             'password_again' => [
-                new Assert\NotBlank(),
-                new Assert\EqualTo(['propertyPath' => 'password', 'message' => 'Password is not matched.'])
+                ['required'],
+                ['Match', ['item' => 'password']]
             ],
-            'email' => [new Assert\NotBlank(), new Assert\Email()],
-            'accept_tos' => [new Assert\NotBlank(), new Assert\IsTrue()],
+            'email' => 'required | email',
+            'accept_tos' => 'required | Equal(value=yes)',
         ];
     }
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    public static function callbackRules()
     {
-        parent::loadValidatorMetadata($metadata);
-        $metadata->addConstraint(new Assert\Callback('isRegisterSystemOpen'));
-        $metadata->addConstraint(new Assert\Callback('isMaxUserReached'));
-        $metadata->addConstraint(new Assert\Callback('isMaxRegisterIpReached'));
-        $metadata->addConstraint(new Assert\Callback('isValidUsername'));
-        $metadata->addConstraint(new Assert\Callback('isValidEmail'));
-        $metadata->addConstraint(new Assert\Callback('checkRegisterType'));
+        return ['isRegisterSystemOpen', 'isMaxUserReached', 'isMaxRegisterIpReached', 'isValidUsername', 'isValidEmail', 'checkRegisterType'];
     }
 
-    public function isRegisterSystemOpen(ExecutionContextInterface $context)
+    protected function isRegisterSystemOpen()
     {
-        if (app()->config->get("base.enable_register_system") != true) {
-            $context->buildViolation("The register isn't open in this site.")->addViolation();
+        if (app()->config->get('base.enable_register_system') != true) {
+            $this->buildCallbackFailMsg('RegisterSystemOpen','The register isn\'t open in this site.');
             return;
         }
 
-        if (app()->config->get("register.by_" . $this->type) != true)
-            $context->buildViolation("The register by {$this->type} ways isn't open in this site.")->addViolation();
-    }
-
-    public function isMaxUserReached(ExecutionContextInterface $context)
-    {
-        if (app()->config->get("register.max_user_check") &&
-            Site::fetchUserCount() >= app()->config->get("base.max_user")) {
-            $context->buildViolation("Max user limit Reached")->addViolation();
+        if (app()->config->get('register.by_' . $this->type) != true) {
+            $this->buildCallbackFailMsg('RegisterSystemOpen',"The register by {$this->type} ways isn't open in this site.");
+            return;
         }
     }
 
-    public function isMaxRegisterIpReached(ExecutionContextInterface $context)
+    protected function isMaxUserReached()
+    {
+        if (app()->config->get('register.max_user_check') &&
+            Site::fetchUserCount() >= app()->config->get('base.max_user'))
+            $this->buildCallbackFailMsg('MaxUserReached','Max user limit Reached');
+    }
+
+    public function isMaxRegisterIpReached()
     {
         if (app()->config->get("register.max_ip_check")) {
             $client_ip = app()->request->getClientIp();
@@ -135,28 +123,31 @@ class UserRegisterForm extends Validator
                 "ip" => $client_ip
             ])->queryScalar();
 
-            if ($user_ip_count > $max_user_per_ip)
-                $context->buildViolation("The register member count in this ip `$client_ip` is reached")->addViolation();
+            if ($user_ip_count > $max_user_per_ip) {
+                $this->buildCallbackFailMsg('MaxRegisterIpReached',"The register member count in this ip `$client_ip` is reached");
+            }
         }
     }
 
-    public function isValidUsername(ExecutionContextInterface $context)
+    public function isValidUsername()
     {
         $username = $this->username;
         // The following characters are allowed in user names
-        if (strspn(strtolower($username), "abcdefghijklmnopqrstuvwxyz0123456789_") != strlen($username)) {
-            $context->buildViolation("Invalid characters in user names.")->addViolation();
+        if (strspn(strtolower($username), 'abcdefghijklmnopqrstuvwxyz0123456789_') != strlen($username)) {
+            $this->buildCallbackFailMsg('ValidUsername', 'Invalid characters in user names.');
             return;
         }
 
         $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
             "username" => $username
         ])->queryScalar();
-        if ($count > 0)
-            $context->buildViolation("The user name `$username` is already used.")->addViolation();
+        if ($count > 0) {
+            $this->buildCallbackFailMsg('ValidUsername', "The user name `$username` is already used.");
+            return;
+        }
     }
 
-    public function isValidEmail(ExecutionContextInterface $context)
+    public function isValidEmail()
     {
         $email = $this->email;
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
@@ -164,14 +155,15 @@ class UserRegisterForm extends Validator
             app()->config->get("register.email_black_list")) {
             $email_black_list = explode(",", app()->config->get("register.email_black_list"));
             if (in_array($email_suffix, $email_black_list)) {
-                $context->buildViolation("The email suffix `$email_suffix` is not allowed.")->addViolation();
+                $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
+                return;
             }
         }
         if (app()->config->get("register.enabled_email_white_list") &&
             app()->config->get("register.email_white_list")) {
             $email_white_list = explode(",", app()->config->get("register.email_white_list"));
             if (!in_array($email_suffix, $email_white_list)) {
-                $context->buildViolation("The email suffix `$email_suffix` is not allowed.")->addViolation();
+                $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
                 return;
             }
         }
@@ -180,27 +172,27 @@ class UserRegisterForm extends Validator
             "email" => $email
         ])->queryScalar();
         if ($email_check > 0) {
-            $context->buildViolation("Email Address '$email' is already used.")->addViolation();
+            $this->buildCallbackFailMsg('ValidEmail', "Email Address '$email' is already used.");
             return;
         }
     }
 
-    public function checkRegisterType(ExecutionContextInterface $context)
+    protected function checkRegisterType()
     {
         if ($this->type == 'invite') {
             if (strlen($this->invite_hash) != 32) {
-                $context->buildViolation("This invite hash : `$this->invite_hash` is not valid")->addViolation();
+                $this->buildCallbackFailMsg('Invite', "This invite hash : `$this->invite_hash` is not valid");
                 return;
             } else {
                 $inviteInfo = app()->pdo->createCommand("SELECT * FROM `invite` WHERE `hash`=:invite_hash")->bindParams([
                     "invite_hash" => $this->invite_hash
                 ])->queryOne();
                 if (!$inviteInfo) {
-                    $context->buildViolation("This invite hash : `$this->invite_hash` is not exist")->addViolation();
+                    $this->buildCallbackFailMsg('Invite', "This invite hash : `$this->invite_hash` is not exist");
                     return;
                 } else {
                     if ($inviteInfo["expire_at"] < time()) {
-                        $context->buildViolation("This invite hash is expired at " . $inviteInfo["expire_at"] . ".")->addViolation();
+                        $this->buildCallbackFailMsg('Invite', "This invite hash is expired at " . $inviteInfo["expire_at"] . ".");
                         return;
                     }
                 }
@@ -219,7 +211,7 @@ class UserRegisterForm extends Validator
              * If he don't pass this check , you should throw Exception with **enough** message.
              *
              */
-            $context->buildViolation("The Green way to register in this site is not Implemented.")->addViolation();
+            $this->buildCallbackFailMsg('Green', "The Green way to register in this site is not Implemented.");
             return;
         }
     }
