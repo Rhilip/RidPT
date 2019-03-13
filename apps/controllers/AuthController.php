@@ -26,7 +26,7 @@ class AuthController extends Controller
             $user->setData(app()->request->post());
             $success = $user->validate();
             if (!$success) {
-                return $this->render('errors/action_fail', [
+                return $this->render('auth/error', [
                     'title' => 'Register Failed',
                     'msg' => $user->getError()
                 ]);
@@ -53,8 +53,7 @@ class AuthController extends Controller
         $confirm->setData(app()->request->get());
         $success = $confirm->validate();
         if (!$success) {
-            // FIXME  'errors/action_fail' should not be touch in AuthController
-            return $this->render('errors/action_fail', [
+            return $this->render('auth/error', [
                 'title' => 'Confirm Failed',
                 'msg' => $confirm->getError()
             ]);
@@ -93,7 +92,7 @@ class AuthController extends Controller
                     $return_to = app()->session->pop('login_return_to') ?? '/index';
                     return app()->response->redirect($return_to);
                 } else {
-                    return $this->render('errors/action_fail', ['title' => 'Login Failed', 'msg' => 'Reach the limit of Max User Session.']);
+                    return $this->render('auth/error', ['title' => 'Login Failed', 'msg' => 'Reach the limit of Max User Session.']);
                 }
             }
         } else {

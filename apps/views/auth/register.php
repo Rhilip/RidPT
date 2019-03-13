@@ -60,6 +60,12 @@
                             <input type="password" class="layui-input" id="password" name="password" required  lay-verify="required" placeholder="Password">
                         </div>
                     </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label" for="password_again"><i class="layui-icon layui-icon-password"></i></label>
+                        <div class="layui-input-block">
+                            <input type="password" class="layui-input" id="password_again" name="password_again" required  lay-verify="required" placeholder="Password again">
+                        </div>
+                    </div>
 
                     <?php if ($register_type == 'invite') : ?>
                         <?php $invite_hash = app()->request->get('invite_hash', '') ?>
