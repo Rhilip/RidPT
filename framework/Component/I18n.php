@@ -6,7 +6,7 @@
  * Time: 19:55
  */
 
-namespace Rid\I18n;
+namespace Rid\Component;
 
 use Rid\Base\Component;
 

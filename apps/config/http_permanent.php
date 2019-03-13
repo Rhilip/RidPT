@@ -18,7 +18,7 @@ return array_replace_recursive($base, [
         ],
 
         'config' => [
-            'class'   => Rid\Config\DynamicConfig::class,
+            'class'   => Rid\Component\Config::class,
         ]
     ],
 ]);

@@ -3,7 +3,7 @@
 namespace Rid\Base;
 
 /**
- * @property \Rid\Log\Log $log
+ * @property \Rid\Component\Log $log
  * @property \Rid\Console\Input $input
  * @property \Rid\Http\Route $route
  * @property \Rid\Http\Request $request
@@ -14,10 +14,10 @@ namespace Rid\Base;
  * @property \Rid\Http\Cookie $cookie
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
- * @property \Rid\Config\DynamicConfig $config
+ * @property \Rid\Component\Config $config
  * @property \Rid\Pool\ConnectionPool $connectionPool
  * @property \Rid\User\User $user
- * @property \Rid\I18n\I18n $i18n
+ * @property \Rid\Component\I18n $i18n
  */
 class Application extends BaseObject
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rid\Config;
+namespace Rid\Base;
 
 /**
  * 环境类

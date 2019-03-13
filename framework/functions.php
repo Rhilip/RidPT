@@ -23,7 +23,7 @@ if (!function_exists('env')) {
      */
     function env($name = null, $default = '')
     {
-        return \Rid\Config\Env::get($name, $default);
+        return \Rid\Base\Env::get($name, $default);
     }
 }
 

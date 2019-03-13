@@ -142,9 +142,10 @@ So that tracker can record the peer's ip address.
 
 ## Development Help
 
-Some rule or Docs May help you when you rebuild this project:
+Some rule or Docs May help you when you rebuild this project,
+Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 
-| Name | Used As | Repo | Docs | 
+| Name | Used As | Docs | 
 |:--|:--:|:--:|:--:|
 | [MixPHP](https://github.com/mix-php/mix-framework/tree/v1) | Framework | https://www.kancloud.cn/onanying/mixphp1/379324 ( Chinese Version ) |
 | [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | http://www.sirius.ro/php/sirius/validation/ |

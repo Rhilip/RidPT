@@ -33,10 +33,10 @@ return [
         ],
 
         'log'    => [
-            'class'       => Rid\Log\Log::class,
+            'class'       => Rid\Component\Log::class,
             'level'       => ['error', 'info', 'debug'],
             'logDir'      => 'logs',
-            'logRotate'   => Rid\Log\Log::ROTATE_DAY,
+            'logRotate'   => Rid\Component\Log::ROTATE_DAY,
             'maxFileSize' => 1024,   // bytes
         ],
 

@@ -5,7 +5,7 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-Rid\Config\Env::load(__DIR__ . '/../.env');
+Rid\Base\Env::load(__DIR__ . '/../.env');
 
 $config   = require __DIR__ . '/../apps/config/httpd.php';
 $exitCode = (new Rid\Console\Application($config))->run();

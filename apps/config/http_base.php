@@ -69,9 +69,9 @@ return [
 
         // 日志
         'log' => [
-            'class'       => Rid\Log\Log::class,  // 类路径
+            'class'       => Rid\Component\Log::class,  // 类路径
             'dir'         => 'logs',  // 日志目录
-            'rotate'      => Rid\Log\Log::ROTATE_DAY,  // 日志轮转类型
+            'rotate'      => Rid\Component\Log::ROTATE_DAY,  // 日志轮转类型
             'maxFileSize' => 0,  // 最大文件尺寸
         ],
 
@@ -186,7 +186,7 @@ return [
         ],
 
         'config' => [
-            'class'   => Rid\Config\DynamicConfig::class,
+            'class'   => Rid\Component\Config::class,
         ],
 
         'user' => [
@@ -194,7 +194,7 @@ return [
         ],
 
         'i18n' => [
-            'class' => Rid\I18n\I18n::class,
+            'class' => Rid\Component\I18n::class,
             'fileNamespace' => 'apps\lang',
             'fallbackLang' => 'en',
             'mergeFallback' => true,

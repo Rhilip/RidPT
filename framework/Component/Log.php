@@ -1,6 +1,6 @@
 <?php
 
-namespace Rid\Log;
+namespace Rid\Component;
 
 use Psr\Log\LogLevel;
 use Psr\Log\LoggerTrait;

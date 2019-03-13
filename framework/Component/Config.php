@@ -6,12 +6,12 @@
  * Time: 20:39
  */
 
-namespace Rid\Config;
+namespace Rid\Component;
 
 use Rid\Base\Component;
 use Rid\Exceptions\ConfigException;
 
-class DynamicConfig extends Component implements DynamicConfigInterface
+class Config extends Component
 {
     /** @var \swoole_table */
     private $cacheTable;
