@@ -27,6 +27,13 @@ if (!function_exists('env')) {
     }
 }
 
+if (!function_exists('__')) {
+    function __($string, $avg = null, $lang = null)
+    {
+        return app()->i18n->trans($string, $avg, $lang);
+    }
+}
+
 if (!function_exists('tgo')) {
 
     /** 创建一个带异常捕获的协程

@@ -191,7 +191,16 @@ return [
 
         'user' => [
             'class' => Rid\User\User::class,
-        ]
+        ],
+
+        'i18n' => [
+            'class' => Rid\I18n\I18n::class,
+            'fileNamespace' => 'apps\lang',
+            'fallbackLang' => 'en',
+            'mergeFallback' => true,
+            'forcedLang' => null,
+            'allowedLangSet' => ['en', 'zh-CN']
+        ],
     ],
 
     // 类库配置

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 08, 2019 at 08:30 AM
+-- Generation Time: Mar 13, 2019 at 03:26 PM
 -- Server version: 8.0.14
 -- PHP Version: 7.3.1
 
@@ -598,6 +598,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `bonus_seeding` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `bonus_invite` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `bonus_other` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
+  `lang` varchar(10) NOT NULL DEFAULT 'en',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),

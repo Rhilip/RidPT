@@ -25,6 +25,8 @@ trait UserTrait
 
     private $avatar;
 
+    private $lang;
+
     private $create_at;
     private $last_login_at;
     private $last_access_at;
@@ -286,5 +288,13 @@ trait UserTrait
             app()->redis->hSet($this->infoCacheKey, 'active_leech_count', $active_leech);
         }
         return $active_leech;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLang()
+    {
+        return $this->lang;
     }
 }
