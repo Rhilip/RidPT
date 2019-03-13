@@ -146,8 +146,7 @@ Some rule or Docs May help you when you rebuild this project:
 
 | Name | Used As | Repo | Docs | 
 |:--|:--:|:--:|:--:|
-| MixPHP | Framework | https://github.com/mix-php/mix-framework/tree/v1 | https://www.kancloud.cn/onanying/mixphp1/379324 ( Chinese Version ) |
-| siriusphp/validation | Validator | https://github.com/siriusphp/validation | http://www.sirius.ro/php/sirius/validation/ |
-| league/plates | Template system | https://github.com/thephpleague/plates | http://platesphp.com/ |
-
+| [MixPHP](https://github.com/mix-php/mix-framework/tree/v1) | Framework | https://www.kancloud.cn/onanying/mixphp1/379324 ( Chinese Version ) |
+| [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | http://www.sirius.ro/php/sirius/validation/ |
+| [league/plates](https://github.com/thephpleague/plates) | Template system | http://platesphp.com/ |
 

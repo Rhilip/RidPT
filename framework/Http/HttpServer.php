@@ -86,12 +86,19 @@ class HttpServer extends BaseObject
     protected function onWorkerStart()
     {
         $this->_server->on('WorkerStart', function (\swoole_server $server,int $workerId) {
+            // 刷新OpCode缓存，防止reload重载入时受到影响
+            foreach (['apc_clear_cache', 'opcache_reset'] as $func) {
+                if (function_exists($func)) /** @noinspection PhpComposerExtensionStubsInspection */
+                    $func();
+            }
+
             // 进程命名
             if ($workerId < $server->setting['worker_num']) {
                 ProcessHelper::setTitle("rid-httpd: worker #{$workerId}");
             } else {
                 ProcessHelper::setTitle("rid-httpd: task #{$workerId}");
             }
+
             // 实例化App
             $config = require $this->virtualHost['configFile'];
             $app = new Application($config);

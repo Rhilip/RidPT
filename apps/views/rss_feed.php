@@ -22,7 +22,7 @@ $copyright = "Copyright (c) " . $site_name . " " . (date("Y") != $yearfounded ? 
 <rss version="2.0">
     <channel>
         <title><?= addslashes($site_name . ' Torrents') ?></title>
-        <link><?= $url  ?></link>
+        <link><?= $url ?></link>
         <description><![CDATA[<?= addslashes('Latest torrents from ' . $site_name ) ?>]]></description>
         <language>en</language>
         <copyright><?= $copyright ?></copyright>
