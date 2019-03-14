@@ -197,7 +197,6 @@ return [
             'class' => Rid\Component\I18n::class,
             'fileNamespace' => 'apps\lang',
             'fallbackLang' => 'en',
-            'mergeFallback' => true,
             'forcedLang' => null,
             'allowedLangSet' => ['en', 'zh-CN']
         ],

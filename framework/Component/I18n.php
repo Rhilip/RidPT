@@ -39,14 +39,6 @@ class I18n extends Component
     public $fallbackLang = 'en';
 
     /**
-     * Merge in fallback language
-     * Whether to merge current language's strings with the strings of the fallback language ($fallbackLang).
-     *
-     * @var bool
-     */
-    public $mergeFallback = false;
-
-    /**
      * Forced language
      * If you want to force a specific language define it here.
      *
@@ -57,7 +49,7 @@ class I18n extends Component
     /*
      * The following properties are only available after calling init().
      */
-    protected $lastLang = null;
+    protected $lastLangs = null;
 
     public function onRequestBefore()
     {
@@ -78,13 +70,8 @@ class I18n extends Component
      * @param null $reqLang
      * @return array with the user languages sorted by priority.
      */
-    public function getUserLangs($reqLang = null) {
+    private function getUserLangs($reqLang = null) {
         $userLangs = array();
-
-        // Quick Return the last used language list
-        if ($this->lastLang != null && $reqLang == null) {
-            return $this->lastLang;
-        }
 
         // Highest priority: forced language
         if ($this->forcedLang != NULL) $userLangs[] = $this->forcedLang;
@@ -92,38 +79,43 @@ class I18n extends Component
         // 1st highest priority: required language
         if ($reqLang != null) {
             $userLangs[] = $reqLang;
-        } else {
-            // 2nd highest priority: GET parameter 'lang'
-            if (!is_null(app()->request->get('lang'))) $userLangs[] = app()->request->get('lang');
 
-            // 3rd highest priority: SESSION parameter 'lang'
-            if (!is_null(app()->user->getLang())) $userLangs[] = app()->user->getLang();
+            // Lowest priority: fallback
+            $userLangs[] = $this->fallbackLang;
 
-            // 4th highest priority: HTTP_ACCEPT_LANGUAGE
-            if (!is_null(app()->request->header('accept_language'))) {
-                /**
-                 * We get headers like this string 'en-US,en;q=0.8,uk;q=0.6,ru;q=0.4' (length=32)
-                 * And then sort to an array like this
-                 *
-                 * array(size=4)
-                 *    'en-US'    => float 1
-                 *    'en'       => float 0.8
-                 *    'uk'       => float 0.6
-                 *    'ru'       => float 0.4
-                 *
-                 */
-                $prefLocales = array_reduce(
-                    explode(',', app()->request->header('accept_language')),
-                    function ($res, $el) {
-                        list($l, $q) = array_merge(explode(';q=', $el), [1]);
-                        $res[$l] = (float)$q;
-                        return $res;
-                    }, []);
-                arsort($prefLocales);
+            $userLangs = array_unique($userLangs);  // remove duplicate elements
+            return $userLangs;
+        }
 
-                foreach ($prefLocales as $part => $q) {
-                    $userLangs[] = $part;
-                }
+        // 2nd highest priority: GET parameter 'lang'
+        if (!is_null(app()->request->get('lang'))) $userLangs[] = app()->request->get('lang');
+
+        // 3rd highest priority: SESSION parameter 'lang'
+        if (!is_null(app()->user->getLang())) $userLangs[] = app()->user->getLang();
+
+        // 4th highest priority: HTTP_ACCEPT_LANGUAGE
+        if (!is_null(app()->request->header('accept_language'))) {
+            /**
+             * We get headers like this string 'en-US,en;q=0.8,uk;q=0.6'
+             * And then sort to an array like this after sort
+             *
+             * array(size=4)
+             *    'en-US'    => float 1
+             *    'en'       => float 0.8
+             *    'uk'       => float 0.6
+             *
+             */
+            $prefLocales = array_reduce(
+                explode(',', app()->request->header('accept_language')),
+                function ($res, $el) {
+                    list($l, $q) = array_merge(explode(';q=', $el), [1]);
+                    $res[$l] = (float)$q;
+                    return $res;
+                }, []);
+            arsort($prefLocales);
+
+            foreach ($prefLocales as $part => $q) {
+                $userLangs[] = $part;
             }
         }
 
@@ -131,17 +123,22 @@ class I18n extends Component
         $userLangs[] = $this->fallbackLang;
 
         $userLangs = array_unique($userLangs);  // remove duplicate elements
-        $this->lastLang = $userLangs;  // Store it for last use.
+        $this->lastLangs = $userLangs;  // Store it for last use if not in req mode
         return $userLangs;
     }
 
-    protected function getConfigClassName($langcode) {
+    private function getConfigClassName($langcode) {
         $langcode = str_replace('-','_',$langcode);
         return $this->fileNamespace . '\\' . $langcode;
     }
 
-    private function getLangList($lang = null) {
-        $userLangs = $this->getUserLangs($lang);
+    private function getLangList($reqLang = null) {
+        // Quick Return the last used language list
+        if ($this->lastLangs != null && $reqLang == null) {
+            return $this->lastLangs;
+        }
+
+        $userLangs = $this->getUserLangs($reqLang);
 
         // remove illegal userLangs
         $userLangs2 = array();
@@ -160,10 +157,22 @@ class I18n extends Component
         }
 
         // remove duplicate elements
-        return array_unique($userLangs2);
+        $userLangs2 = array_unique($userLangs2);
+
+        // Cache the main languages list is not in request model
+        if ($reqLang == null) $this->lastLangs = $userLangs2;
+        return $userLangs2;
     }
 
-
+    /**
+     * Get i18n text by call static constant, if the string is not exist. The empty string ''
+     * will be return.
+     *
+     * @param string $string the trans string
+     * @param array $args the args used for format string by using `vsprintf`
+     * @param string $lang the required lang
+     * @return string
+     */
     public function trans($string, $args = null, $lang = null)
     {
         $langs = $this->getLangList($lang);
@@ -174,7 +183,7 @@ class I18n extends Component
                 $return = constant($item . "::" . $string);
                 break;
             } catch (\Exception $e) {
-                app()->log->warning('A no-exist translation hit.',['lang_class' => $item,'string' => $string]);
+                app()->log->warning('A no-exist translation hit.', ['lang_class' => $item, 'string' => $string]);
             }
         }
 

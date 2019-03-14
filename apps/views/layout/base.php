@@ -42,14 +42,14 @@
     <div class="layui-row" align="center">
         <nav id="menu">
             <ul class="layui-nav">
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/">Index</a></li>
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/forums', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/forums">Forums</a></li>
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrents', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents">Torrents</a></li>
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrents/request', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents/request">Request</a></li>
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrents/upload', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents/upload">Upload</a></li>
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/subtitles', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/subtitles">Subtitles</a></li>
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/site/topten', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/site/topten">Top 10</a></li>
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/site/about', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/site/about">About</a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/"><?= __('nav_index') ?></a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/forums', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/forums"><?= __('nav_forums') ?></a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrents', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents"><?= __('nav_torrents') ?></a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrents/request', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents/request"><?= __('nav_requests') ?></a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrents/upload', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents/upload"><?= __('nav_upload') ?></a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/subtitles', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/subtitles"><?= __('nav_subtitles') ?></a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/site/topten', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/site/topten"><?= __('nav_topten') ?></a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/site/about', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/site/about"><?= __('nav_faq') ?></a></li>
             </ul>
         </nav>
     </div>
