@@ -24,12 +24,6 @@
 <table class="layui-table">
     <tbody>
     <tr>
-        <th>Key</th>
-        <td><input type="text" value="<?= $key ?>" readonly="readonly"
-                   style="border: none; width: 100%; font-family: Menlo, Monaco, Consolas, 'Courier New', monospace;"/>
-        </td>
-    </tr>
-    <tr>
         <th>Type</th>
         <td><code><?= $type ?></code></td>
     </tr>
@@ -77,7 +71,7 @@
             <tr>
                 <td></td>
                 <td><code><?= $k ?></code></td>
-                <td><code><?= $v ?></code></td>
+                <td><code><?= is_string($v) ? $v : json_encode($v, JSON_PRETTY_PRINT) ?></code></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
