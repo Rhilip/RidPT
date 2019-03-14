@@ -8,6 +8,8 @@
  * @var League\Plates\Template\Template $this
  * @var string $title
  */
+
+$css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_date');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,7 +22,7 @@
     <link rel="stylesheet" href="/lib/fontAwesome/css/all.css"> <?php /** https://fontawesome.com/icons?d=gallery */ ?>
 
     <!-- Custom styles for this template -->
-    <link rel="stylesheet" href="/static/css/main.css?<?= app()->config->get('base.site_css_update_date') ?>">
+    <link rel="stylesheet" href="/static/css/main.css?<?= $css_tag ?>">
 
     <?= $this->section('css') ?> <!-- Other temp CSS field -->
 </head>
@@ -93,7 +95,8 @@
 </footer>
 
 <script src="/lib/layui/src/layui.js"></script>
-<script src="/static/js/main.js?<?= app()->config->get('base.site_css_update_date') ?>"></script>
+<script src="/lib/notice.js/dist/notice.js"></script>
+<script src="/static/js/main.js?<?= $css_tag ?>"></script>
 <?= $this->section('script') ?> <!-- Other temp script field -->
 
 </body>
