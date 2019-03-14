@@ -19,6 +19,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
     <title><?= app()->config->get('base.site_name') ?> :: <?= $this->e($this->section('title') ?? '') ?> -- Powered by <?= app()->config->get('base.site_generator') ?></title>
 
     <link rel="stylesheet" href="/lib/layui/src/css/layui.css"> <?php /** https://www.layui.com/doc/ */ ?>
+    <link rel="stylesheet" href="/lib/notice.js/dist/noticejs.css"> <?php /** https://github.com/alihesari/notice.js */ ?>
     <link rel="stylesheet" href="/lib/fontAwesome/css/all.css"> <?php /** https://fontawesome.com/icons?d=gallery */ ?>
 
     <!-- Custom styles for this template -->

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 13, 2019 at 03:26 PM
+-- Generation Time: Mar 14, 2019 at 03:59 PM
 -- Server version: 8.0.14
 -- PHP Version: 7.3.1
 
@@ -126,6 +126,30 @@ CREATE TABLE IF NOT EXISTS `agent_deny_log` (
 
 --
 -- RELATIONSHIPS FOR TABLE `agent_deny_log`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `bookmarks`
+--
+
+DROP TABLE IF EXISTS `bookmarks`;
+CREATE TABLE IF NOT EXISTS `bookmarks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` int(11) UNSIGNED NOT NULL,
+  `tid` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UN_bookmarks_uid_tid` (`tid`,`uid`),
+  KEY `IN_bookmarks_users_id` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `bookmarks`:
+--   `tid`
+--       `torrents` -> `id`
+--   `uid`
+--       `users` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -677,6 +701,13 @@ ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `bookmarks`
+--
+ALTER TABLE `bookmarks`
+  ADD CONSTRAINT `FK_bookmarks_torrents_id` FOREIGN KEY (`tid`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_bookmarks_users_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `files`

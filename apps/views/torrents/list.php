@@ -27,9 +27,9 @@ $time_now = time();
         <th class="text-center" style="width: 5px" title="Comment"><i class="fas fa-comment-alt"></i></th>
         <th class="text-center" style="width: 50px" title="Size">Size</th>
         <th class="text-center" style="width: 100px" title="Date">Date</th>
-        <th class="text-center" style="width: 15px" title="Seeders"><i class="fas fa-arrow-up"></th>
+        <th class="text-center" style="width: 15px" title="Seeders"><i class="fas fa-arrow-up"></i></th>
         <th class="text-center" style="width: 15px" title="Leechers"><i class="fas fa-arrow-down"></i></th>
-        <th class="text-center" style="width: 15px" title="Completed"><i class="fas fa-check"></th>
+        <th class="text-center" style="width: 15px" title="Completed"><i class="fas fa-check"></i></th>
         <th class="text-center" style="width: 50px" title="Owner"><i class="fas fa-user"></i></th>
     </tr>
     </thead>
@@ -46,7 +46,7 @@ $time_now = time();
                 <div class="text-center" style="width: 5px">
                     <!--suppress HtmlUnknownTarget -->
                     <a href="/torrents/download?id=<?= $torrent->getId() ?>"><i class="fas fa-download"></i></a>
-                    <a href="#"><i class="<?= true ? 'far' : 'fas' // TODO ?> fa-star"></i></a>
+                    <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->user->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star"></i></a>
                 </div>
             </div>
         </td>

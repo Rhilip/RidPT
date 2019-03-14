@@ -43,9 +43,9 @@ trait UserTrait
     private $downloaded;
     private $seedtime;
     private $leechtime;
-    
+
     protected $infoCacheKey;
-    
+
     public function loadUserContentById($id)
     {
         $this->infoCacheKey = 'User:id_' . $id . '_content';
@@ -55,7 +55,7 @@ trait UserTrait
                 "id" => $id
             ])->queryOne();
             app()->redis->hMset($this->infoCacheKey, $self);
-            app()->redis->expire($this->infoCacheKey, 3 * 60);
+            app()->redis->expire($this->infoCacheKey, 10 * 60);
         }
         $this->importAttributes($self);
         

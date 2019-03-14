@@ -33,7 +33,8 @@
     "swiftmailer/swiftmailer": "^6.1",
     "piwik/device-detector": "^3.11",
     "league/plates": "^3.3",
-    "siriusphp/validation": "^2.2"
+    "siriusphp/validation": "^2.2",
+    "phpmailer/phpmailer": "^6.0"
   },
   "autoload": {
     "psr-4": {

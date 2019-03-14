@@ -26,11 +26,13 @@ class User extends Component implements UserInterface
     public $passkeyCacheKey = 'User_Map:passkey_to_id';
 
     private $anonymous = false;
+    private $bookmark_list = null;
 
     public function onRequestBefore()
     {
         parent::onRequestBefore();
         $this->anonymous = true;
+        $this->bookmark_list = null;
     }
 
     public function onRequestAfter()
@@ -86,4 +88,25 @@ class User extends Component implements UserInterface
         return $this->_userSessionId;
     }
 
+    public function getBookmarkList()
+    {
+        if (!is_null($this->bookmark_list))
+            return $this->bookmark_list;
+
+        $bookmaks = app()->redis->hGet($this->infoCacheKey, 'bookmark_array');
+        if ($bookmaks === false) {
+            $bookmaks = app()->pdo->createCommand('SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid')->bindParams([
+                'uid' => $this->id
+            ])->queryColumn() ?: [0];
+            app()->redis->hSet($this->infoCacheKey, 'bookmark_array', $bookmaks);
+        }
+
+        $this->bookmark_list = $bookmaks;  // Store in avg to reduce the cache call
+        return $bookmaks;
+    }
+
+    public function inBookmarkList($tid = null)
+    {
+        return in_array($tid, $this->getBookmarkList());
+    }
 }
