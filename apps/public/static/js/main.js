@@ -73,9 +73,9 @@ layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
                     anim: 5,
                     shadeClose: true, //开启遮罩关闭
                     area: '700px',
-                    content: "<ul id='torrent_filelist'>" + list_worker(file_list) + "</ul>",
+                    content: "<ul id='torrent-filelist'>" + list_worker(file_list) + "</ul>",
                     success: function (layero, index) {
-                        $('#torrent_filelist a').click(function () {
+                        $('#torrent-filelist a').click(function () {
                             let that = $(this);
                             let icon = that.find(' > i');
                             let parent = that.parents('li:eq(0)');
@@ -85,8 +85,8 @@ layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
                             let expand = (par ? par : "") + "/" + that.attr('data-folder-name');
 
                             icon.toggleClass('fa-folder', !old_is_open).toggleClass('fa-folder-open', old_is_open);
-                            $('#torrent_filelist li[data-par^="' + expand + '/"]').hide();  // 首先隐藏所有对应子项
-                            $('#torrent_filelist li[data-par$="' + expand + '"]').toggle();  // 然后对当前项可见性进行切换
+                            $('#torrent-filelist li[data-par^="' + expand + '/"]').hide();  // 首先隐藏所有对应子项
+                            $('#torrent-filelist li[data-par$="' + expand + '"]').toggle();  // 然后对当前项可见性进行切换
                         });
                     }
                 });
