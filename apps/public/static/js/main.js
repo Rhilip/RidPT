@@ -22,6 +22,22 @@ layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
     let layer = layui.layer;
     let api_point = '/api/v1';
 
+    // Convert ubbcode blcok text to html
+    $(".ubbcode-block").html(function (index, oldhtml) {
+        /*
+        Because:
+            1. Cloudflare or other CDN may clean the newline characters like `\n`
+            2. our backend use nl2br() to Inserts HTML line breaks before all newlines in a string,
+        It's needed to to remove the exist `\n` (if case 1 not happened), and change the html tag `<br />` to `\n`,
+        then feed to our XBBCODE converter for safety output.
+         */
+        oldhtml = oldhtml.trim()
+            .replace(/\n/ig, '')
+            .replace(/<br ?\/?>/ig, '\n');
+        return XBBCODE.process({text: oldhtml}).html;
+    });
+    // TODO Add [hide] support
+
     // Add/Remove favour action
     $('.torrent-favour').click(function () {
         let that = $(this);
@@ -72,7 +88,7 @@ layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
                     btn: [],
                     anim: 5,
                     shadeClose: true, //开启遮罩关闭
-                    area: '700px',
+                    area: ['700px','500px'],
                     content: "<ul id='torrent-filelist'>" + list_worker(file_list) + "</ul>",
                     success: function (layero, index) {
                         $('#torrent-filelist a').click(function () {
@@ -94,21 +110,12 @@ layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
                 layer.alert(res.errors.join(', '), {icon: 2});
             }
         })
-
-    })
-
-    // Convert ubbcode blcok text to html
-    $(".ubbcode-block").html(function (index, oldhtml) {
-        /*
-        Because:
-            1. Cloudflare or other CDN may clean the newline characters like `\n`
-            2. our backend use nl2br() to Inserts HTML line breaks before all newlines in a string,
-        It's needed to to remove the exist `\n` (if case 1 not happened), and change the html tag `<br />` to `\n`,
-        then feed to our XBBCODE converter for safety output.
-         */
-        oldhtml = oldhtml.trim()
-            .replace(/\n/ig, '')
-            .replace(/<br ?\/?>/ig, '\n');
-        return XBBCODE.process({text: oldhtml}).html;
     });
+
+    // For torrents structure page
+    if ($('#torrent-structure').length) {
+        $('#torrent-structure div.dictionary,div.list').click(function () {
+            $(this).next('ul').toggle();
+        });
+    }
 });

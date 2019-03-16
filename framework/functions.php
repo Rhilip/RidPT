@@ -35,7 +35,6 @@ if (!function_exists('__')) {
 }
 
 if (!function_exists('tgo')) {
-
     /** 创建一个带异常捕获的协程
      * @param $closure
      */
@@ -61,5 +60,75 @@ if (!function_exists('println')) {
     function println($expression)
     {
         echo $expression . PHP_EOL;
+    }
+}
+
+if (!function_exists('is_indexed_array')) {
+    /** 索引数组：所有键名都为数值型，注意字符串类型的数字键名会被转换为数值型。
+     * 判断数组是否为索引数组
+     * @param array $arr
+     * @return bool
+     */
+    function is_indexed_array(array $arr): bool
+    {
+        if (is_array($arr)) {
+            return count(array_filter(array_keys($arr), 'is_string')) === 0;
+        }
+        return false;
+    }
+}
+
+if (!function_exists('is_continuous_indexed_array')) {
+    /** 连续索引数组：键名是连续性的数字。
+     * 判断数组是否为连续的索引数组
+     * 以下这种索引数组为非连续索引数组
+     * [
+     *   0 => 'a',
+     *   2 => 'b',
+     *   3 => 'c',
+     *   5 => 'd',
+     * ]
+     * @param array $arr
+     * @return bool
+     */
+    function is_continuous_indexed_array(array $arr): bool
+    {
+        if (is_array($arr)) {
+            $keys = array_keys($arr);
+            return $keys == array_keys($keys);
+        }
+        return false;
+    }
+}
+
+if (!function_exists('is_assoc_array')) {
+    /** 关联数组：所有键名都为字符串型，注意字符串类型的数字键名会被转换为数值型。
+     * 判断数组是否为关联数组
+     * @param array $arr
+     * @return bool
+     */
+    function is_assoc_array(array $arr): bool
+    {
+        if (is_array($arr)) {
+            // return !is_indexed_array($arr);
+            return count(array_filter(array_keys($arr), 'is_string')) === count($arr);
+        }
+        return false;
+    }
+}
+
+if (!function_exists('is_assoc_array')) {
+    /** 混合数组：键名既有数值型也有字符串型。
+     * 判断数组是否为混合数组
+     * @param array $arr
+     * @return bool
+     */
+    function is_mixed_array(array $arr): bool
+    {
+        if (is_array($arr)) {
+            $count = count(array_filter(array_keys($arr), 'is_string'));
+            return $count !== 0 && $count !== count($arr);
+        }
+        return false;
     }
 }

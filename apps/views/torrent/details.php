@@ -18,7 +18,6 @@
 <?php $this->start('title')?><?= $torrent->getTitle() ?><?php $this->end();?>
 
 <?php $this->start('container')?>
-
 <div class="text-center torrent-title-block">
     <h1 class="torrent-title"><?= $torrent->getTitle() ?></h1>
     <small class="torrent-subtitle"><em><?= $torrent->getSubtitle() ?: 'No Subtitle.' ?></em></small>
@@ -66,8 +65,8 @@
                     <a class="torrent-files" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-file fa-fw"></i>&nbsp;View Torrent's Files</a>
                 </div><!-- View Torrent's Files -->
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
-                    <a class="torrent-structure" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-folder-open fa-fw"></i>&nbsp;View Torrent's Structure</a>
-                </div><!-- TODO View TorrentController's Structure -->
+                    <a class="torrent-structure" href="/torrent/structure?id=<?= $torrent->getId() ?>"><i class="fas fa-folder-open fa-fw"></i>&nbsp;View Torrent's Structure</a>
+                </div><!-- View Torrent's Structure -->
             </div>
         </div>
         <div class="layui-card" id="torrent-info-card">

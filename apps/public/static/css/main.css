@@ -83,3 +83,15 @@ nav#menu .layui-nav-item{line-height:45px}
 
 .torrent-filelist-modal{width:700px}
 ul#torrent-filelist ul{margin-left:1.25em}
+
+#torrent-structure ul{margin-left:15px}
+#torrent-structure ul,li{list-style-type:none;color:#000}
+#torrent-structure li div.string{padding:3px}
+#torrent-structure li div.integer{padding:3px}
+#torrent-structure li div.dictionary{padding:3px}
+#torrent-structure li div.list{padding:3px}
+#torrent-structure li div.string span.icon{color:#090;padding:2px}
+#torrent-structure li div.integer span.icon{color:#990;padding:2px}
+#torrent-structure li div.dictionary span.icon{color:#909;padding:2px}
+#torrent-structure li div.list span.icon{color:#009;padding:2px}
+#torrent-structure li span.title{font-weight:bold}

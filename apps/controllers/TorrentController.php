@@ -67,10 +67,11 @@ class TorrentController extends Controller
         return $torrent->getDownloadDict(true);
     }
 
-    public function actionStructure() {
+    public function actionStructure()
+    {
         $tid = app()->request->get('id');
 
         $torrent = new Torrent($tid);  // If torrent is not exist or can't visit , a notfound exception will throw out........
-        return $this->render('torrent/structure',['torrent'=> $torrent]);
+        return $this->render('torrent/structure', ['torrent' => $torrent]);
     }
 }

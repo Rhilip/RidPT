@@ -19,7 +19,6 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
     <title><?= app()->config->get('base.site_name') ?> :: <?= $this->e($this->section('title') ?? '') ?> -- Powered by <?= app()->config->get('base.site_generator') ?></title>
 
     <link rel="stylesheet" href="/lib/layui/src/css/layui.css"> <?php /** https://www.layui.com/doc/ */ ?>
-    <link rel="stylesheet" href="/lib/notice.js/dist/noticejs.css"> <?php /** https://github.com/alihesari/notice.js */ ?>
     <link rel="stylesheet" href="/lib/fontAwesome/css/all.css"> <?php /** https://fontawesome.com/icons?d=gallery */ ?>
 
     <!-- Custom styles for this template -->
@@ -49,7 +48,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
                 <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/forums', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/forums"><?= __('nav_forums') ?></a></li>
                 <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrents', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents"><?= __('nav_torrents') ?></a></li>
                 <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrents/request', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents/request"><?= __('nav_requests') ?></a></li>
-                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrent/upload', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrents/upload"><?= __('nav_upload') ?></a></li>
+                <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/torrent/upload', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/torrent/upload"><?= __('nav_upload') ?></a></li>
                 <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/subtitles', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/subtitles"><?= __('nav_subtitles') ?></a></li>
                 <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/site/topten', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/site/topten"><?= __('nav_topten') ?></a></li>
                 <li class="layui-nav-item<?= /** @noinspection PhpUndefinedMethodInspection */ $this->uri('/site/about', ' layui-this'); ?>"><!--suppress HtmlUnknownTarget --><a href="/site/about"><?= __('nav_faq') ?></a></li>
@@ -58,17 +57,21 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
     </div>
     <div class="layui-row header-info">
         <div class="pull-left">
-            Welcome Back, <a href="/user"><?= app()->user->getUsername() ?></a>&nbsp;
-            <span><!--suppress HtmlUnknownTarget --><a href="/auth/logout">[Logout]</a></span>&nbsp;
+            Welcome Back, <a href="/user" data-user-id="<?= app()->user->getId() ?>"><?= app()->user->getUsername() ?></a>&nbsp;
+            <span data-item="logout"><!--suppress HtmlUnknownTarget --><a href="/auth/logout">[Logout]</a></span>&nbsp;
             <?php if (app()->user->getClass(true) > \Rid\User\UserInterface::ROLE_FORUM_MODERATOR): ?>
                 <span><!--suppress HtmlUnknownTarget --><a href="/admin">[Admin Panel]</a></span>&nbsp;
             <?php endif; ?>
-            <span><!--suppress HtmlUnknownTarget --><a href="/torrents/favour">[Favour]</a></span>&nbsp;
+            <span data-item="favour"><!--suppress HtmlUnknownTarget --><a href="/torrents/favour">[Favour]</a></span>&nbsp;
             <br>
-            <span>Ratio: <?= app()->user->getRatio() ?></span>&nbsp;
-            <span>Uploaded: <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?></span>&nbsp;
-            <span>Downloaded: <?= $this->e(app()->user->getDownloaded(), 'format_bytes') ?></span>&nbsp;
-            <span>BT Activity:
+            <span data-item="ratio" data-ratio="<?= $this->e(app()->user->getRatio()) ?>">
+                Ratio: <?= app()->user->getRatio() ?></span>&nbsp;
+            <span data-item="uploaded" data-uploaded="<?= $this->e(app()->user->getUploaded()) ?>">
+                Uploaded: <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?></span>&nbsp;
+            <span data-item="download" data-downloaded="<?= $this->e(app()->user->getDownloaded()) ?>">
+                Downloaded: <?= $this->e(app()->user->getDownloaded(), 'format_bytes') ?></span>&nbsp;
+            <span data-item="bt_activity" data-seeding="<?= app()->user->getActiveSeed() ?>" data-leeching="<?= app()->user->getActiveLeech() ?>">
+                BT Activity:
                 <span class="fas fa-arrow-up icon-seeding"></span>&nbsp;<?= app()->user->getActiveSeed() ?>&nbsp;
                 <span class="fas fa-arrow-down icon-leeching"></span>&nbsp;<?= app()->user->getActiveLeech() ?>&nbsp;
             </span>&nbsp;
@@ -96,7 +99,6 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
 </footer>
 
 <script src="/lib/layui/src/layui.js"></script>
-<script src="/lib/notice.js/dist/notice.js"></script>
 <script src="/static/js/bbcodeParser.js"></script>
 <script src="/static/js/main.js?<?= $css_tag ?>"></script>
 <?= $this->section('script') ?> <!-- Other temp script field -->
