@@ -44,6 +44,7 @@ trait UserTrait
     private $seedtime;
     private $leechtime;
 
+    protected $peer_status;
     protected $infoCacheKey;
 
     public function loadUserContentById($id)
@@ -266,30 +267,28 @@ trait UserTrait
         return max(1, $this->seedtime) / max(1, $this->leechtime);
     }
 
+    private function getPeerStatus($seeder = null)
+    {
+        $peer_status = $this->peer_status ?? app()->redis->get('User:' . $this->id . ':peer_count');
+        if (is_null($peer_status) || $peer_status === false) {
+            $peer_count = app()->pdo->createCommand("SELECT `seeder`, COUNT(id) FROM `peers` WHERE `user_id` = :uid GROUP BY seeder")->bindParams([
+                'uid' => $this->id
+            ])->queryAll() ?: [];
+            $peer_status = array_merge(['yes' => 0, 'no' => 0, 'partial' => 0], $peer_count);
+            $this->peer_status = $peer_status;
+            app()->redis->set('User:' . $this->id . ':peer_count', $peer_status, 60);
+        }
+        return $seeder ? (int)$peer_status[$seeder] : $peer_status;
+    }
+
     public function getActiveSeed()
     {
-        $active_seed = app()->redis->hGet('User:' . $this->id . ':peer_count', 'active_seed_count');
-        if ($active_seed === false) {
-            $active_seed = app()->pdo->createCommand("SELECT COUNT(id) FROM `peers` WHERE `user_id` = :uid AND `seeder`='yes'")->bindParams([
-                'uid' => $this->id
-            ])->queryScalar() ?: 0;
-            app()->redis->hSet('User:' . $this->id . ':peer_count', 'active_seed_count', $active_seed);
-            app()->redis->expire('User:' . $this->id . ':peer_count',60);
-        }
-        return $active_seed;
+        return $this->getPeerStatus('yes');
     }
 
     public function getActiveLeech()
     {
-        $active_leech = app()->redis->hGet('User:' . $this->id . ':peer_count', 'active_leech_count');
-        if ($active_leech === false) {
-            $active_leech = app()->pdo->createCommand("SELECT COUNT(id) FROM `peers` WHERE `user_id` = :uid AND `seeder`='no'")->bindParams([
-                'uid' => $this->id
-            ])->queryScalar() ?: 0;
-            app()->redis->hSet('User:' . $this->id . ':peer_count', 'active_leech_count', $active_leech);
-            app()->redis->expire('User:' . $this->id . ':peer_count',60);
-        }
-        return $active_leech;
+        return $this->getPeerStatus('no') + $this->getPeerStatus('partial');
     }
 
     /**
