@@ -48,7 +48,7 @@ trait UserTrait
 
     public function loadUserContentById($id)
     {
-        $this->infoCacheKey = 'User:id_' . $id . '_content';
+        $this->infoCacheKey = 'User:' . $id . ':base_content';
         $self = app()->redis->hGetAll($this->infoCacheKey);
         if (empty($self)) {
             $self = app()->pdo->createCommand("SELECT * FROM `users` WHERE id = :id;")->bindParams([

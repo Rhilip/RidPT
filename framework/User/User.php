@@ -93,12 +93,12 @@ class User extends Component implements UserInterface
         if (!is_null($this->bookmark_list))
             return $this->bookmark_list;
 
-        $bookmaks = app()->redis->hGet($this->infoCacheKey, 'bookmark_array');
+        $bookmaks = app()->redis->get('User:' . $this->id . ':bookmark_array');
         if ($bookmaks === false) {
             $bookmaks = app()->pdo->createCommand('SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid')->bindParams([
                 'uid' => $this->id
             ])->queryColumn() ?: [0];
-            app()->redis->hSet($this->infoCacheKey, 'bookmark_array', $bookmaks);
+            app()->redis->set('User:' . $this->id . ':bookmark_array', $bookmaks, 132800);
         }
 
         $this->bookmark_list = $bookmaks;  // Store in avg to reduce the cache call

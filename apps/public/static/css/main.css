@@ -78,4 +78,5 @@ nav#menu .layui-nav-item{line-height:45px}
 .icon-leeching {color: red}
 
 
-.torrent-title-block {margin: 15px}
+.torrent-title-block{margin:15px}
+.torrent-action-item{padding:3px}

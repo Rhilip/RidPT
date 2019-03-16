@@ -14,16 +14,10 @@ class BaseResponse extends Component
     const FORMAT_HTML = 'html';
     const FORMAT_JSON = 'json';
     const FORMAT_JSONP = 'jsonp';
-    const FORMAT_XML = 'xml';
     const FORMAT_RAW = 'raw';
 
     // 默认输出格式
     public $defaultFormat = self::FORMAT_HTML;
-
-    /**
-     * @var \Rid\Http\Xml
-     */
-    public $xml;
 
     // 当前输出格式
     public $format;
@@ -71,9 +65,6 @@ class BaseResponse extends Component
                 case self::FORMAT_JSONP:
                     $this->setHeader('Content-Type', 'application/json; charset=utf-8');
                     break;
-                case self::FORMAT_XML:
-                    $this->setHeader('Content-Type', 'text/xml; charset=utf-8');
-                    break;
             }
         }
         // 转换内容为字符型
@@ -91,9 +82,6 @@ class BaseResponse extends Component
                         $content = $callback_key . '(' . $content . ')';
                         break;
                     }
-                case self::FORMAT_XML:
-                    $content = $this->xml->encode($content);
-                    break;
             }
         }
         $this->content = $content;

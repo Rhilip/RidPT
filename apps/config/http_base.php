@@ -36,12 +36,19 @@ return [
             'rules'          => [
                 'GET tracker/{tracker_action}' => ['tracker','index'],
                 'GET captcha' => ['captcha', 'index'],
+
+                // Auth By Passkey Route
                 'GET rss' => ['rss', 'index','middleware' => [
                     apps\middleware\AuthByPasskeyMiddleware::class
                 ]],
-                'api/v1/{controller}/{action}' => ['api/{controller}', '{action}', 'middleware' => [
-                    apps\middleware\ApiMiddleware::class
+
+                // API version 1
+                'api/v1/{controller}/{action}' => ['api/v1/{controller}', '{action}', 'middleware' => [
+                    apps\middleware\ApiMiddleware::class,
+                    apps\middleware\AuthByCookiesMiddleware::class
                 ]],
+
+                // Web view
                 '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => [
                     apps\middleware\AuthByCookiesMiddleware::class
                 ]],

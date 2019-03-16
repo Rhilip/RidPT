@@ -13,7 +13,6 @@ class Error extends Component
     // 格式值
     const FORMAT_HTML = 'html';
     const FORMAT_JSON = 'json';
-    const FORMAT_XML = 'xml';
 
     // 输出格式
     public $format = self::FORMAT_HTML;

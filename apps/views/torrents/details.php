@@ -42,19 +42,39 @@ include 'helper.php';
         <div class="layui-card" id="torrent-action-card">
             <div class="layui-card-header"><b>Torrent Action</b></div>
             <div class="layui-card-body">
-                <div><!--suppress HtmlUnknownTarget --><a href="/torrents/download?id=<?= $torrent->getId() ?>"><i class="fa fa-download fa-fw"></i> Download Torrent</a></div>
-                <div><a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->user->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i> Add to Favour</a> </div><!-- add remove from Favour -->
-                <div><!--suppress HtmlUnknownTarget --><a href="/report?type=torrent&id=<?= $torrent->getId() ?>"><i class="fa fa-bug fa-fw"></i> Report this Torrent</a></div>
+                <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
+                    <a href="/torrents/download?id=<?= $torrent->getId() ?>"><i class="fa fa-download fa-fw"></i>&nbsp;Download Torrent</a>
+                </div><!-- Download Torrent -->
+                <div class="torrent-action-item">
+                    <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->user->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i>&nbsp;Add to Favour</a>
+                </div><!-- TODO Add to Favour -->
+                <div class="torrent-action-item">
+                    <a class="torrent-myrss" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="fas fa-rss fa-fw"></i>&nbsp;Add to RSS Basket</a>
+                </div><!-- TODO Add to RSS Basket -->
+                <hr>
+                <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
+                    <a class="torrent-edit" href="/torrents/edit?id=<?= $torrent->getId() ?>"><i class="fas fa-edit fa-fw"></i>&nbsp;Edit/Remove this Torrent</a>
+                </div><!-- TODO Edit/Remove this Torrent -->
+                <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
+                    <a class="torrent-report" href="/report?type=torrent&id=<?= $torrent->getId() ?>"><i class="fa fa-bug fa-fw"></i>&nbsp;Report this Torrent</a>
+                </div><!-- TODO Report this Torrent -->
+                <hr>
+                <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
+                    <a class="torrent-files" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-file fa-fw"></i>&nbsp;View Torrent's Files</a>
+                </div><!-- TODO View Torrent's Files -->
+                <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
+                    <a class="torrent-structure" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-folder-open fa-fw"></i>&nbsp;View Torrent's Structure</a>
+                </div><!-- TODO View Torrent's Structure -->
             </div>
         </div>
         <div class="layui-card" id="torrent-info-card">
             <div class="layui-card-header"><b>Torrent Information</b></div>
             <div class="layui-card-body">
-                <div data-field="added_date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>"><b>Date:</b> <?= $torrent->getAddedAt() ?></div>
+                <div data-field="added_date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>"><b>Uploaded Date:</b> <?= $torrent->getAddedAt() ?></div>
                 <div data-field="size" data-filesize="<?= $torrent->getTorrentSize() ?>"><b>File size:</b> <?= $this->e($torrent->getTorrentSize(),'format_bytes') ?></div>
-                <div data-field="uploader"><b>Uploader:</b> <?= get_torrent_uploader($torrent) ?></div>
+                <div data-field="uploader" data-owner-id="<?= get_torrent_uploader_id($torrent) ?>"><b>Uploader:</b> <?= get_torrent_uploader($torrent) ?></div>
                 <div data-field="peers" data-seeders="<?= $torrent->getComplete() ?>" data-leechers="<?= $torrent->getComplete() ?>" data-completed="<?= $torrent->getDownloaded() ?>">
-                    <b>Peers:</b> <span style="color: green;"><i class="fas fa-arrow-up"></i> <?= $torrent->getComplete() ?></span> / <span style="color: red;"><i class="fas fa-arrow-down"></i> <?= $torrent->getIncomplete() ?></span> / <span><i class="fas fa-check"></i> <?= $torrent->getDownloaded() ?></span>
+                    <b>Peers:</b> <span style="color: green;"><i class="fas fa-arrow-up fa-fw"></i> <?= $torrent->getComplete() ?></span> / <span style="color: red;"><i class="fas fa-arrow-down fa-fw"></i> <?= $torrent->getIncomplete() ?></span> / <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
                 </div>
                 <div data-field="info_hash" data-infohash="<?= $torrent->getInfoHash() ?>"><b>Info Hash:</b> <kbd><?= $torrent->getInfoHash() ?></kbd></div>
             </div>

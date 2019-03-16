@@ -43,9 +43,10 @@ class Validator extends BaseObject
     }
 
 
-    private function validateCallbackRules() {
-        foreach ($this->callbackRules() as $rule) {
-            call_user_func([$this,$rule]);
+    private function validateCallbackRules()
+    {
+        foreach (static::callbackRules() as $rule) {
+            call_user_func([$this, $rule]);
             if (!$this->_success) break;
         }
     }
