@@ -298,4 +298,12 @@ trait UserTrait
     {
         return $this->lang;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPasskey()
+    {
+        return $this->passkey;
+    }
 }

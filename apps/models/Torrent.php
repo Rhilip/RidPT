@@ -163,7 +163,7 @@ class Torrent
 
     public function getDownloadDict($encode = true)
     {
-        $userInfo = app()->session->get('userInfo');  // FIXME add remote download by &passkey=  (Add change our BeforeMiddle) or token ?
+        $dict = $this->getRawDict();
 
         $scheme = "http://";
         if (filter_var(app()->request->get("https"), FILTER_VALIDATE_BOOLEAN))
@@ -173,12 +173,7 @@ class Torrent
         else if (app()->request->isSecure())
             $scheme = "https://";
 
-        // FIXME bad code
-        $passkey = app()->pdo->createCommand("SELECT `passkey` FROM `users` WHERE id=:id LIMIT 1;")->bindParams([
-            "id" => $userInfo["uid"]
-        ])->queryScalar();
-
-        $announce_suffix = "/announce?passkey=" . $passkey;
+        $announce_suffix = "/announce?passkey=" . app()->user->getPasskey();
         $dict["announce"] = $scheme . app()->config->get("base.site_tracker_url") . $announce_suffix;
 
         /** BEP 0012 Multitracker Metadata Extension
