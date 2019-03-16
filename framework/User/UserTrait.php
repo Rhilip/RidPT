@@ -268,24 +268,26 @@ trait UserTrait
 
     public function getActiveSeed()
     {
-        $active_seed = app()->redis->hGet($this->infoCacheKey, 'active_seed_count');
+        $active_seed = app()->redis->hGet('User:' . $this->id . ':peer_count', 'active_seed_count');
         if ($active_seed === false) {
             $active_seed = app()->pdo->createCommand("SELECT COUNT(id) FROM `peers` WHERE `user_id` = :uid AND `seeder`='yes'")->bindParams([
                 'uid' => $this->id
             ])->queryScalar() ?: 0;
-            app()->redis->hSet($this->infoCacheKey, 'active_seed_count', $active_seed);
+            app()->redis->hSet('User:' . $this->id . ':peer_count', 'active_seed_count', $active_seed);
+            app()->redis->expire('User:' . $this->id . ':peer_count',60);
         }
         return $active_seed;
     }
 
     public function getActiveLeech()
     {
-        $active_leech = app()->redis->hGet($this->infoCacheKey, 'active_leech_count');
+        $active_leech = app()->redis->hGet('User:' . $this->id . ':peer_count', 'active_leech_count');
         if ($active_leech === false) {
             $active_leech = app()->pdo->createCommand("SELECT COUNT(id) FROM `peers` WHERE `user_id` = :uid AND `seeder`='no'")->bindParams([
                 'uid' => $this->id
             ])->queryScalar() ?: 0;
-            app()->redis->hSet($this->infoCacheKey, 'active_leech_count', $active_leech);
+            app()->redis->hSet('User:' . $this->id . ':peer_count', 'active_leech_count', $active_leech);
+            app()->redis->expire('User:' . $this->id . ':peer_count',60);
         }
         return $active_leech;
     }
