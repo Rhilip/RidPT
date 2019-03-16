@@ -11,8 +11,6 @@ namespace apps\controllers;
 use Rid\Http\Controller;
 
 use apps\models\Torrent;
-use apps\models\form\TorrentUploadForm;
-
 
 class TorrentsController extends Controller
 {
@@ -32,60 +30,8 @@ class TorrentsController extends Controller
 
     }
 
-    public function actionUpload()
-    {
-        // TODO Check user upload pos
-        if (app()->request->isPost()) {
-            $torrent = new TorrentUploadForm();
-            $torrent->setData(app()->request->post());
-            $torrent->setFileData(app()->request->files());
-            $success = $torrent->validate();
-            if (!$success) {
-                return $this->render('errors/action_fail', ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
-            } else {
-                try {
-                    $torrent->flush();
-                } catch (\Exception $e) {
-                    return $this->render('errors/action_fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
-                }
-
-                return app()->response->redirect('/torrents/details?id=' . $torrent->id);
-            }
-
-        } else {
-            // TODO Check user can upload
-            return $this->render('torrents/upload');
-        }
-
-    }
-
     public function actionSearch()
     {
 
-    }
-
-    public function actionDetails()
-    {
-        $tid = app()->request->get('id');
-        $torrent = new Torrent($tid);
-
-        return $this->render('torrents/details', ['torrent' => $torrent]);
-    }
-
-    public function actionDownload()
-    {
-        $tid = app()->request->get('id');
-
-        $torrent = new Torrent($tid);  // If torrent is not exist or can't visit , a notfound exception will throw out........
-        $filename = '[' . app()->config->get('base.site_name') . ']' . $torrent->getTorrentName() . '.torrent';
-
-        app()->response->setHeader('Content-Type', 'application/x-bittorrent');
-        if (strpos(app()->request->header('user-agent'), 'IE')) {
-            app()->response->setHeader('Content-Disposition', 'attachment; filename=' . str_replace('+', '%20', rawurlencode($filename)));
-        } else {
-            app()->response->setHeader('Content-Disposition', "attachment; filename=\"$filename\" ; charset=utf-8");
-        }
-
-        return $torrent->getDownloadDict(true);
     }
 }

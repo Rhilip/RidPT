@@ -10,9 +10,10 @@
  * @var \apps\models\Torrent $torrent
  */
 
-include 'helper.php';
 $time_now = time();
 ?>
+
+<?php $this->insert('common/helper') ?>
 
 <?= $this->layout('layout/base') ?>
 
@@ -40,12 +41,12 @@ $time_now = time();
         <td>
             <div class="pull-left">
                 <!--suppress HtmlUnknownTarget -->
-                <a href="/torrents/details?id=<?= $torrent->getId() ?>" target="_blank"><?= $torrent->getTitle() ?></a>
+                <a href="/torrent/details?id=<?= $torrent->getId() ?>" target="_blank"><?= $torrent->getTitle() ?></a>
             </div>
             <div class="pull-right">
                 <div class="text-center" style="width: 5px">
                     <!--suppress HtmlUnknownTarget -->
-                    <a href="/torrents/download?id=<?= $torrent->getId() ?>"><i class="fas fa-download"></i></a>
+                    <a href="/torrent/download?id=<?= $torrent->getId() ?>"><i class="fas fa-download"></i></a>
                     <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->user->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star"></i></a>
                 </div>
             </div>

@@ -9,8 +9,9 @@
  * @var \apps\models\Torrent $torrent
  */
 
-include 'helper.php';
 ?>
+
+<?php $this->insert('common/helper') ?>
 
 <?= $this->layout('layout/base') ?>
 
@@ -45,8 +46,8 @@ include 'helper.php';
             <div class="layui-card-header"><b>Torrent Action</b></div>
             <div class="layui-card-body">
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
-                    <a href="/torrents/download?id=<?= $torrent->getId() ?>"><i class="fa fa-download fa-fw"></i>&nbsp;Download Torrent</a>
-                </div><!-- Download Torrent -->
+                    <a href="/torrent/download?id=<?= $torrent->getId() ?>"><i class="fa fa-download fa-fw"></i>&nbsp;Download Torrent</a>
+                </div><!-- Download TorrentController -->
                 <div class="torrent-action-item">
                     <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->user->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i>&nbsp;Add to Favour</a>
                 </div><!-- TODO Add to Favour -->
@@ -55,18 +56,18 @@ include 'helper.php';
                 </div><!-- TODO Add to RSS Basket -->
                 <hr>
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
-                    <a class="torrent-edit" href="/torrents/edit?id=<?= $torrent->getId() ?>"><i class="fas fa-edit fa-fw"></i>&nbsp;Edit/Remove this Torrent</a>
-                </div><!-- TODO Edit/Remove this Torrent -->
+                    <a class="torrent-edit" href="/torrent/edit?id=<?= $torrent->getId() ?>"><i class="fas fa-edit fa-fw"></i>&nbsp;Edit/Remove this Torrent</a>
+                </div><!-- TODO Edit/Remove this TorrentController -->
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                     <a class="torrent-report" href="/report?type=torrent&id=<?= $torrent->getId() ?>"><i class="fa fa-bug fa-fw"></i>&nbsp;Report this Torrent</a>
-                </div><!-- TODO Report this Torrent -->
+                </div><!-- TODO Report this TorrentController -->
                 <hr>
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                     <a class="torrent-files" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-file fa-fw"></i>&nbsp;View Torrent's Files</a>
-                </div><!-- TODO View Torrent's Files -->
+                </div><!-- TODO View TorrentController's Files -->
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                     <a class="torrent-structure" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-folder-open fa-fw"></i>&nbsp;View Torrent's Structure</a>
-                </div><!-- TODO View Torrent's Structure -->
+                </div><!-- TODO View TorrentController's Structure -->
             </div>
         </div>
         <div class="layui-card" id="torrent-info-card">
