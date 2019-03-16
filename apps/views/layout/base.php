@@ -97,6 +97,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
 
 <script src="/lib/layui/src/layui.js"></script>
 <script src="/lib/notice.js/dist/notice.js"></script>
+<script src="/static/js/bbcodeParser.js"></script>
 <script src="/static/js/main.js?<?= $css_tag ?>"></script>
 <?= $this->section('script') ?> <!-- Other temp script field -->
 

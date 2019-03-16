@@ -19,7 +19,7 @@ class View
     {
         $this->templates = new Engine(app()->getViewPath());
         $this->templates->loadExtension(new URI(app()->request->server('path_info')));
-        $this->templates->loadExtension(new \Rid\View\ByteConversion());
+        $this->templates->loadExtension(new \Rid\View\Conversion());
     }
 
     public function render($__template__, $__data__)

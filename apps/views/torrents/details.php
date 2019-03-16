@@ -27,8 +27,10 @@ include 'helper.php';
     <div class="layui-col-md8">
         <div class="layui-card" id="torrent-descr-card">
             <div class="layui-card-header"><b>Torrent Description</b></div>
-            <div class="layui-card-body" id="torrent-descr">
-                <?= $torrent->getDescr() ?: '<h4>No description.</h4>' ?>
+            <div class="layui-card-body ubb" id="torrent-descr">
+                <div class="ubbcode-block">
+                <?= $torrent->getDescr() ? $this->batch($torrent->getDescr(),'format_ubbcode') : '[h4]No description.[/h4]' ?>
+                </div>
             </div>
         </div>
         <div class="layui-card" id="torrent-commit-card">
