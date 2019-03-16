@@ -11,7 +11,7 @@ namespace apps\models\api\v1\form;
 
 use Rid\Validators\Validator;
 
-class TorrentsBookmarkForm extends Validator
+class TorrentsForm extends Validator
 {
     public $tid;
 
@@ -56,5 +56,18 @@ class TorrentsBookmarkForm extends Validator
 
             return ['msg' => 'Add New Bookmark Success', 'result' => 'added'];
         }
+    }
+
+    public function getFileList()
+    {
+        // Check if cache is exist if exist , just quick return
+        $filelist = app()->redis->hGet('Torrent:' . $this->tid . ':base_content', 'torrent_structure');
+        if ($filelist == false) {
+            $filelist = app()->pdo->createCommand('SELECT `torrent_structure` FROM `torrents` WHERE `id`= :tid LIMIT 1')->bindParams([
+                'tid' => $this->tid
+            ])->queryScalar();
+            // However, we don't cache it for cache safety reason.
+        }
+        return ['msg' => 'Get Filelist success', 'result' => json_decode($filelist, false)];
     }
 }

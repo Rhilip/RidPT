@@ -53,13 +53,13 @@ class Torrent
 
     public function loadTorrentContentById($id)
     {
-        $self = app()->redis->hGetAll('Torrent:id_' . $id . '_content');
+        $self = app()->redis->hGetAll('Torrent:' . $id . ':base_content');
         if (empty($self)) {
             $self = app()->pdo->createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
                     "id" => $id
                 ])->queryOne() ?? [];
-            app()->redis->hMset('Torrent:id_' . $id . '_content', $self);
-            app()->redis->expire('Torrent:id_' . $id . '_content', 3 * 60);
+            app()->redis->hMset('Torrent:' . $id . ':base_content', $self);
+            app()->redis->expire('Torrent:' . $id . ':base_content', 10 * 60);
         }
         $this->importAttributes($self);
     }

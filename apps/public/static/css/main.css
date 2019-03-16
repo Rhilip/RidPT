@@ -80,3 +80,6 @@ nav#menu .layui-nav-item{line-height:45px}
 
 .torrent-title-block{margin:15px}
 .torrent-action-item{padding:3px}
+
+.torrent-filelist-modal{width:700px}
+ul#torrent_filelist ul{margin-left:1.25em}
