@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v0.1.3-alpha"></a>
+## [v0.1.3-alpha] - 2019-03-16
 ### Build
 - **Compatible:** Remove Compatible Model
 - **Environment:** Upgrade Dependency of Mysql and PHP
@@ -24,30 +27,32 @@
 - **RSS:** Start Build rss feed
 - **Torrent:** Save Torrent File Structure in Table `torrents`
 - **Torrent:** Clean temp upload torrent file after success upload
-- **Torrent:** Add Torrent Content Cache
 - **Torrent:** Add Torrent FileList View
+- **Torrent:** Finish Torrent's Structure part
+- **Torrent:** Add Torrent Content Cache
 - **Torrent Upload:** Add utf-8 path support for torrent upload
 - **UBB:** Add ubb converter
+- **User:** Add User Active Seed/Leech Count
 - **User:** Add User Confirm Support
 - **User:** Add user load by passkey
-- **User:** Add User Active Seed/Leech Count
 - **View:** Add ram use status in footer
 - **i18n:** Add i18n Support
 
 ### Fix
-- **Auth:** Update description texts in `/auth/login`
-- **Auth:** Fix 'errors/action_fail' view should not be touch in AuthController
 - **Auth:** Fix layout fo Auth Point
+- **Auth:** Fix 'errors/action_fail' view should not be touch in AuthController
+- **Auth:** Update description texts in `/auth/login`
 - **Bencode:** Add full parse check
 - **Compatible:** Fix Compatible Model not work
 - **Database:** Change Foreign Key behaviour
 - **Nameplace:** Fix error nameplace of compatible
 - **Namespace:** Namespace miss change
+- **Torrent:** Fix Torrent Download Dict miss
 - **Upload:** Fix Upload Torrent can't save in database
 - **UserTrackerStatus:** Fix redis cache key miss
-- **View:** Fix cost time miss in render
 - **View:** Fix View Don't change after service reload
 - **View:** Fix `admin/redis_key` of wrong array echo
+- **View:** Fix cost time miss in render
 
 ### Perf
 - **Admin:** Call redis key info only when pattern give
@@ -69,6 +74,7 @@
 - **Framework:** Refactor framework from upstream
 - **Helpers:** Remove JsonHelper
 - **Output:** Remove \Rid\Console\Output
+- **Route:** Fix Route of Torrent
 - **Validator:** Change Validator Provider
 - **View:** Change template system
 - **XML:** Remove XML support
@@ -83,6 +89,20 @@
 - **Git:** Fix git style in private path
 - **Validator:** Separate File and Captcha Validate to Trait object
 - **View:** Change View Layout
+
+### BREAKING CHANGE
+
+New db structure `bookmarks`
+
+dbstructure of `Users` Change
+
+Change Validator Provider
+
+frontend framework and backend driver change
+
+Remove Compatible Model
+
+Mysql Version changes from 5.7 to 8.0
 
 
 <a name="v0.1.2-alpha"></a>
@@ -116,6 +136,7 @@ Structure of Table `users_session_log` Change
 <a name="v0.1.0-alpha"></a>
 ## v0.1.0-alpha - 2019-01-30
 
-[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.2-alpha...HEAD
+[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.3-alpha...HEAD
+[v0.1.3-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.2-alpha...v0.1.3-alpha
 [v0.1.2-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.1-alpha...v0.1.2-alpha
 [v0.1.1-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.0-alpha...v0.1.1-alpha
