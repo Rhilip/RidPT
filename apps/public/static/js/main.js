@@ -17,9 +17,12 @@ function humanFileSize(bytes, fix, si) {
 }
 
 
-layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
+layui.use('layui.all', function () {
+    // Get and short the call of the layui component
     let $ = layui.jquery;
     let layer = layui.layer;
+    let util = layui.util;
+
     let api_point = '/api/v1';
 
     // Convert ubbcode blcok text to html
@@ -38,6 +41,9 @@ layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
     });
     // TODO Add [hide] support
 
+    // Add quick to TOP fixbar
+    util.fixbar({showHeight: 100,});
+
     // Add/Remove favour action
     $('.torrent-favour').click(function () {
         let that = $(this);
@@ -50,7 +56,7 @@ layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
                 star.toggleClass('fas', !old_is_stared).toggleClass('far', old_is_stared);
                 layer.msg(`Torrent(${tid}) ${res.result} from your favour successfully`, {
                     icon: 6,
-                    offset: 'rb',
+                    offset: 'rt',
                 });
             } else {
                 layer.alert(res.errors.join(', '), {icon: 2});
@@ -88,7 +94,7 @@ layui.use(['layer', 'form', 'element', 'laypage', 'jquery'], function () {
                     btn: [],
                     anim: 5,
                     shadeClose: true, //开启遮罩关闭
-                    area: ['700px','500px'],
+                    area: ['700px', '500px'],
                     content: "<ul id='torrent-filelist'>" + list_worker(file_list) + "</ul>",
                     success: function (layero, index) {
                         $('#torrent-filelist a').click(function () {

@@ -18,8 +18,8 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
 
     <title><?= app()->config->get('base.site_name') ?> :: <?= $this->e($this->section('title') ?? '') ?> -- Powered by <?= app()->config->get('base.site_generator') ?></title>
 
-    <link rel="stylesheet" href="/lib/layui/src/css/layui.css"> <?php /** https://www.layui.com/doc/ */ ?>
-    <link rel="stylesheet" href="/lib/fontAwesome/css/all.css"> <?php /** https://fontawesome.com/icons?d=gallery */ ?>
+    <link rel="stylesheet" href="/lib/layui/dist/css/layui.css"> <?php /** https://www.layui.com/doc/ */ ?>
+    <link rel="stylesheet" href="/lib/fontAwesome/css/all.min.css"> <?php /** https://fontawesome.com/icons?d=gallery */ ?>
 
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="/static/css/main.css?<?= $css_tag ?>">
@@ -98,7 +98,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
     </div>
 </footer>
 
-<script src="/lib/layui/src/layui.js"></script>
+<script src="/lib/layui/dist/layui.all.js"></script>
 <script src="/static/js/bbcodeParser.js"></script>
 <script src="/static/js/main.js?<?= $css_tag ?>"></script>
 <?= $this->section('script') ?> <!-- Other temp script field -->
