@@ -5,6 +5,7 @@ namespace Rid\Http;
 use Rid\Base\BaseObject;
 
 use Rid\Base\TaskInterface;
+use Rid\Base\Timer;
 use Rid\Exceptions\TaskException;
 use Rid\Helpers\ProcessHelper;
 
@@ -108,6 +109,16 @@ class HttpServer extends BaseObject
             $app->setServ($this->_server);
             $app->setWorker($workerId);
             $app->loadAllComponents();
+
+            if ($workerId == 0) {  // 将系统设置中的 Timer 添加到 worker #0 中
+                foreach (app()->env('timer') as $timer_name => $timer_config) {
+                    $timer_class = $timer_config['class'];
+                    $timer = new $timer_class();
+                    if ($timer instanceof \Rid\Base\TimerInterface) {
+                        $timer->run($timer_config);
+                    }
+                }
+            }
         });
     }
 

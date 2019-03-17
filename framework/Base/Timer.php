@@ -16,6 +16,10 @@ namespace Rid\Base;
 class Timer implements StaticInstanceInterface
 {
     use StaticInstanceTrait;
+
+    const AFTER = 'after';
+    const TICK = 'tick';
+
     /**
      * 定时器ID
      * @var int
@@ -83,5 +87,15 @@ class Timer implements StaticInstanceInterface
             return swoole_timer_clear($this->_timerId);
         }
         return false;
+    }
+
+    public function run($config)
+    {
+        $type = $config['type'];
+        $msec = $config['msec'];
+        $callback = $config['callback'];
+
+        println('New Timer '. self::class .' added. (Type: ' . $type . ', msec: ' . $msec . ', callback function: ' . $callback . ')');
+        $this->{$type}($msec, [$this, $callback]);
     }
 }

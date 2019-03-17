@@ -209,6 +209,16 @@ return [
         ],
     ],
 
+    // 定时器配置
+    'timer'            => [
+        'crontab' => [
+            'class' => \apps\task\CronTabTimer::class,
+            'type' => \Rid\Base\Timer::TICK,
+            'msec' => 1 * 1000,    // 单位为毫秒
+            'callback' => 'init'
+        ]
+    ],
+
     // 类库配置
     'libraries'           => [
         'swiftmailer' => [
