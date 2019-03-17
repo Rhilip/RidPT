@@ -9,7 +9,7 @@
 namespace apps\models\form;
 
 use Rid\Helpers\StringHelper;
-use Rid\User\UserInterface;
+use apps\components\User\UserInterface;
 
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;

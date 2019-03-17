@@ -6,7 +6,7 @@
  * Time: 20:24
  */
 
-namespace Rid\User;
+namespace apps\components\User;
 
 use Rid\Exceptions\NotFoundException;
 use Rid\Utils\AttributesImportUtils;

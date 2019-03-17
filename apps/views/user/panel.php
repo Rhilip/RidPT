@@ -5,7 +5,7 @@
  * Date: 2019/2/22
  * Time: 17:13
  *
- * @var \Rid\User\UserTrait $user
+ * @var \apps\components\User\UserTrait $user
  */
 ?>
 

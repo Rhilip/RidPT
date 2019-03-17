@@ -196,16 +196,16 @@ return [
             'class'   => Rid\Component\Config::class,
         ],
 
-        'user' => [
-            'class' => Rid\User\User::class,
-        ],
-
         'i18n' => [
             'class' => Rid\Component\I18n::class,
             'fileNamespace' => 'apps\lang',
             'fallbackLang' => 'en',
             'forcedLang' => null,
             'allowedLangSet' => ['en', 'zh-CN']
+        ],
+
+        'user' => [
+            'class' => apps\components\User\User::class,
         ],
     ],
 

@@ -59,7 +59,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
         <div class="pull-left">
             Welcome Back, <a href="/user" data-user-id="<?= app()->user->getId() ?>"><?= app()->user->getUsername() ?></a>&nbsp;
             <span data-item="logout"><!--suppress HtmlUnknownTarget --><a href="/auth/logout">[Logout]</a></span>&nbsp;
-            <?php if (app()->user->getClass(true) > \Rid\User\UserInterface::ROLE_FORUM_MODERATOR): ?>
+            <?php if (app()->user->getClass(true) > \apps\components\User\UserInterface::ROLE_FORUM_MODERATOR): ?>
                 <span><!--suppress HtmlUnknownTarget --><a href="/admin">[Admin Panel]</a></span>&nbsp;
             <?php endif; ?>
             <span data-item="favour"><!--suppress HtmlUnknownTarget --><a href="/torrents/favour">[Favour]</a></span>&nbsp;

@@ -6,7 +6,7 @@
  * Time: 11:39
  */
 
-namespace Rid\User;
+namespace apps\components\User;
 
 interface UserInterface
 {

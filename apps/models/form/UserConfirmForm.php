@@ -8,7 +8,7 @@
 
 namespace apps\models\form;
 
-use Rid\User\UserInterface;
+use apps\components\User\UserInterface;
 use Rid\Validators\Validator;
 
 

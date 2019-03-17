@@ -8,7 +8,7 @@
 
 namespace apps\controllers;
 
-use Rid\User\UserInterface;
+use apps\components\User\UserInterface;
 use Rid\Utils\IpUtils;
 use Rid\Bencode\Bencode;
 

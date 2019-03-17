@@ -6,7 +6,7 @@
  * Time: 19:30
  */
 
-namespace Rid\User;
+namespace apps\components\User;
 
 use Rid\Base\Component;
 
