@@ -80,4 +80,9 @@ class Response extends BaseResponse
         $this->_responder->end($this->content);
     }
 
+    public function getResponderStatus()
+    {
+        return isset($this->_responder);
+    }
+
 }
