@@ -134,7 +134,7 @@ class UserLoginForm extends Validator
                 'VALUES (:uid,:sid,INET6_ATON(:login_ip),:ua, NOW())')->bindParams([
                 'uid' => $userId, 'sid' => $userSessionId,
                 'login_ip' => app()->request->getClientIp(),
-                'ua' => app()->request->getUserAgent()
+                'ua' => app()->request->header('user-agent')
             ])->execute();
 
             // Add this session id in Redis Cache

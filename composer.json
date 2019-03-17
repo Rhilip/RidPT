@@ -31,7 +31,6 @@
     "psr/log": "^1.1",
     "robthree/twofactorauth": "^1.6",
     "swiftmailer/swiftmailer": "^6.1",
-    "piwik/device-detector": "^3.11",
     "league/plates": "^3.3",
     "siriusphp/validation": "^2.2",
     "phpmailer/phpmailer": "^6.0"
