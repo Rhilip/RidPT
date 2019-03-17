@@ -222,14 +222,23 @@ class TrackerController
         if (strspn(strtolower($passkey), 'abcdef0123456789') != 32)
             throw new TrackerException(131, [":attribute" => "passkey", ":reason" => "The format of passkey isn't correct"]);
 
+        // If this passkey is exist in no-exist set. (Worked as `Filter`
+        if (app()->redis->sIsMember('Tracker:no_exist_user_passkey_set', $passkey))
+            throw new TrackerException(140);
+
         // Get userInfo from RedisConnection Cache and then Database
-        $userInfo = app()->redis->get("TRACKER:user_passkey_" . $passkey . "_content");
+        $userInfo = app()->redis->get("TRACKER:user:passkey_" . $passkey . "_content");
         if ($userInfo === false) {
             // If Cache breakdown , We will get User info from Database and then cache it
             // Notice: if this passkey is not find in Database , a null will be cached.
             $userInfo = app()->pdo->createCommand("SELECT `id`,`status`,`passkey`,`downloadpos`,`class`,`uploaded`,`downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1")
-                ->bindParams(["passkey" => $passkey])->queryOne() ?: null;
-            app()->redis->setex("TRACKER:user_passkey_" . $passkey . "_content", 3600, $userInfo);
+                ->bindParams(["passkey" => $passkey])->queryOne();
+            if ($userInfo === false) {
+                app()->redis->sAdd('Tracker:no_exist_user_passkey_set', $passkey);
+                throw new TrackerException(140);
+            }
+
+            app()->redis->setex("TRACKER:user:passkey_" . $passkey . "_content", 3600, $userInfo);
         }
 
         /**
@@ -239,10 +248,30 @@ class TrackerController
          *  - The user's status is not `confirmed`
          *  - The user's download Permission is disabled.
          */
-        if (is_null($userInfo)) throw new TrackerException(140);
         if ($userInfo["status"] != "confirmed") throw new TrackerException(141, [":status" => $userInfo["status"]]);
         if ($userInfo["downloadpos"] == "no") throw new TrackerException(142);
     }
+
+    private function getTorrentInfoByHash($hash, $field)
+    {
+        // If this torrent info_hash is exist in no-exist set. (Worked as `Filter`
+        if (app()->redis->sIsMember('Tracker:no_exist_torrent_info_hash_set', $hash)) return [];
+
+        $cache_key = 'Tracker:torrent:info_' . $hash . '_content_hash';
+        $exist = app()->redis->exists($cache_key);
+        if ($exist === 0) {  // This cache key is not exist , get it's information from db and then cache it
+            $torrentInfo = app()->pdo->createCommand("SELECT id , info_hash , owner_id , status , incomplete , complete, downloaded , added_at FROM torrents WHERE info_hash = :info LIMIT 1")
+                ->bindParams(["info" => $hash])->queryOne();
+            if ($torrentInfo === false) {  // No-exist torrent
+                app()->redis->sAdd('Tracker:no_exist_torrent_info_hash_set', $hash);
+                return [];
+            }
+            app()->redis->hMset($cache_key, $torrentInfo);
+            app()->redis->expire($cache_key, 360); // FIXME this ttl may too small
+        }
+        return app()->redis->hMGet($cache_key, $field);
+    }
+
 
     /**
      * @param $info_hash_array
@@ -267,12 +296,7 @@ class TrackerController
     {
         $torrent_details = [];
         foreach ($info_hash_array as $item) {
-            $metadata = app()->redis->get("TRACKER:torrent_hash_" . $item . "_scrape_content");
-            if ($metadata === false) {
-                $metadata = app()->pdo->createCommand("SELECT incomplete, complete , downloaded FROM torrents WHERE info_hash = :info LIMIT 1")
-                    ->bindParams(["info" => $item])->queryOne() ?: null;
-                app()->redis->setex("TRACKER:torrent_hash_" . $item . "_scrape_content", 350, $metadata);
-            }
+            $metadata = $this->getTorrentInfoByHash($item, ['incomplete', 'complete', 'downloaded']);
             if (!is_null($metadata)) $torrent_details[$item] = $metadata;  // Append it to tmp array only it exist.
         }
 
@@ -565,19 +589,12 @@ class TrackerController
      */
     private function getTorrentInfo($queries, $userInfo, &$torrentInfo)
     {
-        $info_hash = $queries["info_hash"];
-
-        $torrentInfo = app()->redis->get('TRACKER:torrent_hash_' . $info_hash . '_content');
-        if ($torrentInfo === false) {
-            $torrentInfo = app()->pdo->createCommand("SELECT id , info_hash , owner_id , status , incomplete , complete , added_at FROM torrents WHERE info_hash = :info LIMIT 1")
-                ->bindParams(["info" => $info_hash])->queryOne() ?: null;
-            app()->redis->setex('TRACKER:torrent_hash_' . $info_hash . '_content', 350, $torrentInfo);
-        }
+        $torrentInfo = $this->getTorrentInfoByHash($queries["info_hash"], ['id', 'info_hash', 'owner_id', 'status', 'incomplete', 'complete', 'added_at']);
         if (is_null($torrentInfo)) throw new TrackerException(150);
 
         switch ($torrentInfo["status"]) {
             case 'confirmed' :
-                break; // Do nothing , just break torrent status check when it is a confirmed torrent
+                return; // Do nothing , just break torrent status check when it is a confirmed torrent
             case 'pending' :
                 {
                     // For Pending torrent , we just allow it's owner and other user who's class great than your config set to connect
