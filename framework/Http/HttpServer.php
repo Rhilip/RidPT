@@ -160,9 +160,6 @@ class HttpServer extends BaseObject
         $configTable->column('data', \Swoole\Table::TYPE_STRING, 256);
         $configTable->create();
         $this->_server->configTable = $configTable;
-
-        // 为 Dynamic Config construct行为创建一个锁，防止不同Worker下的Config同时写入（虽然这种情况也没什么事）
-        $this->_server->configTable_construct_lock = new \Swoole\Lock(SWOOLE_MUTEX);
     }
 
     // 欢迎信息
