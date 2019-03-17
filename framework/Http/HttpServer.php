@@ -4,6 +4,7 @@ namespace Rid\Http;
 
 use Rid\Base\BaseObject;
 
+use Rid\Base\TaskInterface;
 use Rid\Helpers\ProcessHelper;
 
 /**
@@ -23,7 +24,7 @@ class HttpServer extends BaseObject
         'enable_coroutine' => false,  // 开启协程
         'reactor_num' => 8,   // 主进程事件处理线程数
         'worker_num' => 8,  // 工作进程数
-        'task_worker_num' => 0,  // 任务进程数
+        'task_worker_num' => 8,  // 任务进程数
         'max_request' => 10000,      // 进程的最大任务数
         'reload_async' => true,    // 异步安全重启
         'max_wait_time' => 60,   // 退出等待时间
@@ -60,6 +61,7 @@ class HttpServer extends BaseObject
         $this->onStart();
         $this->onManagerStart();
         $this->onWorkerStart();
+        $this->onTaskStart();
         $this->onRequest();
         $this->_server->set($this->settings);
         $this->_server->start();
@@ -88,8 +90,7 @@ class HttpServer extends BaseObject
         $this->_server->on('WorkerStart', function (\swoole_server $server,int $workerId) {
             // 刷新OpCode缓存，防止reload重载入时受到影响
             foreach (['apc_clear_cache', 'opcache_reset'] as $func) {
-                if (function_exists($func)) /** @noinspection PhpComposerExtensionStubsInspection */
-                    $func();
+                if (function_exists($func)) $func();
             }
 
             // 进程命名
@@ -105,6 +106,28 @@ class HttpServer extends BaseObject
             $app->setServ($this->_server);
             $app->setWorker($workerId);
             $app->loadAllComponents();
+        });
+    }
+
+    protected function onTaskStart()
+    {
+        $this->_server->on('Task', function (\swoole_server $serv, int $task_id, int $src_worker_id, $data) {
+            $error_msg = "This Task {$task_id} from Worker {$src_worker_id}.\n";
+            $data = json_decode($data, true);
+            $task_worker_name = $data['worker'];
+            if (class_exists($task_worker_name)) {
+                /** @var TaskInterface $task_worker */
+                $task_worker = new $task_worker_name();
+                if ($task_worker instanceof TaskInterface) {
+                    return $task_worker->run($data);
+                }
+                $error_msg .= "Error: The task worker is not instanceof TaskInterface,\nData: " . json_encode($data);
+                app()->log->critical($error_msg);
+                return new \RuntimeException('The task worker is not instanceof TaskInterface');
+            }
+            $error_msg .= "No Task Worker model found,\nData: " . json_encode($data);
+            app()->log->critical($error_msg);
+            return new \RuntimeException('No Task Worker model found.');
         });
     }
 
@@ -127,7 +150,7 @@ class HttpServer extends BaseObject
         // 实例化服务器
         $this->_server = new \Swoole\Http\Server($this->_host, $this->_port);
 
-        // rid-httpd 模式下，ConfigHandler 一定为 \Swoole\Table ，在此处创建全局的 \Swoole\Table
+        // rid-httpd 模式下，在此处创建全局的 \Swoole\Table
         $configTable = new \Swoole\Table(2048);
         $configTable->column('data', \Swoole\Table::TYPE_STRING, 256);
         $configTable->create();

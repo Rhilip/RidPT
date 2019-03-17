@@ -76,18 +76,30 @@ class ServiceCommand extends Command
         return ExitCode::OK;  // 返回退出码
     }
 
-    // 重启工作进程
-    public function actionReload()
+    private function _reload($sig = SIGUSR1)
     {
         if ($pid = ProcessHelper::readPidFile($this->pidFile)) {
-            ProcessHelper::kill($pid, SIGUSR1);
+            ProcessHelper::kill($pid, $sig);
         }
         if (!$pid) {
             println('rid-httpd is not running.');
             return ExitCode::UNSPECIFIED_ERROR;
         }
-        println('rid-httpd worker process reload completed.');
+        println('rid-httpd ' . ($sig == SIGUSR1 ? 'worker' : 'task') . ' process reload completed.');
         return ExitCode::OK; // 返回退出码
+    }
+
+
+    // 重启工作进程
+    public function actionReload()
+    {
+        return $this->_reload();
+    }
+
+    // 重启任务进程
+    public function actionTaskReload()
+    {
+        return $this->_reload(SIGUSR2);
     }
 
     // 查看服务状态

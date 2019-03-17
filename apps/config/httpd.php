@@ -16,6 +16,7 @@ return [
         'service stop'    => ['Service', 'Stop', 'description' => 'Stop the rid-httpd service.'],
         'service restart' => ['Service', 'Restart', 'description' => 'Restart the rid-httpd service.'],
         'service reload'  => ['Service', 'Reload', 'description' => 'Reload the worker process of the rid-httpd service.'],
+        'service taskreload' => ['Service','TaskReload' , 'description' => 'Reload the task process of the rid-httpd service.'],
         'service status'  => ['Service', 'Status', 'description' => 'Check the status of the rid-httpd service.'],
 
     ],
@@ -61,7 +62,8 @@ return [
             'settings'    => [
                 'enable_coroutine' => false,  // 开启协程
                 'reactor_num'      => 1,  // 连接处理线程数
-                'worker_num'       => 20,  // 工作进程数
+                'worker_num'       => 5,  // 工作进程数
+                'task_worker_num' => 10,   // Task进程数
                 'pid_file'         => '/var/run/rid-httpd.pid',  // PID 文件
                 'log_file'         => '/tmp/rid-httpd.log',  // 日志文件路径
                 'max_request'      => 3000, // 进程的最大任务数
