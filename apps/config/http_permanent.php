@@ -17,8 +17,5 @@ return array_replace_recursive($base, [
             'class' => Rid\Redis\Persistent\RedisConnection::class,
         ],
 
-        'config' => [
-            'class'   => Rid\Component\Config::class,
-        ]
     ],
 ]);

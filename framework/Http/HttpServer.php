@@ -5,6 +5,7 @@ namespace Rid\Http;
 use Rid\Base\BaseObject;
 
 use Rid\Base\TaskInterface;
+use Rid\Exceptions\TaskException;
 use Rid\Helpers\ProcessHelper;
 
 /**
@@ -61,7 +62,8 @@ class HttpServer extends BaseObject
         $this->onStart();
         $this->onManagerStart();
         $this->onWorkerStart();
-        $this->onTaskStart();
+        $this->onTask();
+        $this->onFinish();
         $this->onRequest();
         $this->_server->set($this->settings);
         $this->_server->start();
@@ -109,11 +111,11 @@ class HttpServer extends BaseObject
         });
     }
 
-    protected function onTaskStart()
+    protected function onTask()
     {
         $this->_server->on('Task', function (\swoole_server $serv, int $task_id, int $src_worker_id, $data) {
             $error_msg = "This Task {$task_id} from Worker {$src_worker_id}.\n";
-            $data = json_decode($data, true);
+            $data = unserialize($data);
             $task_worker_name = $data['worker'];
             if (class_exists($task_worker_name)) {
                 /** @var TaskInterface $task_worker */
@@ -122,12 +124,16 @@ class HttpServer extends BaseObject
                     return $task_worker->run($data);
                 }
                 $error_msg .= "Error: The task worker is not instanceof TaskInterface,\nData: " . json_encode($data);
-                app()->log->critical($error_msg);
-                return new \RuntimeException('The task worker is not instanceof TaskInterface');
+                throw new TaskException($error_msg);
             }
             $error_msg .= "No Task Worker model found,\nData: " . json_encode($data);
-            app()->log->critical($error_msg);
-            return new \RuntimeException('No Task Worker model found.');
+            throw new TaskException($error_msg);
+        });
+    }
+
+    protected function onFinish() {
+        $this->_server->on('Finish', function (\swoole_server $serv, $task_id, $data) {
+            //echo "Task#$task_id finished, data_len=".strlen($data).PHP_EOL;
         });
     }
 
@@ -135,11 +141,10 @@ class HttpServer extends BaseObject
     protected function onRequest()
     {
         $this->_server->on('request', function (\swoole_http_request $request,\swoole_http_response $response) {
-            // 执行请求
             try {
                 app()->request->setRequester($request);
                 app()->response->setResponder($response);
-                app()->run();
+                app()->run();  // 执行请求
             } catch (\Throwable $e) {
                 app()->error->handleException($e);
             }

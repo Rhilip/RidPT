@@ -29,7 +29,7 @@ trait StaticInstanceTrait
         $config = \Rid::app()->env($name);
         $object = \Rid::createObject($config);
         if (get_class($object) != $class) {
-            throw new \Rid\Exceptions\ConfigException('实例化类型与配置类型不符');
+            throw new \Rid\Exceptions\ConfigException('实例化类型与配置类型不符，期望 :' . $class . '当前:' . get_class($object));
         }
         return $object;
     }

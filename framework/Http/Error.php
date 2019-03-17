@@ -28,6 +28,12 @@ class Error extends Component
     // 异常处理
     public function handleException($e)
     {
+        // task处理
+        if ($e instanceof \Rid\Exceptions\TaskException) {
+            app()->log->critical($e->getMessage());
+            return;
+        }
+
         // debug处理 & exit处理
         if ($e instanceof \Rid\Exceptions\DebugException || $e instanceof \Rid\Exceptions\EndException) {
             \Rid::app()->response->content = $e->getMessage();

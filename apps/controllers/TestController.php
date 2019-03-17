@@ -12,11 +12,6 @@ namespace apps\controllers;
 class TestController
 {
     public function actionIndex() {
-        app()->getServ()->task(json_encode(
-            [
-                'worker' => \apps\task\EchoTask::class,
-                'data' => 'Hello World',
-            ]
-        ));
+        return 'Test Model';
     }
 }

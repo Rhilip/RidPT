@@ -97,8 +97,5 @@ return array_replace_recursive($base, [
             'max' => 50,
         ],
 
-        'config' => [
-            'class'   => Rid\Component\Config::class,
-        ]
     ],
 ]);
