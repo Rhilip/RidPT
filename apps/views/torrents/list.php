@@ -64,7 +64,7 @@ $time_now = time();
         <td class="text-center" data-item="t-seeder" data-seeder="<?= $this->e($torrent->getComplete()) ?>"><?= number_format($torrent->getComplete()) ?></td>
         <td class="text-center" data-item="t-leecher" data-leecher="<?= $this->e($torrent->getIncomplete()) ?>"><?= number_format($torrent->getIncomplete()) ?></td>
         <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>"><?= number_format($torrent->getDownloaded()) ?></td>
-        <td class="text-center" data-item="t-uploader" data-uploader="<?= $this->e(get_torrent_uploader_id($torrent)) ?>"><?= get_torrent_uploader($torrent) ?></td>
+        <td class="text-center" data-item="t-uploader" data-uploader="<?= $this->e($torrent->getOwnerId()) ?>"><?= get_torrent_uploader($torrent) ?></td>
     </tr>
     <?php endforeach; ?>
     </tbody>

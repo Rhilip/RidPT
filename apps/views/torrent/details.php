@@ -74,7 +74,7 @@
             <div class="layui-card-body">
                 <div data-field="added_date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>"><b>Uploaded Date:</b> <?= $torrent->getAddedAt() ?></div>
                 <div data-field="size" data-filesize="<?= $torrent->getTorrentSize() ?>"><b>File size:</b> <?= $this->e($torrent->getTorrentSize(),'format_bytes') ?></div>
-                <div data-field="uploader" data-owner-id="<?= get_torrent_uploader_id($torrent) ?>"><b>Uploader:</b> <?= get_torrent_uploader($torrent) ?></div>
+                <div data-field="uploader" data-owner-id="<?= $torrent->getOwnerId() ?>"><b>Uploader:</b> <?= get_torrent_uploader($torrent) ?></div>
                 <div data-field="peers" data-seeders="<?= $torrent->getComplete() ?>" data-leechers="<?= $torrent->getComplete() ?>" data-completed="<?= $torrent->getDownloaded() ?>">
                     <b>Peers:</b> <span style="color: green;"><i class="fas fa-arrow-up fa-fw"></i> <?= $torrent->getComplete() ?></span> / <span style="color: red;"><i class="fas fa-arrow-down fa-fw"></i> <?= $torrent->getIncomplete() ?></span> / <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
                 </div>

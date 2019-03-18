@@ -82,7 +82,12 @@ class Torrent
      */
     public function getOwnerId()
     {
-        return $this->owner_id;
+        if ($this->getUplver() == 'yes' and app()->user->getClass(true) < app()->config->get('authority.see_anonymous_uploader')) {
+            return 0;
+        } else {
+            return $this->owner_id;
+        }
+
     }
 
     public function getOwner()
