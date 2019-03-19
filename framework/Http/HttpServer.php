@@ -114,7 +114,7 @@ class HttpServer extends BaseObject
                 foreach (app()->env('timer') as $timer_name => $timer_config) {
                     $timer_class = $timer_config['class'];
                     $timer = new $timer_class();
-                    if ($timer instanceof \Rid\Base\TimerInterface) {
+                    if ($timer instanceof Timer) {
                         $timer->run($timer_config);
                     }
                 }

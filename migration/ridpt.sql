@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 14, 2019 at 03:59 PM
+-- Generation Time: Mar 19, 2019 at 02:18 PM
 -- Server version: 8.0.14
 -- PHP Version: 7.3.1
 
@@ -141,7 +141,7 @@ CREATE TABLE IF NOT EXISTS `bookmarks` (
   `tid` int(11) UNSIGNED NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UN_bookmarks_uid_tid` (`tid`,`uid`),
-  KEY `IN_bookmarks_users_id` (`uid`)
+  KEY `IN_bookmarks_users_id` (`uid`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -421,16 +421,30 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 
 DROP TABLE IF EXISTS `site_crontab`;
 CREATE TABLE IF NOT EXISTS `site_crontab` (
-  `id` int(10) UNSIGNED NOT NULL,
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `job` varchar(64) NOT NULL,
+  `priority` int(10) UNSIGNED NOT NULL DEFAULT '100',
   `job_interval` int(11) NOT NULL,
   `last_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `next_run_at` timestamp NOT NULL
+  `next_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `site_crontab`:
 --
+
+--
+-- Truncate table before insert `site_crontab`
+--
+
+TRUNCATE TABLE `site_crontab`;
+--
+-- Dumping data for table `site_crontab`
+--
+
+INSERT INTO `site_crontab` (`id`, `job`, `priority`, `job_interval`) VALUES
+(1, 'clean_dead_peer', 1, 600);
 
 -- --------------------------------------------------------
 

@@ -87,7 +87,6 @@ class Torrent
         } else {
             return $this->owner_id;
         }
-
     }
 
     public function getOwner()

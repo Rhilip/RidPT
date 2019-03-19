@@ -25,6 +25,17 @@ class Timer implements StaticInstanceInterface
      * @var int
      */
     protected $_timerId;
+
+    protected $_config;
+
+    /**
+     * @return int
+     */
+    public function getTimerId(): int
+    {
+        return $this->_timerId;
+    }
+
     /**
      * 在指定的时间后执行函数
      * 一次性执行
@@ -91,11 +102,12 @@ class Timer implements StaticInstanceInterface
 
     public function run($config)
     {
+        $this->_config = $config;
         $type = $config['type'];
         $msec = $config['msec'];
         $callback = $config['callback'];
 
-        println('New Timer '. self::class .' added. (Type: ' . $type . ', msec: ' . $msec . ', callback function: ' . $callback . ')');
         $this->{$type}($msec, [$this, $callback]);
+        println('New Timer ' . self::class . ' added. (Type: ' . $type . ', msec: ' . $msec . ', callback function: ' . $callback . ')');
     }
 }
