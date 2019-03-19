@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 19, 2019 at 02:18 PM
+-- Generation Time: Mar 19, 2019 at 03:13 PM
 -- Server version: 8.0.14
 -- PHP Version: 7.3.1
 
@@ -423,11 +423,12 @@ DROP TABLE IF EXISTS `site_crontab`;
 CREATE TABLE IF NOT EXISTS `site_crontab` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `job` varchar(64) NOT NULL,
-  `priority` int(10) UNSIGNED NOT NULL DEFAULT '100',
+  `priority` int(10) UNSIGNED NOT NULL DEFAULT '100' COMMENT '0 - disable this crontab work, else the lower number job have higher priority, by default 100',
   `job_interval` int(11) NOT NULL,
   `last_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `next_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `IN_site_crontab_priority_next_run_at` (`priority`,`next_run_at`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --

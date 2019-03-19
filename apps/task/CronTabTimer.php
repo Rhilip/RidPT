@@ -29,7 +29,7 @@ class CronTabTimer extends Timer
     public function init()
     {
         // Get all run
-        $to_run_jobs = app()->pdo->createCommand('SELECT * FROM `site_crontab` WHERE `next_run_at` < NOW() ORDER BY priority ASC;')->queryAll();
+        $to_run_jobs = app()->pdo->createCommand('SELECT * FROM `site_crontab` WHERE `priority` > 0 AND `next_run_at` < NOW() ORDER BY priority ASC;')->queryAll();
         foreach ($to_run_jobs as $job) {
             if (method_exists($this, $job['job'])) {
                 app()->pdo->beginTransaction();

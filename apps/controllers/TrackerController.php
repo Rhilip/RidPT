@@ -258,7 +258,7 @@ class TrackerController
         if ($exist === 0) {  // This cache key is not exist , get it's information from db and then cache it
             $torrentInfo = app()->pdo->createCommand("SELECT id , info_hash , owner_id , status , incomplete , complete, downloaded , added_at FROM torrents WHERE info_hash = :info LIMIT 1")
                 ->bindParams(["info" => $hash])->queryOne();
-            if ($torrentInfo === false) {  // No-exist torrent
+            if ($torrentInfo === false || $torrentInfo['status'] == 'deleted') {  // No-exist or deleted torrent
                 app()->redis->sAdd('Tracker:no_exist_torrent_info_hash_set', $hash);
                 return [];
             }
@@ -293,7 +293,7 @@ class TrackerController
         $torrent_details = [];
         foreach ($info_hash_array as $item) {
             $metadata = $this->getTorrentInfoByHash($item, ['incomplete', 'complete', 'downloaded']);
-            if (!is_null($metadata)) $torrent_details[$item] = $metadata;  // Append it to tmp array only it exist.
+            if (!empty($metadata)) $torrent_details[$item] = $metadata;  // Append it to tmp array only it exist.
         }
 
         $rep_dict = ["files" => $torrent_details];
@@ -588,7 +588,7 @@ class TrackerController
     private function getTorrentInfo($queries, $userInfo, &$torrentInfo)
     {
         $torrentInfo = $this->getTorrentInfoByHash($queries["info_hash"], ['id', 'info_hash', 'owner_id', 'status', 'incomplete', 'complete', 'added_at']);
-        if (is_null($torrentInfo)) throw new TrackerException(150);
+        if (empty($torrentInfo)) throw new TrackerException(150);
 
         switch ($torrentInfo["status"]) {
             case 'confirmed' :
@@ -608,11 +608,9 @@ class TrackerController
                         throw new TrackerException(151, [":status" => $torrentInfo["status"]]);
                     break;
                 }
-            case 'deleted' :
             default:
                 {
-                    // For Deleted Torrent , no one can connect anymore..
-                    throw new TrackerException(151, [":status" => $torrentInfo["status"]]);
+                    throw new TrackerException(152, [":status" => $torrentInfo["status"]]);
                 }
         }
     }
