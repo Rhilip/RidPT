@@ -39,6 +39,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
         </div>
     </div>
 </header>
+<div class="clearfix"></div>
 
 <nav id="nav" class="header-nav layui-container">
     <div class="layui-row" align="center">
@@ -81,11 +82,12 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
         </div>
     </div>
 </nav> <!-- /nav -->
-
+<div class="clearfix"></div>
 
 <div id="container" class="layui-container">
     <?= $this->section('container') ?> <!-- Page Content -->
 </div> <!-- /container -->
+<div class="clearfix"></div>
 
 <footer id="footer-menu">
     <div class="container" align="center">

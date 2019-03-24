@@ -166,11 +166,3 @@
     </div>
 </div>
 <?php $this->end(); ?>
-
-<?php $this->push('script') ?>
-<script>
-    layui.use(['element'],function () {
-
-    });
-</script>
-<?php $this->end() ?>

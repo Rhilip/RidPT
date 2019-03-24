@@ -24,61 +24,57 @@
 
 <p><strong><?= $dbsize ?> Keys available.</strong></p>
 
-<div class="row">
-    <div class="col-md-12">
-
-        <ul class="nav nav-tabs" role="tablist" id="serverstatus-tabs">
-            <li class="active"><a href="#overall">Overall Status</a></li>
-            <li><a href="#commands">Command Statistics</a></li>
-        </ul>
-
-        <div class="tab-content">
-            <div class="tab-pane active" id="overall">
-                <table class="layui-table">
-                    <thead>
-                    <tr>
-                        <th>Key</th>
-                        <th>Value</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($info as $key => $value): ?>
-                        <?php if (strpos($key, 'cmdstat_') === false): ?>
-                            <tr>
-                                <td><?= $key ?></td>
-                                <td><code><?= $value ?></code></td>
-                            </tr>
-                        <?php endif ?>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="tab-pane" id="commands">
-                <table class="layui-table">
-                    <thead>
-                    <tr>
-                        <th>Command</th>
-                        <th class="text-right">Calls</th>
-                        <th class="text-right">Call Share</th>
-                        <th class="text-right">Duration (Microseconds)</th>
-                        <th class="text-right">Duration/Call</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php foreach ($cmdstat as $key => $value): ?>
+<div class="layui-collapse">
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title"> Overall Status </h2>
+        <div class="layui-colla-content layui-show">
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($info as $key => $value): ?>
+                    <?php if (strpos($key, 'cmdstat_') === false): ?>
                         <tr>
-                            <td><code><?= str_replace('cmdstat_', '', $key) ?> </code></td>
-                            <td class="text-right"><?= $value['calls'] ?></td>
-                            <td class="text-right"><?= sprintf('%.2f', $value["calls"] / $info["total_commands_processed"] * 100) ?> %</td>
-                            <td class="text-right"><?= $value['usec'] ?></td>
-                            <td class="text-right"><?= sprintf('%.1f', $value['usec_per_call']) ?></td>
+                            <td><?= $key ?></td>
+                            <td><code><?= $value ?></code></td>
                         </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                    <?php endif ?>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
         </div>
-
     </div>
-</div><?php $this->end(); ?>
+    <div class="layui-colla-item">
+        <h2 class="layui-colla-title"> Command Statistics </h2>
+        <div class="layui-colla-content layui-show">
+            <table class="layui-table">
+                <thead>
+                <tr>
+                    <th>Command</th>
+                    <th class="text-right">Calls</th>
+                    <th class="text-right">Call Share</th>
+                    <th class="text-right">Duration (Microseconds)</th>
+                    <th class="text-right">Duration/Call</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($cmdstat as $key => $value): ?>
+                    <tr>
+                        <td><code><?= str_replace('cmdstat_', '', $key) ?> </code></td>
+                        <td class="text-right"><?= $value['calls'] ?></td>
+                        <td class="text-right"><?= sprintf('%.2f', $value["calls"] / $info["total_commands_processed"] * 100) ?> %</td>
+                        <td class="text-right"><?= $value['usec'] ?></td>
+                        <td class="text-right"><?= sprintf('%.1f', $value['usec_per_call']) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<?php $this->end(); ?>
 

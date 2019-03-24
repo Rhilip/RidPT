@@ -21,34 +21,44 @@
 <h1>Redis Keys Status</h1>
 <p>Please input the search pattern of keys, or your can use the search suggest</p>
 
-<div class="thumbnail">
-    <div>
+<hr>
+
+<div>
+    <div class="layui-form-item">
         <!--suppress HtmlUnknownTarget -->
         <form id="search_redis" class="form-inline" method="get" action="/admin/service">
             <div class="form-group">
                 <?php $pattern = $pattern ?? ''; ?>
                 <label><input name="provider" type="text" class="form-control" value="redis" style="display: none"></label>
                 <label><input name="panel" type="text" class="form-control" value="keys" style="display: none"></label>
-                <input name="pattern" type="text" class="form-control" placeholder="<?= $pattern ?>" value="<?= $pattern ?>">
-                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search </button>
-                <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Reset </button>
+                <div class="layui-inline">
+                    <label class="layui-form-label">Search Keys</label>
+                    <div class="layui-input-inline" style="width: 300px">
+                        <input name="pattern" type="text" class="layui-input" placeholder="<?= $pattern ?? '' ?>" value="<?= $pattern ?? '' ?>">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button type="submit" class="layui-btn layui-btn-normal"><i class="fas fa-search"></i> Search</button>
+                    <button type="reset" class="layui-btn layui-btn-danger"><i class="fas fa-times"></i> Reset</button>
+                </div>
             </div>
         </form>
     </div>
     <?php $suggent_pattern = ['*', 'SESSION:*', 'TORRENT:*', 'TRACKER:*', 'USER:*'] ?>
     <div id="suggest_pattern">Suggest Pattern :
         <?php foreach ($suggent_pattern as $pat): ?>
-            <span class="bg-success">
-                <a href="javascript:void(0);" data-pat="<?= $pat ?>"> <?= $pat ?> </a>
-            </span>&nbsp;&nbsp;
+            <a href="javascript:void(0);" data-pat="<?= $pat ?>"><span class="layui-badge layui-bg-green"><?= $pat ?></span></a>&nbsp;&nbsp;
         <?php endforeach; ?>
     </div>
 </div>
 
 <?php if ($pattern != ''): ?>
+    <hr>
     <div>
         <div class="pull-left">Keys matching <code><?= $pattern ?></code></div>
-        <div class="pull-right">(<strong><?= $num_keys ?? 0 ?></strong> out of <strong><?= $dbsize ?? 0 ?></strong> matched)</div>
+        <div class="pull-right">(<strong><?= $num_keys ?? 0 ?></strong> out of <strong><?= $dbsize ?? 0 ?></strong>
+            matched)
+        </div>
     </div>
     <table class="layui-table">
         <thead>
@@ -96,7 +106,7 @@
 
 <?php $this->push('script') ?>
 <script>
-    layui.use(['jquery'],function () {
+    layui.use(['jquery'], function () {
         let $ = layui.jquery;
         $('#suggest_pattern a').click(function () {
             let pat = $(this).attr('data-pat');

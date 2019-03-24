@@ -15,24 +15,19 @@
 <?php $this->start('title')?>Admin Panel<?php $this->end();?>
 
 <?php $this->start('container')?>
-<div class="layui-row">
-    <div class="layui-col-md3">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Site Status</h3>
-            </div>
-            <div class="panel-body">
-                <ul class="nav nav-pills nav-stacked">
-                    <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=mysql">Mysql Status</a></li>
-                    <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis">Redis Service Status</a></li>
-                    <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis&panel=keys">Redis Keys Status</a></li>
-                </ul>
-            </div><!--/.panel-body -->
-        </div>
+<div class="layui-row admin-panel">
+    <div class="admin-panel-tree">
+        <ul class="layui-tree">
+            <li><h2>Site Status</h2></li>
+            <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=mysql"><cite>Mysql Status</cite></a></li>
+            <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis"><cite>Redis Service Status</cite></a></li>
+            <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis&panel=keys"><cite>Redis Keys Status</cite></a></li>
+        </ul>
     </div>
-    <div class="layui-col-md9">
+    <div class="admin-panel-content">
         <?= $this->section('panel') ?>
     </div>
 </div>
+
 <?php $this->end();?>
 

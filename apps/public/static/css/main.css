@@ -99,3 +99,54 @@ ul#torrent-filelist ul{margin-left:1.25em}
 #torrent-structure li div.dictionary span.icon{color:#909;padding:2px}
 #torrent-structure li div.list span.icon{color:#009;padding:2px}
 #torrent-structure li span.title{font-weight:bold}
+
+.admin-panel {
+    font-size: 0;
+}
+
+.admin-panel-tree .layui-tree {
+    line-height: 32px;
+}
+
+.admin-panel-tree .layui-tree li h2 {
+    line-height: 36px;
+    border-left: 5px solid #009E94;
+    margin: 15px 0 5px;
+    padding: 0 10px;
+    background-color: #f2f2f2;
+}
+
+.admin-panel-tree {
+    border-right: 1px solid #eee;
+}
+.admin-panel-tree {
+    width: 220px;
+    min-height: 900px;
+    padding: 5px 0 20px;
+}
+.admin-panel-tree, .admin-panel-content {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 14px;
+}
+
+.admin-panel-content {
+    width: 899px;
+    min-height: 900px;
+    padding: 20px 0 10px 20px;
+}
+
+.admin-panel-tree .layui-tree .site-tree-noicon a cite {
+    padding-left: 15px;
+}
+
+.admin-panel-tree .layui-tree li a cite {
+    padding: 0 8px;
+}
+
+.admin-panel-tree .layui-tree li a em {
+    font-size: 12px;
+    color: #bbb;
+    padding-right: 5px;
+    font-style: normal;
+}
