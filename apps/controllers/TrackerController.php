@@ -82,7 +82,8 @@ class TrackerController
                         if (!app()->config->get("tracker.enable_announce")) throw new TrackerException(102);
 
                         $this->checkAnnounceFields($queries);
-                        $this->lockAnnounceDuration($queries);  // Lock min announce before User Data update to avoid flood
+                        if (!env('APP_DEBUG'))
+                            $this->lockAnnounceDuration($queries);  // Lock min announce before User Data update to avoid flood
 
                         /**
                          * If nothing error we start to get and cache the the torrent_info from database,
@@ -111,8 +112,11 @@ class TrackerController
 
                         $this->checkSession($queries, $role, $userInfo, $torrentInfo);
 
-                        app()->getServ()->task(serialize([
+
+                        // Push to Redis Queue and quick response
+                        app()->redis->lPush('Tracker:to_deal_queue',json_encode([
                             'worker' => \apps\task\TrackerAnnounceTask::class,
+                            'timestamp' => time(),
                             'queries' => $queries,
                             'role' => $role,
                             'userInfo' => $userInfo,
@@ -523,35 +527,35 @@ class TrackerController
 
             // Ignore all un-Native IPv6 address ( starting with FD or FC ; reserved IPv6 ) and IPv4-mapped-IPv6 address
             if (!IpUtils::isPublicIPv6($queries["ipv6"]) || strpos($queries['ipv6'], '.') !== false) {
-                $queries['ipv6'] = $queries["ipv6_port"] = "";
+                $queries['ipv6'] = $queries['ipv6_port'] = '';
             }
         }
 
         // If we can't get valid IPv6 address from `&ipv6=`
         // fail back to `&ip=<IPv6>` then the IPv6 format remote_ip
-        if (!$queries["ipv6"]) {
-            if ($queries["ip"] && IpUtils::isValidIPv6($queries["ip"])) {
+        if (!$queries['ipv6']) {
+            if ($queries['ip'] && IpUtils::isValidIPv6($queries['ip'])) {
                 $queries['ipv6'] = $queries["ip"];
             } elseif (IpUtils::isValidIPv6($remote_ip)) {
                 $queries['ipv6'] = $remote_ip;
             }
-            if ($queries["ipv6"]) $queries["ipv6_port"] = $queries["port"];
+            if ($queries['ipv6']) $queries['ipv6_port'] = $queries['port'];
         }
 
         // `&ip=` is not a BEP param , however It's mainly used in UTorrent as `&ipv4=` or `&ipv6=`
-        if ($queries["ip"] && !IpUtils::isValidIPv4($queries['ip'])) {
+        if ($queries['ip'] && !IpUtils::isValidIPv4($queries['ip'])) {
             $queries['ip'] = '';
         }
 
         // param `&ipv4=` is like `&ipv6=`
-        if ($queries["ipv4"]) {
-            if ($client = IpUtils::isEndPoint($queries["ipv4"])) {
+        if ($queries['ipv4']) {
+            if ($client = IpUtils::isEndPoint($queries['ipv4'])) {
                 if (IpUtils::isValidIPv4($client['ip'])) {
                     $queries['ip'] = $client['ip'];
                     $queries['port'] = $client['port'];
                 }
-            } elseif (IpUtils::isValidIPv4($queries["ipv4"])) {
-                $queries['ip'] = $queries["ipv4"];
+            } elseif (IpUtils::isValidIPv4($queries['ipv4'])) {
+                $queries['ip'] = $queries['ipv4'];
             }
         }
 
@@ -561,7 +565,9 @@ class TrackerController
         }
 
         // Part.4 check Port Fields is Valid and Allowed
-        $this->checkPortFields($queries["port"]);
+        $this->checkPortFields($queries['port']);
+        if (isset($queries['ipv6_port']) && $queries['port'] != $queries['ipv6_port'])
+            $this->checkPortFields($queries['ipv6_port']);
         if ($queries['port'] == 0 && strtolower($queries['event']) != 'stopped')
             throw new TrackerException(137, [":event" => strtolower($queries['event'])]);
     }
