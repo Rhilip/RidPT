@@ -150,7 +150,6 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
 <script src="/lib/zui/dist/js/zui.min.js"></script>
 
 <!-- Custom Javascript of this template -->
-<script src="/static/js/bbcodeParser.js"></script>
 <script src="/static/js/main.js?<?= $css_tag ?>"></script>
 
 <!-- Other Page script field -->

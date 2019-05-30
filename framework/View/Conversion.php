@@ -8,6 +8,8 @@
 
 namespace Rid\View;
 
+use Decoda\Decoda;
+use Decoda\Storage\RedisStorage;
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;
 
@@ -39,9 +41,13 @@ class Conversion implements ExtensionInterface
 
     public function format_ubbcode($string)
     {
-        $string = htmlspecialchars($string, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        $string = str_replace(array_keys(self::UBBCODE_MAP), array_values(self::UBBCODE_MAP), $string);
-        $string = nl2br($string);
-        return $string;
+        $code = new Decoda($string,[
+            'escapeHtml' => true
+        ],'Post_cache:' . md5($string));
+
+        $code->defaults();
+
+        $code->setStorage(new RedisStorage(app()->redis->getRedis()));
+        return $code->parse();
     }
 }

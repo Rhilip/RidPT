@@ -37,22 +37,6 @@ jQuery(document).ready(function() {
         return new $.zui.Messager(text, option).show();
     }
 
-    // Convert ubbcode blcok text to html
-    $(".ubbcode-block").html(function (index, oldhtml) {
-        /*
-        Because:
-            1. Cloudflare or other CDN may clean the newline characters like `\n`
-            2. our backend use nl2br() to Inserts HTML line breaks before all newlines in a string,
-        It's needed to to remove the exist `\n` (if case 1 not happened), and change the html tag `<br />` to `\n`,
-        then feed to our XBBCODE converter for safety output.
-         */
-        oldhtml = oldhtml.trim()
-            .replace(/\n/ig, '')
-            .replace(/<br ?\/?>/ig, '\n');
-        return XBBCODE.process({text: oldhtml}).html;
-    });
-
-
     // Torrent favour Add/Remove action
     $('.torrent-favour').click(function () {
         let that = $(this);

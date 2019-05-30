@@ -302,4 +302,12 @@ class BaseRedisConnection extends Component
     {
         return $this->_calledData;
     }
+
+    /**
+     * @return \Redis
+     */
+    public function getRedis(): \Redis
+    {
+        return $this->_redis;
+    }
 }
