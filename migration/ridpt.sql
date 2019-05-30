@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 19, 2019 at 03:13 PM
--- Server version: 8.0.14
--- PHP Version: 7.3.1
+-- Generation Time: May 30, 2019 at 09:53 PM
+-- Server version: 8.0.16
+-- PHP Version: 7.3.5
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -350,8 +350,10 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('authority.route_admin_service', '90'),
 ('authority.see_anonymous_uploader', '40'),
 ('authority.see_banned_torrent', '40'),
+('authority.see_extend_debug_log', '90'),
 ('authority.see_pending_torrent', '40'),
 ('authority.upload_anonymous', '5'),
+('base.enable_extend_debug', '1'),
 ('base.enable_register_system', '1'),
 ('base.enable_tracker_system', '1'),
 ('base.max_per_user_session', '10'),
@@ -381,7 +383,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('buff.random_percent_free', '2'),
 ('register.by_green', '0'),
 ('register.by_invite', '1'),
-('register.by_open', '0'),
+('register.by_open', '1'),
 ('register.email_black_list', '@test.com'),
 ('register.email_white_list', '@gmail.com'),
 ('register.enabled_email_black_list', '1'),

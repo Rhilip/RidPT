@@ -96,11 +96,11 @@ body{background-color:#f6f6f6}
 /* '/torrent/details' */
 .torrent-details-block{}
 .torrent-action-item{padding:3px}
-#torrent_extend_info_panel_group > hr{margin:0}
+#torrent_extend_info_panel_group hr{margin:10px 0}
 
 /* '/torrent/structure' */
 #torrent_structure ul{}
-#torrent_structure ul,li{list-style-type:none;color:#000}
+#torrent_structure ul,#torrent_structure li{list-style-type:none;color:#000}
 #torrent_structure li div.string{padding:3px}
 #torrent_structure li div.integer{padding:3px}
 #torrent_structure li div.dictionary{padding:3px}
