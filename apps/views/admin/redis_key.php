@@ -21,7 +21,7 @@
 
 <?php $this->start('panel') ?>
 <h1>Key: <code><?= $key ?></code></h1>
-<table class="layui-table">
+<table class="table table-hover table-auto">
     <tbody>
     <tr>
         <th>Type</th>
@@ -58,7 +58,7 @@
     </ol>
 <?php elseif ($type == \Redis::REDIS_HASH): ?>
     <h2>Hash keys and values</h2>
-    <table class="layui-table">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th></th>
@@ -85,7 +85,7 @@
     </ul>
 <?php elseif ($type == \Redis::REDIS_ZSET): ?>
     <h2>Sorted set entries</h2>
-    <table class="layui-table">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th>Rank</th>
@@ -105,7 +105,6 @@
         <?php endforeach; ?>
         </tbody>
     </table>
-
 <?php endif; ?>
 
 <?php $this->end(); ?>

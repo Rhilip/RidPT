@@ -71,7 +71,7 @@ if (env('APP_DEBUG')) {
 
 <div class="message-box">
     <div class="message-info" align="center">
-        <h1><?=$status ?></h1>
+        <h1><?= $status ?></h1>
         <p><?= $status == 404 ? 'Page not found' : (env('APP_DEBUG') ? $message : 'Internal server error') ?></p>
     </div>
     <hr>

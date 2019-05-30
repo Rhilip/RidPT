@@ -24,14 +24,14 @@
     It started up on <code><?= date("M d, Y \\a\\t h:i A", $startAt) ?></code>
 </div>
 <br>
-<div class="layui-collapse">
-    <div class="layui-colla-item">
-        <h2 class="layui-colla-title"> Server Traffic </h2>
-        <div class="layui-colla-content layui-show">
-            <small>These tables show the network traffic statistics of this MySQL server since its startup</small>
-            <div class="layui-row">
-                <div class="layui-col-md5">
-                    <table class="layui-table" lay-even>
+<div class="panel-group">
+    <div class="panel panel-primary">
+        <div class="panel-heading"> Server Traffic <br>
+            <small>These tables show the network traffic statistics of this MySQL server since its startup</small></div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th class="text-left">Traffic</th>
@@ -58,8 +58,8 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="layui-col-md7">
-                    <table class="layui-table" lay-even>
+                <div class="col-md-6">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th class="text-left">Connections</th>
@@ -101,19 +101,20 @@
             </div>
         </div>
     </div>
-    <div class="layui-colla-item">
-        <h2 class="layui-colla-title">Query Statistics</h2>
-        <div class="layui-colla-content layui-show">
-            <small>Since it's start up, <code><?= number_format($serverStatus['Questions'], 0, '.', ',') ?></code> queries
+    <div class="panel panel-success">
+        <div class="panel-heading">Query Statistics</div>
+        <div class="panel-body">
+            <p><small>
+                Since it's start up, <code><?= number_format($serverStatus['Questions'], 0, '.', ',') ?></code> queries
                 have been sent to the server. <br>
                 ø Per Hour : <code><?= number_format($serverStatus['Questions'] * 3600 / $serverStatus['Uptime'], 2, '.', ',') ?></code>
                 ø Per Minute : <code><?= number_format($serverStatus['Questions'] * 60 / $serverStatus['Uptime'], 2, '.', ',') ?></code>
                 ø Per Second : <code><?= number_format($serverStatus['Questions'] / $serverStatus['Uptime'], 2, '.', ',') ?></code>
-            </small>
-            <div class="layui-row">
+                </small></p>
+            <div class="row">
                 <?php foreach (array_chunk($queryStats, ceil(count($queryStats) / 2), true) as $rows): ?>
-                    <div class="layui-col-md6">
-                        <table class="layui-table" lay-even>
+                    <div class="col-md-6">
+                        <table class="table table-hover">
                             <thead>
                             <tr>
                                 <th class="text-left">Query Type</th>
@@ -124,7 +125,7 @@
                             </thead>
                             <tbody>
                             <?php foreach ($rows as $key => $value): ?>
-                                <tr>
+                                <tr<?= $value !=0 ? ' class="active"':'' ?>>
                                     <td><?= str_replace('_', ' ', $key) ?></td>
                                     <td class="text-right"><?= number_format($value, 0, '.', ',') ?></td>
                                     <td class="text-right"><?= number_format($value * 3600 / $serverStatus['Uptime'], 2, '.', ',') ?></td>
@@ -136,25 +137,24 @@
                     </div>
                 <?php endforeach; ?>
             </div>
-
         </div>
     </div>
-    <div class="layui-colla-item">
-        <h2 class="layui-colla-title">More status variables</h2>
-        <div class="layui-colla-content layui-show">
-            <div class="layui-row">
-                <div class="layui-col-md12">
-                    <table class="layui-table" lay-even>
+    <div class="panel panel-info">
+        <div class="panel-heading"> More status variables </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
-                            <th width="70%" class="text-left">Variable</th>
+                            <th class="text-left">Variable</th>
                             <th class="text-left">Value</th>
                         </tr>
                         </thead>
                         <tbody>
                         <?php foreach ($serverStatus as $key => $value): ?>
                             <tr>
-                                <td><?= str_replace('_', ' ', $key) ?></td>
+                                <td class="nowrap"><?= str_replace('_', ' ', $key) ?></td>
                                 <td><?= $value ?></td>
                             </tr>
                         <?php endforeach; ?>

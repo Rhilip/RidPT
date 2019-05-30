@@ -19,7 +19,11 @@ class en
     const nav_requests = 'Requests';
     const nav_upload = 'Upload';
     const nav_subtitles = 'Subtitles';
-    const nav_topten = 'Top 10';
+    const nav_rules = 'Rules';
     const nav_faq = 'FAQ';
-
+    const nav_staff = 'Staff';
+    const nav_more = 'More';
+    const nav_topten = 'Top 10';
+    const nav_stats = 'Stats';
+    const nav_log = 'Log';
 }

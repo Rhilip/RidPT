@@ -20,18 +20,18 @@ $time_now = time();
 <?php $this->start('title')?>Torrents List<?php $this->end();?>
 
 <?php $this->start('container')?>
-<table class="layui-table" id="torrents-table">
+<table class="table" id="torrents_table">
     <thead>
     <tr>
         <th class="text-center" style="width: 20px" title="Type">Type</th>
         <th class="text-center" style="width: 100%;" title="Torrent">Torrents</th>
-        <th class="text-center" style="width: 5px" title="Comment"><i class="fas fa-comment-alt"></i></th>
+        <th class="text-center" style="width: 5px" title="Comment"><i class="fas fa-comment-alt fa-fw"></i></th>
         <th class="text-center" style="width: 45px" title="Size">Size</th>
         <th class="text-center" style="width: 80px" title="Date">Date</th>
-        <th class="text-center" style="width: 15px" title="Seeders"><i class="fas fa-arrow-up"></i></th>
-        <th class="text-center" style="width: 15px" title="Leechers"><i class="fas fa-arrow-down"></i></th>
-        <th class="text-center" style="width: 15px" title="Completed"><i class="fas fa-check"></i></th>
-        <th class="text-center" style="width: 50px" title="Owner"><i class="fas fa-user"></i></th>
+        <th class="text-center" style="width: 15px" title="Seeders"><i class="fas fa-arrow-up fa-fw color-seeding"></i></th>
+        <th class="text-center" style="width: 15px" title="Leechers"><i class="fas fa-arrow-down fa-fw color-leeching"></i></th>
+        <th class="text-center" style="width: 15px" title="Completed"><i class="fas fa-check fa-fw color-completed"></i></th>
+        <th class="text-center" style="width: 50px" title="Owner"><i class="fas fa-user fa-fw"></i></th>
     </tr>
     </thead>
     <tbody>

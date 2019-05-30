@@ -20,15 +20,13 @@
 <?php $this->start('panel') ?>
 <h1>Redis Server Status</h1>
 
-<p>Used Memory: <?= $info['used_memory_human'] ?> , peak: <?= $info['used_memory_peak_human'] ?></p>
+<p><strong><?= $dbsize ?> Keys available.</strong> Used Memory: <?= $info['used_memory_human'] ?> , peak: <?= $info['used_memory_peak_human'] ?></p>
 
-<p><strong><?= $dbsize ?> Keys available.</strong></p>
-
-<div class="layui-collapse">
-    <div class="layui-colla-item">
-        <h2 class="layui-colla-title"> Overall Status </h2>
-        <div class="layui-colla-content layui-show">
-            <table class="layui-table">
+<div class="panel-group">
+    <div class="panel panel-info">
+        <div class="panel-heading"> Overall Status </div>
+        <div class="panel-body">
+            <table class="table table-hover">
                 <thead>
                 <tr>
                     <th>Key</th>
@@ -48,10 +46,10 @@
             </table>
         </div>
     </div>
-    <div class="layui-colla-item">
-        <h2 class="layui-colla-title"> Command Statistics </h2>
-        <div class="layui-colla-content layui-show">
-            <table class="layui-table">
+    <div class="panel panel-info">
+        <div class="panel-heading"> Command Statistics </div>
+        <div class="panel-body">
+            <table class="table table-hover">
                 <thead>
                 <tr>
                     <th>Command</th>

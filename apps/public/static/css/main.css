@@ -1,40 +1,26 @@
-@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,400italic,500,500italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,300,300italic,400italic,500,500italic,700,700italic);
 /* font-family: 'Ubuntu', sans-serif; */
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,300,400italic,600,600italic,700,700italic,800,800italic);
 /* font-family: 'Open Sans', sans-serif; */
 
 /*-----------------------------------------------------------------------------------
 /*	1.	Global properties (body, common classes, vertical rhythm, structure etc)
 /*-----------------------------------------------------------------------------------*/
 
-.text-left{text-align:left !important}
-.text-right{text-align:right !important}
-.text-center{text-align:center !important}
-.text-justify{text-align:justify !important}
-.text-nowrap{white-space:nowrap !important}
-
-.pull-left{float:left !important}
-.pull-right{float:right !important}
-
-.clearfix:before,.clearfix:after{content:" ";display:table}
-.clearfix:after{clear:both}
-
-code,kbd,pre,samp{font-family:Menlo,Monaco,Consolas,"Courier New",monospace}
-code{padding:2px 4px;font-size:90%;color:#c7254e;background-color:#f9f2f4;border-radius:4px}
-kbd{padding:2px 4px;font-size:90%;color:#fff;background-color:#333;border-radius:3px;box-shadow:inset 0 -1px 0 rgba(0,0,0,0.25)}
-kbd kbd{padding:0;font-size:100%;font-weight:bold;box-shadow:none}
-pre{display:block;padding:9.5px;margin:0 0 10px;font-size:13px;line-height:1.42857143;word-break:break-all;word-wrap:break-word;color:#333333;background-color:#f5f5f5;border:1px solid #ccc;border-radius:4px}
-pre code{padding:0;font-size:inherit;color:inherit;white-space:pre-wrap;background-color:transparent;border-radius:0}
-
 body{background-color:#f6f6f6}
 
-.img-rounded{border-radius:6px}
+.red{color:red}
+.yellow{color:yellow}
+.green{color:green}
+.blue{color:blue}
+.gray{color:gray}
+.black{color:black}
+.white{color:white}
 
-/*
- Extension of layui
- */
+.bgred{background-color:red !important}
+.bggreen{background-color:green !important}
 
-.layui-card-footer{position:relative;height:42px;line-height:42px;padding:0 15px;border-top:1px solid #f6f6f6;color:#333;border-radius:2px 2px 0 0;font-size:14px}
+.nowrap {white-space: nowrap;}
 
 /*-----------------------------------------------------------------------------------*/
 /*	2.	Auth page with prefix `auth-`
@@ -51,14 +37,14 @@ body{background-color:#f6f6f6}
 .auth-login-return-msg{margin-top:5px}
 
 /*-----------------------------------------------------------------------------------*/
-/*	2.	Header, Navigation & Menus
+/*	3.	Layout of Header, Navigation & Menus
 /*-----------------------------------------------------------------------------------*/
 
 /* Top Menu */
-#top-menu{background-color:#383838;color:#999;margin-bottom:30px;padding:3px 0}
+#top_menu{background-color:#383838;color:#999;margin-bottom:30px;padding:3px 0}
 
 /* Header with Logo */
-.header-top{margin-bottom:30px}
+.header-top{margin-bottom:20px}
 .logo .site-title,.logo .site-title a{font-size:50px;line-height:50px;margin:0 0 0 0;color:#FFFFFF}
 .logo .sub-title{font-family:'Open Sans',sans-serif;font-size:10px;line-height:11px;text-transform:capitalize;margin:0;padding-left:2px;letter-spacing:0;color:#F9F9F9}
 .logo .logo-img{display:block;margin-top:6px;float:left}
@@ -66,87 +52,61 @@ body{background-color:#f6f6f6}
 .tagline{color:#7E7E7E;display:inline-block;font-size:12px;margin:13px 0 0 15px}
 
 /* Nav menu with User Info */
-.header-nav {margin-bottom:15px}
-nav#menu .layui-nav-item{line-height:45px}
-.header-info{background-color:#eee;padding:5px}
+.navbar{margin-bottom:0}
+.navbar-custom{}
+.navbar-collapse-custom{}
+
+/* User Info Block */
+#info_block{background-color:#e0e0e0;padding:5px 10px}
+.color-invite{color:#1900d1}
+.color-bonus{color:#1900d1}
+.color-bet{color:#ff0000}
+.color-blackjack{color:#1900d1}
+.color-ratio{color:#1900d1}
+.color-seeding{color:#008000}
+.color-leeching{color:#8b0000}
+.color-completed{}
+.color-connectable{color:#1900d1}
+.color-friends{color:#ffc078}
+.color-rss{color:#5c7cfa}
+
+/* Main Container */
+.main-container{background-color:#eaeaea;padding-top:10px}
 
 /* Footer Menu */
-#footer-menu{background-color:#383838;color:#C3C0B9;font-size:12px;margin-top:30px;padding-bottom:10px;padding-top:15px}
-#footer-menu ul{list-style-type:none}
-#footer-menu li{float:left;margin-left:10px}
-#footer-menu a{color:#C3C0B9}
-#footer-menu a:hover{color:#E84807}
+#footer_menu{background-color:#383838;color:#C3C0B9;font-size:12px;margin-top:30px;padding-bottom:10px;padding-top:15px}
+#footer_menu p{margin:0}
+#footer_menu ul{list-style-type:none}
+#footer_menu li{float:left;margin-left:10px}
+#footer_menu a{color:#C3C0B9}
+#footer_menu a:hover{color:#E84807}
 
-.icon-seeding {color: green}
-.icon-leeching {color: red}
+/*-----------------------------------------------------------------------------------*/
+/*	4. Page of '/torrent'
+/*-----------------------------------------------------------------------------------*/
 
-#torrents-table{width:100%;border-collapse:collapse;table-layout:fixed}
+/* Common */
+.torrent-title-block{margin-bottom: 15px}
+.torrent-title{}
 
-.torrent-title-block{margin:15px}
+/* '/torrent/upload' */
+#torrent_upload_table > tbody > tr > td:first-child{vertical-align:middle;text-align:right}
+#torrent_file{display:inline;margin-right:10px;width:220px}
+
+/* '/torrent/details' */
+.torrent-details-block{}
 .torrent-action-item{padding:3px}
+#torrent_extend_info_panel_group > hr{margin:0}
 
-.torrent-filelist-modal{width:700px}
-ul#torrent-filelist ul{margin-left:1.25em}
-
-#torrent-structure ul{margin-left:15px}
-#torrent-structure ul,li{list-style-type:none;color:#000}
-#torrent-structure li div.string{padding:3px}
-#torrent-structure li div.integer{padding:3px}
-#torrent-structure li div.dictionary{padding:3px}
-#torrent-structure li div.list{padding:3px}
-#torrent-structure li div.string span.icon{color:#090;padding:2px}
-#torrent-structure li div.integer span.icon{color:#990;padding:2px}
-#torrent-structure li div.dictionary span.icon{color:#909;padding:2px}
-#torrent-structure li div.list span.icon{color:#009;padding:2px}
-#torrent-structure li span.title{font-weight:bold}
-
-.admin-panel {
-    font-size: 0;
-}
-
-.admin-panel-tree .layui-tree {
-    line-height: 32px;
-}
-
-.admin-panel-tree .layui-tree li h2 {
-    line-height: 36px;
-    border-left: 5px solid #009E94;
-    margin: 15px 0 5px;
-    padding: 0 10px;
-    background-color: #f2f2f2;
-}
-
-.admin-panel-tree {
-    border-right: 1px solid #eee;
-}
-.admin-panel-tree {
-    width: 220px;
-    min-height: 900px;
-    padding: 5px 0 20px;
-}
-.admin-panel-tree, .admin-panel-content {
-    display: inline-block;
-    vertical-align: top;
-    font-size: 14px;
-}
-
-.admin-panel-content {
-    width: 899px;
-    min-height: 900px;
-    padding: 20px 0 10px 20px;
-}
-
-.admin-panel-tree .layui-tree .site-tree-noicon a cite {
-    padding-left: 15px;
-}
-
-.admin-panel-tree .layui-tree li a cite {
-    padding: 0 8px;
-}
-
-.admin-panel-tree .layui-tree li a em {
-    font-size: 12px;
-    color: #bbb;
-    padding-right: 5px;
-    font-style: normal;
-}
+/* '/torrent/structure' */
+#torrent_structure ul{}
+#torrent_structure ul,li{list-style-type:none;color:#000}
+#torrent_structure li div.string{padding:3px}
+#torrent_structure li div.integer{padding:3px}
+#torrent_structure li div.dictionary{padding:3px}
+#torrent_structure li div.list{padding:3px}
+#torrent_structure li div.string span.icon{color:#090;padding:2px}
+#torrent_structure li div.integer span.icon{color:#990;padding:2px}
+#torrent_structure li div.dictionary span.icon{color:#909;padding:2px}
+#torrent_structure li div.list span.icon{color:#009;padding:2px}
+#torrent_structure li span.title{font-weight:bold}

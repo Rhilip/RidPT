@@ -22,7 +22,6 @@
                 </ul>
             </div><!--/.panel-body -->
         </div>
-
     </div>
     <div class="col-md-9">
         <?php $this->section('panel'); ?>

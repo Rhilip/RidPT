@@ -9,16 +9,13 @@
  */
 ?>
 
+<?= $this->layout('user/setting_layout') ?>
 
-<?= $this->layout('layout/base') ?>
-
-<?php $this->start('container') ?>
+<?php $this->start('panel') ?>
 <h1>Sessions</h1>
-<hr>
 This is a list of devices that have logged into your account. Revoke any sessions that you do not recognize.
 <br>
-<br>
-<table class="layui-table">
+<table class="table table-hover table-striped">
     <thead>
     <tr>
         <td class="text-center">Login At</td>

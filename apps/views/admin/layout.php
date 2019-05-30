@@ -15,17 +15,26 @@
 <?php $this->start('title')?>Admin Panel<?php $this->end();?>
 
 <?php $this->start('container')?>
-<div class="layui-row admin-panel">
-    <div class="admin-panel-tree">
-        <ul class="layui-tree">
-            <li><h2>Site Status</h2></li>
-            <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=mysql"><cite>Mysql Status</cite></a></li>
-            <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis"><cite>Redis Service Status</cite></a></li>
-            <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis&panel=keys"><cite>Redis Keys Status</cite></a></li>
-        </ul>
+<div class="row admin-panel">
+    <div class="col-md-2">
+        <h3>..:: For SysOp Only ::..</h3>
+        <nav class="admin-panel-nav-sysop" data-ride="menu">
+            <ul id="admin-panel-menu-sysop" class="tree tree-menu" data-ride="tree">
+                <li class="open">
+                    <a href="#"><i class="icon icon-time"></i>Site Status</a>
+                    <ul>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=mysql"><cite>Mysql Status</cite></a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis"><cite>Redis Service Status</cite></a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis&panel=keys"><cite>Redis Keys Status</cite></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <div class="admin-panel-content">
-        <?= $this->section('panel') ?>
+    <div class="col-md-10">
+        <div class="admin-panel-content">
+            <?= $this->section('panel') ?>
+        </div>
     </div>
 </div>
 
