@@ -73,10 +73,10 @@
                             <h4>
                                 <a href="#new_<?= $new['id'] ?>"><?= $new['title'] ?></a>
                                 <?php if (empty($search) && $i == 0): ?>
-                                    <span class="label label-info">New</span>&nbsp;
+                                    <span class="label label-info">New</span>
                                 <?php endif; ?>
                                 <?php if ($new['force_read']): ?>
-                                    <span class="label label-warning">Important</span>&nbsp;
+                                    <span class="label label-warning">Important</span>
                                 <?php endif; ?>
                             </h4>
                         </div>

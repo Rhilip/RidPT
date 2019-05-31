@@ -35,7 +35,15 @@ $can_manage_news = app()->user->isPrivilege('manage_news');
                             <?= $can_manage_news ? "<a href=\"/news/edit?id={$new['id']}\"><i class=\"icon-pencil\"></i> Edit</a> &nbsp;<a href=\"/news/delete?id={$new['id']}\"><i class=\"icon-remove\"></i> Delete</a> &nbsp;" : '' ?>
                             <span class="text-muted"><?= $new['create_at'] ?></span>
                         </div>
-                        <h4><a href="#new_<?= $new['id'] ?>" data-toggle="collapse"><?= $new['title'] ?></a></h4>
+                        <h4>
+                            <a href="#new_<?= $new['id'] ?>" data-toggle="collapse"><?= $new['title'] ?></a>
+                            <?php if ($index == 0): ?>
+                                <span class="label label-info">New</span>
+                            <?php endif; ?>
+                            <?php if ($new['force_read']): ?>
+                                <span class="label label-warning">Important</span>
+                            <?php endif; ?>
+                        </h4>
                     </div>
                     <div class="item-content collapse<?= $index === 0 ? ' in' : '' ?>" id="new_<?= $new['id'] ?>">
                         <div class="text"><?= $this->batch($new['body'],'format_ubbcode'); ?></div>
