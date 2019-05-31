@@ -35,7 +35,7 @@
         <div class="panel" id="torrent_commit_panel">
             <div class="panel-heading"><b>Torrent Commit</b></div>
             <div class="panel-body" id="torrent_commit">
-                // TODO
+                <!-- TODO http://zui.sexy/#view/comment -->
             </div>
         </div>
     </div>

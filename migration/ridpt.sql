@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 30, 2019 at 09:53 PM
+-- Generation Time: May 31, 2019 at 09:48 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.5
 
@@ -281,6 +281,33 @@ CREATE TABLE IF NOT EXISTS `messages` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `news`
+--
+
+DROP TABLE IF EXISTS `news`;
+CREATE TABLE IF NOT EXISTS `news` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `edit_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `body` text NOT NULL,
+  `notify` tinyint(1) NOT NULL DEFAULT '1',
+  `force_read` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `create_at` (`create_at`),
+  KEY `FK_news_users_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT;
+
+--
+-- RELATIONSHIPS FOR TABLE `news`:
+--   `user_id`
+--       `users` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `peers`
 --
 
@@ -345,6 +372,7 @@ TRUNCATE TABLE `site_config`;
 --
 
 INSERT INTO `site_config` (`name`, `value`) VALUES
+('authority.manage_news', '80'),
 ('authority.pass_tracker_upspeed_check', '60'),
 ('authority.route_admin_index', '60'),
 ('authority.route_admin_service', '90'),
@@ -743,6 +771,12 @@ ALTER TABLE `invite`
 --
 ALTER TABLE `ip_bans`
   ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `news`
+--
+ALTER TABLE `news`
+  ADD CONSTRAINT `FK_news_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `snatched`

@@ -1,5 +1,7 @@
 ;
 
+const _location_search = new URLSearchParams(window.location.search);
+
 function humanFileSize(bytes, fix, si) {
     let thresh = si ? 1000 : 1024;
     if (Math.abs(bytes) < thresh) {
@@ -16,12 +18,38 @@ function humanFileSize(bytes, fix, si) {
     return bytes.toFixed(fix ? fix : 2) + ' ' + units[u];
 }
 
+function location_search_replace(new_params) {
+    let search = _location_search;
+    for (let i in new_params) {
+        search.set(i,new_params[i]);
+    }
+    return '?' + search.toString();
+}
+
 jQuery(document).ready(function() {
+    // Drop all support of IE 6-11
+    if ($.zui.browser.ie) {
+        $.zui.browser.tip();
+    }
+
     // Declare Const
     const api_point = '/api/v1';
 
     // Active tooltop
     $('[data-toggle="tooltip"]').tooltip();
+
+    // Active Pager which source from remote
+    $('ul[data-ride="remote_pager"]').pager({
+        page: _location_search.get('page') || 0,
+        maxNavCount: 8,
+        elements: ['first_icon', 'prev_icon', 'pages', 'next_icon', 'last_icon'],
+        linkCreator: function(page, pager) {
+            return location_search_replace({
+                'page': page,
+                'limit': pager.recPerPage
+            });
+        }
+    });
 
     // TODO Add Scroll to TOP fixbar
 

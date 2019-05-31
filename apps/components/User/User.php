@@ -109,4 +109,13 @@ class User extends Component implements UserInterface
     {
         return in_array($tid, $this->getBookmarkList());
     }
+
+    public function isPrivilege($require_class)
+    {
+        if (is_string($require_class)) {
+            $require_class = app()->config->get('authority.' . $require_class);
+        }
+
+        return $this->class >= $require_class;
+    }
 }
