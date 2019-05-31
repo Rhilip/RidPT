@@ -1,6 +1,24 @@
 ;
 
 const _location_search = new URLSearchParams(window.location.search);
+/**
+ * The icon map for file extension
+ * Notice: The map key should has the fontawesome icon like `fa-file-${v}`
+ */
+const ext2Icon = {
+    audio: ["flac", "aac", "wav", "mp3"],
+    video: ["mkv", "mka", "mp4"],
+    image: ["jpg", "bmp", "jpeg", "webp"],
+    alt: ["txt", "log", "cue", "ass"],
+    archive: ["rar", "zip", "7z"],
+    word: ["doc", "docx", "docm", "dotx", "dotm", "dot", "odt"],
+    powerpoint: ["ppt", "pptx", "pptm", "potx", "potm", "pot", "ppsx", "ppsm", "pps", "ppam", "ppa", "odp"],
+    excel: ["xlsx", "xlsm", "xlsb", "xls", "xltx", "xltm", "xlt", "xlam", "xla", "ods"],
+    pdf: ["pdf"],
+    csv: ["csv"],
+    code: [],
+    contract: []
+};
 
 function humanFileSize(bytes, fix, si) {
     let thresh = si ? 1000 : 1024;
@@ -24,6 +42,15 @@ function location_search_replace(new_params) {
         search.set(i,new_params[i]);
     }
     return '?' + search.toString();
+}
+
+function get_ext_icon (ext) {
+    for (let type in ext2Icon) {
+        if (ext2Icon[type].indexOf(ext) >= 0) {
+            return 'fa-file-' + type;
+        }
+    }
+    return "fa-file";
 }
 
 jQuery(document).ready(function() {
@@ -93,18 +120,24 @@ jQuery(document).ready(function() {
 
         function list_worker(tree, par = '') {
             let ret = '';
-
+            let size = 0;
             for (let k in tree) {
                 let v = tree[k];
                 if (typeof v == 'object') {
-                    ret += `<li${par === '' ? ' class="open"':''}><a href="#">${k}</a><ul>${list_worker(v,par + "/" + k)}</ul></li>`;
+                    let [in_ret, in_size] = list_worker(v, par + "/" + k);
+                    ret += `<li${par === '' ? ' class="open"' : ''}><a href="#">${k} (<span class="file-size" data-size="${v}">${humanFileSize(in_size)}</span>)</a><ul>${in_ret}</ul></li>`;
+                    size += in_size;
                 } else {
-                    ret += `<li><i class="fa fa-file fa-fw"></i> ${k} (<span class="file-size" data-size="${v}">${humanFileSize(v)}</span>)</li>`;
+                    let ext = k.substr(k.lastIndexOf('.') + 1).toLowerCase();
+
+                    ret += `<li><i class="fa ${get_ext_icon(ext)} fa-fw"></i> ${k} (<span class="file-size" data-size="${v}">${humanFileSize(v)}</span>)</li>`;
+                    size += v;
                 }
             }
-            return ret;
+            return [ret, size];
         }
 
+        // TODO Add Client Cache ( innodb )
         $.get(api_point + '/torrent/filelist', {'tid': tid}, function (res) {
             if (res.success) {
                 let file_list = res.result;
@@ -114,7 +147,7 @@ jQuery(document).ready(function() {
                     size: 'lg',
                     //width: '700px',
                     moveable: true,
-                    custom: "<ul  class='tree tree-lines tree-folders' data-ride='tree' id='torrent_filelist'>" + list_worker(file_list) + "</ul>"
+                    custom: "<ul  class='tree tree-lines tree-folders' data-ride='tree' id='torrent_filelist'>" + list_worker(file_list)[0] + "</ul>"
                 })).show({
                     shown:function () {
                         $('#torrent_filelist').tree();
@@ -146,7 +179,7 @@ jQuery(document).ready(function() {
                     ret += `<li><code>${v}</code></li>`;
                 });
                 ret += '</ul>';
-                ret += '<b>Redis key hit:</b><ul>';
+                ret += '<b>Redis keys hit: (Some keys hit may not appear here)</b><ul>';
                 $.each(parsed_redis_data,function (k, v) {
                     ret += '<li><code>' + k + "</code> : " + v + '</li>';
                 });
