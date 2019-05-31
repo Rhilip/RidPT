@@ -16,8 +16,7 @@ return [
 
     // 全局中间件
     'middleware'          => [
-        apps\middleware\IpBanMiddleware::class,
-        apps\middleware\DebugMiddleware::class
+        apps\middleware\IpBanMiddleware::class
     ],
 
     // 组件配置
