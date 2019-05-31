@@ -52,6 +52,7 @@ $type_dict = [
 </div>
 
 <?php if ($pattern != ''): ?>
+<div class="row" style="margin: 0 20px 0 0">
     <hr>
     <div>
         Keys matching <code><?= $pattern ?></code>
@@ -60,7 +61,7 @@ $type_dict = [
         </div>
         <div class="clearfix"></div>
     </div>
-    <table class="table">
+    <table class="table table-hover">
         <thead>
         <tr>
             <th class="text-right" style="width: 5%">#</th>
@@ -82,16 +83,18 @@ $type_dict = [
                     <form method="post">
                         <input type="hidden" name="action" value="delkey"/>
                         <input type="hidden" name="key" value="<?= $key ?>"/>
-                        <button class="layui-btn layui-btn-sm layui-btn-danger" type="submit"
+                        <button class="btn btn-danger" type="submit"
                                 onclick="return confirm('Are you sure you want to delete this key? <?= $key ?>');">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </form>
                 </td>
             </tr>
+            <?php $index ++; ?>
         <?php endforeach; ?>
         </tbody>
     </table>
+</div>
 <?php endif; ?>
 <?php $this->end(); ?>
 
