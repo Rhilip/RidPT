@@ -5,11 +5,6 @@
  * Date: 2019/2/22
  * Time: 11:38
  *
- * Some Javascript Library Documents:
- *   - flag-css: https://kfpun.com/flag-css/
- *   - fontAwesome : https://fontawesome.com/icons?d=gallery
- *   - Zui: http://zui.sexy/
- *
  * @var League\Plates\Template\Template $this
  * @var string $title
  */

@@ -59,8 +59,8 @@ $time_now = time();
             </div>
         </td>
         <td class="text-center" data-item="t-commit" data-commit="0">0</td> <!-- TODO -->
-        <td class="text-center" data-item="t-size" data-size="<?= $torrent->getTorrentSize() ?>"><?= $this->e($torrent->getTorrentSize(),'format_bytes') ?></td>
-        <td class="text-center" data-item="t-added-date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>" data-ttl="<?= $time_now - strtotime($torrent->getAddedAt()) ?>"><?= $torrent->getAddedAt() ?></td>
+        <td class="text-center" data-item="t-size" data-size="<?= $torrent->getTorrentSize() ?>"><?= $this->batch($torrent->getTorrentSize(),'format_bytes_compact') ?></td>
+        <td class="text-center" data-item="t-added-date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>" data-ttl="<?= $time_now - strtotime($torrent->getAddedAt()) ?>"><nobr><?= str_replace(' ','<br />',$torrent->getAddedAt()) ?></nobr></td>
         <td class="text-center" data-item="t-seeder" data-seeder="<?= $this->e($torrent->getComplete()) ?>"><?= number_format($torrent->getComplete()) ?></td>
         <td class="text-center" data-item="t-leecher" data-leecher="<?= $this->e($torrent->getIncomplete()) ?>"><?= number_format($torrent->getIncomplete()) ?></td>
         <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>"><?= number_format($torrent->getDownloaded()) ?></td>

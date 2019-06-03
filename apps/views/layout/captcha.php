@@ -6,4 +6,7 @@
  * Time: 16:49
  */
 ?>
-<img src="/static/pic/captcha_dummy.png" onclick="this.src='/captcha?t=' + Date.now()" alt="Captcha Image">
+<div class="captcha_img_load">
+    <img class="captcha_img" src="/static/pic/captcha_dummy.png" alt="Captcha Image"
+         data-toggle="tooltip" data-placement="right" title="Click to Refresh">
+</div>

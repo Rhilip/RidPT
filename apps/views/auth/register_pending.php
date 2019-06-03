@@ -13,8 +13,8 @@
 
 <?= $this->layout('auth/base') ?>
 
-<?php $this->start('panel') ?>
-<div class="auth-form">
+<?php $this->start('container') ?>
+<div class="jumbotron">
     <h1>One more Step</h1>
     <?php if ($confirm_way == 'email'): ?>
         <p>Check your email : <?= $email ?> to confirm your account.</p>

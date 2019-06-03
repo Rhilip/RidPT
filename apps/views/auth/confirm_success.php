@@ -11,8 +11,8 @@
 
 <?= $this->layout('auth/base') ?>
 
-<?php $this->start('panel') ?>
-<div class="auth-form">
+<?php $this->start('container') ?>
+<div class="jumbotron">
     <h1>Your account is success Confirmed.</h1>
     <p>Click <!--suppress HtmlUnknownTarget --><a href="/auth/login">Login Page</a> to login</p>
 </div>

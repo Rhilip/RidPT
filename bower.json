@@ -19,6 +19,7 @@
     "jqjquery-wysibb": "^1.5.1",
     "html5shiv": "^3.7.3",
     "respond": "^1.4.2",
-    "flag-css": "^0.0.12"
+    "flag-css": "^0.0.12",
+    "zxcvbn": "^4.4.2"
   }
 }

@@ -23,10 +23,12 @@ class Conversion implements ExtensionInterface
     public function register(Engine $engine)
     {
         $engine->registerFunction('format_bytes', [$this, 'format_bytes']);
+        $engine->registerFunction('format_bytes_compact', [$this, 'format_bytes_compact']);
+        $engine->registerFunction('format_bytes_loose', [$this, 'format_bytes_loose']);
         $engine->registerFunction('format_ubbcode', [$this, 'format_ubbcode']);
     }
 
-    public function format_bytes($bytes, $precision = 2)
+    public function format_bytes($bytes, $precision = 2, $separator = " ")
     {
         $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
         $bytes = max($bytes, 0);
@@ -36,7 +38,14 @@ class Conversion implements ExtensionInterface
         // Uncomment one of the following alternatives
         $bytes /= pow(1024, $pow);
 
-        return round($bytes, $precision) . ' ' . $units[$pow];
+        return round($bytes, $precision) . $separator . $units[$pow];
+    }
+
+    public function format_bytes_compact($bytes, $precision = 2) {
+        return $this->format_bytes($bytes, $precision , "<br />");
+    }
+    public function format_bytes_loose($bytes, $precision = 2) {
+        return $this->format_bytes($bytes, $precision , "&nbsp;");
     }
 
     public function format_ubbcode($string)

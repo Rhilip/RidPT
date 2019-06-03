@@ -67,6 +67,13 @@
                     <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                         <a class="torrent-structure" href="/torrent/structure?id=<?= $torrent->getId() ?>"><i class="fas fa-folder-open fa-fw"></i>&nbsp;View Torrent's Structure</a>
                     </div><!-- View Torrent's Structure -->
+                    <hr>
+                    <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
+                        <a class="torrent-peers" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-user-friends fa-fw"></i>&nbsp;See Current Peers</a>
+                    </div><!-- View Torrent's Files -->
+                    <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
+                        <a class="torrent-snatch" href="/torrent/snatch?id=<?= $torrent->getId() ?>"><i class="fas fa-bars fa-fw"></i>&nbsp;See Snatched Record</a>
+                    </div><!-- View Torrent's Structure -->
                 </div>
             </div>
             <div class="panel" id="torrent_info_panel">

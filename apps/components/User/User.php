@@ -31,6 +31,7 @@ class User extends Component implements UserInterface
     public function onRequestBefore()
     {
         parent::onRequestBefore();
+        $this->class = 0;
         $this->anonymous = true;
         $this->bookmark_list = null;
     }

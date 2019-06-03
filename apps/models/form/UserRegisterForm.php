@@ -84,7 +84,8 @@ class UserRegisterForm extends Validator
                 ['Match', ['item' => 'password']]
             ],
             'email' => 'required | email',
-            'accept_tos' => 'required | Equal(value=yes)',
+            'verify_tos' => 'required | Equal(value=yes)',
+            'verify_age' => 'required | Equal(value=yes)',
         ];
     }
 

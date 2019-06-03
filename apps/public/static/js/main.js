@@ -20,6 +20,14 @@ const ext2Icon = {
     contract: []
 };
 
+const paswordStrengthText = {
+    0: "Worst ☹",  // too guessable: risky password. (guesses < 10^3)
+    1: "Bad ☹",    // too guessable: risky password. (guesses < 10^3)
+    2: "Weak ☹",   // somewhat guessable: protection from unthrottled online attacks. (guesses < 10^8)
+    3: "Good ☺",   // safely unguessable: moderate protection from offline slow-hash scenario. (guesses < 10^10)
+    4: "Strong ☻"  // very unguessable: strong protection from offline slow-hash scenario. (guesses >= 10^10)
+};
+
 function humanFileSize(bytes, fix, si) {
     let thresh = si ? 1000 : 1024;
     if (Math.abs(bytes) < thresh) {
@@ -77,7 +85,19 @@ jQuery(document).ready(function() {
             });
         }
     });
+    
+    // Captcha Img Re-flush
+    let captcha_img_another = $('.captcha_img');
+    captcha_img_another.on('click',function () {
+        $(this).attr('src','/captcha?t=' + Date.now())  // Change src to get another captcha image
+            .parent('.captcha_img_load').addClass('load-indicator loading');  // Add loading indicator in parent of img tag
+    });
+    captcha_img_another.on('load',function () {
+        $(this).parent('.captcha_img_load').removeClass('load-indicator loading');
+    });
 
+    
+    
     // TODO Add Scroll to TOP fixbar
 
 
@@ -92,6 +112,40 @@ jQuery(document).ready(function() {
         return new $.zui.Messager(text, option).show();
     }
 
+    // Password strength checker
+    let password_strength = $('#password_strength');
+    if (password_strength.length > 0) {
+        let strength_text = $('#password_strength_text');
+        let strength_suggest = $('#password_strength_suggest');
+        $('#password').on('input', function () {
+            let val = $(this).val();
+            if (val !== "") {
+                try {
+                    let result = zxcvbn(val);
+                    password_strength.show();
+                    strength_text.html(paswordStrengthText[result.score]);
+                    strength_suggest.html( (result.feedback.warning !== "" ? (result.feedback.warning + "<br>") : "") + result.feedback.suggestions);
+                } catch (e) {
+                }
+            } else {
+                password_strength.hide();
+                strength_suggest.text('');
+            }
+        })
+    }
+
+    $('#password_help_btn').click(function () {
+        let password_input = $(this).prev('input[name="password"]');
+        let help_info = $(this).children('i');
+        let old_type_is_password = password_input.attr('type') === 'password';
+        password_input.attr('type', old_type_is_password ? 'text' : 'password');
+        if (old_type_is_password) {
+            help_info.removeClass('fa-eye').addClass('fa-eye-slash');
+        } else {
+            help_info.removeClass('fa-eye-slash').addClass('fa-eye');
+        }
+    });
+    
     // Torrent favour Add/Remove action
     $('.torrent-favour').click(function () {
         let that = $(this);
@@ -164,7 +218,7 @@ jQuery(document).ready(function() {
         $('#torrent_structure div.dictionary,div.list').click(function () {
             $(this).next('ul').toggle();
         });
-    };
+    }
 
     // Show Extend debug info of Database sql execute and Redis key hit
     if (typeof _extend_debug_info !== 'undefined' && _extend_debug_info) {

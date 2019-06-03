@@ -56,6 +56,17 @@ $can_manage_news = app()->user->isPrivilege('manage_news');
     </div>
 </div>
 
+<div class="panel" id="disclaimer_panel">
+    <div class="panel-heading">Disclaimer</div>
+    <div class="panel-body">
+        None of the files shown here are actually hosted on this server. The tracker only manages connections, it does
+        not have any knowledge of the contents of the files being distributed. The links are provided solely by this
+        site's users. The administrator of this site cannot be held responsible for what its users post, or any other
+        actions of its users. You may not use this site to distribute or download any material when you do not have the
+        legal rights to do so. It is your own responsibility to adhere to these terms.
+    </div>
+</div>
+
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
     <h1>Navbar <?= __('greeting', null); ?></h1>

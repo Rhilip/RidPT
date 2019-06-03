@@ -12,11 +12,9 @@
 
 <?= $this->layout('auth/base') ?>
 
-<?php $this->start('panel') ?>
-<div class="auth-form">
-    <div class="jumbotron">
-        <h1>Opps~</h1>
-        <p><?= nl2br($msg) ?></p>
-    </div>
+<?php $this->start('container') ?>
+<div class="jumbotron">
+    <h1>Opps~</h1>
+    <p><?= nl2br($msg) ?></p>
 </div>
 <?php $this->end(); ?>

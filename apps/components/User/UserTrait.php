@@ -19,7 +19,7 @@ trait UserTrait
     private $username;
     private $email;
     private $status;
-    private $class;
+    private $class = 0;
 
     private $passkey;
 
