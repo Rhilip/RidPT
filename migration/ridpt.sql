@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 04, 2019 at 03:00 PM
+-- Generation Time: Jun 05, 2019 at 12:06 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.6
 
@@ -476,7 +476,8 @@ TRUNCATE TABLE `site_crontab`;
 --
 
 INSERT INTO `site_crontab` (`id`, `job`, `priority`, `job_interval`) VALUES
-(1, 'clean_dead_peer', 1, 600);
+(1, 'clean_dead_peer', 1, 600),
+(2, 'clean_expired_session', 1, 600);
 
 -- --------------------------------------------------------
 
@@ -676,9 +677,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 DROP TABLE IF EXISTS `users_confirm`;
 CREATE TABLE IF NOT EXISTS `users_confirm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `action` enum('register','recover') NOT NULL,
   `uid` int(11) UNSIGNED NOT NULL,
   `serect` varchar(64) NOT NULL,
   `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `used` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `serect` (`serect`),
   KEY `FK_confirm_user_id` (`uid`)

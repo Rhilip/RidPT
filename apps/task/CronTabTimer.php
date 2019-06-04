@@ -73,4 +73,20 @@ class CronTabTimer extends Timer
         $affect_peer_count = app()->pdo->getRowCount();
         $this->print_log('Success clean ' . $affect_peer_count . ' peers from our peer list');
     }
+
+    protected function clean_expired_session() {
+        $timenow = time();
+
+        $expired_sessions = app()->redis->zRangeByScore('Site:Sessions:to_expire', 0, $timenow);
+        foreach ($expired_sessions as $session) {
+            app()->pdo->createCommand('UPDATE `users_session_log` SET `expired` = 1 WHERE sid = :sid')->createCommand([
+                'sid' => $session
+            ])->execute();
+        }
+
+        $clean_record_count = app()->redis->zRemRangeByScore('Site:Sessions:to_expire', 0, $timenow);
+        $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) .'), Redis(' . $clean_record_count .').');
+    }
+
+    // TODO sync sessions from database to redis to avoid lost (Maybe)...
 }

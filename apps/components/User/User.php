@@ -8,6 +8,7 @@
 
 namespace apps\components\User;
 
+use apps\libraries\Constant;
 use Rid\Base\Component;
 
 
@@ -48,7 +49,7 @@ class User extends Component implements UserInterface
 
     public function loadUserFromCookies()
     {
-        $this->_userSessionId = app()->request->cookie($this->cookieName);
+        $this->_userSessionId = app()->request->cookie(Constant::cookie_name);
         $userId = app()->redis->zScore($this->sessionSaveKey, $this->_userSessionId);
 
         if ($userId) {
@@ -79,7 +80,7 @@ class User extends Component implements UserInterface
         app()->pdo->createCommand('UPDATE `users_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
             'sid' => $this->_userSessionId
         ])->execute();
-        app()->cookie->delete($this->cookieName);
+        app()->cookie->delete(Constant::cookie_name);
         return $success ? true : false;
     }
 

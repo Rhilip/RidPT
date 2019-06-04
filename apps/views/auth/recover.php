@@ -15,7 +15,7 @@
         <div class="panel">
             <div class="panel-heading">Recover lost user name or password</div>
             <div class="panel-body">
-                <fieldset style="margin-bottom: 10px">
+                <fieldset class="auth-recover-step" data-step="1">
                     <legend class="text-special">1. Enter Your Email</legend>
 
                     <form class="auth-form" method="post">
@@ -46,14 +46,13 @@
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" value="Register" class="btn btn-primary">Recover it!!</button>
+                            <button type="submit" value="Register" class="btn btn-primary">Recover it !!</button>
                         </div>
                     </form>
                 </fieldset>
-
-                <fieldset><legend>2. Follow The Confirm Link to reset your password.</legend></fieldset>
-                <fieldset><legend>3. Get new generate password from Email and login.</legend></fieldset>
-                <fieldset><legend>4. Set your own password in user panel.</legend></fieldset>
+                <fieldset class="auth-recover-step" data-step="2"><legend>2. Follow The Link in confirmation email to reset your password.</legend></fieldset>
+                <fieldset class="auth-recover-step" data-step="3"><legend>3. Get new generate password from Email and login.</legend></fieldset>
+                <fieldset class="auth-recover-step" data-step="3"><legend>4. Set your own password in user panel.</legend></fieldset>
             </div>
         </div>
     </div>

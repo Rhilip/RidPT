@@ -92,7 +92,7 @@
                             <div class="row">
                                 <label for="ssl" class="col-md-3">SSL (HTTPS)</label>
                                 <div class="col-md-6">
-                                    <input type="checkbox"  name="ssl" id="ssl" value="yes" title="" checked disabled> Enable SSL
+                                    <input type="checkbox"  name="ssl" id="ssl" value="yes" title=""<?= app()->request->isSecure() ? ' checked disabled': '' ?>> Enable SSL
                                 </div>
                             </div>
                         </div>

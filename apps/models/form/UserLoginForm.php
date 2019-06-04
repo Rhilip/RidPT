@@ -8,8 +8,10 @@
 
 namespace apps\models\form;
 
-use Rid\Helpers\StringHelper;
+use apps\libraries\Constant;
 use apps\components\User\UserInterface;
+
+use Rid\Helpers\StringHelper;
 
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
@@ -26,6 +28,10 @@ class UserLoginForm extends Validator
     public $password;
     public $opt;
 
+    public $logout;
+    public $securelogin;
+    public $ssl;
+
     private $self;
 
     // Key Information of User Session
@@ -33,7 +39,6 @@ class UserLoginForm extends Validator
     private $sessionSaveKey = 'SESSION:user_set';
 
     // Cookie
-    private $cookieName = 'rid';
     private $cookieExpires = 0x7fffffff;
     private $cookiePath = '/';
     private $cookieDomain = '';
@@ -44,7 +49,6 @@ class UserLoginForm extends Validator
     {
         parent::__construct($config);
         $this->sessionSaveKey = app()->user->sessionSaveKey;
-        $this->cookieName = app()->user->cookieName;
     }
 
     public static function inputRules()
@@ -55,6 +59,10 @@ class UserLoginForm extends Validator
                 ['required'],
                 ['length', ['min' => 6, 'max' => 40]]
             ],
+            'opt' => 'length(6)',
+            'securelogin' => 'Equal(value=yes)',
+            'logout' => 'Equal(value=yes)',
+            'ssl' => 'Equal(value=yes)',
         ];
     }
 
@@ -122,8 +130,11 @@ class UserLoginForm extends Validator
 
         $exist_session_count = app()->redis->zCount($this->sessionSaveKey, $userId, $userId);
         if ($exist_session_count < app()->config->get('base.max_per_user_session')) {
-            do { // To make sure this session is unique!
-                $userSessionId = StringHelper::getRandomString($this->sessionLength);
+            do { // To make sure this session is unique !
+                // The first character of sessionId is the Flag of secure login
+                $userSessionId = StringHelper::getRandomString($this->sessionLength - 1);
+                $userSessionId = ($this->securelogin === 'yes' ? '1' : '0') . $userSessionId;
+
                 $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users_session_log` WHERE sid = :sid')->bindParams([
                     'sid' => $userSessionId
                 ])->queryScalar();
@@ -140,16 +151,29 @@ class UserLoginForm extends Validator
             // Add this session id in Redis Cache
             app()->redis->zAdd($this->sessionSaveKey, $userId, $userSessionId);
 
+            // Add IP linked
+            if ($this->securelogin === 'yes') {
+                app()->redis->hSet('Site:Sessions:secure', $userSessionId, app()->request->getClientIp());
+            }
+
             // Set User Cookie
-            app()->response->setCookie($this->cookieName, $userSessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
+            $cookieExpire = $this->cookieExpires;
+            if ($this->logout === 'yes') {
+                $cookieExpire = time() + 15 * 60;
+                // TODO Use redis zset to auto clean those session
+                app()->redis->zAdd('Site:Sessions:to_expire', $cookieExpire, $userSessionId);
+            }
+
+            app()->response->setCookie(Constant::cookie_name, $userSessionId, $cookieExpire, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
             return true;
         } else {
-            return false;
+            return 'Reach the limit of Max User Session.';
         }
     }
 
     public function updateUserLoginInfo()
     {
+        // TODO or move to task queue...
         app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
             "ip" => app()->request->getClientIp(), "id" => $this->self["id"]
         ])->execute();

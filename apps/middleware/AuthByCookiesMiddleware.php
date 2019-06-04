@@ -3,6 +3,8 @@
 namespace apps\middleware;
 
 
+use apps\libraries\Constant;
+
 class AuthByCookiesMiddleware
 {
 
@@ -29,10 +31,23 @@ class AuthByCookiesMiddleware
         }
 
         if ($isAnonymousUser) {
-            $to = app()->request->server('path_info') . '?' . app()->request->server('query_string');
+            $query = app()->request->server('query_string');
+            $to = app()->request->server('path_info') . (strlen($query) > 0 ? '?' . $query : '');
             app()->session->set('login_return_to', $to);
             return app()->response->redirect("/auth/login");
         } else {
+            /**
+             * Check if session is locked with IP
+             */
+            $userSessionId = app()->request->cookie(Constant::cookie_name);
+            if (substr($userSessionId, 0, 1) === '1') {
+                $record_ip = app()->redis->hGet('Site:Sessions:secure', $userSessionId);
+                if (app()->request->getClientIp() !== $record_ip) {  // The Ip isn't matched
+                    app()->cookie->delete(Constant::cookie_name);
+                    return app()->response->redirect('/auth/login');
+                }
+            }
+
             /** Check User Permission to this route
              *
              * When user visit - /admin -> Controller : \apps\controllers\AdminController  Action: actionIndex

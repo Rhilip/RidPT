@@ -110,12 +110,17 @@ class AuthController extends Controller
                 ]);
             } else {
                 $success = $login->createUserSession();
-                if ($success) {
+                if ($success === true) {
                     $login->updateUserLoginInfo();
+
                     $return_to = app()->session->pop('login_return_to') ?? '/index';
+                    if (!app()->request->isSecure() && $login->ssl === 'yes') {  // Upgrade the scheme with full url
+                        $return_to = 'https://' . app()->request->header('host') . $return_to;
+                    }
+
                     return app()->response->redirect($return_to);
                 } else {
-                    return $this->render('auth/error', ['title' => 'Login Failed', 'msg' => 'Reach the limit of Max User Session.']);
+                    return $this->render('auth/error', ['title' => 'Login Failed', 'msg' => $success]);
                 }
             }
         } else {

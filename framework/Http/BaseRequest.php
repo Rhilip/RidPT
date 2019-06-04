@@ -199,11 +199,11 @@ class BaseRequest extends Component
     // 返回请求的完整URL
     public function fullUrl()
     {
-        return $this->scheme() . '://' . $this->header('host') . $this->server('path_info') . '?' . $this->server('query_string');
+        return $this->url() . '?' . $this->server('query_string');
     }
 
     // 获取协议
-    protected function scheme()
+    public function scheme()
     {
         return $this->server('request_scheme') ?: $this->header('scheme');
     }

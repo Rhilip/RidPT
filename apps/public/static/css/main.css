@@ -72,7 +72,7 @@ body{background-color:#f6f6f6}
 /*-----------------------------------------------------------------------------------*/
 
 .auth-password-help-btn{position:absolute;top:0;right:0;width:32px;height:32px;padding:0;text-align:center;filter:alpha(opacity=65);outline:0;opacity:.65;z-index:3}
-
+.auth-recover-step[data-step="1"]{margin-bottom: 20px}
 
 /*-----------------------------------------------------------------------------------*/
 /*	3. Page of '/index'
