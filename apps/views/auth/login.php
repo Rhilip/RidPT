@@ -38,7 +38,7 @@
 
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <div class="pull-right"><a href="#" class="text-muted">Forget you password?</a></div> <!-- TODO password recover -->
+                        <div class="pull-right"><a href="/auth/recover" class="text-muted">Forget you password?</a></div> <!-- TODO password recover -->
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fas fa-key fa-fw"></span></span>
                             <input type="password" class="form-control" id="password" name="password" required

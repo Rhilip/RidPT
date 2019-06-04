@@ -8,9 +8,10 @@
 
 namespace apps\controllers;
 
-use apps\models\form\UserConfirmForm;
 use apps\models\User;
 use apps\models\form\UserLoginForm;
+use apps\models\form\UserConfirmForm;
+use apps\models\form\UserRecoverForm;
 use apps\models\form\UserRegisterForm;
 
 use Rid\Http\Controller;
@@ -59,13 +60,35 @@ class AuthController extends Controller
             ]);
         } else {
             $confirm->flush();
-            return $this->render('auth/confirm_success');
+            return $this->render('auth/confirm_success', ['action' => $confirm->action]);
         }
     }
 
     public function actionRecover()
     {
-        // TODO User Recover Action
+        if (app()->request->isPost()) {
+            $form = new UserRecoverForm();
+            $form->setData(app()->request->post());
+            $success = $form->validate();
+            if (!$success) {
+                return $this->render('auth/error', [
+                    'title' => 'Action Failed',
+                    'msg' => $form->getError()
+                ]);
+            } else {
+                $flush = $form->flush();
+                if ($flush === true) {
+                    return $this->render('auth/recover_next_step');
+                } else {
+                    return $this->render('auth/error', [
+                        'title' => 'Confirm Failed',
+                        'msg' => $flush
+                    ]);
+                }
+            }
+        } else {
+            return $this->render('auth/recover');
+        }
     }
 
     public function actionLogin()

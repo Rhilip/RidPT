@@ -46,6 +46,8 @@ class UserRegisterForm extends Validator
     private $leechtime;
     private $bonus;
 
+    protected $_action = 'register';
+
     public function setData($config)
     {
         parent::setData($config);
@@ -271,13 +273,16 @@ class UserRegisterForm extends Validator
 
         if ($this->confirm_way == 'email') {
             $confirm_key = StringHelper::getRandomString(32);
-            app()->pdo->createCommand('INSERT INTO `users_confirm` (uid,serect) VALUES (:uid,:serect)')->bindParams([
-                'uid' => $this->id, 'serect' => $confirm_key
+            app()->pdo->createCommand('INSERT INTO `users_confirm` (`uid`,`serect`,`action`) VALUES (:uid,:serect,:action)')->bindParams([
+                'uid' => $this->id, 'serect' => $confirm_key, 'action' => $this->_action
             ])->execute();
-            $confirm_url = app()->request->root() . '/auth/confirm?secret=' . urlencode($confirm_key);
+            $confirm_url = app()->request->root() . '/auth/confirm?' . http_build_query([
+                    'secret' => $confirm_key,
+                    'action' => $this->_action
+                ]);
 
             $mail_sender = \Rid\Libraries\Mailer::newInstanceByConfig('libraries.[swiftmailer]');
-            $mail_sender->send([$this->email], 'Please confirm your accent', "Click this link $confirm_url to confirm.");
+            $mail_sender->send([$this->email], 'Please confirm your accent', "Click this link $confirm_url to confirm.");  // FIXME change to email template
         }
 
         Site::writeLog($log_text, Site::LOG_LEVEL_MOD);

@@ -149,7 +149,7 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 
 | Library | Docs |
 |:--|:--|
-| [Zui](https://github.com/easysoft/zui): an HTML5 front UI framework | http://zui.sexy/ |
+| [Zui](https://github.com/easysoft/zui): an HTML5 front UI framework | http://zui.sexy/  ( Chinese Version ) |
 | [FortAwesome](https://github.com/FortAwesome/Font-Awesome): The iconic SVG, font, and CSS toolkit | https://fontawesome.com/icons?d=gallery |
 | [flag-css](https://github.com/7kfpun/flag-css): CSS for SVG country flags respecting the original ratio. | https://kfpun.com/flag-css/ |
 | [zxcvbn](https://github.com/dropbox/zxcvbn): Low-Budget Password Strength Estimation | https://lowe.github.io/tryzxcvbn/ |
