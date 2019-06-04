@@ -14,9 +14,12 @@ use apps\models\User;
 
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;
+use Rid\Validators\CaptchaTrait;
 
 class UserRegisterForm extends Validator
 {
+    use CaptchaTrait;
+
     public $id;
 
     public $username;
@@ -91,7 +94,12 @@ class UserRegisterForm extends Validator
 
     public static function callbackRules()
     {
-        return ['isRegisterSystemOpen', 'isMaxUserReached', 'isMaxRegisterIpReached', 'isValidUsername', 'isValidEmail', 'checkRegisterType'];
+        return [
+            'validateCaptcha',
+            'isRegisterSystemOpen', 'isMaxUserReached', 'isMaxRegisterIpReached',
+            'isValidUsername', 'isValidEmail',
+            'checkRegisterType'
+        ];
     }
 
     protected function isRegisterSystemOpen()
@@ -109,14 +117,14 @@ class UserRegisterForm extends Validator
 
     protected function isMaxUserReached()
     {
-        if (app()->config->get('register.max_user_check') &&
+        if (app()->config->get('register.check_max_user') &&
             Site::fetchUserCount() >= app()->config->get('base.max_user'))
             $this->buildCallbackFailMsg('MaxUserReached','Max user limit Reached');
     }
 
     public function isMaxRegisterIpReached()
     {
-        if (app()->config->get("register.max_ip_check")) {
+        if (app()->config->get("register.check_max_ip")) {
             $client_ip = app()->request->getClientIp();
 
             $max_user_per_ip = app()->config->get("register.per_ip_user") ?: 5;
@@ -152,7 +160,7 @@ class UserRegisterForm extends Validator
     {
         $email = $this->email;
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
-        if (app()->config->get("register.enabled_email_black_list") &&
+        if (app()->config->get("register.check_email_blacklist") &&
             app()->config->get("register.email_black_list")) {
             $email_black_list = explode(",", app()->config->get("register.email_black_list"));
             if (in_array($email_suffix, $email_black_list)) {
@@ -160,7 +168,7 @@ class UserRegisterForm extends Validator
                 return;
             }
         }
-        if (app()->config->get("register.enabled_email_white_list") &&
+        if (app()->config->get("register.check_email_whitelist") &&
             app()->config->get("register.email_white_list")) {
             $email_white_list = explode(",", app()->config->get("register.email_white_list"));
             if (!in_array($email_suffix, $email_white_list)) {

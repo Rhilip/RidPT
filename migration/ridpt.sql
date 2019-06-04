@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 31, 2019 at 09:48 PM
+-- Generation Time: Jun 04, 2019 at 03:00 PM
 -- Server version: 8.0.16
--- PHP Version: 7.3.5
+-- PHP Version: 7.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -384,6 +384,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('base.enable_extend_debug', '1'),
 ('base.enable_register_system', '1'),
 ('base.enable_tracker_system', '1'),
+('base.max_news_sum', '5'),
 ('base.max_per_user_session', '10'),
 ('base.max_user', '5000'),
 ('base.site_author', 'Rhilip'),
@@ -412,12 +413,12 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('register.by_green', '0'),
 ('register.by_invite', '1'),
 ('register.by_open', '1'),
+('register.check_email_blacklist', '1'),
+('register.check_email_whitelist', '1'),
+('register.check_max_ip', '1'),
+('register.check_max_user', '1'),
 ('register.email_black_list', '@test.com'),
 ('register.email_white_list', '@gmail.com'),
-('register.enabled_email_black_list', '1'),
-('register.enabled_email_white_list', '1'),
-('register.max_ip_check', '1'),
-('register.max_user_check', '1'),
 ('register.per_ip_user', '5'),
 ('register.user_confirm_way', 'auto'),
 ('register.user_default_bonus', '0'),
@@ -617,18 +618,6 @@ CREATE TABLE IF NOT EXISTS `torrents_categories` (
 --
 -- RELATIONSHIPS FOR TABLE `torrents_categories`:
 --
-
---
--- Truncate table before insert `torrents_categories`
---
-
-TRUNCATE TABLE `torrents_categories`;
---
--- Dumping data for table `torrents_categories`
---
-
-INSERT INTO `torrents_categories` (`id`, `name`) VALUES
-(1, 'Movie');
 
 -- --------------------------------------------------------
 
