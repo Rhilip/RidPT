@@ -9,8 +9,6 @@
  */
 
 $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_date');
-$extend_debug_info = app()->config->get('base.enable_extend_debug') &&
-    app()->user->getClass(true) > app()->config->get('authority.see_extend_debug_log');
 ?>
 
 <!DOCTYPE html>
@@ -85,14 +83,6 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
                 with <b><?= $this->e(memory_get_usage(),'format_bytes') ?></b> ram used,
                 <b><?= count(app()->pdo->getExecuteData()) ?></b> db queries,
                 <b><?= array_sum(app()->redis->getCalledData())?></b> calls of Redis ]
-                <?php if ($extend_debug_info): ?>
-                    <a href="javascript:" id="extend_debug_info"><span class="label label-warning label-outline">Debug info</span></a>
-                    <script>
-                        const _extend_debug_info = true;
-                        const _sql_data = '<?= json_encode(app()->pdo->getExecuteData(), JSON_HEX_APOS) ?>';
-                        const _redis_data = '<?= json_encode(app()->redis->getCalledData(), JSON_HEX_APOS) ?>';
-                    </script>
-                <?php endif; ?>
             </p>
         </div>
     </div>
