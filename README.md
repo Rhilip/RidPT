@@ -163,3 +163,6 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 | [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | http://www.sirius.ro/php/sirius/validation/ |
 | [league/plates](https://github.com/thephpleague/plates) | Template system | http://platesphp.com/ |
 
+## Licence
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_large)
