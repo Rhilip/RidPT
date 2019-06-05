@@ -1,11 +1,10 @@
 <p align="center">
 <img src="https://github.com/Rhilip/RidPT/raw/master/apps/public/static/pic/logo.png" width='256px'><br/>
 A Private Torrent framework Project.<br/>
-<br/>
-[![GitHub Releases](https://img.shields.io/github/release/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/releases)
-[![used-Swoole-blue](https://img.shields.io/badge/used-Swoole-blue.svg)]
-[![GitHub license](https://img.shields.io/github/license/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/blob/master/LICENSE)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_shield)
+<a href="https://github.com/Rhilip/RidPT/releases"><img src="https://img.shields.io/github/release/Rhilip/RidPT.svg" alt="GitHub Releases" /></a>
+<a href="https://www.swoole.com/"><img src="https://img.shields.io/badge/used-Swoole-blue.svg" alt="used-Swoole-blue" /></a>
+<a href="https://github.com/Rhilip/RidPT/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Rhilip/RidPT.svg" alt="GitHub license" /></a>
+<a href="https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_shield"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=shield" alt="FOSSA Status" /></a>
 </p>
 
 --------------------------------------
