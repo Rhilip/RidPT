@@ -63,7 +63,7 @@ class UserRecoverForm  extends Validator
                     'action' => $this->_action
                 ]);
 
-            $mail_sender = \Rid\Libraries\Mailer::newInstanceByConfig('libraries.[swiftmailer]');
+            $mail_sender = \apps\Libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
             $mail_sender->send([$this->email], 'Please confirm your action to recover your password', "Click this link $confirm_url to confirm.");  // FIXME change to email template
         }
         return true;

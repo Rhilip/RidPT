@@ -120,17 +120,18 @@ So that tracker can record the peer's ip address.
 | REDIS_DATABASE | Int | dbindex, the database number to switch to. |
 | REDIS_PASSWORD | String | The password for the Redis server. |
 
-### Section `Swiftmailer`
+### Section `Mailer`
 
-> Document: [Documentation – Swift Mailer](https://swiftmailer.symfony.com/docs/introduction.html#basic-usage)
+> Document: [the PHPMailer wiki](https://github.com/PHPMailer/PHPMailer/wiki)
 
 | Key | Type | Note |
 |:--|:--:|:--|
-| MAILER_HOST | String | The mailer host. |
-| MAILER_PORT | Int | The port to connect to. |
-| MAILER_ENCRYPTION | Enum('tls','ssl') | The encryption type. |
-| MAILER_USERNAME | String | The username to authenticate with. |
-| MAILER_PASSWORD | String | The password to authenticate with. |
+| MAILER_DEBUG | Int | SMTP class debug output mode. |
+| MAILER_HOST | String | SMTP hosts. |
+| MAILER_PORT | Int | The default SMTP server port. |
+| MAILER_ENCRYPTION | Enum('','tls','ssl') | What kind of encryption to use on the SMTP connection. |
+| MAILER_USERNAME | String | SMTP username. |
+| MAILER_PASSWORD | String | SMTP password. |
 | MAILER_FROM | String | The from address of this message. |
 | ~~MAILER_FROM_NICKNAME~~ | String | Not use now. |
 

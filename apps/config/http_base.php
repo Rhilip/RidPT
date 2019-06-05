@@ -220,15 +220,16 @@ return [
 
     // 类库配置
     'libraries'           => [
-        'swiftmailer' => [
-            'class'   => Rid\Libraries\Mailer::class,
+        'mailer' => [
+            'class'   => \apps\libraries\Mailer::class,
+            'debug'   => env('MAILER_DEBUG'),
             'host'    => env('MAILER_HOST'),
             'port'    => env('MAILER_PORT'),
             'encryption' => env('MAILER_ENCRYPTION'),
             'username'=> env('MAILER_USERNAME'),
             'password'=> env('MAILER_PASSWORD'),
             'from'    => env('MAILER_FROM'),
-            'nikename'=> env('MAILER_FROM_NICKNAME'),
+            'fromname'=> env('MAILER_FROMNAME'),
         ],
     ],
 ];

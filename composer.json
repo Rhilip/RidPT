@@ -30,11 +30,11 @@
     "ext-mbstring": "*",
     "psr/log": "^1.1",
     "league/plates": "^3.3",
-    "robthree/twofactorauth": "^1.6",
-    "swiftmailer/swiftmailer": "^6.1",
-    "siriusphp/validation": "^2.2",
+    "mjohnson/decoda": "^6.12",
     "phpmailer/phpmailer": "^6.0",
-    "mjohnson/decoda": "^6.12"
+    "siriusphp/validation": "^2.2",
+    "soundasleep/html2text": "^1.1",
+    "robthree/twofactorauth": "^1.6"
   },
   "autoload": {
     "psr-4": {
