@@ -268,7 +268,13 @@ class BaseRedisConnection extends Component
 
         $this->autoConnect();   // 自动连接
 
-        $calling = $name . ($arguments ? ' ' . $arguments[0] : '');
+        $arg_text = '';
+        foreach ($arguments as $arg) {
+            if (!is_string($arg)) $arg = '[Array]';
+            $arg_text .= ' ' . $arg;
+        }
+
+        $calling = $name . ($arguments ? ' ' . $arg_text : '');
         if (isset($this->_calledData[$calling])) {
             $this->_calledData[$calling] += 1;
         } else {
