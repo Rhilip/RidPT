@@ -13,6 +13,7 @@ use apps\libraries\Site;
 use apps\models\User;
 
 use Rid\Helpers\StringHelper;
+use Rid\Http\View;
 use Rid\Validators\Validator;
 use Rid\Validators\CaptchaTrait;
 
@@ -281,8 +282,12 @@ class UserRegisterForm extends Validator
                     'action' => $this->_action
                 ]);
 
+            $mail_body = (new View(false))->render('email/user_register', [
+                'username' => $this->username,
+                'confirm_url' => $confirm_url,
+            ]);
             $mail_sender = \apps\Libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
-            $mail_sender->send([$this->email], 'Please confirm your accent', "Click this link $confirm_url to confirm.");  // FIXME change to email template
+            $mail_sender->send([$this->email], 'Please confirm your accent', $mail_body);
         }
 
         Site::writeLog($log_text, Site::LOG_LEVEL_MOD);

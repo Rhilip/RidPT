@@ -1,6 +1,54 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Chore
+- **User:** Make User component as Part of App but not framework
+
+### Docs
+- **Migration:** Update Nginx config
+
+### Feat
+- **Auth:** Add full Advanced Options for Login
+- **Auth:** Add UserRecover Form
+- **Cleanup:** Cleanup dead peers
+- **Cleanup:** Add disable cleanup job by set priority to 0
+- **Debug:** Remove DebugMiddleware
+- **Debug:** Add extend debug output
+- **Invite:** Add base invite table
+- **News:** Fix news tag not appear in index
+- **News:** Add Site News model
+- **Task:** Add task process support
+- **Timer:** Add Timer Example
+- **Torrent:** Add folder size sum in torrent file modal
+
+### Fix
+- **Admin Panel:** Fix index num in Redis Keys Page
+- **Auth:** Fix Broken Auth page after frontend framework change
+- **Error:** Fix Error Handler
+- **Register:** Add captcha checker
+- **Tracker:** Add miss port check for field ipv6_port
+- **View:** remove view helper function `get_torrent_uploader_id`
+- **View:** Fix view function redeclare
+
+### Perf
+- **BBCode:** Use mjohnson/decoda to parse and cache BBCode
+- **Config:** Remove `configTable_construct_lock`
+- **Tracker:** Use Task process to quick response Tracker Announce Action
+- **Tracker:** Add passkey and info_hash Filter
+
+### Refactor
+- **Redis:** Add more Redis arguments in debug output
+- **Session:** Add Session Format Docs
+
+### Revert
+- **Http:** Remove Request::getUserAgent()
+
+### Style
+- **Admin Panel:** Fix Broken View Admin Panel
+- **Auth:** Not output extend debug info for anonymous. (In route `/auth`)
+- **Frontend:** Back frontend framework to Zui
+- **View:** Add top util by layui.util
+
 
 <a name="v0.1.3-alpha"></a>
 ## [v0.1.3-alpha] - 2019-03-16
@@ -18,6 +66,7 @@
 - **Demo:** Change demo site link
 - **Readme:** Add Demo Site Information
 - **Readme:** Update Readme.md
+- **Release:** Release v0.1.3-alpha
 
 ### Feat
 - **Favour:** Add full favour support

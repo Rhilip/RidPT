@@ -11,6 +11,7 @@ namespace apps\models\form;
 
 use apps\components\User\UserInterface;
 use Rid\Helpers\StringHelper;
+use Rid\Http\View;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 
@@ -45,7 +46,7 @@ class UserRecoverForm  extends Validator
      */
     public function flush() {
         // Check this email is in our database or not?
-        $user_info = app()->pdo->createCommand('SELECT `id`,`status` FROM `users` WHERE `email` = :email;')->bindParams([
+        $user_info = app()->pdo->createCommand('SELECT `id`,`username`,`status` FROM `users` WHERE `email` = :email;')->bindParams([
             'email' => $this->email
         ])->queryOne();
         if ($user_info !== false) {
@@ -63,8 +64,12 @@ class UserRecoverForm  extends Validator
                     'action' => $this->_action
                 ]);
 
+            $mail_body = (new View(false))->render('email/user_recover', [
+                'username' => $user_info['username'],
+                'confirm_url' => $confirm_url,
+            ]);
             $mail_sender = \apps\Libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
-            $mail_sender->send([$this->email], 'Please confirm your action to recover your password', "Click this link $confirm_url to confirm.");  // FIXME change to email template
+            $mail_sender->send([$this->email], 'Please confirm your action to recover your password', $mail_body);
         }
         return true;
     }

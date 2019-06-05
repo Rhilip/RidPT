@@ -168,7 +168,6 @@ class UserLoginForm extends Validator
             $cookieExpire = $this->cookieExpires;
             if ($this->logout === 'yes') {
                 $cookieExpire = time() + 15 * 60;
-                // TODO Use redis zset to auto clean those session
                 app()->redis->zAdd('Site:Sessions:to_expire', $cookieExpire, $userSessionId);
             }
 
@@ -185,5 +184,9 @@ class UserLoginForm extends Validator
         app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
             "ip" => app()->request->getClientIp(), "id" => $this->self["id"]
         ])->execute();
+    }
+
+    public function noticeUser() {
+        // TODO send email to tail user login
     }
 }

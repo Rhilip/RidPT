@@ -36,14 +36,8 @@ class NewEditForm extends Validator
                 ['maxlength', ['max' => 255]]
             ],
             'body' => 'required',
-            'notify' => [
-                ['Integer'],
-                ['Between', ['min' => 0, 'max' => 1]]
-            ],
-            'force_read' => [
-                ['Integer'],
-                ['Between', ['min' => 0, 'max' => 1]]
-            ]
+            'notify' => 'Integer|Equal(value=1)',
+            'force_read' => 'Integer|Equal(value=1)',
         ];
     }
 

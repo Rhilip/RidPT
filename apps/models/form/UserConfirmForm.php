@@ -10,6 +10,7 @@ namespace apps\models\form;
 
 use apps\components\User\UserInterface;
 use Rid\Helpers\StringHelper;
+use Rid\Http\View;
 use Rid\Validators\Validator;
 
 
@@ -23,6 +24,8 @@ class UserConfirmForm extends Validator
 
     protected $id;
     private $uid;
+    private $email;
+    private $username;
     private $user_status;
 
     public static function inputRules()
@@ -47,7 +50,7 @@ class UserConfirmForm extends Validator
     protected function validConfirmSecret()
     {
         $record = app()->pdo->createCommand(
-            'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status` FROM `user_confirm` 
+            'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm` 
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `serect` = :serect AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
             'serect' => $this->secret , 'action' => $this->action
@@ -58,8 +61,10 @@ class UserConfirmForm extends Validator
             return;
         }
 
-        $this->uid = $record['uid'];
         $this->id = $record['id'];
+        $this->uid = $record['uid'];
+        $this->email = $record['email'];
+        $this->username = $record['username'];
         $this->user_status = $record['status'];
     }
 
@@ -84,7 +89,7 @@ class UserConfirmForm extends Validator
 
     public function flush_recover() {
         if ($this->user_status !==  UserInterface::STATUS_CONFIRMED) {
-            return 'user status is not confirmed , they may still in pending or banned';  // FIXME msg
+            return 'user status is not confirmed , they may in pending or banned';  // FIXME msg
         }
 
         // generate new password
@@ -94,10 +99,13 @@ class UserConfirmForm extends Validator
         ])->execute();
         $this->update_confirm_status();
 
-        // TODO Send user email to tell his new password.
-
-
-
+        // Send user email to tell his new password.
+        $mail_body = (new View(false))->render('email/user_new_password', [
+            'username' => $this->username,
+            'password' => $new_password,
+        ]);
+        $mail_sender = \apps\Libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
+        $mail_sender->send([$this->email], 'New Password', $mail_body);
 
         return true;
     }

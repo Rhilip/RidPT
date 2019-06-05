@@ -3,6 +3,9 @@
 .env
 !**/.gitkeep
 
+# Test File
+apps/controllers/TestController.php
+
 ### MixPHP included
 # zend studio for eclipse project files
 .buildpath
