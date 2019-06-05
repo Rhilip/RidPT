@@ -41,8 +41,10 @@ class AuthByCookiesMiddleware
              */
             $userSessionId = app()->request->cookie(Constant::cookie_name);
             if (substr($userSessionId, 0, 1) === '1') {
-                $record_ip = app()->redis->hGet('Site:Sessions:secure', $userSessionId);
-                if (app()->request->getClientIp() !== $record_ip) {  // The Ip isn't matched
+                $record_ip_crc = substr($userSessionId, 2, 8);
+                $this_ip_crc = sprintf('%08x',crc32(app()->request->getClientIp()));
+
+                if (strcasecmp($record_ip_crc,$this_ip_crc) !== 0) {  // The Ip isn't matched
                     app()->cookie->delete(Constant::cookie_name);
                     return app()->response->redirect('/auth/login');
                 }

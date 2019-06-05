@@ -130,10 +130,23 @@ class UserLoginForm extends Validator
 
         $exist_session_count = app()->redis->zCount($this->sessionSaveKey, $userId, $userId);
         if ($exist_session_count < app()->config->get('base.max_per_user_session')) {
+            /**
+             * SessionId Format:
+             *      /^(?P<secure_login_flag>[01])\$(?P<ip_or_random_crc>[a-z0-9]{8})\$\w+$/
+             * The first character of sessionId is the Flag of secure login,
+             * if secure login, The second param is the sprintf('%08x',crc32($id))
+             *            else, Another random string with length 8
+             * The prefix of sessionId is in lowercase
+             *
+             */
+            if ($this->securelogin === 'yes') {
+                $sid_prefix = '1$' . sprintf('%08x',crc32(app()->request->getClientIp())) . '$';
+            } else {
+                $sid_prefix = '0$' . StringHelper::getRandomString(8) . '$';
+            }
+            $sid_prefix = strtolower($sid_prefix);
             do { // To make sure this session is unique !
-                // The first character of sessionId is the Flag of secure login
-                $userSessionId = StringHelper::getRandomString($this->sessionLength - 1);
-                $userSessionId = ($this->securelogin === 'yes' ? '1' : '0') . $userSessionId;
+                $userSessionId = $sid_prefix . StringHelper::getRandomString($this->sessionLength - strlen($sid_prefix));
 
                 $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE sid = :sid')->bindParams([
                     'sid' => $userSessionId
@@ -150,11 +163,6 @@ class UserLoginForm extends Validator
 
             // Add this session id in Redis Cache
             app()->redis->zAdd($this->sessionSaveKey, $userId, $userSessionId);
-
-            // Add IP linked
-            if ($this->securelogin === 'yes') {
-                app()->redis->hSet('Site:Sessions:secure', $userSessionId, app()->request->getClientIp());
-            }
 
             // Set User Cookie
             $cookieExpire = $this->cookieExpires;
