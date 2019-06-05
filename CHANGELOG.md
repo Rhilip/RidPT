@@ -12,11 +12,12 @@
 - **Auth:** Add UserRecover Form
 - **Cleanup:** Cleanup dead peers
 - **Cleanup:** Add disable cleanup job by set priority to 0
-- **Debug:** Remove DebugMiddleware
 - **Debug:** Add extend debug output
+- **Debug:** Remove DebugMiddleware
+- **Email:** Add email template
 - **Invite:** Add base invite table
-- **News:** Fix news tag not appear in index
 - **News:** Add Site News model
+- **News:** Fix news tag not appear in index
 - **Task:** Add task process support
 - **Timer:** Add Timer Example
 - **Torrent:** Add folder size sum in torrent file modal

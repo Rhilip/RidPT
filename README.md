@@ -133,8 +133,8 @@ So that tracker can record the peer's ip address.
 | MAILER_ENCRYPTION | Enum('','tls','ssl') | What kind of encryption to use on the SMTP connection. |
 | MAILER_USERNAME | String | SMTP username. |
 | MAILER_PASSWORD | String | SMTP password. |
-| MAILER_FROM | String | The from address of this message. |
-| ~~MAILER_FROM_NICKNAME~~ | String | Not use now. |
+| MAILER_FROM | String | The from address of this email. |
+| MAILER_FROMNAME | String | The from name of this email. |
 
 ## Dynamic Config
 
