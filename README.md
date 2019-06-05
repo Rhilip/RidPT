@@ -1,16 +1,16 @@
 <p align="center">
 <img src="https://github.com/Rhilip/RidPT/raw/master/apps/public/static/pic/logo.png" width='256px'><br/>
 A Private Torrent framework Project.<br/>
-<a href="https://github.com/Rhilip/RidPT/releases" title="GitHub Releases"><img src="https://img.shields.io/github/release/Rhilip/RidPT.svg"></a>
-<img src="https://img.shields.io/badge/used-Swoole-blue.svg">
-<a href="https://github.com/Rhilip/RidPT/LICENSE" title="GitHub license"><img src="https://img.shields.io/github/license/Rhilip/RidPT.svg"></a>
+<br/>
+[![GitHub Releases](https://img.shields.io/github/release/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/releases)
+[![used-Swoole-blue](https://img.shields.io/badge/used-Swoole-blue.svg)]
+[![GitHub license](https://img.shields.io/github/license/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/blob/master/LICENSE)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_shield)
 </p>
 
 --------------------------------------
 
 ## Demo Site
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_shield)
-
 
 Demo Url: http://ridpt.top/
 
@@ -165,7 +165,6 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 | [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | http://www.sirius.ro/php/sirius/validation/ |
 | [league/plates](https://github.com/thephpleague/plates) | Template system | http://platesphp.com/ |
 
-
-
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_large)
+

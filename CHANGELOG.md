@@ -37,6 +37,7 @@
 - **Tracker:** Add passkey and info_hash Filter
 
 ### Refactor
+- **Mailer:** Use phpmailer to replace swiftmailer
 - **Redis:** Add more Redis arguments in debug output
 - **Session:** Add Session Format Docs
 
