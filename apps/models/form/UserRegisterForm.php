@@ -273,7 +273,7 @@ class UserRegisterForm extends Validator
 
         if ($this->confirm_way == 'email') {
             $confirm_key = StringHelper::getRandomString(32);
-            app()->pdo->createCommand('INSERT INTO `users_confirm` (`uid`,`serect`,`action`) VALUES (:uid,:serect,:action)')->bindParams([
+            app()->pdo->createCommand('INSERT INTO `user_confirm` (`uid`,`serect`,`action`) VALUES (:uid,:serect,:action)')->bindParams([
                 'uid' => $this->id, 'serect' => $confirm_key, 'action' => $this->_action
             ])->execute();
             $confirm_url = app()->request->root() . '/auth/confirm?' . http_build_query([

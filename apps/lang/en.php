@@ -16,6 +16,7 @@ class en
     const nav_index = 'Index';
     const nav_forums = 'Forums';
     const nav_torrents = 'Torrents';
+    const nav_collections = 'Collections';
     const nav_requests = 'Requests';
     const nav_upload = 'Upload';
     const nav_subtitles = 'Subtitles';

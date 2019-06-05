@@ -42,13 +42,13 @@ class UserConfirmForm extends Validator
     }
 
     /**
-     * Verity The confirm secret and action exist in table `users_confirm` or not
+     * Verity The confirm secret and action exist in table `user_confirm` or not
      */
     protected function validConfirmSecret()
     {
         $record = app()->pdo->createCommand(
-            'SELECT `users_confirm`.`id`,`users_confirm`.`uid`,`users`.`status` FROM `users_confirm` 
-                  LEFT JOIN `users` ON `users`.`id` = `users_confirm`.`uid`
+            'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status` FROM `user_confirm` 
+                  LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `serect` = :serect AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
             'serect' => $this->secret , 'action' => $this->action
         ])->queryOne();
@@ -64,7 +64,7 @@ class UserConfirmForm extends Validator
     }
 
     protected function update_confirm_status() {
-        app()->pdo->createCommand('UPDATE `users_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
+        app()->pdo->createCommand('UPDATE `user_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
             'id' => $this->id
         ])->execute();
     }

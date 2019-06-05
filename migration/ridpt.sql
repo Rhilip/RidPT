@@ -1,9 +1,9 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.5
+-- version 4.9.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 05, 2019 at 12:06 AM
+-- Generation Time: Jun 05, 2019 at 12:18 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.6
 
@@ -297,7 +297,7 @@ CREATE TABLE IF NOT EXISTS `news` (
   PRIMARY KEY (`id`),
   KEY `create_at` (`create_at`),
   KEY `FK_news_users_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `news`:
@@ -335,10 +335,11 @@ CREATE TABLE IF NOT EXISTS `peers` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_peer` (`user_id`,`torrent_id`,`peer_id`),
   KEY `role` (`seeder`),
-  KEY `user_id` (`user_id`) USING HASH,
+  KEY `user_id` (`user_id`),
   KEY `torrent_id` (`torrent_id`),
-  KEY `peer_id` (`peer_id`)
-) ENGINE=MEMORY DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `peer_id` (`peer_id`),
+  KEY `last_action_at` (`last_action_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `peers`:
@@ -492,7 +493,7 @@ CREATE TABLE IF NOT EXISTS `site_log` (
   `msg` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `level` enum('normal','mod','sysop','leader') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'normal',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `site_log`:
@@ -566,7 +567,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `FK_torrent_categories` (`category`),
   KEY `FK_torrent_owner` (`owner_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `torrents`:
@@ -658,6 +659,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `bonus_invite` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `bonus_other` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
   `lang` varchar(10) NOT NULL DEFAULT 'en',
+  `invites` smallint(5) NOT NULL DEFAULT '0' COMMENT 'The invites which never expire',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
@@ -671,11 +673,11 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users_confirm`
+-- Table structure for table `user_confirm`
 --
 
-DROP TABLE IF EXISTS `users_confirm`;
-CREATE TABLE IF NOT EXISTS `users_confirm` (
+DROP TABLE IF EXISTS `user_confirm`;
+CREATE TABLE IF NOT EXISTS `user_confirm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `action` enum('register','recover') NOT NULL,
   `uid` int(11) UNSIGNED NOT NULL,
@@ -688,7 +690,7 @@ CREATE TABLE IF NOT EXISTS `users_confirm` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- RELATIONSHIPS FOR TABLE `users_confirm`:
+-- RELATIONSHIPS FOR TABLE `user_confirm`:
 --   `uid`
 --       `users` -> `id`
 --
@@ -696,11 +698,33 @@ CREATE TABLE IF NOT EXISTS `users_confirm` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users_session_log`
+-- Table structure for table `user_invitations`
 --
 
-DROP TABLE IF EXISTS `users_session_log`;
-CREATE TABLE IF NOT EXISTS `users_session_log` (
+DROP TABLE IF EXISTS `user_invitations`;
+CREATE TABLE IF NOT EXISTS `user_invitations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `qty` smallint(5) NOT NULL DEFAULT '0',
+  `expire_at` timestamp NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_invition_users_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='The invite which is temporary';
+
+--
+-- RELATIONSHIPS FOR TABLE `user_invitations`:
+--   `user_id`
+--       `users` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_session_log`
+--
+
+DROP TABLE IF EXISTS `user_session_log`;
+CREATE TABLE IF NOT EXISTS `user_session_log` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uid` int(10) UNSIGNED NOT NULL,
   `sid` varchar(64) NOT NULL,
@@ -715,7 +739,7 @@ CREATE TABLE IF NOT EXISTS `users_session_log` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- RELATIONSHIPS FOR TABLE `users_session_log`:
+-- RELATIONSHIPS FOR TABLE `user_session_log`:
 --   `uid`
 --       `users` -> `id`
 --
@@ -785,14 +809,20 @@ ALTER TABLE `torrents`
   ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `users_confirm`
+-- Constraints for table `user_confirm`
 --
-ALTER TABLE `users_confirm`
+ALTER TABLE `user_confirm`
   ADD CONSTRAINT `FK_confirm_user_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints for table `users_session_log`
+-- Constraints for table `user_invitations`
 --
-ALTER TABLE `users_session_log`
+ALTER TABLE `user_invitations`
+  ADD CONSTRAINT `FK_invition_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `user_session_log`
+--
+ALTER TABLE `user_session_log`
   ADD CONSTRAINT `FK_session_user_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;

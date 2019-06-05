@@ -135,13 +135,13 @@ class UserLoginForm extends Validator
                 $userSessionId = StringHelper::getRandomString($this->sessionLength - 1);
                 $userSessionId = ($this->securelogin === 'yes' ? '1' : '0') . $userSessionId;
 
-                $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users_session_log` WHERE sid = :sid')->bindParams([
+                $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE sid = :sid')->bindParams([
                     'sid' => $userSessionId
                 ])->queryScalar();
             } while ($count != 0);
 
             // store user login information , ( for example `login ip`,`user_agent`,`last activity at` )
-            app()->pdo->createCommand('INSERT INTO `users_session_log`(`uid`, `sid`, `login_ip`, `user_agent` , `last_access_at`) ' .
+            app()->pdo->createCommand('INSERT INTO `user_session_log`(`uid`, `sid`, `login_ip`, `user_agent` , `last_access_at`) ' .
                 'VALUES (:uid,:sid,INET6_ATON(:login_ip),:ua, NOW())')->bindParams([
                 'uid' => $userId, 'sid' => $userSessionId,
                 'login_ip' => app()->request->getClientIp(),

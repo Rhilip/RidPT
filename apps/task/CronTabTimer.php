@@ -79,7 +79,7 @@ class CronTabTimer extends Timer
 
         $expired_sessions = app()->redis->zRangeByScore('Site:Sessions:to_expire', 0, $timenow);
         foreach ($expired_sessions as $session) {
-            app()->pdo->createCommand('UPDATE `users_session_log` SET `expired` = 1 WHERE sid = :sid')->createCommand([
+            app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
                 'sid' => $session
             ])->execute();
         }

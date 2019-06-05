@@ -43,7 +43,7 @@ class UserController extends Controller
                 $to_del_session = app()->request->post('session');
 
                 // expired it from Database first
-                app()->pdo->createCommand('UPDATE `users_session_log` SET `expired` = 1 WHERE uid = :uid AND sid = :sid')->bindParams([
+                app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE uid = :uid AND sid = :sid')->bindParams([
                     'uid' => app()->user->getId(), 'sid' => $to_del_session
                 ])->execute();
                 $success = app()->pdo->getRowCount();
@@ -56,7 +56,7 @@ class UserController extends Controller
             }
         }
 
-        $sessions = app()->pdo->createCommand('SELECT sid,login_at,login_ip,user_agent,last_access_at FROM users_session_log WHERE uid = :uid and expired = 0')->bindParams([
+        $sessions = app()->pdo->createCommand('SELECT sid,login_at,login_ip,user_agent,last_access_at FROM user_session_log WHERE uid = :uid and expired = 0')->bindParams([
             'uid' => app()->user->getId()
         ])->queryAll();
         return $this->render('user/sessions', ['sessions' => $sessions]);

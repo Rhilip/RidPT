@@ -40,9 +40,14 @@ trait UserTrait
     private $last_tracker_ip;
 
     private $uploaded;
+    private $true_uploaded;
     private $downloaded;
+    private $true_downloaded;
     private $seedtime;
     private $leechtime;
+
+    private $invites;
+    private $temp_invites;
 
     protected $peer_status;
     protected $infoCacheKey;
@@ -214,14 +219,15 @@ trait UserTrait
     public function getUploaded($real = false)
     {
         if ($real) {
-            $upload = app()->redis->hGet($this->infoCacheKey, 'true_uploaded');
-            if (false === $upload) {
-                $upload = app()->pdo->createCommand('SELECT SUM(`true_uploaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
-                        "uid" => $this->id
-                    ])->queryScalar() ?? 0;
-                app()->redis->hSet($this->infoCacheKey, 'true_uploaded', $upload);
+            if (is_null($this->true_uploaded)) {
+                $this->true_uploaded = app()->redis->hGet($this->infoCacheKey, 'true_uploaded');
+                if (false === $this->true_uploaded) {
+                    $this->true_uploaded = app()->pdo->createCommand('SELECT SUM(`true_downloaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
+                            "uid" => $this->id
+                        ])->queryScalar() ?? 0;
+                    app()->redis->hSet($this->infoCacheKey, 'true_uploaded', $this->true_uploaded);
+                }
             }
-            return $upload;
         }
         return $this->uploaded;
     }
@@ -233,14 +239,16 @@ trait UserTrait
     public function getDownloaded($real = false)
     {
         if ($real) {
-            $download = app()->redis->hGet($this->infoCacheKey, 'true_downloaded');
-            if (false === $download) {
-                $download = app()->pdo->createCommand('SELECT SUM(`true_downloaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
-                        "uid" => $this->id
-                    ])->queryScalar() ?? 0;
-                app()->redis->hSet($this->infoCacheKey, 'true_downloaded', $download);
+            if (is_null($this->true_downloaded)) {
+                $this->true_downloaded = app()->redis->hGet($this->infoCacheKey, 'true_downloaded');
+                if (false === $this->true_downloaded) {
+                    $this->true_downloaded = app()->pdo->createCommand('SELECT SUM(`true_downloaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
+                            "uid" => $this->id
+                        ])->queryScalar() ?? 0;
+                    app()->redis->hSet($this->infoCacheKey, 'true_downloaded', $this->true_downloaded);
+                }
             }
-            return $download;
+            return $this->true_downloaded;
         }
         return $this->downloaded;
     }
@@ -305,5 +313,30 @@ trait UserTrait
     public function getPasskey()
     {
         return $this->passkey;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getInvites()
+    {
+        return $this->invites;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTempInvites()
+    {
+        if (is_null($this->temp_invites)) {
+            $this->temp_invites = app()->redis->hGet($this->infoCacheKey, 'temp_invite');
+            if (false === $this->temp_invites) {
+                $this->temp_invites = app()->pdo->createCommand('SELECT SUM(`qty`) FROM `user_invitations` WHERE `user_id` = :uid AND `qty` > 0 AND `expire_at` < NOW()')->bindParams([
+                        "uid" => $this->id
+                    ])->queryScalar() ?? 0;
+                app()->redis->hSet($this->infoCacheKey, 'temp_invite', $this->temp_invites);
+            }
+        }
+        return $this->temp_invites;
     }
 }

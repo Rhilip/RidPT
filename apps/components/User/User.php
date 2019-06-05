@@ -77,7 +77,7 @@ class User extends Component implements UserInterface
     public function deleteUserThisSession()
     {
         $success = app()->redis->zRem($this->sessionSaveKey, $this->_userSessionId);
-        app()->pdo->createCommand('UPDATE `users_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
+        app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
             'sid' => $this->_userSessionId
         ])->execute();
         app()->cookie->delete(Constant::cookie_name);
@@ -115,7 +115,7 @@ class User extends Component implements UserInterface
     public function isPrivilege($require_class)
     {
         if (is_string($require_class)) {
-            $require_class = app()->config->get('authority.' . $require_class);
+            $require_class = app()->config->get('authority.' . $require_class, false) ?: 1;
         }
 
         return $this->class >= $require_class;

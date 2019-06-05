@@ -51,20 +51,21 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
             <div class="collapse navbar-collapse navbar-collapse-custom">
                 <ul class="nav navbar-nav nav-justified">
                     <li<?= $this->uri('/index', ' class="active"') ?>><a href="/"><?= __('nav_index') ?></a></li>
-                    <li<?= $this->uri('/forums', ' class="active"'); ?>><a href="/forums"><?= __('nav_forums') ?></a></li>
+                    <li<?= $this->uri('/forums', ' class="active"'); ?>><a href="/forums"><?= __('nav_forums') ?></a></li> <!-- TODO  -->
+                    <li<?= $this->uri('/collections', ' class="active"'); ?>><a href="/collections"><?= __('nav_collections') ?></a></li> <!-- TODO  -->
                     <li<?= $this->uri('/torrents', ' class="active"'); ?>><a href="/torrents"><?= __('nav_torrents') ?></a></li>
                     <li<?= $this->uri('/torrent/upload', ' class="active"'); ?>><a href="/torrent/upload"><?= __('nav_upload') ?></a></li>
-                    <li<?= $this->uri('/torrents/request', ' class="active"'); ?>><a href="/torrents/request"><?= __('nav_requests') ?></a></li>
-                    <li<?= $this->uri('/subtitles', ' class="active"'); ?>><a href="/subtitles"><?= __('nav_subtitles') ?></a></li>
-                    <li<?= $this->uri('/site/rules', ' class="active"'); ?>><a href="/site/rules"><?= __('nav_rules') ?></a></li>
-                    <li<?= $this->uri('/site/staff', ' class="active"'); ?>><a href="/site/staff"><?= __('nav_staff') ?></a></li>
+                    <li<?= $this->uri('/torrents/request', ' class="active"'); ?>><a href="/torrents/request"><?= __('nav_requests') ?></a></li> <!-- TODO  -->
+                    <li<?= $this->uri('/subtitles', ' class="active"'); ?>><a href="/subtitles"><?= __('nav_subtitles') ?></a></li> <!-- TODO  -->
+                    <li<?= $this->uri('/site/rules', ' class="active"'); ?>><a href="/site/rules"><?= __('nav_rules') ?></a></li> <!-- TODO  -->
+                    <li<?= $this->uri('/site/staff', ' class="active"'); ?>><a href="/site/staff"><?= __('nav_staff') ?></a></li> <!-- TODO  -->
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?= __('nav_more') ?> <b class="caret"></b></a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li<?= $this->uri('/site/topten', ' class="active"'); ?>><a href="/site/topten"><?= __('nav_topten') ?></a></li>
+                        <ul class="dropdown-menu" role="menu"><!-- FIXME class="active" in dropdown-munu -->
+                            <li<?= $this->uri('/site/topten', ' class="active"'); ?>><a href="/site/topten"><?= __('nav_topten') ?></a></li> <!-- TODO  -->
                             <li class="divider"></li>
-                            <li<?= $this->uri('/site/stats', ' class="active"'); ?>><a href="/site/stats"><?= __('nav_stats') ?></a></li>
-                            <li<?= $this->uri('/site/log', ' class="active"'); ?>><a href="/site/log"><?= __('nav_log') ?></a></li>
+                            <li<?= $this->uri('/site/stats', ' class="active"'); ?>><a href="/site/stats"><?= __('nav_stats') ?></a></li> <!-- TODO  -->
+                            <li<?= $this->uri('/site/log', ' class="active"'); ?>><a href="/site/log"><?= __('nav_log') ?></a></li> <!-- TODO  -->
                         </ul>
                     </li>
                 </ul> <!-- END .navbar-nav -->
@@ -82,7 +83,11 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
             <?php endif; ?>
             <span data-item="favour"><!--suppress HtmlUnknownTarget -->[<a href="/torrents/favour">Favour</a>]</span>
             <span data-item="invite" data-invite="">
-                <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span> 3 <!-- TODO  -->
+                <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span>
+                <?= app()->user->getInvites() ?>
+                <?php if (app()->user->getTempInvites() > 0): ?>
+                 (<?= app()->user->getTempInvites() ?>)
+                <?php endif; ?>
             </span>
             <span data-item="bonus" data-bonus="">
                 <span class="color-bonus">Bonus: </span> <a href="#">2345234</a> <!-- TODO  -->
