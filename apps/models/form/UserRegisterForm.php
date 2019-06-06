@@ -46,6 +46,7 @@ class UserRegisterForm extends Validator
     private $seedtime;
     private $leechtime;
     private $bonus;
+    private $invites;
 
     protected $_action = 'register';
 
@@ -57,16 +58,17 @@ class UserRegisterForm extends Validator
 
     public function buildDefaultValue()
     {
-        $this->status = app()->config->get("register.user_default_status") ?? User::STATUS_PENDING;
-        $this->class = app()->config->get("register.user_default_class") ?? User::ROLE_USER;
-        $this->uploadpos = app()->config->get("register.user_default_uploadpos") ?? 1;
-        $this->downloadpos = app()->config->get("register.user_default_downloadpos") ?? 1;
-        $this->uploaded = app()->config->get("register.user_default_uploaded") ?? 1;
-        $this->downloaded = app()->config->get("register.user_default_downloaded") ?? 1;
-        $this->seedtime = app()->config->get("register.user_default_seedtime") ?? 0;
-        $this->leechtime = app()->config->get("register.user_default_leechtime") ?? 0;
-        $this->bonus = app()->config->get("register.user_default_bonus") ?? 0;
-        $this->confirm_way = app()->config->get("register.user_confirm_way") ?? "auto";
+        $this->status = app()->config->get('register.user_default_status') ?? User::STATUS_PENDING;
+        $this->class = app()->config->get('register.user_default_class') ?? User::ROLE_USER;
+        $this->uploadpos = app()->config->get('register.user_default_uploadpos') ?? 1;
+        $this->downloadpos = app()->config->get('register.user_default_downloadpos') ?? 1;
+        $this->uploaded = app()->config->get('register.user_default_uploaded') ?? 1;
+        $this->downloaded = app()->config->get('register.user_default_downloaded') ?? 1;
+        $this->seedtime = app()->config->get('register.user_default_seedtime') ?? 0;
+        $this->leechtime = app()->config->get('register.user_default_leechtime') ?? 0;
+        $this->bonus = app()->config->get('register.user_default_bonus') ?? 0;
+        $this->confirm_way = app()->config->get('register.user_confirm_way') ?? 'auto';
+        $this->invites = app()->config->get('register.user_default_invites') ?? 0;
     }
 
     public static function inputRules()
@@ -127,10 +129,10 @@ class UserRegisterForm extends Validator
 
     public function isMaxRegisterIpReached()
     {
-        if (app()->config->get("register.check_max_ip")) {
+        if (app()->config->get('register.check_max_ip')) {
             $client_ip = app()->request->getClientIp();
 
-            $max_user_per_ip = app()->config->get("register.per_ip_user") ?: 5;
+            $max_user_per_ip = app()->config->get('register.per_ip_user') ?: 5;
             $user_ip_count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)")->bindParams([
                 "ip" => $client_ip
             ])->queryScalar();
@@ -163,17 +165,17 @@ class UserRegisterForm extends Validator
     {
         $email = $this->email;
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
-        if (app()->config->get("register.check_email_blacklist") &&
-            app()->config->get("register.email_black_list")) {
-            $email_black_list = explode(",", app()->config->get("register.email_black_list"));
+        if (app()->config->get('register.check_email_blacklist') &&
+            app()->config->get('register.email_black_list')) {
+            $email_black_list = explode(",", app()->config->get('register.email_black_list'));
             if (in_array($email_suffix, $email_black_list)) {
                 $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
                 return;
             }
         }
-        if (app()->config->get("register.check_email_whitelist") &&
-            app()->config->get("register.email_white_list")) {
-            $email_white_list = explode(",", app()->config->get("register.email_white_list"));
+        if (app()->config->get('register.check_email_whitelist') &&
+            app()->config->get('register.email_white_list')) {
+            $email_white_list = explode(",", app()->config->get('register.email_white_list'));
             if (!in_array($email_suffix, $email_white_list)) {
                 $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
                 return;
@@ -203,6 +205,11 @@ class UserRegisterForm extends Validator
                     $this->buildCallbackFailMsg('Invite', "This invite hash : `$this->invite_hash` is not exist");
                     return;
                 } else {
+                    if ($this->username != $inviteInfo['username']) {
+                        $this->buildCallbackFailMsg('Invite', "This invite username is not match.");
+                        return;
+                    }
+
                     if ($inviteInfo["expire_at"] < time()) {
                         $this->buildCallbackFailMsg('Invite', "This invite hash is expired at " . $inviteInfo["expire_at"] . ".");
                         return;
@@ -247,22 +254,22 @@ class UserRegisterForm extends Validator
             $this->status = User::STATUS_CONFIRMED;
         }
 
-        app()->pdo->createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`) 
-                                 VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus)")->bindParams(array(
-            "name" => $this->username, "passhash" => password_hash($this->password, PASSWORD_DEFAULT), "email" => $this->email,
-            "status" => $this->status, "class" => $this->class, "passkey" => $this->passkey,
-            "invite_by" => $this->invite_by, "ip" => app()->request->getClientIp(),
-            "uploadpos" => $this->uploadpos, "downloadpos" => $this->downloadpos,
-            "uploaded" => $this->uploaded, "downloaded" => $this->downloaded,
-            "seedtime" => $this->seedtime, "leechtime" => $this->leechtime,
-            "bonus" => $this->bonus
+        app()->pdo->createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`) 
+                                 VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus, :invites)")->bindParams(array(
+            'name' => $this->username, 'passhash' => password_hash($this->password, PASSWORD_DEFAULT), 'email' => $this->email,
+            'status' => $this->status, 'class' => $this->class, 'passkey' => $this->passkey,
+            'invite_by' => $this->invite_by, 'ip' => app()->request->getClientIp(),
+            'uploadpos' => $this->uploadpos, 'downloadpos' => $this->downloadpos,
+            'uploaded' => $this->uploaded, 'downloaded' => $this->downloaded,
+            'seedtime' => $this->seedtime, 'leechtime' => $this->leechtime,
+            'bonus' => $this->bonus , 'invites' => $this->invites
         ))->execute();
         $this->id = app()->pdo->getLastInsertId();
 
         $log_text = "User $this->username($this->id) is created now.";
 
         if ($this->type == 'invite') {
-            app()->pdo->createCommand("DELETE from `invite` WHERE `hash` = :invite_hash")->bindParams([
+            app()->pdo->createCommand("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 05, 2019 at 12:18 PM
+-- Generation Time: Jun 06, 2019 at 11:48 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.6
 
@@ -213,12 +213,16 @@ DROP TABLE IF EXISTS `invite`;
 CREATE TABLE IF NOT EXISTS `invite` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `inviter_id` int(11) UNSIGNED NOT NULL,
+  `username` varchar(16) NOT NULL,
   `hash` varchar(32) NOT NULL,
+  `invite_type` enum('temporarily','permanent') NOT NULL DEFAULT 'temporarily',
   `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expire_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `used` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`),
-  KEY `FK_invite_inviter_id` (`inviter_id`)
+  KEY `FK_invite_inviter_id` (`inviter_id`),
+  KEY `used` (`used`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -373,7 +377,10 @@ TRUNCATE TABLE `site_config`;
 --
 
 INSERT INTO `site_config` (`name`, `value`) VALUES
+('authority.invite_manual_confirm', '70'),
+('authority.invite_recycle_pending', '70'),
 ('authority.manage_news', '80'),
+('authority.pass_invite_interval_check', '60'),
 ('authority.pass_tracker_upspeed_check', '60'),
 ('authority.route_admin_index', '60'),
 ('authority.route_admin_service', '90'),
@@ -383,6 +390,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('authority.see_pending_torrent', '40'),
 ('authority.upload_anonymous', '5'),
 ('base.enable_extend_debug', '1'),
+('base.enable_invite_system', '1'),
 ('base.enable_register_system', '1'),
 ('base.enable_tracker_system', '1'),
 ('base.max_news_sum', '5'),
@@ -397,8 +405,8 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('base.site_keywords', 'RidPT,Private Tracker'),
 ('base.site_muti_tracker_url', ''),
 ('base.site_name', 'RidPT'),
-('base.site_tracker_url', 'ridpt.rhilip.info/tracker'),
-('base.site_url', 'ridpt.rhilip.info'),
+('base.site_tracker_url', 'ridpt.top/tracker'),
+('base.site_url', 'ridpt.top'),
 ('buff.enable_large', '1'),
 ('buff.enable_magic', '1'),
 ('buff.enable_mod', '1'),
@@ -411,6 +419,11 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('buff.random_percent_30%', '0'),
 ('buff.random_percent_50%', '5'),
 ('buff.random_percent_free', '2'),
+('invite.force_interval', '1'),
+('invite.interval', '7200'),
+('invite.recycle_invite_lifetime', '86400'),
+('invite.recycle_return_invite', '1'),
+('invite.timeout', '259200'),
 ('register.by_green', '0'),
 ('register.by_invite', '1'),
 ('register.by_open', '1'),
@@ -426,6 +439,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('register.user_default_class', '1'),
 ('register.user_default_downloaded', '0'),
 ('register.user_default_downloadpos', '1'),
+('register.user_default_invites', '0'),
 ('register.user_default_leechtime', '0'),
 ('register.user_default_seedtime', '0'),
 ('register.user_default_status', 'pending'),
@@ -705,7 +719,8 @@ DROP TABLE IF EXISTS `user_invitations`;
 CREATE TABLE IF NOT EXISTS `user_invitations` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `qty` smallint(5) NOT NULL DEFAULT '0',
+  `total` smallint(5) NOT NULL DEFAULT '0',
+  `used` smallint(5) NOT NULL DEFAULT '0',
   `expire_at` timestamp NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_invition_users_id` (`user_id`)

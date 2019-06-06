@@ -224,7 +224,26 @@ jQuery(document).ready(function() {
             $(this).next('ul').toggle();
         });
     }
+    
+    // User Invite
+    $('.invite-btn').click(function () {
+        $('.invite-btn').removeAttr('disabled');
+        $('#invite_form:hidden').show();
 
+        let that = $(this);
+        let invite_type = that.data('type');
+        let invite_panel_notice = $('#invite_type');
+
+        that.attr('disabled','disabled');
+        $('#invite_create_form input[name=invite_type]').val(invite_type);
+        if (invite_type === 'temporarily') {
+            $('#invite_create_form input[name=temp_id]').val(that.data('temp-invite-id'));
+            invite_panel_notice.text('(Using Temporarily Invite - ' + that.data('id') + ')');
+        } else {
+            invite_panel_notice.text('(Using Permanent Invite)');
+        }
+    });
+    
     // Show Extend debug info of Database sql execute and Redis key hit
     if (typeof _extend_debug_info !== 'undefined' && _extend_debug_info) {
         $('#extend_debug_info').modalTrigger({

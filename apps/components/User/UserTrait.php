@@ -47,7 +47,8 @@ trait UserTrait
     private $leechtime;
 
     private $invites;
-    private $temp_invites;
+    private $temp_invites_sum;
+    private $temp_invites_details;
 
     protected $peer_status;
     protected $infoCacheKey;
@@ -56,7 +57,7 @@ trait UserTrait
     {
         $this->infoCacheKey = 'User:' . $id . ':base_content';
         $self = app()->redis->hGetAll($this->infoCacheKey);
-        if (empty($self)) {
+        if (empty($self) || !isset($self['id'])) {
             $self = app()->pdo->createCommand("SELECT * FROM `users` WHERE id = :id;")->bindParams([
                 "id" => $id
             ])->queryOne();
@@ -320,23 +321,45 @@ trait UserTrait
      */
     public function getInvites()
     {
-        return $this->invites;
+        return $this->invites ?? 0;
     }
 
     /**
      * @return mixed
      */
-    public function getTempInvites()
+    public function getTempInvitesSum()
     {
-        if (is_null($this->temp_invites)) {
-            $this->temp_invites = app()->redis->hGet($this->infoCacheKey, 'temp_invite');
-            if (false === $this->temp_invites) {
-                $this->temp_invites = app()->pdo->createCommand('SELECT SUM(`qty`) FROM `user_invitations` WHERE `user_id` = :uid AND `qty` > 0 AND `expire_at` < NOW()')->bindParams([
-                        "uid" => $this->id
-                    ])->queryScalar() ?? 0;
-                app()->redis->hSet($this->infoCacheKey, 'temp_invite', $this->temp_invites);
+        return array_sum(array_map(function ($d) {
+            return $d['total'] - $d['used'];
+        }, $this->getTempInviteDetails()));
+    }
+
+    /**
+     * @return array
+     */
+    public function getTempInviteDetails() {
+        if (is_null($this->temp_invites_details)) {
+            $this->temp_invites_details = app()->redis->hGet($this->infoCacheKey,'temp_invite');
+            if (false === $this->temp_invites_details) {
+                $this->temp_invites_details = app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
+                    "uid" => app()->user->getId()
+                ])->queryAll() ?: [];
+                app()->redis->hSet($this->infoCacheKey, 'temp_invite', $this->temp_invites_details);
             }
         }
-        return $this->temp_invites;
+        if (is_null($this->temp_invites_details)) $this->temp_invites_details = [];
+        return $this->temp_invites_details;
+    }
+
+    public function getPendingInvites() {  // FIXME
+        return app()->pdo->createCommand('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
+            'uid'=> $this->id
+        ])->queryAll();
+    }
+
+    public function getInvitees() {  // FIXME
+        return app()->pdo->createCommand('SELECT id,username,email,status,class,uploaded,downloaded FROM `users` WHERE `invite_by` = :uid')->bindParams([
+            'uid' => $this->id
+        ])->queryAll();
     }
 }

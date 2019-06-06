@@ -21,7 +21,7 @@ class Validator extends BaseObject
     protected $_validator;
 
     /** @var array */
-    protected $_errors;
+    protected $_errors = [];
 
     /** @var boolean */
     protected $_success;

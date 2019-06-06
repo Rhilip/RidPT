@@ -5,7 +5,9 @@
 - **User:** Make User component as Part of App but not framework
 
 ### Docs
+- **Licence:** Add Licence Checker By FOSSA
 - **Migration:** Update Nginx config
+- **README:** Fix Mailer Env typo
 
 ### Feat
 - **Auth:** Add full Advanced Options for Login

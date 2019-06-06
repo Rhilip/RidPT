@@ -82,11 +82,11 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
                 <span><!--suppress HtmlUnknownTarget -->[<a href="/admin">Admin Panel</a>]</span>
             <?php endif; ?>
             <span data-item="favour"><!--suppress HtmlUnknownTarget -->[<a href="/torrents/favour">Favour</a>]</span>
-            <span data-item="invite" data-invite="">
+            <span data-item="invite" data-invite="<?= app()->user->getInvites() ?>" data-temp-invite="<?= app()->user->getTempInvitesSum() ?>">
                 <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span>
                 <?= app()->user->getInvites() ?>
-                <?php if (app()->user->getTempInvites() > 0): ?>
-                 (<?= app()->user->getTempInvites() ?>)
+                <?php if (app()->user->getTempInvitesSum() > 0): ?>
+                    <span data-toggle="tooltip" data-placement="bottom" title="Temporarily Invites" class="text-primary">(+<?= app()->user->getTempInvitesSum() ?>)</span>
                 <?php endif; ?>
             </span>
             <span data-item="bonus" data-bonus="">

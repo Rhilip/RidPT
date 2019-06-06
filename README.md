@@ -151,18 +151,18 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 
 | Library | Docs |
 |:--|:--|
-| [Zui](https://github.com/easysoft/zui): an HTML5 front UI framework | http://zui.sexy/  ( Chinese Version ) |
-| [FortAwesome](https://github.com/FortAwesome/Font-Awesome): The iconic SVG, font, and CSS toolkit | https://fontawesome.com/icons?d=gallery |
-| [flag-css](https://github.com/7kfpun/flag-css): CSS for SVG country flags respecting the original ratio. | https://kfpun.com/flag-css/ |
-| [zxcvbn](https://github.com/dropbox/zxcvbn): Low-Budget Password Strength Estimation | https://lowe.github.io/tryzxcvbn/ |
+| [Zui](https://github.com/easysoft/zui): an HTML5 front UI framework | <http://zui.sexy/> ( Chinese Version ) |
+| [FortAwesome](https://github.com/FortAwesome/Font-Awesome): The iconic SVG, font, and CSS toolkit | <https://fontawesome.com/icons?d=gallery> |
+| [flag-css](https://github.com/7kfpun/flag-css): CSS for SVG country flags respecting the original ratio. | <https://kfpun.com/flag-css/> |
+| [zxcvbn](https://github.com/dropbox/zxcvbn): Low-Budget Password Strength Estimation | <https://lowe.github.io/tryzxcvbn/> |
 
 ### Backend Library
 
 | Library | Used As | Docs | 
 |:--|:--:|:--|
-| [MixPHP](https://github.com/mix-php/mix-framework/tree/v1) | Framework | https://www.kancloud.cn/onanying/mixphp1/379324 ( Chinese Version ) |
-| [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | http://www.sirius.ro/php/sirius/validation/ |
-| [league/plates](https://github.com/thephpleague/plates) | Template system | http://platesphp.com/ |
+| [MixPHP](https://github.com/mix-php/mix-framework/tree/v1) | Framework | <https://www.kancloud.cn/onanying/mixphp1/379324> ( Chinese Version ) |
+| [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | <http://www.sirius.ro/php/sirius/validation/> |
+| [league/plates](https://github.com/thephpleague/plates) | Template system | <http://platesphp.com/> |
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_large)

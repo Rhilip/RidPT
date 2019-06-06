@@ -98,7 +98,7 @@ $register_type = app()->request->get('type', 'open')
                                     <div class="input-group">
                                         <span class="input-group-addon"><span class="fas fa-code fa-fw"></span></span>
                                         <input type="text" class="form-control" id="invite_hash" name="invite_hash"
-                                               value="<?= $invite_hash ?>" required>
+                                               value="<?= $invite_hash ?>" required<?= strlen($invite_hash) > 0 ? ' disabled':'' ?>>
                                     </div>
                                 </div>
                                 <?php endif; ?>

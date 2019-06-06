@@ -13,12 +13,12 @@
 
 <?= $this->layout('layout/base') ?>
 
-<?php $this->start('title')?><?= $title ?><?php $this->end();?>
+<?php $this->start('title')?><?= $title ?? 'Failed Action' ?><?php $this->end();?>
 
 <?php $this->start('container')?>
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
     <h1>Opps~</h1>
-    <p><?= nl2br($msg) ?></p>
+    <p><?= nl2br($msg ?? 'Empty Failed Reason, Please Ask the sysop team to fix it.') ?></p>
 </div>
 <?php $this->end();?>
