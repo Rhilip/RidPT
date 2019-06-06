@@ -30,15 +30,18 @@ class CronTabTimer extends Timer
     {
         // Get all run
         $to_run_jobs = app()->pdo->createCommand('SELECT * FROM `site_crontab` WHERE `priority` > 0 AND `next_run_at` < NOW() ORDER BY priority ASC;')->queryAll();
+        $hit = 0;
+        $start_time = time();
         foreach ($to_run_jobs as $job) {
             if (method_exists($this, $job['job'])) {
                 app()->pdo->beginTransaction();
                 $this->print_log('CronTab Worker Start To run job : ' . $job['job']);
                 try {
                     // Run this job
-                    $start_time = time();
+                    $job_start_time = time();
                     $this->{$job['job']}($job);
-                    $end_time = time();
+                    $job_end_time = time();
+                    $hit ++;
 
                     // Update the run information
                     app()->pdo->createCommand('UPDATE `site_crontab` set last_run_at= NOW() , next_run_at= DATE_ADD(NOW(), interval job_interval second) WHERE id=:id')->bindParams([
@@ -48,7 +51,7 @@ class CronTabTimer extends Timer
                         'id' => $job['id']
                     ])->queryScalar();   // FIXME Bad Code
                     $this->print_log('The run job : ' . $job['job'] . ' Finished. ' .
-                        'Cost time: ' . number_format($end_time - $start_time, 10) . 's, ' . 'Next run at : ' . $next_run_at
+                        'Cost time: ' . number_format($job_end_time - $job_start_time, 10) . 's, ' . 'Next run at : ' . $next_run_at
                     );
 
                     // Finish The Transaction and commit~
@@ -62,6 +65,8 @@ class CronTabTimer extends Timer
                 app()->log->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
             }
         }
+        $end_time = time();
+        $this->print_log('This period Start At' . $start_time.', Cost Time: ' . number_format($start_time - $end_time, 10) . 's, With ' . $hit . 'Jobs hits.');
     }
 
     protected function clean_dead_peer()
@@ -89,4 +94,12 @@ class CronTabTimer extends Timer
     }
 
     // TODO sync sessions from database to redis to avoid lost (Maybe)...
+
+
+    protected function expired_temporarily_invites() {
+        app()->pdo->createCommand('UPDATE `user_invitations` SET `used` = `total` WHERE expire_at > NOW()');
+        $count = app()->pdo->getRowCount();
+        $this->print_log('Success Expired ' . $count . ' Temporarily invites');
+    }
+
 }

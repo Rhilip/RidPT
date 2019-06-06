@@ -12,14 +12,15 @@
 ### Feat
 - **Auth:** Add full Advanced Options for Login
 - **Auth:** Add UserRecover Form
-- **Cleanup:** Cleanup dead peers
 - **Cleanup:** Add disable cleanup job by set priority to 0
-- **Debug:** Add extend debug output
+- **Cleanup:** Cleanup dead peers
 - **Debug:** Remove DebugMiddleware
+- **Debug:** Add extend debug output
 - **Email:** Add email template
 - **Invite:** Add base invite table
-- **News:** Add Site News model
 - **News:** Fix news tag not appear in index
+- **News:** Add Site News model
+- **Register:** Can't copy password and paste to retyep_password
 - **Task:** Add task process support
 - **Timer:** Add Timer Example
 - **Torrent:** Add folder size sum in torrent file modal

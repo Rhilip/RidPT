@@ -29,7 +29,6 @@ class AuthByCookiesMiddleware
                 return $next();
             }
         }
-
         if ($isAnonymousUser) {
             $query = app()->request->server('query_string');
             $to = app()->request->server('path_info') . (strlen($query) > 0 ? '?' . $query : '');
