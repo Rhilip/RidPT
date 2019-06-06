@@ -43,7 +43,7 @@ class NewEditForm extends Validator
 
     public function flush() {
         if ($this->id == 0) { // This is new news
-            app()->pdo->createCommand('INSERT INTO news (user_id,create_at,title,body,notify,force_read) VALUES (:uid,NOW(),:title,:body,:notify,:fread);')->bindParams([
+            app()->pdo->createCommand('INSERT INTO news (user_id,create_at,title,body,notify,force_read) VALUES (:uid,CURRENT_TIMESTAMP,:title,:body,:notify,:fread);')->bindParams([
                 'uid' => $this->user_id, 'title' => $this->title, 'body' => $this->body,
                 'notify' => $this->notify, 'fread' => $this->force_read
             ])->execute();

@@ -14,10 +14,11 @@
 - **Auth:** Add UserRecover Form
 - **Cleanup:** Add disable cleanup job by set priority to 0
 - **Cleanup:** Cleanup dead peers
-- **Debug:** Remove DebugMiddleware
 - **Debug:** Add extend debug output
+- **Debug:** Remove DebugMiddleware
 - **Email:** Add email template
 - **Invite:** Add base invite table
+- **Invite:** Finish invite system
 - **News:** Fix news tag not appear in index
 - **News:** Add Site News model
 - **Register:** Can't copy password and paste to retyep_password

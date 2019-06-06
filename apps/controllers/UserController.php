@@ -81,7 +81,7 @@ class UserController extends Controller
                                 ])->execute();
                                 $msg .= ' And return you a permanent invite';
                             } elseif ($invite_info['invite_type'] == 'temporarily') {
-                                app()->pdo->createCommand('INSERT INTO `user_invitations` (`user_id`,`total`,`expire_at`) VALUES (:uid,:total,DATE_ADD(NOW(),INTERVAL :life_time SECOND ))')->bindParams([
+                                app()->pdo->createCommand('INSERT INTO `user_invitations` (`user_id`,`total`,`create_at`,`expire_at`) VALUES (:uid,:total,CURRENT_TIMESTAMP,DATE_ADD(NOW(),INTERVAL :life_time SECOND ))')->bindParams([
                                     'uid' => app()->user->getId(), 'total' => 1,
                                     'life_time' => app()->config->get('invite.recycle_invite_lifetime')
                                 ])->execute();

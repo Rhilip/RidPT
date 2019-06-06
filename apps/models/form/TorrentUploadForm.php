@@ -169,7 +169,8 @@ class TorrentUploadForm extends Validator
 
         app()->pdo->beginTransaction();
         try {
-            app()->pdo->insert('torrents', [
+            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`descr`,`uplver`) 
+VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:descr,:uplver)')->bindParams([
                 'owner_id' => app()->user->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,

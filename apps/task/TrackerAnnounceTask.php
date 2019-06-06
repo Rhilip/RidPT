@@ -64,7 +64,7 @@ class TrackerAnnounceTask implements TaskInterface
                 $trueUploaded = max(0, $queries['uploaded']);
                 $trueDownloaded = max(0, $queries['downloaded']);
 
-                app()->pdo->createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, 
+                app()->pdo->createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, `started_at`= CURRENT_TIMESTAMP
                         `agent`=:agent, `seeder` = :seeder, {$ipField} , 
                         `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
                         `corrupt` = :corrupt , `key` = :key ;
@@ -180,8 +180,8 @@ class TrackerAnnounceTask implements TaskInterface
         $upspeed = (($trueUploaded > 0 && $duration > 0) ? $trueUploaded / $duration : 0);
 
         $logCheater = function ($commit) use ($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration) {
-            app()->pdo->createCommand("INSERT INTO `cheaters`(`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`) 
-            VALUES (:uid, :tid, :uploaded, :downloaded, :anctime, :seeders, :leechers, :hit, :msg, :reviewed, :reviewed_by)  
+            app()->pdo->createCommand("INSERT INTO `cheaters`(`added_at`,`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`) 
+            VALUES (CURRENT_TIMESTAMP, :uid, :tid, :uploaded, :downloaded, :anctime, :seeders, :leechers, :hit, :msg, :reviewed, :reviewed_by)  
             ON DUPLICATE KEY UPDATE `hit` = `hit` + 1, `reviewed` = 0,`reviewed_by` = '',`commit` = VALUES(`commit`)")->bindParams([
                 "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
                 "uploaded" => $trueUploaded, "downloaded" => $trueDownloaded, "anctime" => $duration,

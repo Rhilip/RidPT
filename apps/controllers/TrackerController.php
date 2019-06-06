@@ -139,8 +139,8 @@ class TrackerController
                 }
                 $req_info = app()->request->server('query_string') . "\n\n" . $raw_header;
 
-                app()->pdo->createCommand("INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`, `msg`) 
-                VALUES (:tid,:uid,:ua,:peer_id,:req_info,:msg) 
+                app()->pdo->createCommand("INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`) 
+                VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg) 
                 ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
                                         `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`), 
                                         `last_action_at` = NOW();")->bindParams([

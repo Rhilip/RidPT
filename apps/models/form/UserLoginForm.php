@@ -154,8 +154,8 @@ class UserLoginForm extends Validator
             } while ($count != 0);
 
             // store user login information , ( for example `login ip`,`user_agent`,`last activity at` )
-            app()->pdo->createCommand('INSERT INTO `user_session_log`(`uid`, `sid`, `login_ip`, `user_agent` , `last_access_at`) ' .
-                'VALUES (:uid,:sid,INET6_ATON(:login_ip),:ua, NOW())')->bindParams([
+            app()->pdo->createCommand('INSERT INTO `user_session_log`(`uid`, `sid`, `login_ip`, `user_agent` ,`login_at`, `last_access_at`) ' .
+                'VALUES (:uid,:sid,INET6_ATON(:login_ip),:ua,NOW(), NOW())')->bindParams([
                 'uid' => $userId, 'sid' => $userSessionId,
                 'login_ip' => app()->request->getClientIp(),
                 'ua' => app()->request->header('user-agent')

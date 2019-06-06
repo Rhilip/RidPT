@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2019 at 12:03 AM
+-- Generation Time: Jun 07, 2019 at 12:27 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.6
 
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `agent_deny_log` (
   `peer_id` varbinary(20) NOT NULL,
   `req_info` text NOT NULL,
   `msg` varchar(255) NOT NULL,
-  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_action_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `one_peer` (`tid`,`uid`)
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS `bookmarks` (
 DROP TABLE IF EXISTS `cheaters`;
 CREATE TABLE IF NOT EXISTS `cheaters` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `added_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `added_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `userid` mediumint(8) UNSIGNED NOT NULL DEFAULT '0',
   `torrentid` mediumint(8) UNSIGNED NOT NULL DEFAULT '0',
   `uploaded` int(10) UNSIGNED NOT NULL DEFAULT '0',
@@ -242,7 +242,7 @@ CREATE TABLE IF NOT EXISTS `ip_bans` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ip` varchar(255) NOT NULL,
   `add_by` int(10) UNSIGNED NOT NULL,
-  `add_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `add_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `commit` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ip` (`ip`),
@@ -266,7 +266,7 @@ CREATE TABLE IF NOT EXISTS `messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `sender` mediumint(8) UNSIGNED NOT NULL DEFAULT '0',
   `receiver` mediumint(8) UNSIGNED NOT NULL DEFAULT '0',
-  `add_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `add_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `subject` varchar(128) NOT NULL DEFAULT '',
   `msg` text NOT NULL,
   `unread` enum('yes','no') NOT NULL DEFAULT 'yes',
@@ -292,7 +292,7 @@ DROP TABLE IF EXISTS `news`;
 CREATE TABLE IF NOT EXISTS `news` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) UNSIGNED NOT NULL,
-  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `edit_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `title` varchar(255) NOT NULL DEFAULT '',
   `body` text NOT NULL,
@@ -330,8 +330,8 @@ CREATE TABLE IF NOT EXISTS `peers` (
   `downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `to_go` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `finished` tinyint(1) NOT NULL DEFAULT '0',
-  `started_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `last_action_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `started_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `last_action_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `finish_at` timestamp NULL DEFAULT NULL,
   `agent` varchar(64) NOT NULL,
   `corrupt` tinyint(1) NOT NULL DEFAULT '0',
@@ -504,7 +504,7 @@ INSERT INTO `site_crontab` (`id`, `job`, `priority`, `job_interval`) VALUES
 DROP TABLE IF EXISTS `site_log`;
 CREATE TABLE IF NOT EXISTS `site_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `msg` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `level` enum('normal','mod','sysop','leader') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'normal',
   PRIMARY KEY (`id`)
@@ -536,7 +536,7 @@ CREATE TABLE IF NOT EXISTS `snatched` (
   `leech_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `finished` enum('yes','no') NOT NULL DEFAULT 'no',
   `finish_ip` varchar(40) DEFAULT NULL,
-  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_action_at` timestamp NULL DEFAULT NULL,
   `finish_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -564,7 +564,8 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `owner_id` int(11) UNSIGNED NOT NULL,
   `info_hash` varbinary(20) NOT NULL,
   `status` enum('deleted','banned','pending','confirmed') NOT NULL DEFAULT 'confirmed',
-  `added_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `added_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `complete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have completed downloading.',
   `incomplete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have not completed downloading.',
   `downloaded` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of peers that have ever completed downloading.',
@@ -608,7 +609,7 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
   `ratio_type` enum('Normal','Free','2X','2X Free','50%','2X 50%','30%','Other') NOT NULL DEFAULT 'Normal',
   `upload_ratio` decimal(4,2) NOT NULL DEFAULT '1.00',
   `download_ratio` decimal(4,2) NOT NULL DEFAULT '1.00',
-  `add_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `add_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `start_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expired_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
@@ -653,7 +654,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `class` smallint(6) UNSIGNED NOT NULL DEFAULT '1',
   `passkey` varchar(32) NOT NULL,
   `invite_by` int(11) UNSIGNED NOT NULL DEFAULT '0',
-  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `register_ip` varbinary(16) NOT NULL,
   `uploadpos` tinyint(1) NOT NULL DEFAULT '1',
   `downloadpos` tinyint(1) NOT NULL DEFAULT '1',
@@ -697,7 +698,7 @@ CREATE TABLE IF NOT EXISTS `user_confirm` (
   `action` enum('register','recover') NOT NULL,
   `uid` int(11) UNSIGNED NOT NULL,
   `serect` varchar(64) NOT NULL,
-  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `used` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `serect` (`serect`),
@@ -722,7 +723,7 @@ CREATE TABLE IF NOT EXISTS `user_invitations` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `total` smallint(5) NOT NULL DEFAULT '0',
   `used` smallint(5) NOT NULL DEFAULT '0',
-  `create_at` timestamp NOT NULL,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expire_at` timestamp NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_invition_users_id` (`user_id`)
@@ -745,7 +746,7 @@ CREATE TABLE IF NOT EXISTS `user_session_log` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `uid` int(10) UNSIGNED NOT NULL,
   `sid` varchar(64) NOT NULL,
-  `login_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `login_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `login_ip` varbinary(16) NOT NULL,
   `user_agent` varchar(512) NOT NULL DEFAULT '',
   `last_access_at` timestamp NOT NULL,

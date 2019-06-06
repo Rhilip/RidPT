@@ -18,13 +18,13 @@ class Site
 
     public static function writeLog($msg, $level = self::LOG_LEVEL_NORMAL)
     {
-        app()->pdo->createCommand("INSERT INTO `site_log`(`msg`, `level`) VALUES (:msg,:level)")->bindParams([
+        app()->pdo->createCommand("INSERT INTO `site_log`(`create_at`,`msg`, `level`) VALUES (CURRENT_TIMESTAMP,:msg,:level)")->bindParams([
             "msg" => $msg, "level" => $level
         ])->execute();
     }
 
     public static function sendPM($sender, $receiver, $subject, $msg, $save = "no", $location = 1) {
-        app()->pdo->createCommand("INSERT messages (sender, receiver, subject, msg, saved, location) VALUES(:sender,:receiver,:subject,:msg,:save,:location)")->bindParams([
+        app()->pdo->createCommand("INSERT `messages` (`sender`,`receiver`,`add_at`, subject, msg, saved, location) VALUES (:sender,:receiver,CURRENT_TIMESTAMP,:subject,:msg,:save,:location)")->bindParams([
             "sender" => $sender, "receiver" => $receiver,
             "subject" => $subject , "msg" => $msg,
             "save" => $save , "location" => $location
