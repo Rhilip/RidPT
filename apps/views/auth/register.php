@@ -47,7 +47,14 @@ $register_type = app()->request->get('type', 'open')
                                         <input type="text" class="form-control" id="username" name="username" required
                                                value="<?= $username ?? '' ?>">
                                     </div>
-                                    <div class="help-block">Max Length 12 with those character: <code>A-Za-z0-9_</code></div>
+                                    <div class="help-block">
+                                        <ul>
+                                            <?php if (strtolower($register_type) == 'invite'): ?>
+                                             <li>You are invited by one of our member, Please retype your username without any change.</li>
+                                            <?php endif;?>
+                                            <li>Max Length 12 with those character: <code>A-Za-z0-9_</code></li>
+                                        </ul>
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -63,10 +70,12 @@ $register_type = app()->request->get('type', 'open')
                                     <label for="password">Password</label>
                                     <div class="pull-right" id="password_strength" style="display: none">
                                         Strength: <span id="password_strength_text"></span>
-                                    </div> <!-- TODO add password strength check -->
+                                    </div>
                                     <div class="input-group">
                                         <span class="input-group-addon"><span class="fas fa-key fa-fw"></span></span>
-                                        <input type="password" class="form-control" id="password" name="password" required>
+                                        <input type="password" class="form-control" id="password" name="password" required
+                                               oncopy="return false;"
+                                        >
                                         <button id="password_help_btn" type="button" class="btn btn-link auth-password-help-btn"><i class="fas fa-eye fa-fw"></i></button>
                                     </div>
                                     <div class="help-block" id="password_strength_suggest"></div>
@@ -76,7 +85,9 @@ $register_type = app()->request->get('type', 'open')
                                     <label for="password_again">Retype Password</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><span class="fas fa-key fa-fw"></span></span>
-                                        <input type="password" class="form-control" id="password_again" name="password_again" required>
+                                        <input type="password" class="form-control" id="password_again" name="password_again" required
+                                               onpaste="return false;"
+                                        >
                                     </div>
                                 </div>
 

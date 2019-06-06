@@ -124,7 +124,12 @@ jQuery(document).ready(function() {
                     let result = zxcvbn(val);
                     password_strength.show();
                     strength_text.html(paswordStrengthText[result.score]);
-                    strength_suggest.html( (result.feedback.warning !== "" ? (result.feedback.warning + "<br>") : "") + result.feedback.suggestions);
+                    let feedback = [];
+                    if (result.feedback.warning !== "") {feedback.push(result.feedback.warning);}
+                    feedback = feedback.concat(result.feedback.suggestions);
+                    if (feedback.length > 0) {
+                        strength_suggest.html('<ul><li>' + feedback.join('</li><li>') + '</li></ul>');
+                    }
                 } catch (e) {
                 }
             } else {
