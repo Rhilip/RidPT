@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2019 at 10:53 AM
+-- Generation Time: Jun 07, 2019 at 11:15 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.6
 
@@ -199,8 +199,11 @@ CREATE TABLE IF NOT EXISTS `invite` (
   `used` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`),
+  UNIQUE KEY `username` (`username`),
   KEY `FK_invite_inviter_id` (`inviter_id`),
-  KEY `used` (`used`)
+  KEY `used` (`used`),
+  KEY `expire_at` (`expire_at`),
+  KEY `IN_invite_id_create` (`id`,`create_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -676,11 +679,11 @@ CREATE TABLE IF NOT EXISTS `user_confirm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `action` enum('register','recover') NOT NULL,
   `uid` int(11) UNSIGNED NOT NULL,
-  `serect` varchar(64) NOT NULL,
+  `secret` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `used` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `serect` (`serect`),
+  UNIQUE KEY `secret` (`secret`) USING BTREE,
   KEY `FK_confirm_user_id` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -705,7 +708,8 @@ CREATE TABLE IF NOT EXISTS `user_invitations` (
   `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expire_at` timestamp NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK_invition_users_id` (`user_id`)
+  KEY `expire_at` (`expire_at`),
+  KEY `FK_invitation_users_id` (`user_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='The invite which is temporary';
 
 --
@@ -809,7 +813,7 @@ ALTER TABLE `user_confirm`
 -- Constraints for table `user_invitations`
 --
 ALTER TABLE `user_invitations`
-  ADD CONSTRAINT `FK_invition_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_invitations_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_session_log`

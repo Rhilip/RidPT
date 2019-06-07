@@ -213,7 +213,7 @@ return [
         'crontab' => [
             'class' => \apps\task\CronTabTimer::class,
             'type' => \Rid\Base\Timer::TICK,
-            'msec' => 1 * 1000,    // 单位为毫秒
+            'msec' => 5 * 60 * 1000,    // TODO 单位为毫秒，应该为所有contab worker的最小公倍数（应该在面板有所提醒）
             'callback' => 'init'
         ]
     ],

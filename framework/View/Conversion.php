@@ -28,8 +28,21 @@ class Conversion implements ExtensionInterface
         $engine->registerFunction('format_ubbcode', [$this, 'format_ubbcode']);
     }
 
-    public function format_bytes($bytes, $precision = 2, $separator = " ")
+    public static function setDefault(&$array, $defaults)
     {
+        if (is_string($array)) $array = [$array];
+        foreach ($defaults as  $key => $default) {
+            if (!array_key_exists($key, $array)) {
+                $array[$key] = $default;
+            }
+        }
+    }
+
+    public function format_bytes($var)
+    {
+        self::setDefault($var, ['precision' => 2, 'separator' => ' ']);
+        $bytes = array_shift($var);
+
         $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
@@ -38,21 +51,27 @@ class Conversion implements ExtensionInterface
         // Uncomment one of the following alternatives
         $bytes /= pow(1024, $pow);
 
-        return round($bytes, $precision) . $separator . $units[$pow];
+        return round($bytes, $var['precision']) . $var['separator'] . $units[$pow];
     }
 
-    public function format_bytes_compact($bytes, $precision = 2) {
-        return $this->format_bytes($bytes, $precision , "<br />");
-    }
-    public function format_bytes_loose($bytes, $precision = 2) {
-        return $this->format_bytes($bytes, $precision , "&nbsp;");
-    }
-
-    public function format_ubbcode($string)
+    public function format_bytes_compact($var)
     {
-        $code = new Decoda($string,[
-            'escapeHtml' => true
-        ],'Post_cache:' . md5($string));
+        self::setDefault($var, ['precision' => 2, 'separator' => '<br />']);
+        return $this->format_bytes($var);
+    }
+
+    public function format_bytes_loose($var)
+    {
+        self::setDefault($var, ['precision' => 2, 'separator' => '&nbsp;']);
+        return $this->format_bytes($var);
+    }
+
+    public function format_ubbcode($var)
+    {
+        self::setDefault($var, ['escapeHtml' => true]);
+        $string = array_shift($var);
+
+        $code = new Decoda($string, $var,'Post_cache:' . md5($string));
 
         $code->defaults();
 

@@ -52,8 +52,8 @@ class UserConfirmForm extends Validator
         $record = app()->pdo->createCommand(
             'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm` 
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
-                  WHERE `serect` = :serect AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
-            'serect' => $this->secret , 'action' => $this->action
+                  WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
+            'secret' => $this->secret , 'action' => $this->action
         ])->queryOne();
 
         if ($record == false) {  // It means this confirm key is not exist

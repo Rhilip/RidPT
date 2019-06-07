@@ -108,6 +108,6 @@ class Timer implements StaticInstanceInterface
         $callback = $config['callback'];
 
         $this->{$type}($msec, [$this, $callback]);
-        println('New Timer ' . self::class . ' added. (Type: ' . $type . ', msec: ' . $msec . ', callback function: ' . $callback . ')');
+        println('New Timer ' . static::class . ' added. (Type: ' . $type . ', msec: ' . $msec . ', callback function: ' . $callback . ')');
     }
 }

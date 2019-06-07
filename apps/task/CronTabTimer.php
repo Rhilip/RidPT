@@ -66,7 +66,7 @@ class CronTabTimer extends Timer
             }
         }
         $end_time = time();
-        $this->print_log('This period Start At' . $start_time.', Cost Time: ' . number_format($start_time - $end_time, 10) . 's, With ' . $hit . 'Jobs hits.');
+        $this->print_log('This Cron Work period Start At ' . $start_time.', Cost Time: ' . number_format($start_time - $end_time, 10) . 's, With ' . $hit . 'Jobs hits.');
     }
 
     protected function clean_dead_peer()
@@ -97,7 +97,7 @@ class CronTabTimer extends Timer
 
 
     protected function expired_temporarily_invites() {
-        app()->pdo->createCommand('UPDATE `user_invitations` SET `used` = `total` WHERE expire_at > NOW()');
+        app()->pdo->createCommand('UPDATE `user_invitations` SET `used` = `total` WHERE expire_at > NOW() AND `total` != `used`');
         $count = app()->pdo->getRowCount();
         $this->print_log('Success Expired ' . $count . ' Temporarily invites');
     }

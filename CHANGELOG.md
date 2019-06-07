@@ -10,13 +10,14 @@
 - **README:** Fix Mailer Env typo
 
 ### Feat
-- **Auth:** Add full Advanced Options for Login
 - **Auth:** Add UserRecover Form
+- **Auth:** Add full Advanced Options for Login
 - **Cleanup:** Add disable cleanup job by set priority to 0
 - **Cleanup:** Cleanup dead peers
 - **Debug:** Add extend debug output
 - **Debug:** Remove DebugMiddleware
 - **Email:** Add email template
+- **Form Validator:** Add library bootstrap-validator library
 - **Invite:** Add base invite table
 - **Invite:** Finish invite system
 - **News:** Fix news tag not appear in index
@@ -47,6 +48,7 @@
 - **Mailer:** Use phpmailer to replace swiftmailer
 - **Redis:** Add more Redis arguments in debug output
 - **Session:** Add Session Format Docs
+- **ext2Icon:** Add more File format
 
 ### Revert
 - **Http:** Remove Request::getUserAgent()
