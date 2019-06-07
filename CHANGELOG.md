@@ -39,6 +39,7 @@
 ### Perf
 - **BBCode:** Use mjohnson/decoda to parse and cache BBCode
 - **Config:** Remove `configTable_construct_lock`
+- **DATABASE:** Drop Table `files`
 - **Tracker:** Use Task process to quick response Tracker Announce Action
 - **Tracker:** Add passkey and info_hash Filter
 
