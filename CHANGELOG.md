@@ -32,6 +32,7 @@
 - **Auth:** Fix Broken Auth page after frontend framework change
 - **DATABASE:** Fix CURRENT_TIMESTAMP Extra error
 - **Error:** Fix Error Handler
+- **Invite:** Add Fine-grained control of recycle pending
 - **Register:** Add captcha checker
 - **Tracker:** Add miss port check for field ipv6_port
 - **View:** remove view helper function `get_torrent_uploader_id`
