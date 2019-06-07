@@ -20,6 +20,7 @@
     "html5shiv": "^3.7.3",
     "respond": "^1.4.2",
     "flag-css": "^0.0.12",
-    "zxcvbn": "^4.4.2"
+    "zxcvbn": "^4.4.2",
+    "bootstrap-validator": "^0.11.9"
   }
 }

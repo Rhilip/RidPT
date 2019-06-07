@@ -37,7 +37,7 @@ $register_type = app()->request->get('type', 'open')
                                 want an invite and you know someone who have one it's up to them to give you an invite.
                             </p>
                         <?php else: ?>
-                            <form class="auth-form" method="post">
+                            <form class="auth-form" method="post" data-toggle="validator" role="form">
                                 <label for="type"></label><input name="type" id="type" value="<?= $register_type ?>" style="display: none">
 
                                 <div class="form-group">
@@ -45,6 +45,7 @@ $register_type = app()->request->get('type', 'open')
                                     <div class="input-group">
                                         <span class="input-group-addon"><span class="fas fa-user-alt fa-fw"></span></span>
                                         <input type="text" class="form-control" id="username" name="username" required
+                                               pattern="^[A-Za-z0-9_]*$" maxlength="12"
                                                value="<?= $username ?? '' ?>">
                                     </div>
                                     <div class="help-block">
@@ -57,7 +58,7 @@ $register_type = app()->request->get('type', 'open')
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group has-feedback">
                                     <label for="email">Email</label>
                                     <div class="input-group">
                                         <span class="input-group-addon"><span class="fas fa-envelope fa-fw"></span></span>
@@ -86,7 +87,7 @@ $register_type = app()->request->get('type', 'open')
                                     <div class="input-group">
                                         <span class="input-group-addon"><span class="fas fa-key fa-fw"></span></span>
                                         <input type="password" class="form-control" id="password_again" name="password_again" required
-                                               onpaste="return false;"
+                                               onpaste="return false;" data-match="#password"
                                         >
                                     </div>
                                 </div>

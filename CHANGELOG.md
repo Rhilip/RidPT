@@ -29,6 +29,7 @@
 ### Fix
 - **Admin Panel:** Fix index num in Redis Keys Page
 - **Auth:** Fix Broken Auth page after frontend framework change
+- **DATABASE:** Fix CURRENT_TIMESTAMP Extra error
 - **Error:** Fix Error Handler
 - **Register:** Add captcha checker
 - **Tracker:** Add miss port check for field ipv6_port

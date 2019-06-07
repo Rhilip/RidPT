@@ -26,7 +26,7 @@
                     Login failed: <strong class="text-center"><?= $error_msg ?></strong>
                 </div>
                 <?php endif; ?>
-                <form class="auth-form" method="post">
+                <form class="auth-form" method="post" data-toggle="validator" role="form">
                     <div class="form-group">
                         <label for="username">Username / Email address</label>
                         <div class="input-group">

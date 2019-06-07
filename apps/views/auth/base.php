@@ -91,6 +91,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
 <!-- Javascript of Library -->
 <script src="/lib/jquery/dist/jquery.min.js"></script>
 <script src="/lib/zui/dist/js/zui.min.js"></script>
+<script src="/lib/bootstrap-validator/dist/validator.min.js"></script>
 
 <!-- Custom Javascript of this template -->
 <script src="/static/js/main.js?<?= $css_tag ?>"></script>

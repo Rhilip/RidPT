@@ -155,6 +155,7 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 | [FortAwesome](https://github.com/FortAwesome/Font-Awesome): The iconic SVG, font, and CSS toolkit | <https://fontawesome.com/icons?d=gallery> |
 | [flag-css](https://github.com/7kfpun/flag-css): CSS for SVG country flags respecting the original ratio. | <https://kfpun.com/flag-css/> |
 | [zxcvbn](https://github.com/dropbox/zxcvbn): Low-Budget Password Strength Estimation | <https://lowe.github.io/tryzxcvbn/> |
+| [bootstrap-validator](https://github.com/1000hz/bootstrap-validator): A user-friendly HTML5 form validation jQuery plugin for Bootstrap 3 | <http://1000hz.github.io/bootstrap-validator> |
 
 ### Backend Library
 
