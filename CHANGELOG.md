@@ -36,6 +36,7 @@
 - **Invite:** Add Fine-grained control of recycle pending
 - **Register:** Add captcha checker
 - **Tracker:** Add miss port check for field ipv6_port
+- **View:** Fix Conversion::setDefault()
 - **View:** remove view helper function `get_torrent_uploader_id`
 - **View:** Fix view function redeclare
 

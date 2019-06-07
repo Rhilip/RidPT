@@ -75,8 +75,7 @@ $icon_img = $site_url . '/static/pic/logo.png';
                             <div style="color:#555555;line-height:150%;padding: 15px 10px 10px;font-size: 14px; text-align: left; margin: 0;">
                                 <?= $this->section('body') ?>
                                 <hr>
-                                Time: <?= date('Y-m-d H:i:s'); ?>
-                                IP: <?= app()->request->getClientIp(); ?>
+                                Action at <?= date('Y-m-d H:i:s'); ?> From IP: <?= app()->request->getClientIp(); ?>
                             </div>
                         </div>
                     </div>

@@ -104,7 +104,7 @@ class UserConfirmForm extends Validator
             'username' => $this->username,
             'password' => $new_password,
         ]);
-        $mail_sender = \apps\Libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
+        $mail_sender = \apps\libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
         $mail_sender->send([$this->email], 'New Password', $mail_body);
 
         return true;

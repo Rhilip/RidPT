@@ -151,7 +151,7 @@ class UserInviteForm extends UserRegisterForm
                 'username' => $this->username,
                 'invite_link' => $this->invite_link,
             ]);
-            $mail_sender = \apps\Libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
+            $mail_sender = \apps\libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
             $mail_sender->send([$this->email], 'Invite To RidPT', $mail_body);
         }
         return $invite_status;

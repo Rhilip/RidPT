@@ -68,7 +68,7 @@ class UserRecoverForm  extends Validator
                 'username' => $user_info['username'],
                 'confirm_url' => $confirm_url,
             ]);
-            $mail_sender = \apps\Libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
+            $mail_sender = \apps\libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
             $mail_sender->send([$this->email], 'Please confirm your action to recover your password', $mail_body);
         }
         return true;

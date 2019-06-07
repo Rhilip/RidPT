@@ -32,7 +32,7 @@ class Mailer extends BaseObject
     /** @var PHPMailer */
     public $_mailer;
 
-    public function onConstruct()
+    public function onInitialize()
     {
         $mail = new PHPMailer(true);
 

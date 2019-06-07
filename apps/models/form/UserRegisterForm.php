@@ -293,7 +293,7 @@ class UserRegisterForm extends Validator
                 'username' => $this->username,
                 'confirm_url' => $confirm_url,
             ]);
-            $mail_sender = \apps\Libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
+            $mail_sender = \apps\libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
             $mail_sender->send([$this->email], 'Please confirm your accent', $mail_body);
         }
 

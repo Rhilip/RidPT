@@ -95,11 +95,12 @@ class CronTabTimer extends Timer
 
     // TODO sync sessions from database to redis to avoid lost (Maybe)...
 
+    protected function expired_invitee () {
+        app()->pdo->createCommand('UPDATE `invite` SET `used` = -1 WHERE `expire_at` < NOW() AND `used` = 0')->execute();
 
-    protected function expired_temporarily_invites() {
-        app()->pdo->createCommand('UPDATE `user_invitations` SET `used` = `total` WHERE expire_at > NOW() AND `total` != `used`');
+
+
         $count = app()->pdo->getRowCount();
-        $this->print_log('Success Expired ' . $count . ' Temporarily invites');
+        $this->print_log('Success Expired ' . $count . ' invites');
     }
-
 }
