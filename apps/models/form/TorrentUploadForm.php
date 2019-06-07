@@ -101,7 +101,7 @@ class TorrentUploadForm extends Validator
                         }
                         if (!count($ffa)) throw new ParseErrorException('std_filename_errors');
                         $ffe = implode("/", $ffa);
-                        $this->torrent_list[] = ['filename' => $ffe, 'size' => $ll, 'torrent_id' => &$this->id];
+                        $this->torrent_list[] = ['filename' => $ffe, 'size' => $ll];
                     }
                     $this->torrent_type = 'multi';
                 }
@@ -186,9 +186,6 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
                 'uplver' => $this->uplver,
             ])->execute();
             $this->id = app()->pdo->getLastInsertId();
-
-            // Insert files table
-            app()->pdo->batchInsert('files', $this->torrent_list)->execute();
 
             $this->setBuff();
 

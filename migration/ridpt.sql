@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2019 at 12:27 AM
+-- Generation Time: Jun 07, 2019 at 08:00 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.6
 
@@ -179,28 +179,6 @@ CREATE TABLE IF NOT EXISTS `cheaters` (
 
 --
 -- RELATIONSHIPS FOR TABLE `cheaters`:
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `files`
---
-
-DROP TABLE IF EXISTS `files`;
-CREATE TABLE IF NOT EXISTS `files` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `torrent_id` int(10) UNSIGNED NOT NULL,
-  `filename` varchar(255) NOT NULL DEFAULT '',
-  `size` bigint(20) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `torrent_id` (`torrent_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `files`:
---   `torrent_id`
---       `torrents` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -787,12 +765,6 @@ ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
 ALTER TABLE `bookmarks`
   ADD CONSTRAINT `FK_bookmarks_torrents_id` FOREIGN KEY (`tid`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_bookmarks_users_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `files`
---
-ALTER TABLE `files`
-  ADD CONSTRAINT `FK_files_torrents_id` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `invite`
