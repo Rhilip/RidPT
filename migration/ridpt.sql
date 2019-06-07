@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2019 at 08:00 AM
+-- Generation Time: Jun 07, 2019 at 10:53 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.6
 
@@ -356,7 +356,8 @@ TRUNCATE TABLE `site_config`;
 
 INSERT INTO `site_config` (`name`, `value`) VALUES
 ('authority.invite_manual_confirm', '70'),
-('authority.invite_recycle_pending', '70'),
+('authority.invite_recycle_other_pending', '90'),
+('authority.invite_recycle_self_pending', '70'),
 ('authority.manage_news', '80'),
 ('authority.pass_invite_interval_check', '60'),
 ('authority.pass_tracker_upspeed_check', '60'),

@@ -21,7 +21,7 @@
             <small class="text-red"><?= $msg ?></small>
             <?php endif; ?>
         </div>
-        <!-- Start User's Invitee list -->
+
         <div class="panel">
             <div class="panel-heading">Invitee Status</div>
             <div class="panel-body">
@@ -64,14 +64,15 @@
                     <span class="text-muted">No user in Our site is invite by you.</span>
                 <?php endif; ?>
             </div>
-        </div>
+        </div> <!-- User's Invitee list -->
 
-        <?php if ($user->getId() === app()->user->getId()): // Same User, use $user as quick call ?>
-        <?php $can_invite = app()->config->get('base.enable_invite_system') && ($user->getInvites() + $user->getTempInvitesSum() > 0); ?>
         <div class="panel">
             <div class="panel-heading">Pending Invite</div>
             <div class="panel-body">
                 <?php if ($user->getPendingInvites()): ?>
+                <?php $can_recyle = $user->getId() === app()->user->getId() ?
+                        app()->user->isPrivilege('invite_recycle_self_pending') :
+                        app()->user->isPrivilege('invite_recycle_other_pending'); ?>
                     <table class="table table-hover table-striped">
                         <thead>
                         <tr>
@@ -79,8 +80,8 @@
                             <td class="text-center">Invite Hash</td>
                             <td class="text-center">Create At</td>
                             <td class="text-center">Expire At</td>
-                            <?php if (app()->user->isPrivilege('invite_recycle_pending')): ?>
-                            <td class="text-center">Recyclt</td>
+                            <?php if ($can_recyle): ?>
+                            <td class="text-center">Recycle</td>
                             <?php endif; ?>
                         </tr>
                         </thead>
@@ -92,7 +93,7 @@
                                 <td class="text-center"><a href="<?= $invite_link ?>" target="_blank" data-toggle="tooltip" data-placement="right" title="Right mouse button to copy"><?= $pendingInvite['hash'] ?></a></td>
                                 <td class="text-center"><nobr><?= $pendingInvite['create_at'] ?></nobr></td>
                                 <td class="text-center"><nobr><?= $pendingInvite['expire_at'] ?></nobr></td>
-                                <?php if (app()->user->isPrivilege('invite_recycle_pending')): ?>
+                                <?php if ($can_recyle): ?>
                                     <td class="text-center"><a class="btn btn-warning btn-sm" href="?action=recycle&invite_id=<?= $this->e($pendingInvite['id']) ?>" onclick="return confirm('Really?')">Recycle</a></td>
                                 <?php endif; ?>
                             </tr>
@@ -103,8 +104,10 @@
                     <span class="text-muted">No Pending Invite.</span>
                 <?php endif; ?>
             </div>
-        </div>
+        </div> <!-- User's Pending Invite -->
 
+        <?php if ($user->getId() === app()->user->getId()): // Same User, use $user as quick call ?>
+        <?php $can_invite = app()->config->get('base.enable_invite_system') && ($user->getInvites() + $user->getTempInvitesSum() > 0); ?>
         <div class="panel">
             <div class="panel-heading"><span class="text-red">Invite Warning!!!</span></div>
             <div class="panel-body">

@@ -41,7 +41,17 @@ class UserController extends Controller
             }
         }
 
-        // FIXME
+        $user = app()->user;
+        $uid = app()->request->get('id');
+        if (!is_null($uid) && $uid != app()->user->getId()) {
+            if (app()->user->isPrivilege('view_invite')) {
+                $user = new User($uid);
+            } else {
+                return $this->render('errors/action_fail', ['title' => 'Fail', 'msg' => 'Privilege is not enough to see other people\'s invite status.']);
+            }
+        }
+
+        // FIXME By using Form Class
         if (app()->request->get('action') == 'confirm' && app()->user->isPrivilege('invite_manual_confirm')) {
             $uid = app()->request->get('uid');
             if ($uid) {
@@ -56,12 +66,16 @@ class UserController extends Controller
             }
         }
 
-        if (app()->request->get('action') == 'recycle' && app()->user->isPrivilege('invite_recycle_pending')) {
+        if (app()->request->get('action') == 'recycle' && (
+            $user->getId() === app()->user->getId() ?
+                app()->user->isPrivilege('invite_recycle_self_pending') :
+                app()->user->isPrivilege('invite_recycle_other_pending')
+            )) {
             $invite_id = app()->request->get('invite_id');
             if ($invite_id) {
                 // Get unused invite info
                 $invite_info = app()->pdo->createCommand('SELECT * FROM `invite` WHERE `id` = :invite_id AND `inviter_id` = :inviter_id AND `used` = 0')->bindParams([
-                    'invite_id' => $invite_id, 'inviter_id' => app()->user->getId()
+                    'invite_id' => $invite_id, 'inviter_id' => $user->getId()
                 ])->queryOne();
                 if ($invite_info) {
                     app()->pdo->beginTransaction();
@@ -82,11 +96,11 @@ class UserController extends Controller
                                 $msg .= ' And return you a permanent invite';
                             } elseif ($invite_info['invite_type'] == 'temporarily') {
                                 app()->pdo->createCommand('INSERT INTO `user_invitations` (`user_id`,`total`,`create_at`,`expire_at`) VALUES (:uid,:total,CURRENT_TIMESTAMP,DATE_ADD(NOW(),INTERVAL :life_time SECOND ))')->bindParams([
-                                    'uid' => app()->user->getId(), 'total' => 1,
+                                    'uid' => $invite_id['inviter_id'], 'total' => 1,
                                     'life_time' => app()->config->get('invite.recycle_invite_lifetime')
                                 ])->execute();
                                 $msg .= ' And return you a temporarily invite with ' . app()->config->get('invite.recycle_invite_lifetime') . ' seconds lifetime.';
-                                app()->redis->hDel( 'User:' . app()->user->getId() . ':base_content','temp_invite');
+                                app()->redis->hDel( 'User:' . $invite_id['inviter_id'] . ':base_content','temp_invite');
                             }
                         }
                         app()->pdo->commit();
@@ -97,17 +111,6 @@ class UserController extends Controller
                 } else {
                     $msg = 'Can\'t Found this invite record.';
                 }
-            }
-        }
-
-        $user = app()->user;
-
-        $uid = app()->request->get('id');
-        if (!is_null($uid) && $uid != app()->user->getId()) {
-            if (app()->user->isPrivilege('view_invite')) {
-                $user = new User($uid);
-            } else {
-                return $this->render('errors/action_fail', ['title' => 'Fail', 'msg' => 'Privilege is not enougth to see other people\'s invite status.']);
             }
         }
 
