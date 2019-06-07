@@ -49,6 +49,8 @@ trait UserTrait
     private $invites;
     private $temp_invites_sum;
     private $temp_invites_details;
+    private $pending_invites;
+    private $invitees;
 
     protected $peer_status;
     protected $infoCacheKey;
@@ -351,15 +353,22 @@ trait UserTrait
         return $this->temp_invites_details;
     }
 
-    public function getPendingInvites() {  // FIXME
-        return app()->pdo->createCommand('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
-            'uid'=> $this->id
-        ])->queryAll();
+    public function getPendingInvites() {
+        if (is_null($this->pending_invites)) {
+            $this->pending_invites = app()->pdo->createCommand('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
+                'uid'=> $this->id
+            ])->queryAll();
+        }
+        return $this->pending_invites;
     }
 
-    public function getInvitees() {  // FIXME
-        return app()->pdo->createCommand('SELECT id,username,email,status,class,uploaded,downloaded FROM `users` WHERE `invite_by` = :uid')->bindParams([
-            'uid' => $this->id
-        ])->queryAll();
+    public function getInvitees() {
+        if (is_null($this->invitees)) {
+            $this->invitees = app()->pdo->createCommand('SELECT id,username,email,status,class,uploaded,downloaded FROM `users` WHERE `invite_by` = :uid')->bindParams([
+                'uid' => $this->id
+            ])->queryAll();
+        }
+
+        return $this->invitees;
     }
 }

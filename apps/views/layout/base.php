@@ -163,6 +163,7 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
 <!-- Javascript of Library -->
 <script src="/lib/jquery/dist/jquery.min.js"></script>
 <script src="/lib/zui/dist/js/zui.min.js"></script>
+<script src="/lib/localforage/dist/localforage.min.js"></script>
 
 <!-- Custom Javascript of this template -->
 <script src="/static/js/main.js?<?= $css_tag ?>"></script>

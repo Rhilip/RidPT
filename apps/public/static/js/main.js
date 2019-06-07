@@ -36,7 +36,7 @@ function location_search_replace(new_params) {
     return '?' + search.toString();
 }
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     // Drop all support of IE 6-11
     if ($.zui.browser.ie) {
         $.zui.browser.tip();
@@ -50,7 +50,7 @@ jQuery(document).ready(function() {
         page: _location_search.get('page') || 0,
         maxNavCount: 8,
         elements: ['first_icon', 'prev_icon', 'pages', 'next_icon', 'last_icon'],
-        linkCreator: function(page, pager) {
+        linkCreator: function (page, pager) {
             return location_search_replace({
                 'page': page,
                 'limit': pager.recPerPage
@@ -60,23 +60,23 @@ jQuery(document).ready(function() {
 
     // Captcha Img Re-flush
     let captcha_img_another = $('.captcha_img');
-    captcha_img_another.on('click',function () {
-        $(this).attr('src','/captcha?t=' + Date.now())  // Change src to get another captcha image
+    captcha_img_another.on('click', function () {
+        $(this).attr('src', '/captcha?t=' + Date.now())  // Change src to get another captcha image
             .parent('.captcha_img_load').addClass('load-indicator loading');  // Add loading indicator in parent of img tag
     });
-    captcha_img_another.on('load',function () {
+    captcha_img_another.on('load', function () {
         $(this).parent('.captcha_img_load').removeClass('load-indicator loading');
     });
 
     // TODO Add Scroll to TOP fixbar
 
     // Common Function
-    function create_error_notice(text,option) {
+    function create_error_notice(text, option) {
         option = $.extend({
             icon: 'exclamation-sign',
             type: 'danger',
             placement: 'top-right'
-        },option);
+        }, option);
         return new $.zui.Messager(text, option).show();
     }
 
@@ -93,7 +93,9 @@ jQuery(document).ready(function() {
                     password_strength.show();
                     strength_text.html(paswordStrengthText[result.score]);
                     let feedback = [];
-                    if (result.feedback.warning !== "") {feedback.push(result.feedback.warning);}
+                    if (result.feedback.warning !== "") {
+                        feedback.push(result.feedback.warning);
+                    }
                     feedback = feedback.concat(result.feedback.suggestions);
                     if (feedback.length > 0) {
                         strength_suggest.html('<ul><li>' + feedback.join('</li><li>') + '</li></ul>');
@@ -118,7 +120,7 @@ jQuery(document).ready(function() {
             help_info.removeClass('fa-eye-slash').addClass('fa-eye');
         }
     });
-    
+
     // Torrent favour Add/Remove action
     $('.torrent-favour').click(function () {
         let that = $(this);
@@ -143,11 +145,12 @@ jQuery(document).ready(function() {
     // View Torrent File list
     let ext2Icon = $.zui.store.get('rid_ext2Icon');
     if (!ext2Icon) {
-        $.getJSON('/static/json/ext2Icon.json',function (data) {
+        $.getJSON('/static/json/ext2Icon.json', function (data) {
             ext2Icon = data;
             $.zui.store.set('rid_ext2Icon', ext2Icon);
         })
     }
+
     function get_ext_icon(ext) {
         for (let type in ext2Icon) {
             if (ext2Icon[type].indexOf(ext.toLowerCase()) >= 0) {
@@ -158,46 +161,58 @@ jQuery(document).ready(function() {
     }
 
     $('.torrent-files').click(function () {
+        const torrent_files_localforage = localforage.createInstance({name: 'torrent_files'});
+
         let that = $(this);
         let tid = that.attr('data-tid');
 
-        function list_worker(tree, par = '') {
-            let ret = '';
-            let size = 0;
-            for (let k in tree) {
-                let v = tree[k];
-                if (typeof v == 'object') {
-                    let [in_ret, in_size] = list_worker(v, par + "/" + k);
-                    ret += `<li${par === '' ? ' class="open"' : ''}><a href="#"><b>${k}</b> (<span class="file-size" data-size="${v}">${humanFileSize(in_size)}</span>)</a><ul>${in_ret}</ul></li>`;
-                    size += in_size;
-                } else {
-                    let ext = k.substr(k.lastIndexOf('.') + 1).toLowerCase();
+        torrent_files_localforage.getItem(tid, function (err, value) {
+            function list_worker(tree, par = '') {
+                let ret = '';
+                let size = 0;
+                for (let k in tree) {
+                    let v = tree[k];
+                    if (typeof v == 'object') {
+                        let [in_ret, in_size] = list_worker(v, par + "/" + k);
+                        ret += `<li${par === '' ? ' class="open"' : ''}><a href="#"><b>${k}</b> (<span class="file-size" data-size="${v}">${humanFileSize(in_size)}</span>)</a><ul>${in_ret}</ul></li>`;
+                        size += in_size;
+                    } else {
+                        let ext = k.substr(k.lastIndexOf('.') + 1).toLowerCase();
 
-                    ret += `<li><i class="fa ${get_ext_icon(ext)} fa-fw"></i><b>${k}</b> (<span class="file-size" data-size="${v}">${humanFileSize(v)}</span>)</li>`;
-                    size += v;
+                        ret += `<li><i class="fa ${get_ext_icon(ext)} fa-fw"></i><b>${k}</b> (<span class="file-size" data-size="${v}">${humanFileSize(v)}</span>)</li>`;
+                        size += v;
+                    }
+                }
+                return [ret, size];
+            }
+
+            function build_file_tree(res) {
+                if (res.success) {
+                    let file_list = res.result;
+
+                    (new $.zui.ModalTrigger({
+                        name: 'torrent_filelist_model',
+                        showHeader: false,
+                        size: 'lg',
+                        moveable: true,
+                        custom: "<ul  class='tree tree-lines tree-folders' data-ride='tree' id='torrent_filelist'>" + list_worker(file_list)[0] + "</ul>"
+                    })).show({
+                        shown: function () {
+                            $('#torrent_filelist').tree();
+                        }
+                    });
+                } else {
+                    create_error_notice(res.errors.join(', '));
                 }
             }
-            return [ret, size];
-        }
 
-        // TODO Add Client Cache ( innodb ) since the file list will not change in specific torrent
-        $.get(api_point + '/torrent/filelist', {'tid': tid}, function (res) {
-            if (res.success) {
-                let file_list = res.result;
-
-                (new $.zui.ModalTrigger({
-                    name: 'torrent_filelist_model',
-                    showHeader: false,
-                    size: 'lg',
-                    moveable: true,
-                    custom: "<ul  class='tree tree-lines tree-folders' data-ride='tree' id='torrent_filelist'>" + list_worker(file_list)[0] + "</ul>"
-                })).show({
-                    shown:function () {
-                        $('#torrent_filelist').tree();
-                    }
-                });
+            if (value !== null) {
+                build_file_tree(value);
             } else {
-                create_error_notice(res.errors.join(', '));
+                $.getJSON(api_point + '/torrent/filelist', {'tid': tid}, function (res) {
+                    torrent_files_localforage.setItem(tid, res);
+                    build_file_tree(res);
+                });
             }
         });
     });
@@ -208,7 +223,7 @@ jQuery(document).ready(function() {
             $(this).next('ul').toggle();
         });
     }
-    
+
     // User Invite
     $('.invite-btn').click(function () {
         $('.invite-btn').removeAttr('disabled');
@@ -218,7 +233,7 @@ jQuery(document).ready(function() {
         let invite_type = that.data('type');
         let invite_panel_notice = $('#invite_type');
 
-        that.attr('disabled','disabled');
+        that.attr('disabled', 'disabled');
         $('#invite_create_form input[name=invite_type]').val(invite_type);
         if (invite_type === 'temporarily') {
             $('#invite_create_form input[name=temp_id]').val(that.data('temp-invite-id'));
@@ -227,7 +242,7 @@ jQuery(document).ready(function() {
             invite_panel_notice.text('(Using Permanent Invite)');
         }
     });
-    
+
     // Show Extend debug info of Database sql execute and Redis key hit
     if (typeof _extend_debug_info !== 'undefined' && _extend_debug_info) {
         $('#extend_debug_info').modalTrigger({
@@ -237,16 +252,17 @@ jQuery(document).ready(function() {
                 let parsed_sql_data = JSON.parse(_sql_data || '[]');
                 let parsed_redis_data = JSON.parse(_redis_data || '{}');
                 ret += '<b>SQL query list:</b><ul>';
-                $.each(parsed_sql_data,function (i,v) {
+                $.each(parsed_sql_data, function (i, v) {
                     ret += `<li><code>${v}</code></li>`;
                 });
                 ret += '</ul>';
                 ret += '<b>Redis keys hit: (Some keys hit may not appear here)</b><ul>';
-                $.each(parsed_redis_data,function (k, v) {
+                $.each(parsed_redis_data, function (k, v) {
                     ret += '<li><code>' + k + "</code> : " + v + '</li>';
                 });
                 ret += '</ul>';
                 return ret;
-            }});
+            }
+        });
     }
 });
