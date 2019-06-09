@@ -293,7 +293,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
         if (!is_array($dict)) throw new ParseErrorException("std_not_a_dictionary");
 
         $value = $dict[$key];
-        if (!$value) throw new ParseErrorException("std_dictionary_is_missing_key");
+        if (!isset($value)) throw new ParseErrorException("std_dictionary_is_missing_key");
 
         if (!is_null($type)) {
             $isFunction = 'is_' . $type;
