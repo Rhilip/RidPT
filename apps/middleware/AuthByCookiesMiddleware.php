@@ -57,12 +57,12 @@ class AuthByCookiesMiddleware
              * if this config key is not exist , the default class 1 will be used to compare.
              *
              * Example of `Route - Controller - Config Key` Map:
-             * /admin          -> AdminController::actionIndex     ->  authority.route_admin_index
-             * /admin/service  -> AdminController::actionService   ->  authority.route_admin_service
+             * /admin          -> AdminController::actionIndex     ->  route.admin_index
+             * /admin/service  -> AdminController::actionService   ->  route.admin_service
              */
             $route = strtolower(str_replace(['apps\\controllers\\', 'Controller'], ['', ''], $controllerName)) .
                 "_" . strtolower(str_replace('action', '', $action));
-            $required_class = app()->config->get('authority.route_' . $route, false) ?: 1;
+            $required_class = app()->config->get('route.' . $route, false) ?: 1;
             if (app()->user->getClass(true) < $required_class) {
                 return app()->response->setStatusCode(403);
             }

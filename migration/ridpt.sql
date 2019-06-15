@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 07, 2019 at 11:15 AM
+-- Generation Time: Jun 15, 2019 at 07:53 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.6
 
@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS `invite` (
   `invite_type` enum('temporarily','permanent') NOT NULL DEFAULT 'temporarily',
   `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expire_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `used` tinyint(1) NOT NULL DEFAULT '0',
+  `used` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0 - wait to use ; 1 - used ; -1 - expired; -2 - recycled',
   PRIMARY KEY (`id`),
   UNIQUE KEY `hash` (`hash`),
   UNIQUE KEY `username` (`username`),
@@ -364,8 +364,6 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('authority.manage_news', '80'),
 ('authority.pass_invite_interval_check', '60'),
 ('authority.pass_tracker_upspeed_check', '60'),
-('authority.route_admin_index', '60'),
-('authority.route_admin_service', '90'),
 ('authority.see_anonymous_uploader', '40'),
 ('authority.see_banned_torrent', '40'),
 ('authority.see_extend_debug_log', '90'),
@@ -427,6 +425,8 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('register.user_default_status', 'pending'),
 ('register.user_default_uploaded', '0'),
 ('register.user_default_uploadpos', '1'),
+('route.admin_index', '60'),
+('route.admin_service', '90'),
 ('security.max_login_attempts', '10'),
 ('torrent.max_file_size', '3145728'),
 ('torrent.max_nfo_size', '65535'),

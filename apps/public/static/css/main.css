@@ -22,6 +22,8 @@ body{background-color:#f6f6f6}
 
 .nowrap {white-space: nowrap;}
 
+.required:after{position: static}
+
 /*-----------------------------------------------------------------------------------*/
 /*	2.	Layout of Header, Navigation & Menus
 /*-----------------------------------------------------------------------------------*/
@@ -86,6 +88,8 @@ body{background-color:#f6f6f6}
 /* Common */
 .torrent-title-block{margin-bottom: 15px}
 .torrent-title{}
+.name-left{width:95%;}
+#torrents_table td[data-item] {vertical-align: middle;}
 
 /* '/torrent/upload' */
 #torrent_upload_table > tbody > tr > td:first-child{vertical-align:middle;text-align:right}

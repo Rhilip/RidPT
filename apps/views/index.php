@@ -8,8 +8,6 @@
  * @var League\Plates\Template\Template $this
  * @var array $news
  */
-
-$can_manage_news = app()->user->isPrivilege('manage_news');
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -18,6 +16,7 @@ $can_manage_news = app()->user->isPrivilege('manage_news');
 
 <?php $this->start('container') ?>
 <div class="panel" id="news_panel">
+    <?php $can_manage_news = app()->user->isPrivilege('manage_news'); ?>
     <div class="panel-heading">Recent News - <small>[<a href="/news" target="_blank">All</a>]</small>
         <?= $can_manage_news ? '<small>[<a href="/news/new">New</a>]</small>' : '' ?>
     </div>

@@ -90,6 +90,7 @@ $register_type = app()->request->get('type', 'open')
                                                onpaste="return false;" data-match="#password"
                                         >
                                     </div>
+                                    <div class="help-block with-errors"></div>
                                 </div>
 
                                 <?php if ($register_type == 'invite') : ?>

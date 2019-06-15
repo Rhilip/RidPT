@@ -22,7 +22,7 @@
     <table id="torrent_upload_table" class="table table-bordered table-striped">
         <tbody>
             <tr>
-                <td class="nowrap"><label for="title">Title<span class="text-red">*</span></label></td>
+                <td class="nowrap"><label for="title" class="required">Title</td>
                 <td><input id="title" name="title" class="form-control" type="text"
                            placeholder="The main title of Your upload torrent"
                            required="required">
@@ -35,7 +35,7 @@
                     <small>You should obey our upload rules. **LINK**</small></td> <!-- FIXME link url -->
             </tr>
             <tr>
-                <td class="nowrap"><label for="file">Torrent File<span class="text-red">*</span></label></td>
+                <td class="nowrap"><label for="file" class="required">Torrent File</label></td>
                 <td>
                     <input id="torrent_file" name="file" class="form-control" type="file"
                            accept=".torrent" required="required"
@@ -44,7 +44,7 @@
                     <span id="torrent_file_name"></span>
             </tr>
             <tr>
-                <td class="nowrap"><label for="descr">Description<span class="text-red">*</span></label></td>
+                <td class="nowrap"><label for="descr" class="required">Description</label></td>
                 <td>
                     <textarea id="descr" name="descr" class="form-control" style="width: 99%"
                               cols="100" rows="10" required="required"></textarea>
