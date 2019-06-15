@@ -12,12 +12,13 @@
 ### Feat
 - **Auth:** Add full Advanced Options for Login
 - **Auth:** Add UserRecover Form
-- **Cleanup:** Add disable cleanup job by set priority to 0
 - **Cleanup:** Cleanup dead peers
+- **Cleanup:** Add disable cleanup job by set priority to 0
 - **Debug:** Remove DebugMiddleware
 - **Debug:** Add extend debug output
 - **Email:** Add email template
 - **Form Validator:** Add library bootstrap-validator library
+- **Frontend:** Add localforage As Cache Provider
 - **Invite:** Add base invite table
 - **Invite:** Finish invite system
 - **News:** Fix news tag not appear in index
@@ -32,6 +33,7 @@
 - **Admin Panel:** Fix index num in Redis Keys Page
 - **Auth:** Fix Broken Auth page after frontend framework change
 - **DATABASE:** Fix CURRENT_TIMESTAMP Extra error
+- **Email:** Fix Email Can't Send
 - **Error:** Fix Error Handler
 - **Invite:** Add Fine-grained control of recycle pending
 - **Register:** Add captcha checker

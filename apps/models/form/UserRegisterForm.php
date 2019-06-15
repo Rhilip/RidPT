@@ -50,12 +50,6 @@ class UserRegisterForm extends Validator
 
     protected $_action = 'register';
 
-    public function setData($config)
-    {
-        parent::setData($config);
-        $this->buildDefaultValue();
-    }
-
     public function buildDefaultValue()
     {
         $this->status = app()->config->get('register.user_default_status') ?? User::STATUS_PENDING;
@@ -152,6 +146,9 @@ class UserRegisterForm extends Validator
             return;
         }
 
+        // TODO Check if this username is not in blacklist
+
+        // Check this username is exist in Table `users` or not
         $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
             "username" => $username
         ])->queryScalar();
@@ -181,6 +178,8 @@ class UserRegisterForm extends Validator
                 return;
             }
         }
+
+        // TODO Check if this email is not in blacklist
 
         $email_check = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `email` = :email")->bindParams([
             "email" => $email

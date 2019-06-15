@@ -66,13 +66,20 @@ class Validator extends BaseObject
         foreach ($config as $name => $value) {
             $this->$name = $value;
         }
+        $this->buildDefaultValue();
     }
 
-    public function setFileData($config) {
+    public function setFileData($config)
+    {
         $this->_data += $config;
         foreach ($config as $name => $value) {
             $this->$name = UploadFile::newInstanceByName($name);
         }
+    }
+
+    public function buildDefaultValue()
+    {
+
     }
 
     public function validate()
