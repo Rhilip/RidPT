@@ -31,10 +31,10 @@ class Response extends BaseResponse
     }
 
     // 重定向
-    public function redirect($url)
+    public function redirect($url, $code = 302)
     {
         $this->setHeader('Location', $url);
-        $this->statusCode = 302;
+        $this->statusCode = $code;
     }
 
     // 发送

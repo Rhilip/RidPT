@@ -51,9 +51,11 @@
 - **Tracker:** Add passkey and info_hash Filter
 
 ### Refactor
+- **InviteAction:** Use InviteActionFrom instead of func in Controller
 - **Mailer:** Use phpmailer to replace swiftmailer
 - **Redis:** Add more Redis arguments in debug output
 - **Session:** Add Session Format Docs
+- **Validator:** Add function buildDefaultValue()
 - **ext2Icon:** Add more File format
 
 ### Revert
