@@ -121,7 +121,7 @@ class UserRegisterForm extends Validator
             $this->buildCallbackFailMsg('MaxUserReached','Max user limit Reached');
     }
 
-    public function isMaxRegisterIpReached()
+    protected function isMaxRegisterIpReached()
     {
         if (app()->config->get('register.check_max_ip')) {
             $client_ip = app()->request->getClientIp();
@@ -137,7 +137,7 @@ class UserRegisterForm extends Validator
         }
     }
 
-    public function isValidUsername()
+    protected function isValidUsername()
     {
         $username = $this->username;
         // The following characters are allowed in user names
@@ -158,7 +158,7 @@ class UserRegisterForm extends Validator
         }
     }
 
-    public function isValidEmail()
+    protected function isValidEmail()
     {
         $email = $this->email;
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
@@ -226,7 +226,7 @@ class UserRegisterForm extends Validator
              *    // Do something to update $ret_array
              *
              * If register pass the Green Check , you can also update some status of this Users.
-             * If he don't pass this check , you should throw Exception with **enough** message.
+             * If he don't pass this check , you should `buildCallbackFailMsg` with **enough** message.
              *
              */
             $this->buildCallbackFailMsg('Green', "The Green way to register in this site is not Implemented.");

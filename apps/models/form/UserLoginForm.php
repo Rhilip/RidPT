@@ -119,7 +119,8 @@ class UserLoginForm extends Validator
         }
     }
 
-    public function LoginFail() {
+    public function LoginFail()
+    {
         app()->redis->zAdd('SITE:fail_login_ip_zset', time(), app()->request->getClientIp());
         app()->redis->hIncrBy('SITE:fail_login_ip_count', app()->request->getClientIp(), 1);
     }

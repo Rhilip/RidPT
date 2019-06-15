@@ -20,7 +20,9 @@ class UserConfirmForm extends Validator
     public $secret;
     public $action;
 
-    protected static $action_list = ['register', 'recover'];
+    const ACTION_REGISTER = 'register';
+    const ACTION_RECOVER = 'recover';
+
 
     protected $id;
     private $uid;
@@ -34,7 +36,7 @@ class UserConfirmForm extends Validator
             'secret' => 'Required',
             'action' => [
                 ['Required'],
-                ['InList', ['list' => self::$action_list], 'Unknown confirm action.']
+                ['InList', ['list' => [self::ACTION_REGISTER, self::ACTION_RECOVER]], 'Unknown confirm action.']
             ],
         ];
     }
@@ -53,7 +55,7 @@ class UserConfirmForm extends Validator
             'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm` 
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
-            'secret' => $this->secret , 'action' => $this->action
+            'secret' => $this->secret, 'action' => $this->action
         ])->queryOne();
 
         if ($record == false) {  // It means this confirm key is not exist
@@ -68,14 +70,16 @@ class UserConfirmForm extends Validator
         $this->user_status = $record['status'];
     }
 
-    protected function update_confirm_status() {
+    private function update_confirm_status()
+    {
         app()->pdo->createCommand('UPDATE `user_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
             'id' => $this->id
         ])->execute();
     }
 
-    public function flush_register() {
-        if ($this->user_status !==  UserInterface::STATUS_PENDING) {
+    private function flush_register()
+    {
+        if ($this->user_status !== UserInterface::STATUS_PENDING) {
             return 'user status is not pending , they may already confirmed or banned';  // FIXME msg
         }
 
@@ -87,15 +91,16 @@ class UserConfirmForm extends Validator
         return true;
     }
 
-    public function flush_recover() {
-        if ($this->user_status !==  UserInterface::STATUS_CONFIRMED) {
+    private function flush_recover()
+    {
+        if ($this->user_status !== UserInterface::STATUS_CONFIRMED) {
             return 'user status is not confirmed , they may in pending or banned';  // FIXME msg
         }
 
         // generate new password
         $new_password = StringHelper::getRandomString(10);
         app()->pdo->createCommand('UPDATE `users` SET `password` = :new_password WHERE `id` = :uid')->bindParams([
-            'new_password'=> password_hash($new_password, PASSWORD_DEFAULT), 'uid'=>$this->uid
+            'new_password' => password_hash($new_password, PASSWORD_DEFAULT), 'uid' => $this->uid
         ])->execute();
         $this->update_confirm_status();
 
@@ -110,7 +115,12 @@ class UserConfirmForm extends Validator
         return true;
     }
 
-    public function flush() {
-        return $this->{'flush_' . $this->action}();  // Magic function call
+    public function flush()
+    {
+        if ($this->action == self::ACTION_REGISTER) {
+            return $this->flush_register();
+        } elseif ($this->action == self::ACTION_RECOVER) {
+            return $this->flush_recover();
+        }
     }
 }

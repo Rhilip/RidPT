@@ -23,7 +23,7 @@ class UserInviteForm extends UserRegisterForm
 
     public $invite_link;
 
-    public $type =  'invite';
+    public $type = 'invite';
 
     private $temp_record;
 
@@ -55,30 +55,32 @@ class UserInviteForm extends UserRegisterForm
         ];
     }
 
-    protected function isInviteSystemOpen() {
+    protected function isInviteSystemOpen()
+    {
         if (app()->config->get('base.enable_invite_system') != true) {
-            $this->buildCallbackFailMsg('InviteSystemOpen','The invite system isn\'t open in this site.');
+            $this->buildCallbackFailMsg('InviteSystemOpen', 'The invite system isn\'t open in this site.');
         }
     }
 
     /**
      * Check if user can invite
      */
-    protected function canInvite() {
+    protected function canInvite()
+    {
         // if user have enough invite number
         $invite_sum = app()->user->getInvites() + app()->user->getTempInvitesSum();
         if ($invite_sum <= 0) {
-            $this->buildCallbackFailMsg('Invitation qualification','No enough invite qualification');
+            $this->buildCallbackFailMsg('Invitation qualification', 'No enough invite qualification');
             return;
         }
 
         // If it is temporary invite
         if ($this->invite_type == self::INVITE_TYPE_TEMPORARILY) {
             $record = app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE id = :id AND user_id = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW()')->bindParams([
-                'id' => $this->temp_id, 'uid'=> app()->user->getId()
+                'id' => $this->temp_id, 'uid' => app()->user->getId()
             ])->queryOne();
             if (false === $record) {
-                $this->buildCallbackFailMsg('Temporary Invitation','Temporary Invitation is not exist, it may not belong to you or expired.');
+                $this->buildCallbackFailMsg('Temporary Invitation', 'Temporary Invitation is not exist, it may not belong to you or expired.');
                 return;
             }
             $this->temp_record = $record;
@@ -98,7 +100,8 @@ class UserInviteForm extends UserRegisterForm
         }
     }
 
-    private function insertInviteRecord() {
+    private function insertInviteRecord()
+    {
         do { // To make sure this hash is unique !
             $invite_hash = StringHelper::getRandomString(32);
 
@@ -123,22 +126,19 @@ class UserInviteForm extends UserRegisterForm
         // Consume the invite number
         app()->pdo->beginTransaction();
         try {
-            if ($this->invite_type == self::INVITE_TYPE_TEMPORARILY) {
-                // Consume the temp invite
+            if ($this->invite_type == self::INVITE_TYPE_TEMPORARILY) { // Consume the temp invite
                 app()->pdo->createCommand('UPDATE `user_invitations` SET `used` = `used` + 1 WHERE `id` = :id')->bindParams([
                     'id' => $this->temp_id
                 ])->execute();
-                $this->insertInviteRecord();
-                app()->redis->hDel('User:' . app()->user->getId() . ':base_content','temp_invite');  // flush it's cache
-            } else {
-                // Consume user privilege invite
-                 app()->pdo->createCommand('UPDATE `users` SET `invites` = `invites` - 1 WHERE `id` = :uid')->bindParams([
-                     'uid' => app()->user->getId()
-                 ])->execute();
-                $this->insertInviteRecord();
-                 app()->redis->hIncrBy('User:' . app()->user->getId() . ':base_content','invites',-1);
-
+            } else {  // Consume user privilege invite
+                app()->pdo->createCommand('UPDATE `users` SET `invites` = `invites` - 1 WHERE `id` = :uid')->bindParams([
+                    'uid' => app()->user->getId()
+                ])->execute();
             }
+
+            $this->insertInviteRecord();
+            app()->redis->del('User:' . app()->user->getId() . ':base_content');  // flush it's cache
+
             $invite_status = true;
             app()->pdo->commit();
         } catch (\Exception $e) {

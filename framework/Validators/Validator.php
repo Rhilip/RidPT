@@ -10,6 +10,10 @@ use Rid\Http\UploadFile;
  *
  * Wrapper of Class Validator
  * @package Rid\Validators
+ *
+ *
+ * Any CallbackRule function should be protected
+ * Any Flush function should be private
  */
 class Validator extends BaseObject
 {
@@ -38,7 +42,8 @@ class Validator extends BaseObject
         return [];
     }
 
-    public static function callbackRules() {
+    public static function callbackRules()
+    {
         return [];
     }
 
@@ -116,5 +121,10 @@ class Validator extends BaseObject
             return '';
         }
         return $this->getErrors()[0];
+    }
+
+    public function flush()
+    {
+
     }
 }

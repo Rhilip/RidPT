@@ -10,6 +10,7 @@ namespace apps\controllers;
 
 use apps\models\User;
 use apps\models\form\UserInviteForm;
+use apps\models\form\UserInviteActionForm;
 
 use Rid\Http\Controller;
 
@@ -42,7 +43,7 @@ class UserController extends Controller
         }
 
         $user = app()->user;
-        $uid = app()->request->get('id');
+        $uid = app()->request->get('uid');
         if (!is_null($uid) && $uid != app()->user->getId()) {
             if (app()->user->isPrivilege('view_invite')) {
                 $user = new User($uid);
@@ -52,65 +53,14 @@ class UserController extends Controller
         }
 
         // FIXME By using Form Class
-        if (app()->request->get('action') == 'confirm' && app()->user->isPrivilege('invite_manual_confirm')) {
-            $uid = app()->request->get('uid');
-            if ($uid) {
-                app()->pdo->createCommand("UPDATE `users` SET `status` = 'confirmed' WHERE `id` = :invitee_id AND `status` = 'pending'")->bindParams([
-                    'invitee_id' => $uid
-                ])->execute();
-                if (app()->pdo->getRowCount() > 1) {
-                    $msg = 'Confirm Pending User Success!';
-                } else {
-                    $msg = 'You can\'t confirm a confirmed user.';
-                }
-            }
-        }
-
-        if (app()->request->get('action') == 'recycle' && (
-            $user->getId() === app()->user->getId() ?
-                app()->user->isPrivilege('invite_recycle_self_pending') :
-                app()->user->isPrivilege('invite_recycle_other_pending')
-            )) {
-            $invite_id = app()->request->get('invite_id');
-            if ($invite_id) {
-                // Get unused invite info
-                $invite_info = app()->pdo->createCommand('SELECT * FROM `invite` WHERE `id` = :invite_id AND `inviter_id` = :inviter_id AND `used` = 0')->bindParams([
-                    'invite_id' => $invite_id, 'inviter_id' => $user->getId()
-                ])->queryOne();
-                if ($invite_info) {
-                    app()->pdo->beginTransaction();
-                    try {
-                        // Set this record used
-                        app()->pdo->createCommand('UPDATE `invite` SET `used` = 1 WHERE `id` = :id')->bindParams([
-                            'id' => $invite_info['id'],
-                        ])->execute();
-                        $msg = 'Recycle invite success!';
-
-                        // Recycle or not ?
-                        if (app()->config->get('invite.recycle_return_invite')) {
-                            // TODO Add recycle limit so that user can't make a temporarily invite like 'permanent'
-                            if ($invite_info['invite_type'] == 'permanent') {
-                                app()->pdo->createCommand('UPDATE `users` SET `invites` = `invites` + 1 WHERE id = :uid')->bindParams([
-                                    'uid' => $invite_id['inviter_id']
-                                ])->execute();
-                                $msg .= ' And return you a permanent invite';
-                            } elseif ($invite_info['invite_type'] == 'temporarily') {
-                                app()->pdo->createCommand('INSERT INTO `user_invitations` (`user_id`,`total`,`create_at`,`expire_at`) VALUES (:uid,:total,CURRENT_TIMESTAMP,DATE_ADD(NOW(),INTERVAL :life_time SECOND ))')->bindParams([
-                                    'uid' => $invite_id['inviter_id'], 'total' => 1,
-                                    'life_time' => app()->config->get('invite.recycle_invite_lifetime')
-                                ])->execute();
-                                $msg .= ' And return you a temporarily invite with ' . app()->config->get('invite.recycle_invite_lifetime') . ' seconds lifetime.';
-                                app()->redis->hDel( 'User:' . $invite_id['inviter_id'] . ':base_content','temp_invite');
-                            }
-                        }
-                        app()->pdo->commit();
-                    } catch (\Exception $e) {
-                        $msg = '500 Error.....' . $e->getMessage();
-                        app()->pdo->rollback();
-                    }
-                } else {
-                    $msg = 'Can\'t Found this invite record.';
-                }
+        if (!is_null(app()->request->get('action'))) {
+            $action_form = new UserInviteActionForm();
+            $action_form->setData(app()->request->get());
+            $success = $action_form->validate();
+            if ($success) {
+                $msg = $action_form->flush();
+            } else {
+                return $this->render('errors/action_fail', ['title' => 'Invite Failed', 'msg' => $action_form->getError()]);
             }
         }
 
