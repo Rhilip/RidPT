@@ -68,9 +68,7 @@
                                 </div>
                                 <div class="help-block">Case insensitive.</div>
                             </div>
-                            <div class="col-md-4">
-                                <?= $this->insert('layout/captcha') ?>
-                            </div>
+                            <?= $this->insert('layout/captcha') ?>
                         </div>
                     </div>
 

@@ -55,6 +55,7 @@
 - **Mailer:** Use phpmailer to replace swiftmailer
 - **Redis:** Add more Redis arguments in debug output
 - **Session:** Add Session Format Docs
+- **SiteConfig:** change namespace `authority.route_` to `route.`
 - **Validator:** Add function buildDefaultValue()
 - **ext2Icon:** Add more File format
 
