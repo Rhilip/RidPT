@@ -40,7 +40,7 @@ $time_now = time();
         <td class="text-center" style="margin: 0;padding: 0"><?= ($torrent->getCategory())->getName() ?></td>
         <td>
             <div>
-                <div class="pull-left" style="position: absolute">
+                <div class="pull-left name-left">
                     <div data-item="t-main-info" data-title="<?= $this->e($torrent->getTitle()) ?>">
                         <!--suppress HtmlUnknownTarget -->
                         <a href="/torrent/details?id=<?= $torrent->getId() ?>" target="_blank"><b><?= $torrent->getTitle() ?></b></a>
@@ -50,12 +50,12 @@ $time_now = time();
                     </div>
                 </div>
                 <div class="pull-right">
-                    <div class="text-center" style="width: 5px">
-                        <!--suppress HtmlUnknownTarget -->
-                        <a href="/torrent/download?id=<?= $torrent->getId() ?>"><i class="fas fa-download"></i></a>
-                        <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->user->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star"></i></a>
+                    <div class="text-right">
+                        <!--suppress HtmlUnknownTarget --><a href="/torrent/download?id=<?= $torrent->getId() ?>"><i class="fas fa-download fa-fw"></i></a>
+                        <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->user->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i></a>
                     </div>
                 </div>
+
             </div>
         </td>
         <td class="text-center" data-item="t-commit" data-commit="0">0</td> <!-- TODO -->

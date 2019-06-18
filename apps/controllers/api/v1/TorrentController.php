@@ -47,7 +47,6 @@ class TorrentController extends ApiController
                 ];
             } else {
                 $ret = $filelist->getFileList();
-                var_dump($ret);
                 return array_merge(
                     ['success' => true],
                     $ret

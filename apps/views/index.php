@@ -7,6 +7,7 @@
  *
  * @var League\Plates\Template\Template $this
  * @var array $news
+ * @var array $links
  */
 ?>
 
@@ -52,6 +53,26 @@
             </div>
         </div>
         <?php endif; ?>
+    </div>
+</div>
+
+<div class="panel" id="links_panel">
+    <div class="panel-heading">
+        Links
+        <?php if (app()->user->isPrivilege('apply_for_links')): ?>
+        - [<a href="/links/apply" target="_blank">Apply for Links</a>]
+        <?php endif; ?>
+        <?php if (app()->user->isPrivilege('manage_links')): ?>
+        [<a href="/links/manage" target="_blank">Manage Links</a>]
+        <?php endif; ?>
+    </div>
+    <div class="panel-body">
+        <?php foreach ($links as $link): ?>
+            <a href="<?= $this->e($link['url']) ?>" target="_blank" title="<?= $this->e($link['title']) ?>">
+                <img src="https://www.google.com/s2/favicons?domain=<?= parse_url($link['url'])['host'] ?>" alt="">
+                <?= $this->e($link['name']) ?>
+            </a>&nbsp;&nbsp;
+        <?php endforeach; ?>
     </div>
 </div>
 

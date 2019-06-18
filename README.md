@@ -5,13 +5,14 @@ A Private Torrent framework Project.<br/>
 <a href="https://www.swoole.com/"><img src="https://img.shields.io/badge/used-Swoole-blue.svg" alt="used-Swoole-blue" /></a>
 <a href="https://github.com/Rhilip/RidPT/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Rhilip/RidPT.svg" alt="GitHub license" /></a>
 <a href="https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_shield"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=shield" alt="FOSSA Status" /></a>
+<a href="https://t.me/ridpt"><img src="https://img.shields.io/badge/telegram-Group-blue.svg?logo=telegram"></a>
 </p>
 
 --------------------------------------
 
 ## Demo Site
 
-Demo Url: http://ridpt.top/
+Demo Url: https://ridpt.top/
 
 Test Account Information:
  - Username : `Admin`

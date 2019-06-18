@@ -18,6 +18,9 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
 <head>
     <?php $this->insert('layout/head'); ?>
 
+    <!-- Other meta field -->
+    <?= $this->section('meta') ?>
+
     <title><?= app()->config->get('base.site_name') ?> :: <?= $this->e($this->section('title') ?? '') ?> -- Powered by <?= app()->config->get('base.site_generator') ?></title>
 
     <!-- styles of Library -->
@@ -160,9 +163,12 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
     </div>
 </footer>
 
+<?= $this->section('body') ?>
+
 <!-- Javascript of Library -->
 <script src="/lib/jquery/dist/jquery.min.js"></script>
 <script src="/lib/zui/dist/js/zui.min.js"></script>
+<script src="/lib/bootstrap-validator/dist/validator.min.js"></script>
 <script src="/lib/localforage/dist/localforage.min.js"></script>
 
 <!-- Custom Javascript of this template -->

@@ -42,8 +42,8 @@ jQuery(document).ready(function () {
         $.zui.browser.tip();
     }
 
-    // Active tooltop
-    $('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="tooltip"]').tooltip();  // Active tooltip
+    $('[data-toggle="popover"]').popover();  // Active popover
 
     // Active Pager which source from remote
     $('ul[data-ride="remote_pager"]').pager({
@@ -67,6 +67,20 @@ jQuery(document).ready(function () {
     captcha_img_another.on('load', function () {
         $(this).parent('.captcha_img_load').removeClass('load-indicator loading');
     });
+
+    // Form submit loading anime
+    $('form').on('submit',function() {$(this).addClass('load-indicator loading')});
+
+    // Clean form data in a modal
+    $('.modal').on('hidden.zui.modal', function () {
+        let that = $(this);
+        if (that.find('form').length > 0) {
+            let form = that.find('form');
+            form[0].reset();
+        }
+    });
+
+
 
     // TODO Add Scroll to TOP fixbar
 

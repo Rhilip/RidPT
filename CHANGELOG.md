@@ -10,12 +10,12 @@
 - **README:** Fix Mailer Env typo
 
 ### Feat
-- **Auth:** Add full Advanced Options for Login
 - **Auth:** Add UserRecover Form
-- **Cleanup:** Cleanup dead peers
+- **Auth:** Add full Advanced Options for Login
 - **Cleanup:** Add disable cleanup job by set priority to 0
-- **Debug:** Remove DebugMiddleware
+- **Cleanup:** Cleanup dead peers
 - **Debug:** Add extend debug output
+- **Debug:** Remove DebugMiddleware
 - **Email:** Add email template
 - **Form Validator:** Add library bootstrap-validator library
 - **Frontend:** Add localforage As Cache Provider
@@ -24,6 +24,7 @@
 - **News:** Fix news tag not appear in index
 - **News:** Add Site News model
 - **Register:** Can't copy password and paste to retyep_password
+- **Response:** Add redirect code
 - **Task:** Add task process support
 - **Timer:** Add Timer Example
 - **Torrent:** Add folder size sum in torrent file modal
