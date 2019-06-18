@@ -8,7 +8,7 @@
 ?>
 
 <?= $this->layout('layout/base') ?>
-<?php $this->start('meta')?><meta http-equiv="refresh" content="2;url=/" /><?php $this->end();?>
+
 <?php $this->start('title')?>Apply for Links<?php $this->end();?>
 
 <?php $this->start('container') ?>
