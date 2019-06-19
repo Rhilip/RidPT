@@ -112,16 +112,8 @@ class TrackerController
 
                         $this->checkSession($queries, $role, $userInfo, $torrentInfo);
 
-
-                        // Push to Redis Queue and quick response
-                        app()->redis->lPush('Tracker:to_deal_queue',json_encode([
-                            'worker' => \apps\task\TrackerAnnounceTask::class,
-                            'timestamp' => time(),
-                            'queries' => $queries,
-                            'role' => $role,
-                            'userInfo' => $userInfo,
-                            'torrentInfo' => $torrentInfo
-                        ]));
+                        // Send all info to task worker
+                        $this->sendToTaskWorker($queries, $role, $userInfo, $torrentInfo);
 
                         $this->generateAnnounceResponse($queries, $role, $torrentInfo, $rep_dict);
                         return Bencode::encode($rep_dict);
@@ -779,5 +771,18 @@ class TrackerController
             }
         }
 
+    }
+
+    private function sendToTaskWorker($queries, $role, $userInfo, $torrentInfo)
+    {
+        // Push to Redis Queue and quick response
+        app()->redis->lPush('Tracker:to_deal_queue', json_encode([
+            'worker' => \apps\task\TrackerAnnounceTask::class,
+            'timestamp' => time(),
+            'queries' => $queries,
+            'role' => $role,
+            'userInfo' => $userInfo,
+            'torrentInfo' => $torrentInfo
+        ]));
     }
 }

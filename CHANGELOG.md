@@ -10,17 +10,18 @@
 - **README:** Fix Mailer Env typo
 
 ### Feat
-- **Auth:** Add UserRecover Form
 - **Auth:** Add full Advanced Options for Login
-- **Cleanup:** Add disable cleanup job by set priority to 0
+- **Auth:** Add UserRecover Form
 - **Cleanup:** Cleanup dead peers
-- **Debug:** Add extend debug output
+- **Cleanup:** Add disable cleanup job by set priority to 0
 - **Debug:** Remove DebugMiddleware
+- **Debug:** Add extend debug output
 - **Email:** Add email template
 - **Form Validator:** Add library bootstrap-validator library
 - **Frontend:** Add localforage As Cache Provider
-- **Invite:** Add base invite table
 - **Invite:** Finish invite system
+- **Invite:** Add base invite table
+- **Links:** Add full Links manage
 - **News:** Fix news tag not appear in index
 - **News:** Add Site News model
 - **Register:** Can't copy password and paste to retyep_password
