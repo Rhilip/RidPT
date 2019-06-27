@@ -57,7 +57,7 @@ class UserInviteForm extends UserRegisterForm
 
     protected function isInviteSystemOpen()
     {
-        if (app()->config->get('base.enable_invite_system') != true) {
+        if (config('base.enable_invite_system') != true) {
             $this->buildCallbackFailMsg('InviteSystemOpen', 'The invite system isn\'t open in this site.');
         }
     }
@@ -91,8 +91,8 @@ class UserInviteForm extends UserRegisterForm
     {
         if (!app()->user->isPrivilege('pass_invite_interval_check')) {
             $count = app()->pdo->createCommand([
-                ['SELECT COUNT(`id`) FROM `invite` WHERE `create_at` > DATE_SUB(NOW(),INTERVAL :wait_second SECOND) ', 'params' => ['wait_second' => app()->config->get('invite.interval')]],
-                ['AND `used` = 0', 'if' => !app()->config->get('invite.force_interval')]
+                ['SELECT COUNT(`id`) FROM `invite` WHERE `create_at` > DATE_SUB(NOW(),INTERVAL :wait_second SECOND) ', 'params' => ['wait_second' => config('invite.interval')]],
+                ['AND `used` = 0', 'if' => !config('invite.force_interval')]
             ])->queryScalar();
             if ($count > 0) {
                 $this->buildCallbackFailMsg('Invitation interval', 'Hit invitation interval, please wait');
@@ -117,7 +117,7 @@ class UserInviteForm extends UserRegisterForm
 
         app()->pdo->createCommand('INSERT INTO `invite` (`inviter_id`,`username`,`invite_type`, `hash`, `create_at`, `expire_at`) VALUES (:inviter_id,:username,:invite_type,:hash,NOW(),DATE_ADD(NOW(),INTERVAL :timeout SECOND))')->bindParams([
             'inviter_id' => app()->user->getId(), 'username' => $this->username, 'invite_type' => $this->invite_type,
-            'hash' => $invite_hash, 'timeout' => app()->config->get('invite.timeout')
+            'hash' => $invite_hash, 'timeout' => config('invite.timeout')
         ])->execute();
     }
 

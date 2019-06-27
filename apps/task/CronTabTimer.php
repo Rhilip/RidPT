@@ -17,7 +17,7 @@ class CronTabTimer extends Timer
     
     private function print_log($log)
     {
-        $this->_print_flag = $this->_print_flag ?? app()->config->get('debug.print_crontab_log');
+        $this->_print_flag = $this->_print_flag ?? config('debug.print_crontab_log');
         if ($this->_print_flag) {
             println($log);
         }
@@ -71,7 +71,7 @@ class CronTabTimer extends Timer
 
     protected function clean_dead_peer()
     {
-        $deadtime = floor(app()->config->get('tracker.interval') * 1.8);
+        $deadtime = floor(config('tracker.interval') * 1.8);
         app()->pdo->createCommand('DELETE FROM `peers` WHERE last_action_at < DATE_SUB(NOW(), interval :deadtime second )')->bindParams([
             'deadtime' => $deadtime
         ])->execute();

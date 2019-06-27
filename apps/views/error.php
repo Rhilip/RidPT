@@ -27,10 +27,10 @@ use Rid\Helpers\StringHelper;
 <head>
     <?php $this->insert('layout/head'); ?>
 
-    <title><?= app()->config->get('base.site_name') ?> :: Error Page -- Powered by <?= app()->config->get('base.site_generator') ?></title>
+    <title><?= config('base.site_name') ?> :: Error Page -- Powered by <?= config('base.site_generator') ?></title>
 
     <!-- Custom stlylesheet -->
-    <link rel="stylesheet" href="/static/css/error.css?<?= app()->config->get('base.site_css_update_date') ?>"/>
+    <link rel="stylesheet" href="/static/css/error.css?<?= config('base.site_css_update_date') ?>"/>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

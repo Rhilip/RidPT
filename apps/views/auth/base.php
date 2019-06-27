@@ -8,7 +8,7 @@
  * @var League\Plates\Template\Template $this
  */
 
-$css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_date');
+$css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +17,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
 <head>
     <?php $this->insert('layout/head'); ?>
 
-    <title><?= app()->config->get('base.site_name') ?> :: Authorization Point -- Powered by RidPT</title>
+    <title><?= config('base.site_name') ?> :: Authorization Point -- Powered by RidPT</title>
 
     <!-- styles of Library -->
     <link rel="stylesheet" href="/lib/flag-css/dist/css/flag-css.min.css">
@@ -47,7 +47,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
         <div class="row header-top">
             <div class="span5 logo">
                 <a class="logo-img" href="/"><img src="/static/pic/logo.png" style="width: 135px" alt="Logo"/></a>
-                <p class="tagline"><?= app()->config->get('base.site_description') ?></p>
+                <p class="tagline"><?= config('base.site_description') ?></p>
             </div>
         </div>
     </header>
@@ -55,7 +55,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
 
     <nav id="nav" class="navbar navbar-default navbar-static-top navbar-custom" role="navigation">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#"><?= app()->config->get('base.site_name') ?></a>
+            <a class="navbar-brand" href="#"><?= config('base.site_name') ?></a>
         </div>
         <div class="collapse navbar-collapse navbar-collapse-custom">
             <ul class="nav navbar-nav">
@@ -76,7 +76,7 @@ $css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_
     <div class="container" align="center">
         <div class="row">
             <p class="copyright">
-                &copy; <a href="/" target="_self"><?= app()->config->get('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT">RidPT</a>
+                &copy; <a href="/" target="_self"><?= config('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT">RidPT</a>
             </p>
             <p class="debug-info">
                 [ Page created in <b><?= number_format(microtime(true) - app()->request->start_at, 6) ?></b> sec

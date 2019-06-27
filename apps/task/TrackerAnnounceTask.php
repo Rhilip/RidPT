@@ -98,8 +98,8 @@ class TrackerAnnounceTask implements TaskInterface
             $trueDownloaded = max(0, $queries['downloaded'] - $self['downloaded']);
             $duration = max(0, $self['duration']);
 
-            if (app()->config->get("tracker.enable_upspeed_check")) {
-                if ($userInfo["class"] < app()->config->get("authority.pass_tracker_upspeed_check") && $duration > 0)
+            if (config("tracker.enable_upspeed_check")) {
+                if ($userInfo["class"] < config("authority.pass_tracker_upspeed_check") && $duration > 0)
                     $this->checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration);
             }
 

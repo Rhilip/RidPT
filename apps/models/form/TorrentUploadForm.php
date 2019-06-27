@@ -52,7 +52,7 @@ class TorrentUploadForm extends Validator
                 ['required'],
                 ['Upload\Required'],
                 ['Upload\Extension', ['allowed' => 'torrent']],
-                ['Upload\Size', ['size' => app()->config->get("torrent.max_file_size") . 'B']]
+                ['Upload\Size', ['size' => config("torrent.max_file_size") . 'B']]
             ],
             'descr' => 'required',
             'uplver' => [
@@ -118,7 +118,7 @@ class TorrentUploadForm extends Validator
 
     public function makePrivateTorrent()
     {
-        $this->torrent_dict['announce'] = "https://" . app()->config->get("base.site_tracker_url") . "/announce";
+        $this->torrent_dict['announce'] = "https://" . config("base.site_tracker_url") . "/announce";
 
         // Remove un-need field in private torrents
         unset($this->torrent_dict['announce-list']); // remove multi-tracker capability
@@ -146,7 +146,7 @@ class TorrentUploadForm extends Validator
 
         // Make it private and unique by add our source flag
         $this->torrent_dict['info']['private'] = 1;  // add private tracker flag
-        $this->torrent_dict['info']['source'] = "Powered by [" . app()->config->get("base.site_url") . "] " . app()->config->get("base.site_name");
+        $this->torrent_dict['info']['source'] = "Powered by [" . config("base.site_url") . "] " . config("base.site_name");
 
         // Get info_hash on new torrent content dict['info']
         $this->info_hash = pack("H*", sha1(Bencode::encode($this->torrent_dict['info'])));
@@ -211,9 +211,9 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
     private function setBuff()
     {
         // Add Large Buff and Random Buff
-        if (app()->config->get("buff.enable_large") && $this->file->size > app()->config->get("buff.large_size")) {
+        if (config("buff.enable_large") && $this->file->size > config("buff.large_size")) {
             // TODO app()->pdo->createCommand();
-        } elseif (app()->config->get("buff.enable_random")) {
+        } elseif (config("buff.enable_random")) {
             // TODO app()->pdo->createCommand();
         }
 

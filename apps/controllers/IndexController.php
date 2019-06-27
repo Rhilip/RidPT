@@ -14,7 +14,7 @@ class IndexController extends Controller
         $news = app()->redis->get('Site:recent_news');
         if ($news === false) { // Get news from Database and cache it in redis
             $news = app()->pdo->createCommand('SELECT * FROM news ORDER BY create_at DESC LIMIT :max')->bindParams([
-                'max' => app()->config->get('base.max_news_sum')
+                'max' => config('base.max_news_sum')
             ])->queryAll();
             app()->redis->set('Site:recent_news', $news, 86400);
         }

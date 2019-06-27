@@ -126,7 +126,7 @@ class UserInviteActionForm extends Validator
             $msg = 'Recycle invite success!';
 
             // Recycle or not ?
-            if (app()->config->get('invite.recycle_return_invite')) {
+            if (config('invite.recycle_return_invite')) {
                 if ($this->invite_info['invite_type'] == UserInviteForm::INVITE_TYPE_PERMANENT) {
                     app()->pdo->createCommand('UPDATE `users` SET `invites` = `invites` + 1 WHERE id = :uid')->bindParams([
                         'uid' => $this->invite_info['inviter_id']
@@ -135,9 +135,9 @@ class UserInviteActionForm extends Validator
                 } elseif ($this->invite_info['invite_type'] == UserInviteForm::INVITE_TYPE_TEMPORARILY) {
                     app()->pdo->createCommand('INSERT INTO `user_invitations` (`user_id`,`total`,`create_at`,`expire_at`) VALUES (:uid,:total,CURRENT_TIMESTAMP,DATE_ADD(NOW(),INTERVAL :life_time SECOND ))')->bindParams([
                         'uid' => $this->invite_info['inviter_id'], 'total' => 1,
-                        'life_time' => app()->config->get('invite.recycle_invite_lifetime')
+                        'life_time' => config('invite.recycle_invite_lifetime')
                     ])->execute();
-                    $msg .= ' And return you a temporarily invite with ' . app()->config->get('invite.recycle_invite_lifetime') . ' seconds lifetime.';
+                    $msg .= ' And return you a temporarily invite with ' . config('invite.recycle_invite_lifetime') . ' seconds lifetime.';
                     app()->redis->hDel( 'User:' . $this->invite_info['inviter_id'] . ':base_content','temp_invite');
                 }
             }

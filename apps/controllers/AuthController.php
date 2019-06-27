@@ -94,7 +94,7 @@ class AuthController extends Controller
     public function actionLogin()
     {
         $test_attempts = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
-        $left_attempts = app()->config->get('security.max_login_attempts') - $test_attempts;
+        $left_attempts = config('security.max_login_attempts') - $test_attempts;
 
         if (app()->request->isPost()) {
             $login = new UserLoginForm();

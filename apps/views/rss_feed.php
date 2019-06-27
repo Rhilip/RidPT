@@ -11,9 +11,9 @@
  * @var \apps\models\Torrent $torrent
  */
 
-$url = (app()->request->isSecure() ? 'https://' : 'http://') . app()->config->get('base.site_url');
-$site_name = app()->config->get('base.site_name');
-$site_email = app()->config->get('base.site_email');
+$url = (app()->request->isSecure() ? 'https://' : 'http://') . config('base.site_url');
+$site_name = config('base.site_name');
+$site_email = config('base.site_email');
 $yearfounded = 2019; // FIXME get it from dynamic config
 $copyright = "Copyright (c) " . $site_name . " " . (date("Y") != $yearfounded ? $yearfounded . "-" : "") . date("Y") . ", all rights reserved";
 ?>
@@ -29,7 +29,7 @@ $copyright = "Copyright (c) " . $site_name . " " . (date("Y") != $yearfounded ? 
         <managingEditor><?= $site_email . "(" . $site_name . " Admin)" ?></managingEditor>
         <webMaster><?= $site_email . "(" . $site_name . " Webmaster)" ?></webMaster>
         <pubDate><?= date('r') ?></pubDate>
-        <generator><?= app()->config->get('base.site_generator') ?> RSS Generator</generator>
+        <generator><?= config('base.site_generator') ?> RSS Generator</generator>
         <docs><![CDATA[http://www.rssboard.org/rss-specification]]></docs>
         <ttl>120</ttl>
         <image>

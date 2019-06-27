@@ -19,11 +19,11 @@
             <div class="panel-heading">Rules for Link Exchange</div>
             <div class="panel-body">
                 <ol>
-                    <li>Please make our link <?= app()->config->get('base.site_name') ?> at your site before asking us to do the same.</li>
+                    <li>Please make our link <?= config('base.site_name') ?> at your site before asking us to do the same.</li>
                     <li>Your site MUST NOT be involed in any illegal things. The administrators of this site OurBits take absolutely no responsibily for anything of your site.</li>
-                    <li>All links we make here at our site <?= app()->config->get('base.site_name') ?> are text-only.</li>
+                    <li>All links we make here at our site <?= config('base.site_name') ?> are text-only.</li>
                     <li>Your site should has at least 200 registered users or 50 daily-visiting people.</li>
-                    <li>We reserve the rights to MODIFY OR DELETE ANY LINKS at our site <?= app()->config->get('base.site_name') ?> without notification.</li>
+                    <li>We reserve the rights to MODIFY OR DELETE ANY LINKS at our site <?= config('base.site_name') ?> without notification.</li>
                     <li>If conformed to rules above, feel free to apply for links of your site at OurBits. However, we give no guarantee to accept all application.</li>
                 </ol>
             </div>

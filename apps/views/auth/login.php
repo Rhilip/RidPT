@@ -19,7 +19,7 @@
             <div class="panel-heading">Authenticate</div>
             <div class="panel-body">
                 <div class="text-primary text-center">
-                    <strong>You have <?= $left_attempts > 3 ? $left_attempts : "<span class='text-red'>$left_attempts</span>" ?>/<?= app()->config->get('security.max_login_attempts') ?> attempts left, or your IP will be banned.</strong>
+                    <strong>You have <?= $left_attempts > 3 ? $left_attempts : "<span class='text-red'>$left_attempts</span>" ?>/<?= config('security.max_login_attempts') ?> attempts left, or your IP will be banned.</strong>
                 </div>
                 <?php if (isset($error_msg)): ?>
                 <div class="text-danger text-center">

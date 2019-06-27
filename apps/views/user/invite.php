@@ -87,7 +87,7 @@
                         </thead>
                         <tbody>
                         <?php foreach ($user->getPendingInvites() as $pendingInvite): ?>
-                        <?php $invite_link = (app()->request->isSecure() ? 'https://' : 'http://') . app()->config->get('base.site_url') . '/auth/register?type=invite&invite_hash=' . $pendingInvite['hash']; ?>
+                        <?php $invite_link = (app()->request->isSecure() ? 'https://' : 'http://') . config('base.site_url') . '/auth/register?type=invite&invite_hash=' . $pendingInvite['hash']; ?>
                             <tr>
                                 <td class="text-center"><?= $pendingInvite['username'] ?></td>
                                 <td class="text-center"><a href="<?= $invite_link ?>" target="_blank" data-toggle="tooltip" data-placement="right" title="Right mouse button to copy"><?= $pendingInvite['hash'] ?></a></td>
@@ -107,7 +107,7 @@
         </div> <!-- User's Pending Invite -->
 
         <?php if ($user->getId() === app()->user->getId()): // Same User, use $user as quick call ?>
-        <?php $can_invite = app()->config->get('base.enable_invite_system') && ($user->getInvites() + $user->getTempInvitesSum() > 0); ?>
+        <?php $can_invite = config('base.enable_invite_system') && ($user->getInvites() + $user->getTempInvitesSum() > 0); ?>
         <div class="panel">
             <div class="panel-heading"><span class="text-red">Invite Warning!!!</span></div>
             <div class="panel-body">
@@ -116,7 +116,7 @@
                     <li>Do not use your invites to create another account (dupe account), this WILL lead to both accounts being disabled!</li>
                     <li>Selling invites WILL get you banned without warning.</li>
                     <li>Do not re-invite an invitee that has already been banned, this WILL lead to all accounts being disabled.</li>
-                    <li><b>We have a invite interval, So please wait <?= app()->config->get('invite.interval') ?> seconds to send another invite.</b></li>
+                    <li><b>We have a invite interval, So please wait <?= config('invite.interval') ?> seconds to send another invite.</b></li>
                 </ul>
                 <hr />
                 <div class="text-center">
@@ -189,7 +189,7 @@
                                 <span class="input-group-addon"><span class="fas fa-envelope fa-fw"></span></span>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
-                            <div class="help-block">We only allow those Email: <code><?= app()->config->get('register.email_white_list') ?></code></div>
+                            <div class="help-block">We only allow those Email: <code><?= config('register.email_white_list') ?></code></div>
                         </div>
                     </div>
                     <div class="form-group">

@@ -52,17 +52,17 @@ class UserRegisterForm extends Validator
 
     public function buildDefaultValue()
     {
-        $this->status = app()->config->get('register.user_default_status') ?? User::STATUS_PENDING;
-        $this->class = app()->config->get('register.user_default_class') ?? User::ROLE_USER;
-        $this->uploadpos = app()->config->get('register.user_default_uploadpos') ?? 1;
-        $this->downloadpos = app()->config->get('register.user_default_downloadpos') ?? 1;
-        $this->uploaded = app()->config->get('register.user_default_uploaded') ?? 1;
-        $this->downloaded = app()->config->get('register.user_default_downloaded') ?? 1;
-        $this->seedtime = app()->config->get('register.user_default_seedtime') ?? 0;
-        $this->leechtime = app()->config->get('register.user_default_leechtime') ?? 0;
-        $this->bonus = app()->config->get('register.user_default_bonus') ?? 0;
-        $this->confirm_way = app()->config->get('register.user_confirm_way') ?? 'auto';
-        $this->invites = app()->config->get('register.user_default_invites') ?? 0;
+        $this->status = config('register.user_default_status') ?? User::STATUS_PENDING;
+        $this->class = config('register.user_default_class') ?? User::ROLE_USER;
+        $this->uploadpos = config('register.user_default_uploadpos') ?? 1;
+        $this->downloadpos = config('register.user_default_downloadpos') ?? 1;
+        $this->uploaded = config('register.user_default_uploaded') ?? 1;
+        $this->downloaded = config('register.user_default_downloaded') ?? 1;
+        $this->seedtime = config('register.user_default_seedtime') ?? 0;
+        $this->leechtime = config('register.user_default_leechtime') ?? 0;
+        $this->bonus = config('register.user_default_bonus') ?? 0;
+        $this->confirm_way = config('register.user_confirm_way') ?? 'auto';
+        $this->invites = config('register.user_default_invites') ?? 0;
     }
 
     public static function inputRules()
@@ -103,12 +103,12 @@ class UserRegisterForm extends Validator
 
     protected function isRegisterSystemOpen()
     {
-        if (app()->config->get('base.enable_register_system') != true) {
+        if (config('base.enable_register_system') != true) {
             $this->buildCallbackFailMsg('RegisterSystemOpen','The register isn\'t open in this site.');
             return;
         }
 
-        if (app()->config->get('register.by_' . $this->type) != true) {
+        if (config('register.by_' . $this->type) != true) {
             $this->buildCallbackFailMsg('RegisterSystemOpen',"The register by {$this->type} ways isn't open in this site.");
             return;
         }
@@ -116,17 +116,17 @@ class UserRegisterForm extends Validator
 
     protected function isMaxUserReached()
     {
-        if (app()->config->get('register.check_max_user') &&
-            Site::fetchUserCount() >= app()->config->get('base.max_user'))
+        if (config('register.check_max_user') &&
+            Site::fetchUserCount() >= config('base.max_user'))
             $this->buildCallbackFailMsg('MaxUserReached','Max user limit Reached');
     }
 
     protected function isMaxRegisterIpReached()
     {
-        if (app()->config->get('register.check_max_ip')) {
+        if (config('register.check_max_ip')) {
             $client_ip = app()->request->getClientIp();
 
-            $max_user_per_ip = app()->config->get('register.per_ip_user') ?: 5;
+            $max_user_per_ip = config('register.per_ip_user') ?: 5;
             $user_ip_count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)")->bindParams([
                 "ip" => $client_ip
             ])->queryScalar();
@@ -162,17 +162,17 @@ class UserRegisterForm extends Validator
     {
         $email = $this->email;
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
-        if (app()->config->get('register.check_email_blacklist') &&
-            app()->config->get('register.email_black_list')) {
-            $email_black_list = explode(",", app()->config->get('register.email_black_list'));
+        if (config('register.check_email_blacklist') &&
+            config('register.email_black_list')) {
+            $email_black_list = explode(",", config('register.email_black_list'));
             if (in_array($email_suffix, $email_black_list)) {
                 $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
                 return;
             }
         }
-        if (app()->config->get('register.check_email_whitelist') &&
-            app()->config->get('register.email_white_list')) {
-            $email_white_list = explode(",", app()->config->get('register.email_white_list'));
+        if (config('register.check_email_whitelist') &&
+            config('register.email_white_list')) {
+            $email_white_list = explode(",", config('register.email_white_list'));
             if (!in_array($email_suffix, $email_white_list)) {
                 $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
                 return;

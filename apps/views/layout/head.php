@@ -14,11 +14,11 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="referrer" content="same-origin" />
 
-    <meta name="author" content="<?= app()->config->get('base.site_author') ?>">
-    <meta name="generator" content="<?= app()->config->get('base.site_generator') ?>">
-    <meta name="keywords" content="<?= app()->config->get('base.site_keywords') ?>">
-    <meta name="description" content="<?= app()->config->get('base.site_description') ?>">
-    <meta name="copyright" content="<?= app()->config->get('base.site_copyright') ?>">
+    <meta name="author" content="<?= config('base.site_author') ?>">
+    <meta name="generator" content="<?= config('base.site_generator') ?>">
+    <meta name="keywords" content="<?= config('base.site_keywords') ?>">
+    <meta name="description" content="<?= config('base.site_description') ?>">
+    <meta name="copyright" content="<?= config('base.site_copyright') ?>">
 
     <script type="text/javascript">const _head_start = new Date();</script>
 

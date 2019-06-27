@@ -34,6 +34,13 @@ if (!function_exists('__')) {
     }
 }
 
+if (!function_exists('config')) {
+    function config($config, $throw = true)
+    {
+        return app()->config->get($config, $throw);
+    }
+}
+
 if (!function_exists('tgo')) {
     /** 创建一个带异常捕获的协程
      * @param $closure

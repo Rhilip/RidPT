@@ -55,12 +55,12 @@
                 <td>
                     <div class="checkbox-primary">
                         <input type="checkbox" id="uplver" name="uplver" value="yes"
-                            <?= app()->user->getClass(true) > app()->config->get('authority.upload_anonymous') ? '' : ' disabled' ?>
+                            <?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled' ?>
                         ><label for="uplver">Anonymous Upload</label>
                     </div>
                     <div class="checkbox-primary">
                         <input type="checkbox" id="hr" name="hr" value="yes"
-                            <?= app()->user->getClass(true) > app()->config->get('authority.upload_anonymous') ? '' : ' disabled' // FIXME ?>
+                            <?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled' // FIXME ?>
                         ><label for="hr">H&R</label>
                     </div>
                 </td>

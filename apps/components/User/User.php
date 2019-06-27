@@ -115,7 +115,7 @@ class User extends Component implements UserInterface
     public function isPrivilege($require_class)
     {
         if (is_string($require_class)) {
-            $require_class = app()->config->get('authority.' . $require_class, false) ?: 1;
+            $require_class = config('authority.' . $require_class, false) ?: 1;
         }
 
         return $this->class >= $require_class;

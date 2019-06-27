@@ -9,7 +9,7 @@
  */
 
 $schme = app()->request->isSecure() ? 'https://' : 'http://';
-$site_url = $schme . app()->config->get('base.site_url');
+$site_url = $schme . config('base.site_url');
 $icon_img = $site_url . '/static/pic/logo.png';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -88,7 +88,7 @@ $icon_img = $site_url . '/static/pic/logo.png';
                             </div>
                             <div class="item-1" style="color:#353535;line-height:120%;padding: 10px 10px 0;">
                                 <p style="font-size: 14px; line-height: 16px; text-align: center; margin: 0;">
-                                    <strong><?= app()->config->get('base.site_name') ?></strong>
+                                    <strong><?= config('base.site_name') ?></strong>
                                 </p>
                             </div>
                         </div>

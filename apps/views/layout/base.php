@@ -9,9 +9,9 @@
  * @var string $title
  */
 
-$css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_date');
-$extend_debug_info = app()->config->get('base.enable_extend_debug') &&
-    app()->user->getClass(true) > app()->config->get('authority.see_extend_debug_log');
+$css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
+$extend_debug_info = config('base.enable_extend_debug') &&
+    app()->user->getClass(true) > config('authority.see_extend_debug_log');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +21,7 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
     <!-- Other meta field -->
     <?= $this->section('meta') ?>
 
-    <title><?= app()->config->get('base.site_name') ?> :: <?= $this->e($this->section('title') ?? '') ?> -- Powered by <?= app()->config->get('base.site_generator') ?></title>
+    <title><?= config('base.site_name') ?> :: <?= $this->e($this->section('title') ?? '') ?> -- Powered by <?= config('base.site_generator') ?></title>
 
     <!-- styles of Library -->
     <link rel="stylesheet" href="/lib/flag-css/dist/css/flag-css.min.css">
@@ -43,7 +43,7 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
         <div class="row header-top">
             <div class="span5 logo">
                 <a class="logo-img" href="/"><img src="/static/pic/logo.png" style="width: 135px" alt="Logo"/></a>
-                <p class="tagline"><?= app()->config->get('base.site_description') ?></p>
+                <p class="tagline"><?= config('base.site_description') ?></p>
             </div>
         </div>
     </header>
@@ -143,7 +143,7 @@ $extend_debug_info = app()->config->get('base.enable_extend_debug') &&
     <div class="container" align="center">
         <div class="row">
             <p class="copyright">
-                &copy; <a href="/" target="_self"><?= app()->config->get('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT">RidPT</a>
+                &copy; <a href="/" target="_self"><?= config('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT">RidPT</a>
             </p>
             <p class="debug-info">
                 [ Page created in <b><?= number_format(microtime(true) - app()->request->start_at, 6) ?></b> sec

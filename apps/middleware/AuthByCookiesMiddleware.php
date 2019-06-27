@@ -22,7 +22,7 @@ class AuthByCookiesMiddleware
             } elseif ($action !== "actionLogout") {
                 if ($action == 'actionLogin') {
                     $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
-                    if ($test_count > app()->config->get('security.max_login_attempts')) {
+                    if ($test_count > config('security.max_login_attempts')) {
                         return app()->response->setStatusCode(403);
                     }
                 }
@@ -62,7 +62,7 @@ class AuthByCookiesMiddleware
              */
             $route = strtolower(str_replace(['apps\\controllers\\', 'Controller'], ['', ''], $controllerName)) .
                 "_" . strtolower(str_replace('action', '', $action));
-            $required_class = app()->config->get('route.' . $route, false) ?: 1;
+            $required_class = config('route.' . $route, false) ?: 1;
             if (app()->user->getClass(true) < $required_class) {
                 return app()->response->setStatusCode(403);
             }

@@ -19,14 +19,14 @@ $register_type = app()->request->get('type', 'open')
         <div class="panel">
             <div class="panel-heading">Recruitment</div>
             <div class="panel-body">
-                <?php if (app()->config->get('base.enable_register_system') != true): ?>
+                <?php if (config('base.enable_register_system') != true): ?>
                     <h2>Sorry~</h2>
                     <p class="lead">
                         The register system is close.
                     </p>
                 <?php else: ?>
                     <?php if (in_array(strtolower($register_type), ['invite', 'green', 'open'])): ?>
-                        <?php if (app()->config->get('register.by_' . $register_type) != true): ?>
+                        <?php if (config('register.by_' . $register_type) != true): ?>
                             <h2>Sorry ~</h2>
                             <p>
                                 Our registration is currently disabled. If you are lucky you might have a friend who wants to invite
@@ -64,7 +64,7 @@ $register_type = app()->request->get('type', 'open')
                                         <span class="input-group-addon"><span class="fas fa-envelope fa-fw"></span></span>
                                         <input type="email" class="form-control" id="email" name="email" required>
                                     </div>
-                                    <div class="help-block">We only allow those Email: <code><?= app()->config->get('register.email_white_list') ?></code></div>
+                                    <div class="help-block">We only allow those Email: <code><?= config('register.email_white_list') ?></code></div>
                                 </div>
 
                                 <div class="form-group">

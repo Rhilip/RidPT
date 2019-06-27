@@ -82,7 +82,7 @@ class Torrent
      */
     public function getOwnerId()
     {
-        if ($this->getUplver() == 'yes' and app()->user->getClass(true) < app()->config->get('authority.see_anonymous_uploader')) {
+        if ($this->getUplver() == 'yes' and app()->user->getClass(true) < config('authority.see_anonymous_uploader')) {
             return 0;
         } else {
             return $this->owner_id;
@@ -178,16 +178,16 @@ class Torrent
             $scheme = "https://";
 
         $announce_suffix = "/announce?passkey=" . app()->user->getPasskey();
-        $dict["announce"] = $scheme . app()->config->get("base.site_tracker_url") . $announce_suffix;
+        $dict["announce"] = $scheme . config("base.site_tracker_url") . $announce_suffix;
 
         /** BEP 0012 Multitracker Metadata Extension
          * See more on : http://www.bittorrent.org/beps/bep_0012.html
          */
-        if ($muti_tracker = app()->config->get("base.site_muti_tracker_url")) {
+        if ($muti_tracker = config("base.site_muti_tracker_url")) {
             $dict["announce-list"] = [];
 
             // Add our main tracker into muti_tracker_list to avoid lost error....
-            $muti_tracker = app()->config->get("base.site_tracker_url") . "," . $muti_tracker;
+            $muti_tracker = config("base.site_tracker_url") . "," . $muti_tracker;
 
             $muti_tracker_list = explode(",", $muti_tracker);
             foreach (array_unique($muti_tracker_list) as $tracker) {  // use array_unique to remove dupe tracker

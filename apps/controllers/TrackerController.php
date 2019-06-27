@@ -55,7 +55,7 @@ class TrackerController
             if (!app()->request->isGet())
                 throw new TrackerException(110, [":method" => app()->request->method()]);
 
-            if (!app()->config->get("base.enable_tracker_system"))
+            if (!config("base.enable_tracker_system"))
                 throw new TrackerException(100);
 
             $this->blockClient();
@@ -69,7 +69,7 @@ class TrackerController
                 // Tracker Protocol Extension: Scrape - http://www.bittorrent.org/beps/bep_0048.html
                 case 'scrape':
                     {
-                        if (!app()->config->get("tracker.enable_scrape")) throw new TrackerException(101);
+                        if (!config("tracker.enable_scrape")) throw new TrackerException(101);
 
                         $this->checkScrapeFields($info_hash_array);
                         $this->generateScrapeResponse($info_hash_array, $rep_dict);
@@ -79,7 +79,7 @@ class TrackerController
 
                 case 'announce':
                     {
-                        if (!app()->config->get("tracker.enable_announce")) throw new TrackerException(102);
+                        if (!config("tracker.enable_announce")) throw new TrackerException(102);
 
                         $this->checkAnnounceFields($queries);
                         if (!env('APP_DEBUG'))
@@ -595,14 +595,14 @@ class TrackerController
                 {
                     // For Pending torrent , we just allow it's owner and other user who's class great than your config set to connect
                     if ($torrentInfo["owner_id"] != $userInfo["id"]
-                        || $userInfo["class"] < app()->config->get("authority.see_pending_torrent"))
+                        || $userInfo["class"] < config("authority.see_pending_torrent"))
                         throw new TrackerException(151, [":status" => $torrentInfo["status"]]);
                     break;
                 }
             case 'banned' :
                 {
                     // For Banned Torrent , we just allow the user who's class great than your config set to connect
-                    if ($userInfo["class"] < app()->config->get("authority.see_banned_torrent"))
+                    if ($userInfo["class"] < config("authority.see_banned_torrent"))
                         throw new TrackerException(151, [":status" => $torrentInfo["status"]]);
                     break;
                 }
@@ -616,8 +616,8 @@ class TrackerController
     private function generateAnnounceResponse($queries, $role, $torrentInfo, &$rep_dict)
     {
         $rep_dict = [
-            "interval" => app()->config->get("tracker.interval") + rand(5, 20),   // random interval to avoid BOOM
-            "min interval" => app()->config->get("tracker.min_interval") + rand(1, 10),
+            "interval" => config("tracker.interval") + rand(5, 20),   // random interval to avoid BOOM
+            "min interval" => config("tracker.min_interval") + rand(1, 10),
             "complete" => $torrentInfo["complete"],
             "incomplete" => $torrentInfo["incomplete"],
             "peers" => []  // By default it is a array object, only when `&compact=1` then it should be a string
@@ -684,9 +684,9 @@ class TrackerController
         $lock_name = "TRACKER:tracker_announce_" . $queries["passkey"] . "_torrent_" . $queries["info_hash"] . "_peer_" . $queries["peer_id"] . "_lock";
         $lock = app()->redis->get($lock_name);
         if ($lock === false) {
-            app()->redis->setex($lock_name, app()->config->get("tracker.min_interval"), true);
+            app()->redis->setex($lock_name, config("tracker.min_interval"), true);
         } else {
-            throw new TrackerException(162, [":min" => app()->config->get("tracker.min_interval")]);
+            throw new TrackerException(162, [":min" => config("tracker.min_interval")]);
         }
     }
 
@@ -703,7 +703,7 @@ class TrackerController
         $peer_unique_cache_key = 'Tracker:peer:unique_' . $userInfo["id"] . '_' . $torrentInfo["id"] . '_' . $queries["peer_id"];
         if (app()->redis->exists($peer_unique_cache_key)) {
             // this peer is already announce before , just expire cache key lifetime and return.
-            app()->redis->expire($peer_unique_cache_key, app()->config->get("tracker.interval") * 2);
+            app()->redis->expire($peer_unique_cache_key, config("tracker.interval") * 2);
             return;
         } elseif ($queries['event'] != 'stopped') {
             // If session is not exist and &event!=stopped, a new session should start
@@ -713,7 +713,7 @@ class TrackerController
                 "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
             ])->queryScalar();
             if ($self !== 0) {  // True MISS
-                app()->redis->set($peer_unique_cache_key, true, app()->config->get("tracker.interval") * 2);
+                app()->redis->set($peer_unique_cache_key, true, config("tracker.interval") * 2);
                 return;
             }
 
@@ -725,11 +725,11 @@ class TrackerController
 
             // Ban one torrent seeding/leech at muti-location due to your site config
             if ($seeder == 'yes') { // if this peer's role is seeder
-                if ($selfCount >= (app()->config->get('tracker.user_max_seed')))
-                    throw new TrackerException(160, [":count" => app()->config->get('tracker.user_max_seed')]);
+                if ($selfCount >= (config('tracker.user_max_seed')))
+                    throw new TrackerException(160, [":count" => config('tracker.user_max_seed')]);
             } else {
-                if ($selfCount >= (app()->config->get('tracker.user_max_leech')))
-                    throw new TrackerException(161, [":count" => app()->config->get('tracker.user_max_leech')]);
+                if ($selfCount >= (config('tracker.user_max_leech')))
+                    throw new TrackerException(161, [":count" => config('tracker.user_max_leech')]);
             }
 
             if ($userInfo["class"] < UserInterface::ROLE_VIP) {
@@ -737,7 +737,7 @@ class TrackerController
                 $gigs = $userInfo["downloaded"] / (1024 * 1024 * 1024);
 
                 // FIXME Wait System
-                if (app()->config->get("tracker.enable_waitsystem")) {
+                if (config("tracker.enable_waitsystem")) {
                     if ($gigs > 10) {
                         if ($ratio < 0.4) $wait = 24;
                         elseif ($ratio < 0.5) $wait = 12;
@@ -752,7 +752,7 @@ class TrackerController
                 }
 
                 // FIXME Max SLots System
-                if (app()->config->get("tracker.enable_maxdlsystem")) {
+                if (config("tracker.enable_maxdlsystem")) {
                     $max = 0;
                     if ($gigs > 10) {
                         if ($ratio < 0.5) $max = 1;

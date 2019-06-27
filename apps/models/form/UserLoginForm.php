@@ -92,7 +92,7 @@ class UserLoginForm extends Validator
         // User enable 2FA but it's code is wrong
         if ($this->self["opt"]) {
             try {
-                $tfa = new TwoFactorAuth(app()->config->get("base.site_name"));
+                $tfa = new TwoFactorAuth(config("base.site_name"));
                 if ($tfa->verifyCode($this->self["opt"], $this->opt) == false) {
                     $this->buildCallbackFailMsg('2FA', '2FA Validation failed. Check your device time.');
                     return;
@@ -113,7 +113,7 @@ class UserLoginForm extends Validator
     protected function isMaxLoginIpReached()
     {
         $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
-        if ($test_count > app()->config->get('security.max_login_attempts')) {
+        if ($test_count > config('security.max_login_attempts')) {
             $this->buildCallbackFailMsg('Login Attempts', 'User Max Login Attempts Archived.');
             return;
         }
@@ -130,7 +130,7 @@ class UserLoginForm extends Validator
         $userId = $this->self['id'];
 
         $exist_session_count = app()->redis->zCount($this->sessionSaveKey, $userId, $userId);
-        if ($exist_session_count < app()->config->get('base.max_per_user_session')) {
+        if ($exist_session_count < config('base.max_per_user_session')) {
             /**
              * SessionId Format:
              *      /^(?P<secure_login_flag>[01])\$(?P<ip_or_random_crc>[a-z0-9]{8})\$\w+$/

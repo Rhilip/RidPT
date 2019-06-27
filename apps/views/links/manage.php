@@ -9,7 +9,7 @@
  * @var array $links
  */
 
-$css_tag = env('APP_DEBUG') ? time() : app()->config->get('base.site_css_update_date');
+$css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
 ?>
 
 <?= $this->layout('layout/base') ?>
