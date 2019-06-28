@@ -66,7 +66,7 @@ if (!function_exists('println')) {
     // 输出字符串并换行
     function println($expression)
     {
-        echo $expression . PHP_EOL;
+        echo date('Y-m-d H:i:s') . ' ' . $expression . PHP_EOL;
     }
 }
 
