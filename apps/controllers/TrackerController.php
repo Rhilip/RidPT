@@ -775,9 +775,13 @@ class TrackerController
 
     private function sendToTaskWorker($queries, $role, $userInfo, $torrentInfo)
     {
-        // Push to Redis Queue and quick response
-        app()->redis->lPush('Tracker:to_deal_queue', json_encode([
-            'worker' => \apps\task\TrackerAnnounceTask::class,
+        /**
+         * Push to Redis Queue and quick response
+         *
+         * Don't use json_{encode,decode} for the value of info_hash and peer_id will make
+         * those function return FALSE
+         */
+        return app()->redis->lPush('Tracker:to_deal_queue', serialize([
             'timestamp' => time(),
             'queries' => $queries,
             'role' => $role,

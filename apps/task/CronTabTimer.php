@@ -12,9 +12,9 @@ use Rid\Base\Timer;
 
 class CronTabTimer extends Timer
 {
-    
+
     private $_print_flag = 1;  // FIXME debug model on
-    
+
     private function print_log($log)
     {
         $this->_print_flag = $this->_print_flag ?? config('debug.print_crontab_log');
@@ -41,7 +41,7 @@ class CronTabTimer extends Timer
                     $job_start_time = time();
                     $this->{$job['job']}($job);
                     $job_end_time = time();
-                    $hit ++;
+                    $hit++;
 
                     // Update the run information
                     app()->pdo->createCommand('UPDATE `site_crontab` set last_run_at= NOW() , next_run_at= DATE_ADD(NOW(), interval job_interval second) WHERE id=:id')->bindParams([
@@ -66,7 +66,7 @@ class CronTabTimer extends Timer
             }
         }
         $end_time = time();
-        $this->print_log('This Cron Work period Start At ' . $start_time.', Cost Time: ' . number_format($start_time - $end_time, 10) . 's, With ' . $hit . 'Jobs hits.');
+        $this->print_log('This Cron Work period Start At ' . $start_time . ', Cost Time: ' . number_format($start_time - $end_time, 10) . 's, With ' . $hit . ' Jobs hits.');
     }
 
     protected function clean_dead_peer()
@@ -79,7 +79,8 @@ class CronTabTimer extends Timer
         $this->print_log('Success clean ' . $affect_peer_count . ' peers from our peer list');
     }
 
-    protected function clean_expired_session() {
+    protected function clean_expired_session()
+    {
         $timenow = time();
 
         $expired_sessions = app()->redis->zRangeByScore('Site:Sessions:to_expire', 0, $timenow);
@@ -90,15 +91,13 @@ class CronTabTimer extends Timer
         }
 
         $clean_record_count = app()->redis->zRemRangeByScore('Site:Sessions:to_expire', 0, $timenow);
-        $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) .'), Redis(' . $clean_record_count .').');
+        $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) . '), Redis(' . $clean_record_count . ').');
     }
 
     // TODO sync sessions from database to redis to avoid lost (Maybe)...
-
-    protected function expired_invitee () {
+    protected function expired_invitee()
+    {
         app()->pdo->createCommand('UPDATE `invite` SET `used` = -1 WHERE `expire_at` < NOW() AND `used` = 0')->execute();
-
-
 
         $count = app()->pdo->getRowCount();
         $this->print_log('Success Expired ' . $count . ' invites');

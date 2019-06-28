@@ -1,11 +1,13 @@
 #!/usr/bin/env php
 <?php
 
-// console入口文件
+/**
+ * httpd 入口文件
+ */
 
 require __DIR__ . '/../vendor/autoload.php';
 
-Rid\Base\Env::load(__DIR__ . '/../.env');
+Rid\Base\Env::load(__DIR__ . '/../.env');  // 获取环境变量
 
 $config   = require __DIR__ . '/../apps/config/httpd.php';
 $exitCode = (new Rid\Console\Application($config))->run();

@@ -48,7 +48,7 @@ class Timer implements StaticInstanceInterface
         // 清除旧定时器
         $this->clear();
         // 设置定时器
-        $timerId = swoole_timer_after($msec, function () use ($callback) {
+        $timerId = \Swoole\Timer::after($msec, function () use ($callback) {
             // 执行闭包
             try {
                 call_user_func($callback);
@@ -74,7 +74,7 @@ class Timer implements StaticInstanceInterface
         // 清除旧定时器
         $this->clear();
         // 设置定时器
-        $timerId = swoole_timer_tick($msec, function () use ($callback) {
+        $timerId = \Swoole\Timer::tick($msec, function () use ($callback) {
             // 执行闭包
             try {
                 call_user_func($callback);
@@ -95,7 +95,8 @@ class Timer implements StaticInstanceInterface
     public function clear()
     {
         if (isset($this->_timerId)) {
-            return swoole_timer_clear($this->_timerId);
+            \Swoole\Timer::clear($this->_timerId);
+            return true;
         }
         return false;
     }

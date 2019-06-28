@@ -50,7 +50,7 @@
         <pre><code><?= json_encode($value, JSON_PRETTY_PRINT) ?></code></pre>
     </figure>
 <?php elseif ($type == \Redis::REDIS_LIST): ?>
-    <h2>Values</h2>
+    <h2>List Values</h2>
     <ol>
         <?php foreach ($value as $item): ?>
             <li><code><?= $item ?></code></li>

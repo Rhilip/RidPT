@@ -13,8 +13,9 @@ use Rid\Exceptions\ConfigException;
 
 class Config extends Component
 {
-    /** @var \swoole_table */
+    /** @var \Swoole\Table */
     private $cacheTable;
+
     private $valueField = 'data';
 
     public function onInitialize(array $config = [])

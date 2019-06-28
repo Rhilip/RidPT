@@ -88,7 +88,9 @@ So that tracker can record the peer's ip address.
 7. Use the default `php bin/rid-httpd service start -d` to let *RidPT* RUN in the background. Or you can use other daemon work like:
     - Systemctl: [ridpt.service](migration/ridpt.service)
 
-## Basie Environment in `.env`
+## Basie Environment Setting in `.env`
+
+> Notice: Any change in file `.env` require the restart of Application to Make it effective 
 
 ### Section `APP`
 

@@ -2,40 +2,44 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 2019/3/17
- * Time: 13:52
+ * Date: 2019/6/28
+ * Time: 9:46
  */
 
 namespace apps\task;
 
-use Rid\Base\TaskInterface;
-use apps\exceptions\TrackerException;
+use Rid\Base\Timer;
 
-
-class TrackerAnnounceTask implements TaskInterface
+class TrackerAnnounceTimer extends Timer
 {
-
-    public function run($data)
+    public function init()
     {
-        app()->pdo->beginTransaction();
-        try {
-            $this->processAnnounceRequest($data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
-            app()->pdo->commit();
-        } catch (TrackerException $e) {
-            app()->pdo->rollback();
-            // TODO throw $e;
-        } catch (\Exception $e) {
-            app()->pdo->rollback();
-            // TODO throw new TrackerException(998, [":msg" => $e->getMessage()]);
+        while (true) {
+            $data_raw = app()->redis->rpoplpush('Tracker:to_deal_queue', 'Tracker:backup_queue');
+            if ($data_raw !== false) {
+                $data = unserialize($data_raw);
+                app()->pdo->beginTransaction();
+                try {
+                    $this->processAnnounceRequest($data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
+                    app()->pdo->commit();
+                    app()->redis->lRem('Tracker:backup_queue', $data_raw, 0);
+                } catch (\Exception $e) {
+                    println($e->getMessage());
+                    app()->pdo->rollback();
+                    // TODO deal with the items in backup_queue
+                }
+            } else {
+                sleep(1);
+            }
         }
     }
+
 
     /** TODO 2018.12.12 Check Muti-Tracker behaviour when a Transaction begin
      * @param $queries
      * @param $seeder
      * @param $userInfo
      * @param $torrentInfo
-     * @throws TrackerException
      */
     private function processAnnounceRequest($queries, $seeder, $userInfo, $torrentInfo)
     {
@@ -64,8 +68,8 @@ class TrackerAnnounceTask implements TaskInterface
                 $trueUploaded = max(0, $queries['uploaded']);
                 $trueDownloaded = max(0, $queries['downloaded']);
 
-                app()->pdo->createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, `started_at`= CURRENT_TIMESTAMP
-                        `agent`=:agent, `seeder` = :seeder, {$ipField} , 
+                app()->pdo->createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, `started_at`= CURRENT_TIMESTAMP , `last_action_at` = CURRENT_TIMESTAMP ,
+                        `agent`= :agent, `seeder` = :seeder, {$ipField} , 
                         `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
                         `corrupt` = :corrupt , `key` = :key ;
                         ")->bindParams([
@@ -122,7 +126,7 @@ class TrackerAnnounceTask implements TaskInterface
             } else {
                 // if session is exist but event!=stopped , we should continue the old session
                 app()->pdo->createCommand("UPDATE `peers` SET `agent`=:agent, {$ipField}," .
-                    "`seeder`=:seeder,
+                    "`seeder`=:seeder, 
                     `uploaded`=`uploaded` + :uploaded, `downloaded`= `downloaded` + :download, `to_go` = :left,
                     `last_action_at`=NOW(), `corrupt`=:corrupt, `key`=:key 
                     WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
@@ -173,7 +177,6 @@ class TrackerAnnounceTask implements TaskInterface
      * @param $trueUploaded
      * @param $trueDownloaded
      * @param $duration
-     * @throws TrackerException
      */
     private function checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration)
     {
@@ -200,7 +203,6 @@ class TrackerAnnounceTask implements TaskInterface
             ])->execute();
 
             app()->redis->del("TRACKER:user_passkey_" . $userInfo["passkey"] . "_content");
-            throw new TrackerException(170);
         }
 
         // Uploaded more than 1 GB with uploading rate higher than 25 MByte/S (For Consertive level). This is likely cheating.

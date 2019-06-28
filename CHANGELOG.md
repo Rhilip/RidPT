@@ -39,6 +39,7 @@
 - **Email:** Fix Email Can't Send
 - **Error:** Fix Error Handler
 - **Invite:** Add Fine-grained control of recycle pending
+- **Links:** Remove extra meta section
 - **Register:** Add captcha checker
 - **TorrentUpload:** Fix length 0 file cause ParseErrorException
 - **Tracker:** Add miss port check for field ipv6_port
@@ -59,6 +60,7 @@
 - **Redis:** Add more Redis arguments in debug output
 - **Session:** Add Session Format Docs
 - **SiteConfig:** change namespace `authority.route_` to `route.`
+- **Tracker:** Separate announce data update function
 - **Validator:** Add function buildDefaultValue()
 - **ext2Icon:** Add more File format
 
