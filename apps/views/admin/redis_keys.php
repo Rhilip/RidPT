@@ -19,6 +19,7 @@ $type_dict = [
     \Redis::REDIS_SET => 'Set',
     \Redis::REDIS_ZSET => 'Zset'
 ];
+$suggent_pattern = ['*', 'SESSION:*', 'TORRENT:*', 'TRACKER:*', 'USER:*'];  // FIXME fix this pattern group
 ?>
 
 <?= $this->layout('admin/layout') ?>
@@ -29,25 +30,26 @@ $type_dict = [
 <h1>Redis Keys Status</h1>
 <p>Please input the search pattern of keys, or your can use the search suggest</p>
 <div class="row">
-    <form id="search_redis" class="form-inline" method="get" action="/admin/service">
-        <label><input name="provider" type="text" class="form-control" value="redis" style="display: none"></label>
-        <label><input name="panel" type="text" class="form-control" value="keys" style="display: none"></label>
-        <?php $pattern = $pattern ?? ''; ?>
-        <div class="input-group" style="width: 600px;">
-            <span class="input-group-addon">Search Keys</span>
-            <label for="pattern"></label>
-            <input id="pattern" name="pattern" type="text" class="form-control"<?= $pattern ? " placeholder=\"$pattern\" value=\"$pattern\"" : '' ?>>
-            <span class="input-group-btn">
+    <div class="col-md-10">
+        <form id="search_redis" class="form-inline" method="get" action="/admin/service">
+            <label><input name="provider" type="text" class="form-control" value="redis" style="display: none"></label>
+            <label><input name="panel" type="text" class="form-control" value="keys" style="display: none"></label>
+            <?php $pattern = $pattern ?? ''; ?>
+            <div class="input-group" style="width: 600px;">
+                <span class="input-group-addon">Search Keys</span>
+                <label for="pattern"></label>
+                <input id="pattern" name="pattern" type="text" class="form-control"<?= $pattern ? " placeholder=\"$pattern\" value=\"$pattern\"" : '' ?>>
+                <span class="input-group-btn">
                 <button type="submit" class="btn btn-default"><i class="fas fa-search fa-fw"></i> Search</button>
                 <button type="reset" class="btn btn-danger"><i class="fas fa-times fa-fw"></i> Reset</button>
             </span>
-        </div>
-    </form>
-    <?php $suggent_pattern = ['*', 'SESSION:*', 'TORRENT:*', 'TRACKER:*', 'USER:*'];  // FIXME fix this pattern group ?>
-    <div id="suggest_pattern" style="margin-top: 5px">Suggest Pattern :
-        <?php foreach ($suggent_pattern as $pat): ?>
-            <a href="javascript:void(0);" data-pat="<?= $pat ?>"><span class="label label-badge label-primary label-outline"><?= $pat ?></span></a>&nbsp;&nbsp;
-        <?php endforeach; ?>
+            </div>
+            <div id="suggest_pattern" style="margin-top: 5px">Suggest Pattern :
+                <?php foreach ($suggent_pattern as $pat): ?>
+                    <a href="javascript:void(0);" data-pat="<?= $pat ?>"><span class="label label-badge label-primary label-outline"><?= $pat ?></span></a>&nbsp;&nbsp;
+                <?php endforeach; ?>
+            </div>
+        </form>
     </div>
 </div>
 

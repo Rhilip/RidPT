@@ -15,7 +15,7 @@ class TrackerAnnounceTimer extends Timer
     public function init()
     {
         while (true) {
-            $data_raw = app()->redis->rpoplpush('Tracker:to_deal_queue', 'Tracker:backup_queue');
+            $data_raw = app()->redis->brpoplpush('Tracker:to_deal_queue', 'Tracker:backup_queue', 5);
             if ($data_raw !== false) {
                 $data = unserialize($data_raw);
                 app()->pdo->beginTransaction();

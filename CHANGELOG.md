@@ -2,8 +2,8 @@
 ## [Unreleased]
 
 
-<a name="v0.1.4-alpha"></a>
-## [v0.1.4-alpha] - 2019-06-28
+<a name="0.1.4-alpha"></a>
+## [0.1.4-alpha] - 2019-06-28
 ### Chore
 - **User:** Make User component as Part of App but not framework
 
@@ -11,6 +11,7 @@
 - **Licence:** Add Licence Checker By FOSSA
 - **Migration:** Update Nginx config
 - **README:** Fix Mailer Env typo
+- **release:**  v0.1.4-alpha
 
 ### Feat
 - **Auth:** Add UserRecover Form
@@ -236,8 +237,8 @@ Structure of Table `users_session_log` Change
 <a name="v0.1.0-alpha"></a>
 ## v0.1.0-alpha - 2019-01-30
 
-[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.4-alpha...HEAD
-[v0.1.4-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.3-alpha...v0.1.4-alpha
+[Unreleased]: https://github.com/Rhilip/ridpt/compare/0.1.4-alpha...HEAD
+[0.1.4-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.3-alpha...0.1.4-alpha
 [v0.1.3-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.2-alpha...v0.1.3-alpha
 [v0.1.2-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.1-alpha...v0.1.2-alpha
 [v0.1.1-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.0-alpha...v0.1.1-alpha
