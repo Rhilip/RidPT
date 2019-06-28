@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v0.1.4-alpha"></a>
+## [v0.1.4-alpha] - 2019-06-28
 ### Chore
 - **User:** Make User component as Part of App but not framework
 
@@ -10,12 +13,12 @@
 - **README:** Fix Mailer Env typo
 
 ### Feat
-- **Auth:** Add full Advanced Options for Login
 - **Auth:** Add UserRecover Form
-- **Cleanup:** Cleanup dead peers
+- **Auth:** Add full Advanced Options for Login
 - **Cleanup:** Add disable cleanup job by set priority to 0
-- **Debug:** Remove DebugMiddleware
+- **Cleanup:** Cleanup dead peers
 - **Debug:** Add extend debug output
+- **Debug:** Remove DebugMiddleware
 - **Email:** Add email template
 - **Form Validator:** Add library bootstrap-validator library
 - **Frontend:** Add localforage As Cache Provider
@@ -30,6 +33,7 @@
 - **Timer:** Add Timer Example
 - **Torrent:** Add folder size sum in torrent file modal
 - **Typo:** Fix Typo of `secret`
+- **framework:** Remove Swoole Task Support
 
 ### Fix
 - **Admin Panel:** Fix index num in Redis Keys Page
@@ -49,6 +53,7 @@
 
 ### Perf
 - **BBCode:** Use mjohnson/decoda to parse and cache BBCode
+- **Config:** Add quick ref config()
 - **Config:** Remove `configTable_construct_lock`
 - **DATABASE:** Drop Table `files`
 - **Tracker:** Use Task process to quick response Tracker Announce Action
@@ -63,6 +68,7 @@
 - **Tracker:** Separate announce data update function
 - **Validator:** Add function buildDefaultValue()
 - **ext2Icon:** Add more File format
+- **timer:** Change Namespace of Timer
 
 ### Revert
 - **Http:** Remove Request::getUserAgent()
@@ -72,6 +78,27 @@
 - **Auth:** Not output extend debug info for anonymous. (In route `/auth`)
 - **Frontend:** Back frontend framework to Zui
 - **View:** Add top util by layui.util
+
+### Pull Requests
+- Merge pull request [#2](https://github.com/Rhilip/ridpt/issues/2) from fossabot/master
+
+### BREAKING CHANGE
+
+Remove Swoole Task Support
+
+DATABASE structure changed
+
+Database Structure of Table `invite`,`user_invitations` Change
+
+Some Table added or name changed
+
+Database Structure of `users_confirm` Change
+
+Database Stucture of `users_confirms` change
+
+DB structure change: TABLE `news` added
+
+dbstructure of `site_crontab` Change
 
 
 <a name="v0.1.3-alpha"></a>
@@ -209,7 +236,8 @@ Structure of Table `users_session_log` Change
 <a name="v0.1.0-alpha"></a>
 ## v0.1.0-alpha - 2019-01-30
 
-[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.3-alpha...HEAD
+[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.4-alpha...HEAD
+[v0.1.4-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.3-alpha...v0.1.4-alpha
 [v0.1.3-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.2-alpha...v0.1.3-alpha
 [v0.1.2-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.1-alpha...v0.1.2-alpha
 [v0.1.1-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.0-alpha...v0.1.1-alpha
