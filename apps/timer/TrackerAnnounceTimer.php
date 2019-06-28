@@ -6,7 +6,7 @@
  * Time: 9:46
  */
 
-namespace apps\task;
+namespace apps\timer;
 
 use Rid\Base\Timer;
 

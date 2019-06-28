@@ -211,13 +211,13 @@ return [
     // 定时器配置
     'timer'            => [
         'crontab' => [
-            'class' => \apps\task\CronTabTimer::class,
+            'class' => \apps\timer\CronTabTimer::class,
             'type' => \Rid\Base\Timer::TICK,
             'msec' => 5 * 60 * 1000,    // TODO 单位为毫秒，应该为所有contab worker的最小公倍数（应该在面板有所提醒）
             'callback' => 'init'
         ],
         'tracker' => [
-            'class' => \apps\task\TrackerAnnounceTimer::class,
+            'class' => \apps\timer\TrackerAnnounceTimer::class,
             'type' => \Rid\Base\Timer::AFTER,
             'msec' => 10 * 1000,
             'callback' => 'init'
