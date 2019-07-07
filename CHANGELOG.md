@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Style
+- **printIn:** Add datetime tag
+
 
 <a name="0.1.4-alpha"></a>
 ## [0.1.4-alpha] - 2019-06-28
