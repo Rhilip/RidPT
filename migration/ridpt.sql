@@ -461,6 +461,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('tracker.enable_waitsystem', '0'),
 ('tracker.interval', '450'),
 ('tracker.min_interval', '60'),
+('tracker.retry_interval', '120'),
 ('tracker.user_max_leech', '1'),
 ('tracker.user_max_seed', '3');
 

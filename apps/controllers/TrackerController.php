@@ -146,7 +146,8 @@ class TrackerController
             }
 
             return Bencode::encode([
-                "failure reason" => $e->getMessage(),
+                'failure reason' => $e->getMessage(),
+                'retry in' => config('tracker.retry_interval')
             ]);
         }
     }
