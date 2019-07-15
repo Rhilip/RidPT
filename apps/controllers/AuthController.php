@@ -9,10 +9,7 @@
 namespace apps\controllers;
 
 use apps\models\User;
-use apps\models\form\UserLoginForm;
-use apps\models\form\UserConfirmForm;
-use apps\models\form\UserRecoverForm;
-use apps\models\form\UserRegisterForm;
+use apps\models\form\Auth;
 
 use Rid\Http\Controller;
 
@@ -23,7 +20,7 @@ class AuthController extends Controller
     public function actionRegister()
     {
         if (app()->request->isPost()) {
-            $user = new UserRegisterForm();
+            $user = new Auth\UserRegisterForm();
             $user->setData(app()->request->post());
             $success = $user->validate();
             if (!$success) {
@@ -50,7 +47,7 @@ class AuthController extends Controller
 
     public function actionConfirm()
     {
-        $confirm = new UserConfirmForm();
+        $confirm = new Auth\UserConfirmForm();
         $confirm->setData(app()->request->get());
         $success = $confirm->validate();
         if (!$success) {
@@ -67,7 +64,7 @@ class AuthController extends Controller
     public function actionRecover()
     {
         if (app()->request->isPost()) {
-            $form = new UserRecoverForm();
+            $form = new Auth\UserRecoverForm();
             $form->setData(app()->request->post());
             $success = $form->validate();
             if (!$success) {
@@ -97,7 +94,7 @@ class AuthController extends Controller
         $left_attempts = config('security.max_login_attempts') - $test_attempts;
 
         if (app()->request->isPost()) {
-            $login = new UserLoginForm();
+            $login = new Auth\UserLoginForm();
             $login->setData(app()->request->post());
             $success = $login->validate();
 

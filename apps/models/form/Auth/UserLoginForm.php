@@ -6,7 +6,7 @@
  * Time: 17:19
  */
 
-namespace apps\models\form;
+namespace apps\models\form\Auth;
 
 use apps\libraries\Constant;
 use apps\components\User\UserInterface;

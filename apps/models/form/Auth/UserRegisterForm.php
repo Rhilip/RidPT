@@ -6,7 +6,7 @@
  * Time: 18:57
  */
 
-namespace apps\models\form;
+namespace apps\models\form\Auth;
 
 use apps\libraries\Site;
 
