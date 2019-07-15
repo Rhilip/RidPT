@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Perf
+- **Tracker:** Use brpoplpush to get announce data from redis
+
 ### Style
 - **printIn:** Add datetime tag
 

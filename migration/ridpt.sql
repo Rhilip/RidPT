@@ -239,6 +239,29 @@ CREATE TABLE IF NOT EXISTS `ip_bans` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `links`
+--
+
+DROP TABLE IF EXISTS `links`;
+CREATE TABLE IF NOT EXISTS `links` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
+  `url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
+  `title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
+  `status` enum('pending','enabled','disabled') NOT NULL DEFAULT 'pending',
+  `administrator` varchar(50) NOT NULL DEFAULT '',
+  `email` varchar(80) NOT NULL DEFAULT '',
+  `reason` text NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `links`:
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `messages`
 --
 
@@ -487,8 +510,8 @@ DROP TABLE IF EXISTS `site_log`;
 CREATE TABLE IF NOT EXISTS `site_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `msg` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `level` enum('normal','mod','sysop','leader') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL DEFAULT 'normal',
+  `msg` text NOT NULL,
+  `level` enum('normal','mod','sysop','leader') NOT NULL DEFAULT 'normal',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
