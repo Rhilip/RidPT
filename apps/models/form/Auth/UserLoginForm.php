@@ -133,7 +133,7 @@ class UserLoginForm extends Validator
         if ($exist_session_count < config('base.max_per_user_session')) {
             /**
              * SessionId Format:
-             *      /^(?P<secure_login_flag>[01])\$(?P<ip_or_random_crc>[a-z0-9]{8})\$\w+$/
+             *      /^(?P<secure_login_flag>[01])_(?P<ip_crc>[a-z0-9]{8})_\w+$/
              * The first character of sessionId is the Flag of secure login,
              * if secure login, The second param is the sprintf('%08x',crc32($id))
              *            else, Another random string with length 8
@@ -141,9 +141,9 @@ class UserLoginForm extends Validator
              *
              */
             if ($this->securelogin === 'yes') {
-                $sid_prefix = '1$' . sprintf('%08x',crc32(app()->request->getClientIp())) . '$';
+                $sid_prefix = '1_' . sprintf('%08x', crc32(app()->request->getClientIp())) . '_';
             } else {
-                $sid_prefix = '0$' . StringHelper::getRandomString(8) . '$';
+                $sid_prefix = '0_' . StringHelper::getRandomString(8) . '_';
             }
             $sid_prefix = strtolower($sid_prefix);
             do { // To make sure this session is unique !
@@ -187,7 +187,8 @@ class UserLoginForm extends Validator
         ])->execute();
     }
 
-    public function noticeUser() {
+    public function noticeUser()
+    {
         // TODO send email to tail user login
     }
 }
