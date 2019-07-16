@@ -12,6 +12,8 @@ namespace apps\models\form;
 use Rid\Helpers\StringHelper;
 use Rid\Http\View;
 
+use apps\models\form\Auth\UserRegisterForm;
+
 class UserInviteForm extends UserRegisterForm
 {
 
