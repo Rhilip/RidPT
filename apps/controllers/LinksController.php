@@ -28,7 +28,7 @@ class LinksController extends Controller
                 $form->flush();
                 return $this->render('links/apply_success');
             } else {
-                return $this->render('errors/action_fail', ['msg' => $form->getError()]);
+                return $this->render('action/action_fail', ['msg' => $form->getError()]);
             }
         }
 
@@ -45,7 +45,7 @@ class LinksController extends Controller
                 if ($success) {
                     $edit_form->flush();
                 } else {
-                    return $this->render('errors/action_fail', ['msg' => $edit_form->getError()]);
+                    return $this->render('action/action_fail', ['msg' => $edit_form->getError()]);
                 }
             } elseif (app()->request->post('action') == 'link_delete') {
                 $delete_form = new Links\RemoveForm();
@@ -54,7 +54,7 @@ class LinksController extends Controller
                 if ($success) {
                     $delete_form->flush();
                 } else {
-                    return $this->render('errors/action_fail', ['msg' => $delete_form->getError()]);
+                    return $this->render('action/action_fail', ['msg' => $delete_form->getError()]);
                 }
             }
         }

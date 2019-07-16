@@ -32,12 +32,12 @@ class TorrentController extends Controller
             $torrent->setFileData(app()->request->files());
             $success = $torrent->validate();
             if (!$success) {
-                return $this->render('errors/action_fail', ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
+                return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
             } else {
                 try {
                     $torrent->flush();
                 } catch (\Exception $e) {
-                    return $this->render('errors/action_fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
+                    return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
                 }
 
                 return app()->response->redirect('/torrent/details?id=' . $torrent->id);

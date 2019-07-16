@@ -38,7 +38,7 @@ class UserController extends Controller
                 $form->flush();
                 $msg = 'Send Invite Success!';
             } else {
-                return $this->render('errors/action_fail', ['title' => 'Invite Failed', 'msg' => $form->getError()]);
+                return $this->render('action/action_fail', ['title' => 'Invite Failed', 'msg' => $form->getError()]);
             }
         }
 
@@ -48,7 +48,7 @@ class UserController extends Controller
             if (app()->user->isPrivilege('view_invite')) {
                 $user = new User($uid);
             } else {
-                return $this->render('errors/action_fail', ['title' => 'Fail', 'msg' => 'Privilege is not enough to see other people\'s invite status.']);
+                return $this->render('action/action_fail', ['title' => 'Fail', 'msg' => 'Privilege is not enough to see other people\'s invite status.']);
             }
         }
 
@@ -60,7 +60,7 @@ class UserController extends Controller
             if ($success) {
                 $msg = $action_form->flush();
             } else {
-                return $this->render('errors/action_fail', ['title' => 'Invite Failed', 'msg' => $action_form->getError()]);
+                return $this->render('action/action_fail', ['title' => 'Invite Failed', 'msg' => $action_form->getError()]);
             }
         }
 
@@ -95,7 +95,7 @@ class UserController extends Controller
                 if ($success > 0) {
                     app()->redis->zRem(app()->user->sessionSaveKey, $to_del_session);
                 } else {
-                    return $this->render('errors/action_fail', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
+                    return $this->render('action/action_fail', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
                 }
             }
         }

@@ -46,7 +46,7 @@ $suggent_pattern = ['*', 'SESSION:*', 'TORRENT:*', 'TRACKER:*', 'USER:*'];  // F
             </div>
             <div id="suggest_pattern" style="margin-top: 5px">Suggest Pattern :
                 <?php foreach ($suggent_pattern as $pat): ?>
-                    <a href="javascript:void(0);" data-pat="<?= $pat ?>"><span class="label label-badge label-primary label-outline"><?= $pat ?></span></a>&nbsp;&nbsp;
+                    <a href="javascript:" data-pat="<?= $pat ?>"><span class="label label-badge label-primary label-outline"><?= $pat ?></span></a>&nbsp;&nbsp;
                 <?php endforeach; ?>
             </div>
         </form>

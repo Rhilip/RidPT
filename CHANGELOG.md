@@ -1,10 +1,21 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Build
+- **Composer:** Update mirror address
+
+### Feat
+- **Tracker:** Add `retry in` field when failed
+
+### Fix
+- **Cookies:** Fix session sep from `%` to `_`
+- **Database:** Fix table `links` miss
+
 ### Perf
 - **Tracker:** Use brpoplpush to get announce data from redis
 
 ### Style
+- **Auth:** Sort Auth Form
 - **printIn:** Add datetime tag
 
 

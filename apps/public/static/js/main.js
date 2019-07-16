@@ -80,7 +80,11 @@ jQuery(document).ready(function () {
         }
     });
 
-
+    $('.modal button[id$=_modal_save]').click(function () {
+        $('.modal button[id$=_modal_close]').click();
+        // By default , we don't need to clean the form data, Since the script in
+        // main.js already have trigger to clean the form data when modal hidden.
+    });
 
     // TODO Add Scroll to TOP fixbar
 

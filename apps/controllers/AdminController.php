@@ -27,7 +27,7 @@ class AdminController extends Controller
             case 'redis':
                 return $this->infoRedis();
             default:
-                return $this->render('errors/action_fail', ['title' => 'Not Support Action', 'msg' => 'not support']);
+                return $this->render('action/action_fail', ['title' => 'Not Support Action', 'msg' => 'not support']);
         }
     }
 

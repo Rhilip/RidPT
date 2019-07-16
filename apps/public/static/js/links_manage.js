@@ -2,12 +2,6 @@ jQuery(document).ready(function () {
     let edit_form = $('#link_edit_form');
     let remove_form = $('#link_remove_form');
 
-    $('#link_modal_save').click(function () {
-        $('#link_modal_close').click();
-        // By default , we don't need to clean the form data, Since the script in
-        // main.js already have trigger to clean the form data when modal hidden.
-    });
-
     $('.link-edit').click(function () {
         let that = $(this);
 
@@ -15,8 +9,8 @@ jQuery(document).ready(function () {
 
         // Get link data from <tr> and Fill link data to form
         let tr = $('#links_manager_table tr[data-id=' + that.data('id') + ']');
-        for (let datium in tr.data()) {
-            edit_form.find('[name="link_' + datium + '"]').val(tr.data(datium));
+        for (let datum in tr.data()) {
+            edit_form.find('[name="link_' + datum + '"]').val(tr.data(datum));
         }
     });
 
@@ -27,8 +21,5 @@ jQuery(document).ready(function () {
             remove_form.submit();
         }
     });
-
-
-
 
 });

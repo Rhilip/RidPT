@@ -9,9 +9,6 @@ use Rid\Base\BaseObject;
  */
 class Controller extends BaseObject
 {
-
-    protected $start_time;
-
     public function render($name, $data = [])
     {
         return (new View())->render($name, $data);
