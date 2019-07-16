@@ -6,6 +6,7 @@
 
 ### Feat
 - **Tracker:** Add `retry in` field when failed
+- **UserInfo:** Add Cache Lock of user access_{time,ip} update
 
 ### Fix
 - **Cookies:** Fix session sep from `%` to `_`

@@ -45,7 +45,7 @@ class EditForm extends ApplyForm
             'administrator' => $this->link_admin, 'email' => $this->link_email,
             'reason' => $this->link_reason
         ];
-        if ($this->link_id !== 0) {  // Check if old links should be update
+        if ((int)$this->link_id !== 0) {  // Check if old links should be update
             $this->link_old_data = app()->pdo->createCommand('SELECT * FROM `links` WHERE id = :id')->bindParams([
                 'id' => $this->link_id
             ])->queryOne();
@@ -55,7 +55,7 @@ class EditForm extends ApplyForm
             $this->link_new_data['id'] = $this->link_id;
 
             // Diff old and new data.
-            $this->link_data_diff = array_diff($this->link_new_data, $this->link_old_data);
+            $this->link_data_diff = array_diff_assoc($this->link_new_data, $this->link_old_data);
             if (count($this->link_data_diff) === 0) {
                 $this->buildCallbackFailMsg('links:update', 'No data update');
             }
