@@ -44,8 +44,16 @@ class TorrentController extends Controller
             }
 
         } else {
+
+            // FIXME
+            $categories = app()->redis->get('site:enabled_torrent_category');
+            if (false === $categories) {
+                $categories = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE `enabled` = 1 ORDER BY `parent_id`,`sort_index`,`id`')->queryAll();
+                app()->redis->set('site:enabled_torrent_category', $categories, 86400);
+            }
+
             // TODO Check user can upload
-            return $this->render('torrent/upload');
+            return $this->render('torrent/upload', ['categories' => $categories]);
         }
 
     }

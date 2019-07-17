@@ -23,6 +23,7 @@ class TorrentUploadForm extends Validator
     /**  @var \Rid\Http\UploadFile */
     public $file;
 
+    public $category;
     public $title;
     public $subtitle = "";
     public $descr;
@@ -46,6 +47,15 @@ class TorrentUploadForm extends Validator
     // 规则
     public static function inputRules()
     {
+        $categories = app()->redis->get('site:enabled_torrent_category');
+        if (false === $categories) {
+            $categories = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE `enabled` = 1 ORDER BY `parent_id`,`sort_index`,`id`')->queryAll();
+            app()->redis->set('site:enabled_torrent_category', $categories, 86400);
+        }
+        $categories_id_list = array_map(function ($cat) {
+            return $cat['id'];
+        }, $categories);
+
         return [
             'title' => 'required',
             'file' => [
@@ -53,6 +63,11 @@ class TorrentUploadForm extends Validator
                 ['Upload\Required'],
                 ['Upload\Extension', ['allowed' => 'torrent']],
                 ['Upload\Size', ['size' => config("torrent.max_file_size") . 'B']]
+            ],
+            'category' => [
+                ['required'],
+                ['Integer'],
+                ['InList', ['list' => $categories_id_list]]
             ],
             'descr' => 'required',
             'uplver' => [
@@ -176,7 +191,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
                 'status' => $this->status,
                 'title' => $this->title,
                 'subtitle' => $this->subtitle,
-                'category' => 1,    // FIXME add category support
+                'category' => $this->category,    // FIXME add category support
                 'filename' => $this->file->getBaseName(),
                 'torrent_name' => $this->torrent_name,
                 'torrent_type' => $this->torrent_type,
@@ -242,7 +257,8 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
      *
      * @return bool|string
      */
-    private function getFileTree() {
+    private function getFileTree()
+    {
         $structure = array_column($this->torrent_list, 'size', 'filename');
         if ($this->torrent_type == self::TORRENT_TYPE_MULTI) {
             $structure = [$this->torrent_name => self::makeFileTree($structure)];
