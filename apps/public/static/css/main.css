@@ -71,6 +71,9 @@ body{background-color:#f6f6f6}
 #footer_menu a{color:#C3C0B9}
 #footer_menu a:hover{color:#E84807}
 
+.modal-content form{padding:0 10px}
+.switch>label{font-weight:700}
+
 /*-----------------------------------------------------------------------------------*/
 /*	3. Page of '/auth'
 /*-----------------------------------------------------------------------------------*/
@@ -114,3 +117,4 @@ body{background-color:#f6f6f6}
 #torrent_structure li div.dictionary span.icon{color:#909;padding:2px}
 #torrent_structure li div.list span.icon{color:#009;padding:2px}
 #torrent_structure li span.title{font-weight:bold}
+
