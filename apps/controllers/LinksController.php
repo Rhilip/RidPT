@@ -26,7 +26,7 @@ class LinksController extends Controller
             $success = $form->validate();
             if ($success) {
                 $form->flush();
-                return $this->render('links/apply_success');
+                return $this->render('action/action_success', ['msg' => 'Thanks you to apply links, Our team will check it ASAP.']); // FIXME
             } else {
                 return $this->render('action/action_fail', ['msg' => $form->getError()]);
             }
@@ -44,6 +44,7 @@ class LinksController extends Controller
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
+                    return $this->render('action/action_success');
                 } else {
                     return $this->render('action/action_fail', ['msg' => $edit_form->getError()]);
                 }
@@ -53,6 +54,7 @@ class LinksController extends Controller
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();
+                    return $this->render('action/action_success');
                 } else {
                     return $this->render('action/action_fail', ['msg' => $delete_form->getError()]);
                 }

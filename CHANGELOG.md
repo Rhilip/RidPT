@@ -11,9 +11,14 @@
 ### Fix
 - **Cookies:** Fix session sep from `%` to `_`
 - **Database:** Fix table `links` miss
+- **Form:** Miss use flag since namespace change
+- **Form:** Link\EditForm Update diff
 
 ### Perf
 - **Tracker:** Use brpoplpush to get announce data from redis
+
+### Refactor
+- **View:** Rename folder `error` to `action`
 
 ### Style
 - **Auth:** Sort Auth Form

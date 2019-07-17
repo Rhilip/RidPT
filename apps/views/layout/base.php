@@ -108,7 +108,7 @@ $extend_debug_info = config('base.enable_extend_debug') &&
         </div>
         <div id="info_block_line_2">
             <span data-item="ratio" data-ratio="<?= $this->e(app()->user->getRatio()) ?>">
-                <span class="color-ratio">Ratio:</span> <?= app()->user->getRatio() ?></span>&nbsp;
+                <span class="color-ratio">Ratio:</span> <?= number_format(app()->user->getRatio(), 3) ?></span>&nbsp;
             <span data-item="uploaded" data-uploaded="<?= $this->e(app()->user->getUploaded()) ?>">
                 <span class="color-seeding">Uploaded:</span> <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?>
             </span>&nbsp;

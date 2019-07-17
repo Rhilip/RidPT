@@ -243,26 +243,6 @@ class Torrent
         return $this->uplver;
     }
 
-    public function getFileList($type = 'list')
-    {
-        if (!in_array($type, ['list', 'tree']))
-            $type = 'list';
-
-        if ($type == 'tree') {
-            return json_decode($this->torrent_structure, true);
-        } else {
-            $list = app()->redis->get('TORRENT:' . $this->id . ':file_list');
-            if ($list === false) {
-                $list = app()->pdo->createCommand("SELECT `filename`,`size` FROM `files` WHERE `torrent_id` = :tid ORDER BY `filename` ASC;")->bindParams([
-                    "tid" => $this->id
-                ])->queryAll();
-                app()->redis->set('TORRENT:' . $this->id . ':file_list', $list);
-            }
-
-            return $list;
-        }
-    }
-
     /**
      * @return mixed
      */
