@@ -6,6 +6,9 @@
 # Test File
 apps/controllers/TestController.php
 
+# Backup Folder
+/backup/
+
 ### MixPHP included
 # zend studio for eclipse project files
 .buildpath
