@@ -65,7 +65,7 @@ $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
                         <td>
                             <a href="<?= '?parent_id=' . $category['id'] ?>"><?= $category['child_count'] > 0 ? "${category['child_count']} SubCategories" : 'No SubCategory' ?></a>
                         </td>
-                        <td><?= $category['enabled'] ? 'Enabled':'Disabled' ?></td>
+                        <td><?= $category['enabled'] ? '<i class="far fa-fw fa-check-square"></i>':'<i class="far fa-fw fa-square"></i>' ?></td>
                         <td><a href="javascript:" class="cat-edit" data-id="<?= $category['id'] ?>">Edit</a> |
                             <a href="javascript:" class="cat-remove" data-id="<?= $category['id'] ?>">Remove</a>
                         </td>

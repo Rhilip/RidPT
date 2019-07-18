@@ -29,6 +29,12 @@ class TorrentUploadForm extends Validator
     public $descr;
     public $uplver = "no";  // If user upload this torrent Anonymous
 
+    // Quality
+    public $audio = 0; /* 0 is default value. */
+    public $codec = 0;
+    public $medium = 0;
+    public $resolution = 0;
+
     private $info_hash; // the value of sha1($this->$torrent_dict['info'])
 
     private $status = 'confirmed';
@@ -36,27 +42,52 @@ class TorrentUploadForm extends Validator
     private $torrent_dict;
     private $torrent_name;    // the $torrent_dict['info']['name'] field
     private $torrent_list = [];  // the file list like ["filename" => "example.txt" , "size" => 12345]
-    private $torrent_structure = [];
+    private $torrent_structure;  // JSON encode string
     private $torrent_type = 'single'; // only in ['single','multi']
     private $torrent_size = 0;  // the count of torrent's content size
 
     const TORRENT_TYPE_SINGLE = 'single';
     const TORRENT_TYPE_MULTI = 'multi';
 
+    public static function getQualityTableList()
+    {
+        return [
+            'audio' => 'Audio Codec',  // TODO i18n title
+            'codec' => 'Codec',
+            'medium' => 'Medium',
+            'resolution' => 'Resolution'
+        ];
+    }
 
-    // 规则
-    public static function inputRules()
+    public static function ruleCategory()
     {
         $categories = app()->redis->get('site:enabled_torrent_category');
         if (false === $categories) {
             $categories = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE `enabled` = 1 ORDER BY `parent_id`,`sort_index`,`id`')->queryAll();
             app()->redis->set('site:enabled_torrent_category', $categories, 86400);
         }
+        return $categories;
+    }
+
+    public static function ruleQuality($quality)
+    {
+        if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
+        $quality_table = app()->redis->get('site:enabled_quality:' . $quality);
+        if (false === $quality_table) {
+            $quality_table = app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
+            app()->redis->set('site:enabled_quality:' . $quality, $quality_table, 86400);
+        }
+        return $quality_table;
+    }
+
+    // 规则
+    public static function inputRules()
+    {
         $categories_id_list = array_map(function ($cat) {
             return $cat['id'];
-        }, $categories);
+        }, self::ruleCategory());
 
-        return [
+        $rules = [
             'title' => 'required',
             'file' => [
                 ['required'],
@@ -65,8 +96,7 @@ class TorrentUploadForm extends Validator
                 ['Upload\Size', ['size' => config("torrent.max_file_size") . 'B']]
             ],
             'category' => [
-                ['required'],
-                ['Integer'],
+                ['required'], ['Integer'],
                 ['InList', ['list' => $categories_id_list]]
             ],
             'descr' => 'required',
@@ -74,6 +104,21 @@ class TorrentUploadForm extends Validator
                 ['InList', ['list' => ['yes', 'no']]]
             ],
         ];
+
+        // Add Quality Valid
+        foreach (self::getQualityTableList() as $quality => $title) {
+            // TODO add config key
+            $quality_id_list = array_map(function ($cat) {
+                return $cat['id'];
+            }, self::ruleQuality($quality));
+
+            $rules[$quality] = [
+                ['Integer'],
+                ['InList', ['list' => $quality_id_list]]
+            ];
+        }
+
+        return $rules;
     }
 
     public static function callbackRules()
@@ -96,7 +141,7 @@ class TorrentUploadForm extends Validator
 
                 if (isset($info['length'])) {
                     $this->torrent_size = $info['length'];
-                    $this->torrent_list[] = ['filename' => $dname, 'size' => $info['length'], 'torrent_id' => &$this->id];
+                    $this->torrent_list[] = ['filename' => $dname, 'size' => $info['length']];
                     $this->torrent_type = 'single';
                 } else {
                     $f_list = $this->checkTorrentDict($info, 'files', 'array');
@@ -181,22 +226,25 @@ class TorrentUploadForm extends Validator
         if ($count > 0) throw new \Exception('std_torrent_existed');
 
         // TODO update torrent status based on user class or their owned torrents count
-
         app()->pdo->beginTransaction();
         try {
-            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`descr`,`uplver`) 
-VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:descr,:uplver)')->bindParams([
+            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`uplver`) 
+VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution, :descr,:uplver)')->bindParams([
                 'owner_id' => app()->user->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
                 'title' => $this->title,
                 'subtitle' => $this->subtitle,
-                'category' => $this->category,    // FIXME add category support
+                'category' => $this->category,
                 'filename' => $this->file->getBaseName(),
                 'torrent_name' => $this->torrent_name,
                 'torrent_type' => $this->torrent_type,
                 'torrent_size' => $this->torrent_size,
                 'torrent_structure' => $this->torrent_structure,
+                'quality_audio' => $this->audio,
+                'quality_codec' => $this->codec,
+                'quality_medium' => $this->medium,
+                'quality_resolution' => $this->resolution,
                 'descr' => $this->descr,
                 'uplver' => $this->uplver,
             ])->execute();

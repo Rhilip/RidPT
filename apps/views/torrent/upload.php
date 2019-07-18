@@ -6,10 +6,11 @@
  * Time: 22:05
  *
  * @var League\Plates\Template\Template $this
- * @var array $categories
  *
  * TODO Add notice for users which can't directly upload torrent (in pending status)
  */
+
+use \apps\models\form\TorrentUploadForm;
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -29,7 +30,7 @@
                     <div class="col-md-3">
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>Please choose one Category</option>
-                            <?php foreach ($categories as $category) : ?>
+                            <?php foreach (TorrentUploadForm::ruleCategory() as $category) : ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -61,7 +62,30 @@
                 <small>You should obey our upload rules. **LINK**</small>
             </td> <!-- FIXME link url -->
         </tr>
+        <tr>
+            <td class="nowrap"><label>Quality</label></td>
+            <td>
+                <div class="row">
+                    <?php foreach (TorrentUploadForm::getQualityTableList() as $quality => $title): ?>
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
+                            <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
+                                <option value="0">Choose One</option>
+                                <?php foreach (TorrentUploadForm::ruleQuality($quality) as $q): ?>
+                                <?php if ($q['id'] == 0): ?>
+                                    <?php continue; ?>
+                                <?php endif; ?>
+                                <option value="<?= $q['id']; ?>"><?= $q['name']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
 
+            </td> <!-- FIXME link url -->
+        </tr>
         <tr>
             <td class="nowrap"><label for="descr" class="required">Description</label></td>
             <td>

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 17, 2019 at 04:04 PM
+-- Generation Time: Jul 18, 2019 at 10:16 PM
 -- Server version: 8.0.16
--- PHP Version: 7.3.6
+-- PHP Version: 7.3.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -356,6 +356,168 @@ CREATE TABLE IF NOT EXISTS `peers` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `quality_audio`
+--
+
+DROP TABLE IF EXISTS `quality_audio`;
+CREATE TABLE IF NOT EXISTS `quality_audio` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `sort_index` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `enabled` (`enabled`,`sort_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `quality_audio`:
+--
+
+--
+-- Truncate table before insert `quality_audio`
+--
+
+TRUNCATE TABLE `quality_audio`;
+--
+-- Dumping data for table `quality_audio`
+--
+
+INSERT INTO `quality_audio` (`id`, `name`, `enabled`, `sort_index`) VALUES
+(0, 'None', 1, 0),
+(1, 'Other', 1, 100),
+(2, 'Atomos', 1, 0),
+(3, 'DTS X', 1, 0),
+(4, 'DTS-HDMA', 1, 0),
+(5, 'TrueHD', 1, 0),
+(6, 'DTS', 1, 0),
+(7, 'LPCM', 1, 0),
+(8, 'FLAC', 1, 0),
+(9, 'APE', 1, 0),
+(10, 'AAC', 1, 0),
+(11, 'AC3', 1, 0),
+(12, 'WAV', 1, 0),
+(13, 'MPEG', 1, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quality_codec`
+--
+
+DROP TABLE IF EXISTS `quality_codec`;
+CREATE TABLE IF NOT EXISTS `quality_codec` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `sort_index` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `enabled` (`enabled`,`sort_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `quality_codec`:
+--
+
+--
+-- Truncate table before insert `quality_codec`
+--
+
+TRUNCATE TABLE `quality_codec`;
+--
+-- Dumping data for table `quality_codec`
+--
+
+INSERT INTO `quality_codec` (`id`, `name`, `enabled`, `sort_index`) VALUES
+(0, 'None', 1, 0),
+(1, 'Other', 1, 100),
+(2, 'H.264', 1, 0),
+(3, 'HEVC', 1, 0),
+(4, 'MPEG-2', 1, 0),
+(5, 'VC-1', 1, 0),
+(6, 'Xvid', 1, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quality_medium`
+--
+
+DROP TABLE IF EXISTS `quality_medium`;
+CREATE TABLE IF NOT EXISTS `quality_medium` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `sort_index` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `enabled` (`enabled`,`sort_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `quality_medium`:
+--
+
+--
+-- Truncate table before insert `quality_medium`
+--
+
+TRUNCATE TABLE `quality_medium`;
+--
+-- Dumping data for table `quality_medium`
+--
+
+INSERT INTO `quality_medium` (`id`, `name`, `enabled`, `sort_index`) VALUES
+(0, 'None', 1, 0),
+(1, 'Other', 1, 100),
+(2, 'UHD Blu-ray', 1, 0),
+(3, 'FHD Blu-ray', 1, 0),
+(4, 'Remux', 1, 0),
+(5, 'Encode', 1, 0),
+(6, 'WEB-DL', 1, 0),
+(7, 'HDTV', 1, 0),
+(8, 'DVD', 1, 0),
+(9, 'CD', 1, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quality_resolution`
+--
+
+DROP TABLE IF EXISTS `quality_resolution`;
+CREATE TABLE IF NOT EXISTS `quality_resolution` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `sort_index` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `enabled` (`enabled`,`sort_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `quality_resolution`:
+--
+
+--
+-- Truncate table before insert `quality_resolution`
+--
+
+TRUNCATE TABLE `quality_resolution`;
+--
+-- Dumping data for table `quality_resolution`
+--
+
+INSERT INTO `quality_resolution` (`id`, `name`, `enabled`, `sort_index`) VALUES
+(0, 'None', 1, 0),
+(1, 'Other', 1, 100),
+(2, 'SD', 1, 0),
+(3, '720p', 1, 0),
+(4, '1080i', 1, 0),
+(5, '1080p', 1, 0),
+(6, '2160p', 1, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `site_config`
 --
 
@@ -583,12 +745,20 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `torrent_type` enum('single','multi') NOT NULL DEFAULT 'multi',
   `torrent_size` bigint(20) NOT NULL DEFAULT '0',
   `torrent_structure` json NOT NULL,
+  `quality_audio` int(11) NOT NULL DEFAULT '0',
+  `quality_codec` int(11) NOT NULL DEFAULT '0',
+  `quality_medium` int(11) NOT NULL DEFAULT '0',
+  `quality_resolution` int(11) NOT NULL DEFAULT '0',
   `descr` text,
   `uplver` enum('yes','no') NOT NULL DEFAULT 'no',
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `FK_torrent_categories` (`category`),
-  KEY `FK_torrent_owner` (`owner_id`)
+  KEY `FK_torrent_owner` (`owner_id`),
+  KEY `FK_torrent_quality_audio` (`quality_audio`),
+  KEY `FK_torrent_quality_codec` (`quality_codec`),
+  KEY `FK_torrent_quality_medium` (`quality_medium`),
+  KEY `FK_torrent_quality_resolution` (`quality_resolution`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -597,6 +767,14 @@ CREATE TABLE IF NOT EXISTS `torrents` (
 --       `torrents_categories` -> `id`
 --   `owner_id`
 --       `users` -> `id`
+--   `quality_audio`
+--       `quality_audio` -> `id`
+--   `quality_codec`
+--       `quality_codec` -> `id`
+--   `quality_medium`
+--       `quality_medium` -> `id`
+--   `quality_resolution`
+--       `quality_resolution` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -850,7 +1028,11 @@ ALTER TABLE `snatched`
 --
 ALTER TABLE `torrents`
   ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_torrent_quality_audio` FOREIGN KEY (`quality_audio`) REFERENCES `quality_audio` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_torrent_quality_codec` FOREIGN KEY (`quality_codec`) REFERENCES `quality_codec` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_torrent_quality_medium` FOREIGN KEY (`quality_medium`) REFERENCES `quality_medium` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_torrent_quality_resolution` FOREIGN KEY (`quality_resolution`) REFERENCES `quality_resolution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_confirm`

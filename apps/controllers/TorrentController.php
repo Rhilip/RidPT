@@ -27,33 +27,23 @@ class TorrentController extends Controller
     {
         // TODO Check user upload pos
         if (app()->request->isPost()) {
-            $torrent = new TorrentUploadForm();
-            $torrent->setData(app()->request->post());
-            $torrent->setFileData(app()->request->files());
-            $success = $torrent->validate();
+            $uploadForm = new TorrentUploadForm();
+            $uploadForm->setData(app()->request->post());
+            $uploadForm->setFileData(app()->request->files());
+            $success = $uploadForm->validate();
             if (!$success) {
-                return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $torrent->getError()]);
+                return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
             } else {
                 try {
-                    $torrent->flush();
+                    $uploadForm->flush();
                 } catch (\Exception $e) {
                     return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
                 }
 
-                return app()->response->redirect('/torrent/details?id=' . $torrent->id);
+                return app()->response->redirect('/torrent/details?id=' . $uploadForm->id);
             }
-
         } else {
-
-            // FIXME
-            $categories = app()->redis->get('site:enabled_torrent_category');
-            if (false === $categories) {
-                $categories = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE `enabled` = 1 ORDER BY `parent_id`,`sort_index`,`id`')->queryAll();
-                app()->redis->set('site:enabled_torrent_category', $categories, 86400);
-            }
-
-            // TODO Check user can upload
-            return $this->render('torrent/upload', ['categories' => $categories]);
+            return $this->render('torrent/upload');
         }
 
     }

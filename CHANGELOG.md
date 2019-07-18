@@ -4,6 +4,9 @@
 ### Build
 - **Composer:** Update mirror address
 
+### Chore
+- **gitignore:** Add ignore of `/backup` folder
+
 ### Feat
 - **Category:** Add Categories Support when upload torrent
 - **Category:** Add Categories Manage Pane
