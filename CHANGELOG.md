@@ -5,6 +5,7 @@
 - **Composer:** Update mirror address
 
 ### Feat
+- **Category:** Add Categories Support when upload torrent
 - **Category:** Add Categories Manage Pane
 - **Tracker:** Add `retry in` field when failed
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update

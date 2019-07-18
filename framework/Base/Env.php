@@ -18,6 +18,9 @@ class Env
             throw new \Rid\Exceptions\EnvException('Environment file does not exist.');
         }
         $env        = parse_ini_file($envFile);
+        if (!$env) {
+            throw new \Rid\Exceptions\EnvException('Fail to parse Environment file.');
+        }
         self::$_env = array_merge($env, $_SERVER, $_ENV);
     }
 
