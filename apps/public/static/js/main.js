@@ -267,7 +267,7 @@ jQuery(document).ready(function () {
             size: 'lg',
             custom: function () {
                 let ret = '';
-                let parsed_sql_data = JSON.parse(_sql_data || '[]');
+                let parsed_sql_data = JSON.parse(_sql_data.replace(/\n/g,' ').replace(/ {2,}/g,' ') || '[]');
                 let parsed_redis_data = JSON.parse(_redis_data || '{}');
                 ret += '<b>SQL query list:</b><ul>';
                 $.each(parsed_sql_data, function (i, v) {
