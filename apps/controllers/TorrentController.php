@@ -52,7 +52,9 @@ class TorrentController extends Controller
     {
         $tid = app()->request->get('id');
 
-        $torrent = new Torrent($tid);  // If torrent is not exist or can't visit , a notfound exception will throw out........
+        // TODO add download rate limit
+
+        $torrent = new Torrent($tid);  // TODO If torrent is not exist or can't visit , a notfound exception should throw out........
         $filename = '[' . config('base.site_name') . ']' . $torrent->getTorrentName() . '.torrent';
 
         app()->response->setHeader('Content-Type', 'application/x-bittorrent');

@@ -25,6 +25,7 @@ body{background-color:#f6f6f6}
 .required:after{position: static}
 
 .captcha_img_load{width:150px;height:40px}
+.pager-unset-margin{margin: unset}
 
 /*-----------------------------------------------------------------------------------*/
 /*	2.	Layout of Header, Navigation & Menus
@@ -95,6 +96,8 @@ body{background-color:#f6f6f6}
 .torrent-title{}
 .name-left{width:95%;}
 #torrents_table td[data-item] {vertical-align: middle;}
+
+#tags_list{margin-top:20px}
 
 /* '/torrent/upload' */
 #torrent_upload_table > tbody > tr > td:first-child{vertical-align:middle;text-align:right}
