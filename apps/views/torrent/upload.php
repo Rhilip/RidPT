@@ -29,7 +29,7 @@ use \apps\models\form\TorrentUploadForm;
                 <div class="row">
                     <div class="col-md-3">
                         <select id="category" name="category" class="form-control">
-                            <option value="0" selected>Please choose one Category</option>
+                            <option value="0" selected>[Select a category]</option>
                             <?php foreach (TorrentUploadForm::ruleCategory() as $category) : ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
@@ -52,14 +52,14 @@ use \apps\models\form\TorrentUploadForm;
             <td><input id="title" name="title" class="form-control" type="text"
                        placeholder="The main title of Your upload torrent"
                        required="required">
-                <small>You should obey our upload rules. **LINK**</small>
+                <div class="help-block">You should obey our upload rules. **LINK**</div>
             </td> <!-- FIXME link url -->
         </tr>
         <tr>
             <td class="nowrap"><label for="subtitle">Sub Title</label></td>
             <td><input id="subtitle" name="subtitle" class="form-control" type="text"
                        placeholder="The subtitle of Your upload torrent">
-                <small>You should obey our upload rules. **LINK**</small>
+                <div class="help-block">You should obey our upload rules. **LINK**</div>
             </td> <!-- FIXME link url -->
         </tr>
         <tr>
@@ -83,7 +83,6 @@ use \apps\models\form\TorrentUploadForm;
                     </div>
                     <?php endforeach; ?>
                 </div>
-
             </td> <!-- FIXME link url -->
         </tr>
         <tr>
@@ -94,18 +93,32 @@ use \apps\models\form\TorrentUploadForm;
             </td>
         </tr>
         <tr>
-            <td class="nowrap"><label for="descr">Other</label></td>
+            <td class="nowrap"><label for="tags">Tags</label></td>
+            <td><input id="tags" name="tags" class="form-control" type="text">
+                <div class="tag-help-block" style="margin-top: 4px">
+                    Pinned Tags:
+                    <?php foreach (TorrentUploadForm::rulePinnedTags() as $tag): ?>
+                        <a href="javascript:" class="add-tag label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
+                    <?php endforeach; ?>
+                </div>
+            </td> <!-- FIXME link url -->
+        </tr>
+        <tr>
+            <td class="nowrap"><label for="descr">Flags</label></td>
             <td>
-                <div class="checkbox-primary">
-                    <input type="checkbox" id="uplver" name="uplver" value="yes"
-                        <?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled' ?>
-                    ><label for="uplver">Anonymous Upload</label>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="switch<?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled' ?>">
+                            <input type="checkbox" id="uplver" name="uplver" value="yes"><label for="uplver">Anonymous Upload</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="switch<?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled'  // FIXME Config key ?>">
+                            <input type="checkbox" id="hr" name="hr" value="yes"><label for="hr">H&R</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="checkbox-primary">
-                    <input type="checkbox" id="hr" name="hr" value="yes"
-                        <?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled' // FIXME  ?>
-                    ><label for="hr">H&R</label>
-                </div>
+
             </td>
         </tr>
         </tbody>

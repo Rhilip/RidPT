@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 18, 2019 at 10:16 PM
+-- Generation Time: Jul 19, 2019 at 05:34 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -257,6 +257,30 @@ CREATE TABLE IF NOT EXISTS `links` (
 
 --
 -- RELATIONSHIPS FOR TABLE `links`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `map_torrents_tags`
+--
+
+DROP TABLE IF EXISTS `map_torrents_tags`;
+CREATE TABLE IF NOT EXISTS `map_torrents_tags` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `torrent_id` int(10) UNSIGNED NOT NULL,
+  `tag_id` int(10) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_map_tt_to_torrents` (`torrent_id`),
+  KEY `FK_map_tt_to_tags` (`tag_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `map_torrents_tags`:
+--   `tag_id`
+--       `tags` -> `id`
+--   `torrent_id`
+--       `torrents` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -723,6 +747,43 @@ CREATE TABLE IF NOT EXISTS `snatched` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tags`
+--
+
+DROP TABLE IF EXISTS `tags`;
+CREATE TABLE IF NOT EXISTS `tags` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `tag` varchar(64) NOT NULL DEFAULT '',
+  `class_name` varchar(64) NOT NULL DEFAULT '',
+  `pinned` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `tag` (`tag`),
+  KEY `pinned` (`pinned`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `tags`:
+--
+
+--
+-- Truncate table before insert `tags`
+--
+
+TRUNCATE TABLE `tags`;
+--
+-- Dumping data for table `tags`
+--
+
+INSERT INTO `tags` (`id`, `tag`, `class_name`, `pinned`) VALUES
+(1, 'Internal', 'label-primary', 1),
+(2, 'DIY', 'label-primary', 1),
+(3, 'Premiere', 'label-primary', 1),
+(4, 'Exclusive', 'label-primary', 1),
+(5, 'Request', 'label-primary', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `torrents`
 --
 
@@ -1009,6 +1070,13 @@ ALTER TABLE `invite`
 --
 ALTER TABLE `ip_bans`
   ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `map_torrents_tags`
+--
+ALTER TABLE `map_torrents_tags`
+  ADD CONSTRAINT `FK_map_tt_to_tags` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_map_tt_to_torrents` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `news`

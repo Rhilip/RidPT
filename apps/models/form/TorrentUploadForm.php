@@ -25,15 +25,18 @@ class TorrentUploadForm extends Validator
 
     public $category;
     public $title;
-    public $subtitle = "";
+    public $subtitle = '';
     public $descr;
-    public $uplver = "no";  // If user upload this torrent Anonymous
+    public $uplver = 'no';  // If user upload this torrent Anonymous
+    public $hr = 'no';  // TODO This torrent require hr check
 
     // Quality
     public $audio = 0; /* 0 is default value. */
     public $codec = 0;
     public $medium = 0;
     public $resolution = 0;
+
+    public $tags;
 
     private $info_hash; // the value of sha1($this->$torrent_dict['info'])
 
@@ -78,6 +81,16 @@ class TorrentUploadForm extends Validator
             app()->redis->set('site:enabled_quality:' . $quality, $quality_table, 86400);
         }
         return $quality_table;
+    }
+
+    public static function rulePinnedTags()
+    {
+        $tags = app()->redis->get('site:pinned_tags');
+        if (false === $tags) {
+            $tags = app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1')->queryAll();
+            app()->redis->set('site:pinned_tags', $tags, 86400);
+        }
+        return $tags;
     }
 
     // 规则
@@ -218,6 +231,7 @@ class TorrentUploadForm extends Validator
     public function flush()
     {
         $this->makePrivateTorrent();
+        $this->rewriteFlags();
 
         // Check if this torrent is exist or not before insert.
         $count = app()->pdo->createCommand('SELECT COUNT(*) FROM torrents WHERE info_hash = :info_hash')->bindParams([
@@ -250,6 +264,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             ])->execute();
             $this->id = app()->pdo->getLastInsertId();
 
+            $this->insertTags();
             $this->setBuff();
 
             // Save this torrent
@@ -268,6 +283,55 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             app()->pdo->rollback();
 
             throw $e;
+        }
+    }
+
+    // TODO Check and rewrite torrent flags if user don't reach flags privilege
+    private function rewriteFlags()
+    {
+
+    }
+
+    private function insertTags()
+    {
+        $tags = str_replace(',', ' ', $this->tags);
+        $tags_list = explode(' ', $tags);
+
+        // Get and cache the exist tags
+        if (!app()->redis->exists('site:torrents_all_tags')) {
+            $exist_tags = app()->pdo->createCommand('SELECT id,tag FROM tags')->queryAll();
+            foreach ($exist_tags as $exist_tag) {
+                app()->redis->zAdd('site:torrents_all_tags', $exist_tag['id'], $exist_tag['tag']);
+            }
+            app()->redis->expire('site:torrents_all_tags', 43200);
+        }
+
+        $tag_id_list = [];
+        for ($i = 0; $i < min(count($tags_list), 10); $i++) {
+            $tag = trim($tags_list[$i]);
+            if (strlen($tag) > 0) {
+                $tag_id = app()->redis->zScore('site:torrents_all_tags', $tag);  // check if it is exist tag in cache
+                if ($tag_id == 0) {  // un-exist tag
+                    // TODO Check if allow user to add un-exist tag
+                    try {  // insert tag to database and cache
+                        app()->pdo->createCommand('INSERT INTO `tags`(`tag`) VALUES (:tag)')->bindParams([
+                            'tag' => $tag
+                        ])->execute();
+                        $tag_id = app()->pdo->getLastInsertId();
+                        app()->redis->zAdd('site:torrents_all_tags', $tag_id, $tag);
+                        $tag_id_list[] = ['tag_id' => $tag_id, 'torrent_id' => $this->id];
+                    } catch (\Exception $e) {
+                        continue;
+                    }
+                } else {
+                    $tag_id_list[] = ['tag_id' => $tag_id, 'torrent_id' => $this->id];
+                }
+            }
+        }
+
+        // batchInsert into map
+        if (count($tag_id_list) > 0) {
+            app()->pdo->batchInsert('map_torrents_tags', $tag_id_list)->execute();
         }
     }
 

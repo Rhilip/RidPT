@@ -16,6 +16,7 @@
 ### Fix
 - **Cookies:** Fix session sep from `%` to `_`
 - **Database:** Fix table `links` miss
+- **Env:** Exit when parse env file failed
 - **Form:** Miss use flag since namespace change
 - **Form:** Link\EditForm Update diff
 - **Requests:** Fix fullUrl() may add unnecessary `?`

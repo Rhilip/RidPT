@@ -283,4 +283,21 @@ jQuery(document).ready(function () {
             }
         });
     }
+
+    // Help to insert tags in `/torrent/upload`
+    if ($('div.tag-help-block').length) {
+        let tags_input = $('input[name="tags"]');
+        $('a.add-tag').click(function (e) {
+            e.preventDefault();
+            let add_tag = $(this).text();
+            let exist_tag_value = tags_input.val();
+            let exist_tag_set = new Set(exist_tag_value.split(' '));
+            if (exist_tag_set.has(add_tag)) {
+                exist_tag_set.delete(add_tag);
+            } else {
+                exist_tag_set.add(add_tag);
+            }
+            tags_input.val(Array.from(exist_tag_set).join(' '));
+        })
+    }
 });

@@ -60,4 +60,14 @@ class ManageController extends Controller
 
         return $this->render('manage/categories', ['parent_id' => $parent_id, 'parent_category' => $parent_category, 'categories' => $categories]);
     }
+
+    public function actionQualities()
+    {
+        // TODO
+    }
+
+    public function actionTags()
+    {
+        // TODO
+    }
 }
