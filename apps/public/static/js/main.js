@@ -58,6 +58,19 @@ jQuery(document).ready(function () {
         }
     });
 
+    // Active Nav `active` class by location.pathname
+    if ($('nav#nav').length) {
+        let pathname_split = window.location.pathname.split('/');
+        for (let i = pathname_split.length; i > 0; i--) {
+            let test_pathname = pathname_split.slice(0, i).join('/');
+            let test_nav_li = $(`nav#nav li > a[href="${test_pathname}"]`);
+            if (test_nav_li.length) {
+                test_nav_li.parent('li').addClass('active');
+                break;
+            }
+        }
+    }
+
     // Captcha Img Re-flush
     let captcha_img_another = $('.captcha_img');
     captcha_img_another.on('click', function () {
