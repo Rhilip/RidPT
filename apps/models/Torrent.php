@@ -35,6 +35,9 @@ class Torrent
     private $descr;
     private $uplver;
 
+    /** @var array */
+    private $tags;
+
     private $torrent_name;
     private $torrent_type;
     private $torrent_size;
@@ -257,5 +260,24 @@ class Torrent
     public function getCategory()
     {
         return (new Category())->setId($this->category);
+    }
+
+    /**
+     * @return array
+     */
+    public function getTags(): array
+    {
+        if (is_null($this->tags)) {
+            $this->tags = app()->pdo->createCommand('
+                SELECT tag, class_name, pinned FROM tags 
+                  INNER JOIN map_torrents_tags mtt on tags.id = mtt.tag_id 
+                  INNER JOIN torrents t on mtt.torrent_id = t.id 
+                WHERE t.id = :tid ORDER BY tags.pinned DESC')->bindParams([
+                'tid' => $this->id
+            ])->queryAll();
+            app()->redis->hSet('Torrent:' . $this->id . ':base_content', 'tags', $this->tags);
+        }
+
+        return $this->tags;
     }
 }

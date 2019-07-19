@@ -86,7 +86,19 @@
                         <b>Peers:</b> <span style="color: green;"><i class="fas fa-arrow-up fa-fw"></i> <?= $torrent->getComplete() ?></span> / <span style="color: red;"><i class="fas fa-arrow-down fa-fw"></i> <?= $torrent->getIncomplete() ?></span> / <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
                     </div>
                     <div data-field="info_hash" data-infohash="<?= $torrent->getInfoHash() ?>"><b>Info Hash:</b> <kbd><?= $torrent->getInfoHash() ?></kbd></div>
-
+                </div>
+            </div>
+            <div class="panel" id="torrent_tags_panel">
+                <div class="panel-heading"><b>Torrent Tags</b></div>
+                <div class="panel-body" id="torrent_tags">
+                    <?php $tags = $torrent->getTags(); ?>
+                    <?php if (count($tags) > 0) : ?>
+                        <?php foreach ($tags as $tag): ?>
+                            <a href="/torrents/tags?tag=<?= $tag['tag'] ?>" class="label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        No tags for this torrent
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

@@ -45,8 +45,18 @@ $time_now = time();
                         <!--suppress HtmlUnknownTarget -->
                         <a href="/torrent/details?id=<?= $torrent->getId() ?>" target="_blank"><b><?= $torrent->getTitle() ?></b></a>
                     </div>
-                    <div data-item="t-sub-info" data-subtitle="<?= $this->e($torrent->getSubtitle()) ?>">
-                        <?= $torrent->getSubtitle() ?>
+                    <div data-item="t-sub-info">
+                        <?php $tags = $torrent->getTags(); ?>
+                        <?php if (count($tags) > 0) : ?>
+                            <span data-item="t-tags">
+                                <?php foreach ($torrent->getTags() as $tag): ?>
+                                    <?php if ($tag['pinned']): // Only show pinned tag in torrent list ?>
+                                        <a href="/torrents/tags?tag=<?= $tag['tag'] ?>" class="label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </span>&nbsp;
+                        <?php endif; ?>
+                        <span data-item="subtitle" data-subtitle="<?= $this->e($torrent->getSubtitle()) ?>"><?= $torrent->getSubtitle() ?></span>
                     </div>
                 </div>
                 <div class="pull-right">

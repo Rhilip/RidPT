@@ -27,11 +27,15 @@ class TorrentsController extends Controller
         return $this->render('torrents/list', [
             'torrents' => $torrents
         ]);
-
     }
 
     public function actionSearch()
     {
+        // TODO
+    }
 
+    public function actionTags()
+    {
+        // TODO
     }
 }
