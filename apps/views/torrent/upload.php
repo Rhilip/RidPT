@@ -109,12 +109,12 @@ use \apps\models\form\TorrentUploadForm;
                 <div class="row">
                     <div class="col-md-3">
                         <div class="switch<?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled' ?>">
-                            <input type="checkbox" id="uplver" name="uplver" value="yes"><label for="uplver">Anonymous Upload</label>
+                            <input type="checkbox" id="uplver" name="uplver" value="1"><label for="uplver">Anonymous Upload</label>
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="switch<?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled'  // FIXME Config key ?>">
-                            <input type="checkbox" id="hr" name="hr" value="yes"><label for="hr">H&R</label>
+                            <input type="checkbox" id="hr" name="hr" value="1"><label for="hr">H&R</label>
                         </div>
                     </div>
                 </div>

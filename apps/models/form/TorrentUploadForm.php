@@ -22,13 +22,14 @@ class TorrentUploadForm extends Validator
 
     /**  @var \Rid\Http\UploadFile */
     public $file;
+    //public $nfo;
 
     public $category;
     public $title;
     public $subtitle = '';
     public $descr;
-    public $uplver = 'no';  // If user upload this torrent Anonymous
-    public $hr = 'no';  // TODO This torrent require hr check
+    public $uplver = 0;  // If user upload this torrent Anonymous
+    public $hr = 0;  // TODO This torrent require hr check
 
     // Quality
     public $audio = 0; /* 0 is default value. */
@@ -106,7 +107,11 @@ class TorrentUploadForm extends Validator
                 ['required'],
                 ['Upload\Required'],
                 ['Upload\Extension', ['allowed' => 'torrent']],
-                ['Upload\Size', ['size' => config("torrent.max_file_size") . 'B']]
+                ['Upload\Size', ['size' => config('torrent.max_file_size') . 'B']]
+            ],
+            'nfo' => [
+                ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],
+                ['Upload\Size', ['size' => config('torrent.max_nfo_size') . 'B']]
             ],
             'category' => [
                 ['required'], ['Integer'],
@@ -114,7 +119,10 @@ class TorrentUploadForm extends Validator
             ],
             'descr' => 'required',
             'uplver' => [
-                ['InList', ['list' => ['yes', 'no']]]
+                ['InList', ['list' => [0, 1]]]
+            ],
+            'hr' => [
+                ['InList', ['list' => [0, 1]]]
             ],
         ];
 
@@ -239,28 +247,29 @@ class TorrentUploadForm extends Validator
         ])->queryScalar();
         if ($count > 0) throw new \Exception('std_torrent_existed');
 
+        $nfo_blob = '';
+        if (isset($this->nfo)) {
+            $nfo_blob = $this->nfo->getFileContent();
+        }
+
         // TODO update torrent status based on user class or their owned torrents count
         app()->pdo->beginTransaction();
         try {
-            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`uplver`) 
-VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution, :descr,:uplver)')->bindParams([
+            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`nfo`,`uplver`,`hr`) 
+VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution, :descr,:nfo ,:uplver, :hr)')->bindParams([
                 'owner_id' => app()->user->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
-                'title' => $this->title,
-                'subtitle' => $this->subtitle,
+                'title' => $this->title, 'subtitle' => $this->subtitle,
                 'category' => $this->category,
                 'filename' => $this->file->getBaseName(),
-                'torrent_name' => $this->torrent_name,
-                'torrent_type' => $this->torrent_type,
-                'torrent_size' => $this->torrent_size,
-                'torrent_structure' => $this->torrent_structure,
-                'quality_audio' => $this->audio,
-                'quality_codec' => $this->codec,
-                'quality_medium' => $this->medium,
-                'quality_resolution' => $this->resolution,
+                'torrent_name' => $this->torrent_name, 'torrent_type' => $this->torrent_type,
+                'torrent_size' => $this->torrent_size, 'torrent_structure' => $this->torrent_structure,
+                'quality_audio' => $this->audio, 'quality_codec' => $this->codec,
+                'quality_medium' => $this->medium, 'quality_resolution' => $this->resolution,
                 'descr' => $this->descr,
-                'uplver' => $this->uplver,
+                'nfo' => $nfo_blob,
+                'uplver' => $this->uplver, 'hr' => $this->hr
             ])->execute();
             $this->id = app()->pdo->getLastInsertId();
 

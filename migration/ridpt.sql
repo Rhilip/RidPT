@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 19, 2019 at 05:34 PM
+-- Generation Time: Jul 19, 2019 at 11:29 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -811,7 +811,9 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `quality_medium` int(11) NOT NULL DEFAULT '0',
   `quality_resolution` int(11) NOT NULL DEFAULT '0',
   `descr` text,
-  `uplver` enum('yes','no') NOT NULL DEFAULT 'no',
+  `nfo` blob NOT NULL,
+  `uplver` tinyint(1) NOT NULL DEFAULT '0',
+  `hr` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `FK_torrent_categories` (`category`),
