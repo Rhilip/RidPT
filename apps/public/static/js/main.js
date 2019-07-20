@@ -46,6 +46,10 @@ function location_search_replace(new_params) {
 }
 
 jQuery(document).ready(function () {
+    // Cache
+    const cache_torrent_files = localforage.createInstance({name: 'torrent_files'});
+    const cache_torrent_nfo = localforage.createInstance({name: 'torrent_nfo'});
+
     // Drop all support of IE 6-11
     if ($.zui.browser.ie) {
         $.zui.browser.tip();
@@ -164,7 +168,7 @@ jQuery(document).ready(function () {
     // Torrent favour Add/Remove action
     $('.torrent-favour').click(function () {
         let that = $(this);
-        let tid = that.attr('data-tid');
+        let tid = that.data('tid');
         let star = that.find(' > i');
 
         $.post(api_point + '/torrent/bookmark', {'tid': tid}, function (res) {
@@ -201,12 +205,10 @@ jQuery(document).ready(function () {
     }
 
     $('.torrent-files').click(function () {
-        const torrent_files_localforage = localforage.createInstance({name: 'torrent_files'});
-
         let that = $(this);
-        let tid = that.attr('data-tid');
+        let tid = that.data('tid');
 
-        torrent_files_localforage.getItem(tid, function (err, value) {
+        cache_torrent_files.getItem(tid, function (err, value) {
             function list_worker(tree, par = '') {
                 let ret = '';
                 let size = 0;
@@ -250,12 +252,43 @@ jQuery(document).ready(function () {
                 build_file_tree(value);
             } else {
                 $.getJSON(api_point + '/torrent/filelist', {'tid': tid}, function (res) {
-                    torrent_files_localforage.setItem(tid, res);
+                    cache_torrent_files.setItem(tid, res);
                     build_file_tree(res);
                 });
             }
         });
     });
+
+    $('.torrent-nfo').click(function () {
+        let that = $(this);
+        let tid = that.data('tid');
+
+        cache_torrent_nfo.getItem(tid, function (err, value) {
+            function build_nfo_modal(res) {
+                if (res.success) {
+                    (new $.zui.ModalTrigger({
+                        name: 'torrent_nfo_content_model',
+                        showHeader: false,
+                        size: 'lg',
+                        moveable: true,
+                        custom: `<pre>${res.result}</pre>`
+                    })).show();
+                } else {
+                    create_error_notice(res.errors.join(', '));
+                }
+            }
+
+            if (value !== null) {
+                build_nfo_modal(value);
+            } else {
+                $.getJSON(api_point + '/torrent/nfofilecontent', {'tid': tid}, function (res) {
+                    cache_torrent_nfo.setItem(tid, res);
+                    build_nfo_modal(res);
+                });
+            }
+        });
+    });
+
 
     // For torrents structure page
     if ($('#torrent_structure').length) {

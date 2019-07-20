@@ -64,6 +64,11 @@
                     <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                         <a class="torrent-files" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-file fa-fw"></i>&nbsp;View Torrent's Files</a>
                     </div><!-- View Torrent's Files -->
+                    <?php if($torrent->hasNfo()): // TODO add global config key of NFO ?>
+                        <div class="torrent-action-item">
+                            <a class="torrent-nfo" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-info fa-fw"></i>&nbsp;View Torrent's Nfo file</a>
+                        </div><!-- View Torrent's Nfo -->
+                    <?php endif;?>
                     <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                         <a class="torrent-structure" href="/torrent/structure?id=<?= $torrent->getId() ?>"><i class="fas fa-folder-open fa-fw"></i>&nbsp;View Torrent's Structure</a>
                     </div><!-- View Torrent's Structure -->

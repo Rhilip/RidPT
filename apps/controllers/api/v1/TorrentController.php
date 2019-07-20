@@ -57,4 +57,25 @@ class TorrentController extends ApiController
             return $this->buildMethodFailMsg('GET');
         }
     }
+
+    public function actionNfoFileContent()
+    {
+        if ($this->checkMethod('GET')) {
+            $filelist = new TorrentsForm();
+            $filelist->setData(app()->request->get());
+            $success = $filelist->validate();
+            if (!$success) {
+                return [
+                    'success' => false,
+                    'errors' => $filelist->getErrors()
+                ];
+            } else {
+                $ret = $filelist->getNfoFileContent();
+                return array_merge(
+                    ['success' => true],
+                    $ret
+                );
+            }
+        }
+    }
 }

@@ -101,7 +101,6 @@ body{background-color:#f6f6f6}
 
 /* '/torrent/upload' */
 #torrent_upload_table > tbody > tr > td:first-child{vertical-align:middle;text-align:right}
-#torrent_file{display:inline;margin-right:10px;width:220px}
 
 /* '/torrent/details' */
 .torrent-details-block{}

@@ -34,6 +34,9 @@ class Torrent
     private $category;
     private $descr;
     private $uplver;
+    private $hr;
+
+    private $nfo;
 
     /** @var array */
     private $tags;
@@ -279,5 +282,18 @@ class Torrent
         }
 
         return $this->tags;
+    }
+
+
+    public function hasNfo() {
+        return (boolean) $this->nfo;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNfo()
+    {
+        return $this->nfo;
     }
 }

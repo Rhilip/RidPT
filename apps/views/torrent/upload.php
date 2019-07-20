@@ -41,11 +41,14 @@ use \apps\models\form\TorrentUploadForm;
         <tr>
             <td class="nowrap"><label for="file" class="required">Torrent File</label></td>
             <td>
-                <input id="torrent_file" name="file" class="form-control" type="file"
-                       accept=".torrent" required="required"
-                       data-toggle="tooltip"
-                       data-original-title="可直接上传从其它PT站下载的torrent文件"> <!-- FIXME original-title -->
-                <span id="torrent_file_name"></span>
+                <div class="row">
+                    <div class="col-md-3">
+                        <input id="torrent_file" name="file" class="form-control" type="file"
+                               accept=".torrent" required="required"> <!-- FIXME original-title -->
+                    </div>
+                    <div class="col-md-9" id="torrent_file_name"></div>
+                </div>
+
         </tr>
         <tr>
             <td class="nowrap"><label for="title" class="required">Title</td>
@@ -86,10 +89,20 @@ use \apps\models\form\TorrentUploadForm;
             </td> <!-- FIXME link url -->
         </tr>
         <tr>
+            <td class="nowrap"><label for="nfo">NFO File</label></td>
+            <td>
+                <div class="row">
+                    <div class="col-md-3">
+                        <input id="torrent_nfo" name="nfo" class="form-control" type="file"
+                               accept=".nfo, .txt"> <!-- FIXME original-title -->
+                    </div>
+                </div>
+        </tr>
+        <tr>
             <td class="nowrap"><label for="descr" class="required">Description</label></td>
             <td>
-                    <textarea id="descr" name="descr" class="form-control" style="width: 99%"
-                              cols="100" rows="10" required="required"></textarea>
+                <textarea id="descr" name="descr" class="form-control" style="width: 99%"
+                          cols="100" rows="10" required="required"></textarea>
             </td>
         </tr>
         <tr>
