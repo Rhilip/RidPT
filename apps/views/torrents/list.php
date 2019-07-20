@@ -47,22 +47,22 @@ $time_now = time();
                         <div>
                             <div class="pull-left name-left">
                                 <div data-item="t-main-info">
-                        <span data-item="t-title" data-title="<?= $this->e($torrent->getTitle()) ?>">
-                            <a href="/torrent/details?id=<?= $torrent->getId() ?>" target="_blank"><b><?= $torrent->getTitle() ?></b></a>
-                        </span>
+                                    <span data-item="t-title" data-title="<?= $this->e($torrent->getTitle()) ?>">
+                                        <a href="/torrent/details?id=<?= $torrent->getId() ?>" target="_blank"><b><?= $torrent->getTitle() ?></b></a>
+                                    </span>
                                 </div>
-                                <div data-item="t-sub-info">
-                                    <?php $tags = $torrent->getTags(); ?>
+                                <div data-item="t-extra-info">
+                                    <?php $tags = $torrent->getPinnedTags(); ?>
                                     <?php if (count($tags) > 0) : ?>
                                         <span data-item="t-tags">
-                                <?php foreach ($torrent->getTags() as $tag): ?>
-                                    <?php if ($tag['pinned']): // Only show pinned tag in torrent list ?>
-                                        <a href="/torrents/search?tags=<?= $tag['tag'] ?>" class="tag label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
+                                            <?php foreach ($tags as $tag): ?>
+                                                <a href="/torrents/search?tags=<?= $tag['tag'] ?>" class="tag label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
+                                            <?php endforeach; ?>
+                                        </span>&nbsp;
                                     <?php endif; ?>
-                                <?php endforeach; ?>
-                            </span>&nbsp;
-                                    <?php endif; ?>
+                                    <?php if ($torrent->getSubtitle()): ?>
                                     <span data-item="subtitle" data-subtitle="<?= $this->e($torrent->getSubtitle()) ?>"><?= $torrent->getSubtitle() ?></span>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <div class="pull-right">

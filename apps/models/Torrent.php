@@ -40,6 +40,7 @@ class Torrent
 
     /** @var array */
     private $tags;
+    private $pinned_tags;
 
     private $torrent_name;
     private $torrent_type;
@@ -262,7 +263,7 @@ class Torrent
      */
     public function getCategory()
     {
-        return (new Category())->setId($this->category);
+        return (new Category())->setId($this->category);  // FIXME if will call cache every time for each torrent
     }
 
     /**
@@ -271,19 +272,35 @@ class Torrent
     public function getTags(): array
     {
         if (is_null($this->tags)) {
-            $this->tags = app()->pdo->createCommand('
+            $this->tags = app()->redis->hGet('Torrent:' . $this->id . ':base_content', 'tags');
+            if (false === $this->tags) {
+                $this->tags = app()->pdo->createCommand('
                 SELECT tag, class_name, pinned FROM tags 
                   INNER JOIN map_torrents_tags mtt on tags.id = mtt.tag_id 
                   INNER JOIN torrents t on mtt.torrent_id = t.id 
                 WHERE t.id = :tid ORDER BY tags.pinned DESC')->bindParams([
-                'tid' => $this->id
-            ])->queryAll();
-            app()->redis->hSet('Torrent:' . $this->id . ':base_content', 'tags', $this->tags);
+                    'tid' => $this->id
+                ])->queryAll();
+                app()->redis->hSet('Torrent:' . $this->id . ':base_content', 'tags', $this->tags);
+            }
         }
 
         return $this->tags;
     }
 
+    /**
+     * @return array
+     */
+    public function getPinnedTags(): array
+    {
+        if (is_null($this->pinned_tags)) {
+            $this->pinned_tags = array_filter($this->getTags(),function ($tag) {
+                return $tag['pinned'] == 1;
+            });
+        }
+
+        return $this->pinned_tags;
+    }
 
     public function hasNfo() {
         return (boolean) $this->nfo;
