@@ -11,10 +11,11 @@ namespace apps\models;
 use Rid\Bencode\Bencode;
 use Rid\Exceptions\NotFoundException;
 use Rid\Utils\AttributesImportUtils;
+use Rid\Utils\ClassValueCacheUtils;
 
 class Torrent
 {
-    use AttributesImportUtils;
+    use AttributesImportUtils, ClassValueCacheUtils;
 
     private $id = null;
 
@@ -74,6 +75,11 @@ class Torrent
     public static function TorrentFileLoc($id = 0)
     {
         return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $id . ".torrent";
+    }
+
+    public function getCacheNameSpace(): string
+    {
+        return 'Torrent:' . $this->id . ':base_content';
     }
 
     /**
@@ -271,21 +277,15 @@ class Torrent
      */
     public function getTags(): array
     {
-        if (is_null($this->tags)) {
-            $this->tags = app()->redis->hGet('Torrent:' . $this->id . ':base_content', 'tags');
-            if (false === $this->tags) {
-                $this->tags = app()->pdo->createCommand('
+        return $this->getCacheValue('tags', function () {
+            return app()->pdo->createCommand('
                 SELECT tag, class_name, pinned FROM tags 
                   INNER JOIN map_torrents_tags mtt on tags.id = mtt.tag_id 
                   INNER JOIN torrents t on mtt.torrent_id = t.id 
                 WHERE t.id = :tid ORDER BY tags.pinned DESC')->bindParams([
-                    'tid' => $this->id
-                ])->queryAll();
-                app()->redis->hSet('Torrent:' . $this->id . ':base_content', 'tags', $this->tags);
-            }
-        }
-
-        return $this->tags;
+                'tid' => $this->id
+            ])->queryAll();
+        });
     }
 
     /**
@@ -293,13 +293,11 @@ class Torrent
      */
     public function getPinnedTags(): array
     {
-        if (is_null($this->pinned_tags)) {
-            $this->pinned_tags = array_filter($this->getTags(),function ($tag) {
+        return $this->getCacheValue('pinned_tags', function () {
+            return array_filter($this->getTags(), function ($tag) {
                 return $tag['pinned'] == 1;
             });
-        }
-
-        return $this->pinned_tags;
+        });
     }
 
     public function hasNfo() {
