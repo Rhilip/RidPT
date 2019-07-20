@@ -18,13 +18,13 @@ trait ClassValueCacheUtils
 
     protected function getCacheValue($key, $closure)
     {
-        if (is_null($this->{$key})) {
-            $this->{$key} = app()->redis->hGet($this->getCacheNameSpace(), $key);
-            if (false === $this->{$key}) {
-                $this->{$key} = $closure();
-                app()->redis->hSet($this->getCacheNameSpace(), $key, $this->{$key});
+        if (is_null($this->$key)) {
+            $this->$key = app()->redis->hGet($this->getCacheNameSpace(), $key);
+            if (false === $this->$key) {
+                $this->$key = $closure();
+                app()->redis->hSet($this->getCacheNameSpace(), $key, $this->$key);
             }
         }
-        return $this->{$key};
+        return $this->$key;
     }
 }
