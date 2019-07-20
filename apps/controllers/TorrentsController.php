@@ -85,11 +85,14 @@ class TorrentsController extends Controller
             ['LIMIT :offset, :rows', 'params' => ['offset' => ($page - 1) * $limit, 'rows' => $limit]],
         ])->queryAll();
 
-        if (count($tags) == 1) {  // If this search tag is unique, just redirect to search page
+        if (count($tags) == 1 && $tags[0]['tag'] == $search) {  // If this search tag is unique and equal to the wanted, just redirect to search page
             return app()->response->redirect('/torrents/search?tags=' . $search);
         }
 
-        $tag_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `tags`')->queryScalar(); // TODO use `site_status` tables to store those data
+        $tag_count = app()->pdo->createCommand([
+            ['SELECT COUNT(tags.id) as `count` FROM tags'],
+            ['WHERE `tags`.`tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $search . '%']],
+        ])->queryScalar();
 
         return $this->render('torrents/tags', ['search' => $search, 'tags' => $tags, 'count' => $tag_count]);
     }
