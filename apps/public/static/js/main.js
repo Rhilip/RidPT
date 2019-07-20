@@ -28,6 +28,15 @@ function humanFileSize(bytes, fix, si) {
     return bytes.toFixed(fix ? fix : 2) + ' ' + units[u];
 }
 
+function randomString(length = 16, charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') {
+    let result = '';
+    let charactersLength = charset.length;
+    for (let i = 0; i < length; i++) {
+        result += charset.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
 function location_search_replace(new_params) {
     let search = _location_search;
     for (let i in new_params) {
@@ -74,7 +83,7 @@ jQuery(document).ready(function () {
     // Captcha Img Re-flush
     let captcha_img_another = $('.captcha_img');
     captcha_img_another.on('click', function () {
-        $(this).attr('src', '/captcha?t=' + Date.now())  // Change src to get another captcha image
+        $(this).attr('src', `/captcha?t=${Date.now()}&r=${randomString(6)}`)  // Change src to get another captcha image
             .parent('.captcha_img_load').addClass('load-indicator loading');  // Add loading indicator in parent of img tag
     });
     captcha_img_another.on('load', function () {
