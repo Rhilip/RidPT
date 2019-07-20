@@ -10,10 +10,12 @@ namespace apps\components\User;
 
 use Rid\Exceptions\NotFoundException;
 use Rid\Utils\AttributesImportUtils;
+use Rid\Utils\ClassValueCacheUtils;
 
 trait UserTrait
 {
     use AttributesImportUtils;
+    use ClassValueCacheUtils;
 
     private $id;
     private $username;
@@ -47,10 +49,6 @@ trait UserTrait
     private $leechtime;
 
     private $invites;
-    private $temp_invites_sum;
-    private $temp_invites_details;
-    private $pending_invites;
-    private $invitees;
 
     protected $peer_status;
     protected $infoCacheKey;
@@ -67,7 +65,12 @@ trait UserTrait
             app()->redis->expire($this->infoCacheKey, 10 * 60);
         }
         $this->importAttributes($self);
-        
+
+    }
+
+    public function getCacheNameSpace(): string
+    {
+        return 'User:' . $this->id . ':base_content';
     }
 
     public function loadUserContentByName($name)
@@ -119,7 +122,7 @@ trait UserTrait
         return $raw ? $this->class : UserInterface::ROLE[$this->class];
     }
 
-    /**
+    /** TODO use gravatar
      * @return mixed
      */
     public function getAvatar()
@@ -215,52 +218,58 @@ trait UserTrait
         return ($this->last_tracker_ip && $readable) ? inet_ntop($this->last_tracker_ip) : $this->last_tracker_ip;
     }
 
-    /**
-     * @param bool $real
-     * @return mixed
-     */
-    public function getUploaded($real = false)
+    public function getUploaded(): int
     {
-        if ($real) {
-            if (is_null($this->true_uploaded)) {
-                $this->true_uploaded = app()->redis->hGet($this->infoCacheKey, 'true_uploaded');
-                if (false === $this->true_uploaded) {
-                    $this->true_uploaded = app()->pdo->createCommand('SELECT SUM(`true_downloaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
-                            "uid" => $this->id
-                        ])->queryScalar() ?? 0;
-                    app()->redis->hSet($this->infoCacheKey, 'true_uploaded', $this->true_uploaded);
-                }
-            }
-        }
         return $this->uploaded;
     }
 
-    /**
-     * @param bool $real
-     * @return mixed
-     */
-    public function getDownloaded($real = false)
+    public function getRealUploaded(): int
     {
-        if ($real) {
-            if (is_null($this->true_downloaded)) {
-                $this->true_downloaded = app()->redis->hGet($this->infoCacheKey, 'true_downloaded');
-                if (false === $this->true_downloaded) {
-                    $this->true_downloaded = app()->pdo->createCommand('SELECT SUM(`true_downloaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
-                            "uid" => $this->id
-                        ])->queryScalar() ?? 0;
-                    app()->redis->hSet($this->infoCacheKey, 'true_downloaded', $this->true_downloaded);
-                }
-            }
-            return $this->true_downloaded;
-        }
+        return $this->getCacheValue('true_uploaded', function () {
+            return app()->pdo->createCommand('SELECT SUM(`true_uploaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
+                    "uid" => $this->id
+                ])->queryScalar() ?? 0;
+        });
+    }
+
+    public function getDownloaded(): int
+    {
         return $this->downloaded;
     }
 
-    public function getRatio($real = false)
+    public function getRealDownloaded()
     {
-        $download = max(1, $this->getDownloaded($real));  // We will never let it as zero
-        $upload = max(1, $this->getUploaded($real));
-        return $upload / $download;
+        return $this->getCacheValue('true_downloaded', function () {
+            return app()->pdo->createCommand('SELECT SUM(`true_downloaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
+                    "uid" => $this->id
+                ])->queryScalar() ?? 0;
+        });
+    }
+
+    public function getRatio()
+    {
+        $uploaded = $this->getUploaded();
+        $download = $this->getDownloaded();
+        if ($download == 0 && $uploaded == 0) {
+            return '---';
+        } elseif ($download == 0) {
+            return 'Inf.';
+        } else {
+            return $uploaded / $download;
+        }
+    }
+
+    public function getRealRatio()
+    {
+        $uploaded = $this->getRealUploaded();
+        $download = $this->getRealDownloaded();
+        if ($download == 0 && $uploaded == 0) {
+            return '---';
+        } elseif ($download == 0) {
+            return 'Inf.';
+        } else {
+            return $uploaded / $download;
+        }
     }
 
     public function getSeedtime()
@@ -339,36 +348,30 @@ trait UserTrait
     /**
      * @return array
      */
-    public function getTempInviteDetails() {
-        if (is_null($this->temp_invites_details)) {
-            $this->temp_invites_details = app()->redis->hGet($this->infoCacheKey,'temp_invite');
-            if (false === $this->temp_invites_details) {
-                $this->temp_invites_details = app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
+    public function getTempInviteDetails()
+    {
+        return $this->getCacheValue('temp_invites_details', function () {
+                return app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
                     "uid" => app()->user->getId()
                 ])->queryAll() ?: [];
-                app()->redis->hSet($this->infoCacheKey, 'temp_invite', $this->temp_invites_details);
-            }
-        }
-        if (is_null($this->temp_invites_details)) $this->temp_invites_details = [];
-        return $this->temp_invites_details;
+            }) ?? [];
     }
 
-    public function getPendingInvites() {
-        if (is_null($this->pending_invites)) {
-            $this->pending_invites = app()->pdo->createCommand('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
-                'uid'=> $this->id
-            ])->queryAll();
-        }
-        return $this->pending_invites;
-    }
-
-    public function getInvitees() {
-        if (is_null($this->invitees)) {
-            $this->invitees = app()->pdo->createCommand('SELECT id,username,email,status,class,uploaded,downloaded FROM `users` WHERE `invite_by` = :uid')->bindParams([
+    public function getPendingInvites()
+    {
+        return $this->getCacheValue('pending_invites', function () {
+            return app()->pdo->createCommand('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
                 'uid' => $this->id
             ])->queryAll();
-        }
+        });
+    }
 
-        return $this->invitees;
+    public function getInvitees()
+    {
+        return $this->getCacheValue('invitees', function () {
+            return app()->pdo->createCommand('SELECT id,username,email,status,class,uploaded,downloaded FROM `users` WHERE `invite_by` = :uid')->bindParams([
+                'uid' => $this->id
+            ])->queryAll();
+        });
     }
 }

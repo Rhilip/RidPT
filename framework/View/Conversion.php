@@ -43,7 +43,7 @@ class Conversion implements ExtensionInterface
         self::setDefault($var, ['precision' => 2, 'separator' => ' ']);
         $bytes = array_shift($var);
 
-        $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB');
+        $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count($units) - 1);
@@ -73,7 +73,7 @@ class Conversion implements ExtensionInterface
 
         $code = new Decoda($string, $var,'Post_cache:' . md5($string));
 
-        $code->defaults();
+        $code->defaults(); // TODO add support of tag [mediainfo] , [nfo]
 
         $code->setStorage(new RedisStorage(app()->redis->getRedis()));
         return $code->parse();
