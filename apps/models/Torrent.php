@@ -77,7 +77,7 @@ class Torrent
         return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $id . ".torrent";
     }
 
-    public function getCacheNameSpace(): string
+    protected function getCacheNameSpace(): string
     {
         return 'Torrent:' . $this->id . ':base_content';
     }

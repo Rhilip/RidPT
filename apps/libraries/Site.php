@@ -9,12 +9,21 @@
 namespace apps\libraries;
 
 
+use Rid\Utils\ClassValueCacheUtils;
+
 class Site
 {
+    use ClassValueCacheUtils;
+
     const LOG_LEVEL_NORMAL = 'normal';
     const LOG_LEVEL_MOD = 'mod';
     const LOG_LEVEL_SYSOP = 'sysop';
     const LOG_LEVEL_LEADER = 'leader';
+
+    protected static function getStaticCacheNameSpace(): string
+    {
+        return 'Cache:site';
+    }
 
     public static function writeLog($msg, $level = self::LOG_LEVEL_NORMAL)
     {
@@ -36,7 +45,40 @@ class Site
         if ($sender != 0) app()->redis->del('user_' . $sender . '_outbox_count');
     }
 
-    public static function fetchUserCount() {
+    public static function getQualityTableList()
+    {
+        return [
+            'audio' => 'Audio Codec',  // TODO i18n title
+            'codec' => 'Codec',
+            'medium' => 'Medium',
+            'resolution' => 'Resolution'
+        ];
+    }
+
+    public static function ruleCategory()
+    {
+        return static::getStaticCacheValue('enabled_torrent_category', function () {
+            return app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
+        }, 86400);
+    }
+
+    public static function ruleQuality($quality)
+    {
+        if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
+        return static::getStaticCacheValue('enabled_quality_' . $quality, function () use ($quality) {
+            return app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
+        }, 86400);
+    }
+
+    public static function rulePinnedTags()
+    {
+        return static::getStaticCacheValue('pinned_tags', function () {
+            return app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1 LIMIT 10;')->queryAll();
+        }, 86400);
+    }
+
+    public static function fetchUserCount()
+    {
         return app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users`")->queryScalar();
     }
 }

@@ -69,7 +69,7 @@ trait UserTrait
 
     }
 
-    public function getCacheNameSpace(): string
+    protected function getCacheNameSpace(): string
     {
         return 'User:' . $this->id . ':base_content';
     }

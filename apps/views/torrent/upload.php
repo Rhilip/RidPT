@@ -10,7 +10,7 @@
  * TODO Add notice for users which can't directly upload torrent (in pending status)
  */
 
-use \apps\models\form\TorrentUploadForm;
+use apps\libraries\Site;
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -30,10 +30,11 @@ use \apps\models\form\TorrentUploadForm;
                     <div class="col-md-3">
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
-                            <?php foreach (TorrentUploadForm::ruleCategory() as $category) : ?>
+                            <?php foreach (Site::ruleCategory() as $category) : ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
+                        <?php Site::ruleCategory()?>
                     </div>
                 </div>
             </td>
@@ -69,13 +70,13 @@ use \apps\models\form\TorrentUploadForm;
             <td class="nowrap"><label>Quality</label></td>
             <td>
                 <div class="row">
-                    <?php foreach (TorrentUploadForm::getQualityTableList() as $quality => $title): ?>
+                    <?php foreach (Site::getQualityTableList() as $quality => $title): ?>
                     <div class="col-md-3">
                         <div class="input-group">
                             <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
                             <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
                                 <option value="0">Choose One</option>
-                                <?php foreach (TorrentUploadForm::ruleQuality($quality) as $q): ?>
+                                <?php foreach (Site::ruleQuality($quality) as $q): ?>
                                 <?php if ($q['id'] == 0): ?>
                                     <?php continue; ?>
                                 <?php endif; ?>
@@ -110,7 +111,7 @@ use \apps\models\form\TorrentUploadForm;
             <td><input id="tags" name="tags" class="form-control" type="text">
                 <div class="tag-help-block" style="margin-top: 4px">
                     Pinned Tags:
-                    <?php foreach (TorrentUploadForm::rulePinnedTags() as $tag): ?>
+                    <?php foreach (Site::rulePinnedTags() as $tag): ?>
                         <a href="javascript:" class="add-tag label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
                     <?php endforeach; ?>
                 </div>

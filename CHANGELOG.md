@@ -20,6 +20,7 @@
 - **Form:** Miss use flag since namespace change
 - **Form:** Link\EditForm Update diff
 - **Requests:** Fix fullUrl() may add unnecessary `?`
+- **categories:** Remove key `sort_index`
 
 ### Perf
 - **Tracker:** Use brpoplpush to get announce data from redis

@@ -9,6 +9,7 @@
 namespace apps\models\form;
 
 use apps\models\Torrent;
+use apps\libraries\Site;
 
 use Rid\Validators\Validator;
 
@@ -53,53 +54,12 @@ class TorrentUploadForm extends Validator
     const TORRENT_TYPE_SINGLE = 'single';
     const TORRENT_TYPE_MULTI = 'multi';
 
-    public static function getQualityTableList()
-    {
-        return [
-            'audio' => 'Audio Codec',  // TODO i18n title
-            'codec' => 'Codec',
-            'medium' => 'Medium',
-            'resolution' => 'Resolution'
-        ];
-    }
-
-    public static function ruleCategory()
-    {
-        $categories = app()->redis->get('site:enabled_torrent_category');
-        if (false === $categories) {
-            $categories = app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
-            app()->redis->set('site:enabled_torrent_category', $categories, 86400);
-        }
-        return $categories;
-    }
-
-    public static function ruleQuality($quality)
-    {
-        if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
-        $quality_table = app()->redis->get('site:enabled_quality:' . $quality);
-        if (false === $quality_table) {
-            $quality_table = app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
-            app()->redis->set('site:enabled_quality:' . $quality, $quality_table, 86400);
-        }
-        return $quality_table;
-    }
-
-    public static function rulePinnedTags()
-    {
-        $tags = app()->redis->get('site:pinned_tags');
-        if (false === $tags) {
-            $tags = app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1 LIMIT 10;')->queryAll();
-            app()->redis->set('site:pinned_tags', $tags, 86400);
-        }
-        return $tags;
-    }
-
     // 规则
     public static function inputRules()
     {
         $categories_id_list = array_map(function ($cat) {
             return $cat['id'];
-        }, self::ruleCategory());
+        }, Site::ruleCategory());
 
         $rules = [
             'title' => 'required',
@@ -127,11 +87,11 @@ class TorrentUploadForm extends Validator
         ];
 
         // Add Quality Valid
-        foreach (self::getQualityTableList() as $quality => $title) {
+        foreach (Site::getQualityTableList() as $quality => $title) {
             // TODO add config key
             $quality_id_list = array_map(function ($cat) {
                 return $cat['id'];
-            }, self::ruleQuality($quality));
+            }, Site::ruleQuality($quality));
 
             $rules[$quality] = [
                 ['Integer'],
@@ -293,6 +253,8 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
 
             throw $e;
         }
+
+        Site::writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ( $this->uplver ? 'Anonymous' : app()->user->getUsername()));
     }
 
     // TODO Check and rewrite torrent flags if user don't reach flags privilege
