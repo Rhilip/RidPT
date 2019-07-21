@@ -32,13 +32,14 @@ class Site
         ])->execute();
     }
 
-    public static function sendPM($sender, $receiver, $subject, $msg, $save = "no", $location = 1) {
+    public static function sendPM($sender, $receiver, $subject, $msg, $save = "no", $location = 1)
+    {
         app()->pdo->createCommand("INSERT `messages` (`sender`,`receiver`,`add_at`, subject, msg, saved, location) VALUES (:sender,:receiver,CURRENT_TIMESTAMP,:subject,:msg,:save,:location)")->bindParams([
             "sender" => $sender, "receiver" => $receiver,
-            "subject" => $subject , "msg" => $msg,
-            "save" => $save , "location" => $location
+            "subject" => $subject, "msg" => $msg,
+            "save" => $save, "location" => $location
         ])->execute();
-        
+
         // FIXME redis key
         app()->redis->del('user_' . $receiver . '_unread_message_count');
         app()->redis->del('user_' . $receiver . '_inbox_count');
@@ -55,14 +56,14 @@ class Site
         ];
     }
 
-    public static function ruleCategory()
+    public static function ruleCategory(): array
     {
         return static::getStaticCacheValue('enabled_torrent_category', function () {
             return app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
         }, 86400);
     }
 
-    public static function ruleQuality($quality)
+    public static function ruleQuality($quality): array
     {
         if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
         return static::getStaticCacheValue('enabled_quality_' . $quality, function () use ($quality) {
@@ -70,14 +71,28 @@ class Site
         }, 86400);
     }
 
-    public static function rulePinnedTags()
+    public static function ruleTeam(): array
+    {
+        return static::getStaticCacheValue('enabled_teams', function () {
+            return app()->pdo->createCommand('SELECT * FROM `teams` WHERE `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
+        }, 86400);
+    }
+
+    public static function ruleCanUsedTeam(): array
+    {
+        return array_filter(static::ruleTeam(), function ($team) {
+            return app()->user->getClass(true) >= $team['class_require'];
+        });
+    }
+
+    public static function rulePinnedTags(): array
     {
         return static::getStaticCacheValue('pinned_tags', function () {
             return app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1 LIMIT 10;')->queryAll();
         }, 86400);
     }
 
-    public static function fetchUserCount()
+    public static function fetchUserCount(): int
     {
         return app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users`")->queryScalar();
     }

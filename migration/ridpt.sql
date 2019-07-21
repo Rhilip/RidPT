@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 21, 2019 at 09:48 AM
+-- Generation Time: Jul 21, 2019 at 02:19 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -826,6 +826,40 @@ INSERT INTO `tags` (`id`, `tag`, `class_name`, `pinned`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `teams`
+--
+
+DROP TABLE IF EXISTS `teams`;
+CREATE TABLE IF NOT EXISTS `teams` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(64) NOT NULL DEFAULT '',
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `class_require` smallint(6) UNSIGNED NOT NULL DEFAULT '40',
+  `sort_index` smallint(6) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `enabled` (`enabled`,`sort_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `teams`:
+--
+
+--
+-- Truncate table before insert `teams`
+--
+
+TRUNCATE TABLE `teams`;
+--
+-- Dumping data for table `teams`
+--
+
+INSERT INTO `teams` (`id`, `name`, `enabled`, `class_require`, `sort_index`) VALUES
+(0, 'None', 1, 1, 0),
+(1, 'Ohter', 1, 1, 100);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `torrents`
 --
 
@@ -852,6 +886,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `quality_codec` int(11) NOT NULL DEFAULT '0',
   `quality_medium` int(11) NOT NULL DEFAULT '0',
   `quality_resolution` int(11) NOT NULL DEFAULT '0',
+  `team` int(11) NOT NULL DEFAULT '0',
   `descr` text,
   `nfo` blob NOT NULL,
   `uplver` tinyint(1) NOT NULL DEFAULT '0',
@@ -863,7 +898,8 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   KEY `FK_torrent_quality_audio` (`quality_audio`),
   KEY `FK_torrent_quality_codec` (`quality_codec`),
   KEY `FK_torrent_quality_medium` (`quality_medium`),
-  KEY `FK_torrent_quality_resolution` (`quality_resolution`)
+  KEY `FK_torrent_quality_resolution` (`quality_resolution`),
+  KEY `FK_torrent_team` (`team`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -880,6 +916,8 @@ CREATE TABLE IF NOT EXISTS `torrents` (
 --       `quality_medium` -> `id`
 --   `quality_resolution`
 --       `quality_resolution` -> `id`
+--   `team`
+--       `teams` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -1102,7 +1140,8 @@ ALTER TABLE `torrents`
   ADD CONSTRAINT `FK_torrent_quality_audio` FOREIGN KEY (`quality_audio`) REFERENCES `quality_audio` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_quality_codec` FOREIGN KEY (`quality_codec`) REFERENCES `quality_codec` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_quality_medium` FOREIGN KEY (`quality_medium`) REFERENCES `quality_medium` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_torrent_quality_resolution` FOREIGN KEY (`quality_resolution`) REFERENCES `quality_resolution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `FK_torrent_quality_resolution` FOREIGN KEY (`quality_resolution`) REFERENCES `quality_resolution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_torrent_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_confirm`

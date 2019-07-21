@@ -21,7 +21,7 @@ trait ClassValueCacheUtils
         return 'Cache:default';
     }
 
-    // Get from redis cache then database
+    // Get from class, redis cache, then generate closure (may database)
     final protected function getCacheValue($key, $closure)
     {
         if (is_null($this->$key)) {
@@ -34,6 +34,7 @@ trait ClassValueCacheUtils
         return $this->$key;
     }
 
+    // Get from redis cache, then generate closure (may database)
     final protected static function getStaticCacheValue($key, $closure, $ttl = 86400)
     {
         $value = app()->redis->get(static::getStaticCacheNameSpace() . ':' . $key);   // FIXME use zset

@@ -31,10 +31,10 @@ use apps\libraries\Site;
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
                             <?php foreach (Site::ruleCategory() as $category) : ?>
+                                <?php if ($category['id'] == 0) { continue; } ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
-                        <?php Site::ruleCategory()?>
                     </div>
                 </div>
             </td>
@@ -75,17 +75,34 @@ use apps\libraries\Site;
                         <div class="input-group">
                             <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
                             <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
-                                <option value="0">Choose One</option>
+                                <option value="0">[Choose One]</option>
                                 <?php foreach (Site::ruleQuality($quality) as $q): ?>
-                                <?php if ($q['id'] == 0): ?>
-                                    <?php continue; ?>
-                                <?php endif; ?>
-                                <option value="<?= $q['id']; ?>"><?= $q['name']; ?></option>
+                                    <?php if ($q['id'] == 0) { continue; } ?>
+                                    <option value="<?= $q['id']; ?>"><?= $q['name']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
                     <?php endforeach; ?>
+                </div>
+            </td> <!-- FIXME link url -->
+        </tr>
+        <tr>
+            <td class="nowrap"><label>Content</label></td>
+            <td>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-addon"><label for="team">Group</label></span>
+                            <select id="team" name="team" class="form-control">
+                                <option value="0" selected>[Choose One]</option>
+                                <?php foreach (Site::ruleCanUsedTeam() as $team) : ?>
+                                    <?php if ($team['id'] == 0){ continue; } ?>
+                                    <option value="<?= $team['id'] ?>"><?= $team['name'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </td> <!-- FIXME link url -->
         </tr>

@@ -23,7 +23,7 @@ class TorrentUploadForm extends Validator
 
     /**  @var \Rid\Http\UploadFile */
     public $file;
-    //public $nfo;
+    public $nfo;
 
     public $category;
     public $title;
@@ -37,6 +37,8 @@ class TorrentUploadForm extends Validator
     public $codec = 0;
     public $medium = 0;
     public $resolution = 0;
+
+    public $team = 0;
 
     public $tags;
 
@@ -69,10 +71,6 @@ class TorrentUploadForm extends Validator
                 ['Upload\Extension', ['allowed' => 'torrent']],
                 ['Upload\Size', ['size' => config('torrent.max_file_size') . 'B']]
             ],
-            'nfo' => [
-                ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],
-                ['Upload\Size', ['size' => config('torrent.max_nfo_size') . 'B']]
-            ],
             'category' => [
                 ['required'], ['Integer'],
                 ['InList', ['list' => $categories_id_list]]
@@ -86,6 +84,13 @@ class TorrentUploadForm extends Validator
             ],
         ];
 
+        if (app()->request->post('nfo')) {
+            $rules['nfo'] = [
+                ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],
+                ['Upload\Size', ['size' => config('torrent.max_nfo_size') . 'B']]
+            ];
+        }
+
         // Add Quality Valid
         foreach (Site::getQualityTableList() as $quality => $title) {
             // TODO add config key
@@ -98,6 +103,15 @@ class TorrentUploadForm extends Validator
                 ['InList', ['list' => $quality_id_list]]
             ];
         }
+
+        // Add Team id Valid
+        $team_id_list = array_map(function ($team) {
+            return $team['id'];
+        }, Site::ruleCanUsedTeam());
+        $rules['team'] = [
+            ['Integer'],
+            ['InList', ['list' => $team_id_list]]
+        ];
 
         return $rules;
     }
@@ -215,8 +229,8 @@ class TorrentUploadForm extends Validator
         // TODO update torrent status based on user class or their owned torrents count
         app()->pdo->beginTransaction();
         try {
-            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`nfo`,`uplver`,`hr`) 
-VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution, :descr,:nfo ,:uplver, :hr)')->bindParams([
+            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`team`,`descr`,`nfo`,`uplver`,`hr`) 
+VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution,:team, :descr,:nfo ,:uplver, :hr)')->bindParams([
                 'owner_id' => app()->user->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
@@ -227,6 +241,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
                 'torrent_size' => $this->torrent_size, 'torrent_structure' => $this->torrent_structure,
                 'quality_audio' => $this->audio, 'quality_codec' => $this->codec,
                 'quality_medium' => $this->medium, 'quality_resolution' => $this->resolution,
+                'team' => $this->team,
                 'descr' => $this->descr,
                 'nfo' => $nfo_blob,
                 'uplver' => $this->uplver, 'hr' => $this->hr
@@ -254,7 +269,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             throw $e;
         }
 
-        Site::writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ( $this->uplver ? 'Anonymous' : app()->user->getUsername()));
+        Site::writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->uplver ? 'Anonymous' : app()->user->getUsername()));
     }
 
     // TODO Check and rewrite torrent flags if user don't reach flags privilege

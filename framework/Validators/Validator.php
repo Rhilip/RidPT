@@ -34,7 +34,6 @@ class Validator extends BaseObject
     {
         parent::__construct($config);
         $this->_validator = new \Sirius\Validation\Validator;
-        $this->_validator->add(static::inputRules());
     }
 
     public static function inputRules()
@@ -89,6 +88,7 @@ class Validator extends BaseObject
 
     public function validate()
     {
+        $this->_validator->add(static::inputRules());
         $this->_success = $this->_validator->validate($this->_data);
         $this->_errors = $this->_validator->getMessages();
 
