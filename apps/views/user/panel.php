@@ -54,8 +54,10 @@
                 <dl class="dl-horizontal text-overflow">
                     <dt>BT Transport</dt>
                     <dd>
-                        Ratio : <?= round($user->getRatio(),2) ?> ( uploaded : <?= $this->e(app()->user->getUploaded(),'format_bytes') ?> and downloaded : <?= $this->e(app()->user->getDownloaded(),'format_bytes') ?>) <br>
-                        Real Ratio : <?= round($user->getRatio(true),2) ?> ( uploaded : <?= $this->e(app()->user->getUploaded(true),'format_bytes') ?> and downloaded : <?= $this->e(app()->user->getDownloaded(true),'format_bytes') ?>) <br>
+                        Ratio : <?= is_string($user->getRatio()) ? $user->getRatio() : round($user->getRatio(),3) ?>
+                        ( uploaded : <?= $this->e(app()->user->getUploaded(),'format_bytes') ?> and downloaded : <?= $this->e(app()->user->getDownloaded(),'format_bytes') ?>) <br>
+                        Real Ratio : <?= is_string($user->getRealRatio()) ? $user->getRealRatio() : round($user->getRealRatio(),3) ?>
+                        ( uploaded : <?= $this->e(app()->user->getRealUploaded(),'format_bytes') ?> and downloaded : <?= $this->e(app()->user->getRealDownloaded(),'format_bytes') ?>) <br>
                     </dd>
                     <dt>BT Time</dt>
                     <dd>Ratio : <?= round($user->getTimeRatio(),2) ?>  ( Seeding Time: <?= $user->getSeedtime() ?> , Leeching Time: <?= $user->getLeechTime() ?>)</dd>

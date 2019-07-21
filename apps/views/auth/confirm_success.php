@@ -11,7 +11,9 @@
  */
 ?>
 
-<?= $this->layout('auth/base') ?>
+<?= $this->layout('layout/base') ?>
+
+<?php $this->start('title') ?>Authorization Point<?php $this->end(); ?>
 
 <?php $this->start('container') ?>
 <div class="jumbotron">
