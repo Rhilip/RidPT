@@ -46,14 +46,12 @@ function location_search_replace(new_params) {
 }
 
 jQuery(document).ready(function () {
-    // Cache
+    // Cache Field
     const cache_torrent_files = localforage.createInstance({name: 'torrent_files'});
     const cache_torrent_nfo = localforage.createInstance({name: 'torrent_nfo'});
 
-    // Drop all support of IE 6-11
-    if ($.zui.browser.ie) {
-        $.zui.browser.tip();
-    }
+    // Init Page
+    if ($.zui.browser.ie) $.zui.browser.tip();  // Drop all support of IE 6-11
 
     $('[data-toggle="tooltip"]').tooltip();  // Active tooltip
     $('[data-toggle="popover"]').popover();  // Active popover
@@ -95,9 +93,11 @@ jQuery(document).ready(function () {
     });
 
     // Form submit loading anime
-    $('form').on('submit',function() {$(this).addClass('load-indicator loading')});
+    $('form').on('submit', function () {
+        $(this).addClass('load-indicator loading')
+    });
 
-    // Clean form data in a modal
+    // Clean form data in a modal when it hidden
     $('.modal').on('hidden.zui.modal', function () {
         let that = $(this);
         if (that.find('form').length > 0) {
@@ -106,10 +106,11 @@ jQuery(document).ready(function () {
         }
     });
 
+    // Close modal when click save button
     $('.modal button[id$=_modal_save]').click(function () {
-        $('.modal button[id$=_modal_close]').click();
-        // By default , we don't need to clean the form data, Since the script in
-        // main.js already have trigger to clean the form data when modal hidden.
+        let that = $(this);
+        let close_btn = that.parents('.modal').find('button[id$=_modal_close]');
+        if (close_btn) close_btn.click();
     });
 
     // TODO Add Scroll to TOP fixbar
@@ -322,7 +323,7 @@ jQuery(document).ready(function () {
             size: 'lg',
             custom: function () {
                 let ret = '';
-                let parsed_sql_data = JSON.parse(_sql_data.replace(/\n/g,' ').replace(/ {2,}/g,' ') || '[]');
+                let parsed_sql_data = JSON.parse(_sql_data.replace(/\n/g, ' ').replace(/ {2,}/g, ' ') || '[]');
                 let parsed_redis_data = JSON.parse(_redis_data || '{}');
                 ret += '<b>SQL query list:</b><ul>';
                 $.each(parsed_sql_data, function (i, v) {
@@ -355,4 +356,53 @@ jQuery(document).ready(function () {
             tags_input.val(Array.from(exist_tag_set).join(' '));
         })
     }
+
+    $('.link-edit').click(function () {
+        let that = $(this);
+
+        $('#links_modal').modal();
+
+        // Get link data from <tr> and Fill link data to form
+        let tr = $('#links_manager_table tr[data-id=' + that.data('id') + ']');
+        let link_edit_form = $('#link_edit_form');
+        for (let datum in tr.data()) {
+            link_edit_form.find('[name="link_' + datum + '"]').val(tr.data(datum));
+        }
+    });
+
+    $('.link-remove').click(function () {
+        let that = $(this);
+        if (confirm('Confirm to remove this links ?')) {
+            let link_remove_form = $('#link_remove_form');
+            link_remove_form.find('input[name=link_id]').val(that.data('id'));
+            link_remove_form.submit();
+        }
+    });
+
+    $('.cat-edit').click(function () {
+        let that = $(this);
+
+        $('#cat_modal').modal();
+
+        // Get category data from <tr> and Fill data to form
+        let tr = $('#cat_manager_table tr[data-id=' + that.data('id') + ']');
+        let cat_edit_form = $('#cat_edit_form');
+        for (let datum in tr.data()) {
+            let input = cat_edit_form.find('[name="cat_' + datum + '"]');
+            if (datum === 'enabled') {
+                input.prop('checked', tr.data(datum) ? 'checked' : '');
+            } else {
+                input.val(tr.data(datum));
+            }
+        }
+    });
+
+    $('.cat-remove').click(function () {
+        let that = $(this);
+        if (confirm('Confirm to remove this Category ?')) {
+            let cat_remove_form = $('#cat_remove_form');
+            cat_remove_form.find('input[name=cat_id]').val(that.data('id'));
+            cat_remove_form.submit();
+        }
+    });
 });

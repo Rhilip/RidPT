@@ -8,8 +8,6 @@
  * @var League\Plates\Template\Template $this
  * @var array $links
  */
-
-$css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -147,8 +145,4 @@ $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
         </div>
     </div>
 </div>
-<?php $this->end(); ?>
-
-<?php $this->start('script'); ?>
-<script src="/static/js/links_manage.js?<?= $css_tag ?>"></script>
 <?php $this->end(); ?>
