@@ -25,7 +25,6 @@ use Rid\Helpers\StringHelper;
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <?php $this->insert('layout/head'); ?>
 
     <title><?= config('base.site_name') ?> :: Error Page -- Powered by <?= config('base.site_generator') ?></title>
 

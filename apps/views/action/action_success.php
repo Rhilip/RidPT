@@ -12,7 +12,7 @@
  * @var string $redirect
  */
 
-$redirect = $redirect ?? app()->request->fullUrl();
+$redirect = app()->session->get('redirect') ?? $redirect ?? app()->request->fullUrl();
 ?>
 
 <?= $this->layout('layout/base'); ?>
@@ -30,7 +30,7 @@ $redirect = $redirect ?? app()->request->fullUrl();
 </div>
 <?php $this->end(); ?>
 
-<?php $this->start('script'); ?>
+<?php $this->push('script'); ?>
 <script>
     setTimeout(function () {
         window.location = '<?=  $this->e($redirect) ?>';

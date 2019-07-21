@@ -123,4 +123,12 @@ class UserConfirmForm extends Validator
             return $this->flush_recover();
         }
     }
+
+    public function getConfirmMsg() {
+        if ($this->action == self::ACTION_REGISTER) {
+            return 'Your account is success Confirmed.'; // FIXME i18n
+        } elseif ($this->action == self::ACTION_RECOVER) {
+            return 'Your password has been reset and new password has been send to your email, Please find it and login.';
+        }
+    }
 }

@@ -49,6 +49,7 @@ trait UserTrait
     private $leechtime;
 
     private $invites;
+    private $temp_invites_details;
 
     protected $peer_status;
     protected $infoCacheKey;

@@ -24,7 +24,7 @@ class AuthController extends Controller
             $register_form->setData(app()->request->post());
             $success = $register_form->validate();
             if (!$success) {
-                return $this->render('auth/error', [
+                return $this->render('action/action_fail', [
                     'title' => 'Register Failed',
                     'msg' => $register_form->getError()
                 ]);
@@ -51,13 +51,16 @@ class AuthController extends Controller
         $confirm->setData(app()->request->get());
         $success = $confirm->validate();
         if (!$success) {
-            return $this->render('auth/error', [
+            return $this->render('action/action_fail', [
                 'title' => 'Confirm Failed',
                 'msg' => $confirm->getError()
             ]);
         } else {
             $confirm->flush();
-            return $this->render('auth/confirm_success', ['action' => $confirm->action]);
+            return $this->render('action/action_success', [
+                'notice' => $confirm->getConfirmMsg(),
+                'redirect' => '/auth/login'
+            ]);
         }
     }
 
@@ -68,7 +71,7 @@ class AuthController extends Controller
             $form->setData(app()->request->post());
             $success = $form->validate();
             if (!$success) {
-                return $this->render('auth/error', [
+                return $this->render('action/action_fail', [
                     'title' => 'Action Failed',
                     'msg' => $form->getError()
                 ]);
@@ -77,7 +80,7 @@ class AuthController extends Controller
                 if ($flush === true) {
                     return $this->render('auth/recover_next_step');
                 } else {
-                    return $this->render('auth/error', [
+                    return $this->render('action/action_fail', [
                         'title' => 'Confirm Failed',
                         'msg' => $flush
                     ]);
@@ -117,7 +120,10 @@ class AuthController extends Controller
 
                     return app()->response->redirect($return_to);
                 } else {
-                    return $this->render('auth/error', ['title' => 'Login Failed', 'msg' => $success]);
+                    return $this->render('action_fail', [
+                        'title' => 'Login Failed',
+                        'msg' => $success
+                    ]);
                 }
             }
         } else {
