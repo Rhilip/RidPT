@@ -71,7 +71,7 @@ class Conversion implements ExtensionInterface
         self::setDefault($var, ['escapeHtml' => true]);
         $string = array_shift($var);
 
-        $code = new Decoda($string, $var,'Post_cache:' . md5($string));
+        $code = new Decoda($string, $var,'Cache:post:' . md5($string));
 
         $code->defaults(); // TODO add support of tag [mediainfo] , [nfo]
 

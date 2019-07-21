@@ -304,6 +304,10 @@ class BaseRedisConnection extends Component
         }
     }
 
+    public function mutiDelete($pattern) {
+        return $this->del($this->keys($pattern));
+    }
+
     public function getCalledData()
     {
         return $this->_calledData;
