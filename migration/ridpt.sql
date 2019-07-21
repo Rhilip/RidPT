@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 19, 2019 at 11:29 PM
+-- Generation Time: Jul 21, 2019 at 09:48 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -151,6 +151,48 @@ CREATE TABLE IF NOT EXISTS `bookmarks` (
 --   `uid`
 --       `users` -> `id`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `categories`
+--
+
+DROP TABLE IF EXISTS `categories`;
+CREATE TABLE IF NOT EXISTS `categories` (
+  `id` mediumint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `parent_id` mediumint(5) NOT NULL DEFAULT '0',
+  `name` varchar(30) NOT NULL,
+  `enabled` tinyint(1) NOT NULL DEFAULT '1',
+  `image` varchar(255) NOT NULL DEFAULT '',
+  `class_name` varchar(255) NOT NULL DEFAULT '',
+  `level` smallint(6) NOT NULL DEFAULT '0',
+  `full_path` varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `full_path` (`full_path`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `categories`:
+--
+
+--
+-- Truncate table before insert `categories`
+--
+
+TRUNCATE TABLE `categories`;
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `parent_id`, `name`, `enabled`, `image`, `class_name`, `level`, `full_path`) VALUES
+(0, 0, 'root', 0, '', '', -1, ''),
+(1, 0, 'Movies', 1, '', '', 0, 'Movies'),
+(2, 0, 'TV', 1, '', '', 0, 'TV'),
+(3, 0, 'Documentary', 1, '', '', 0, 'Documentary'),
+(4, 0, 'Animation', 1, '', '', 0, 'Animation'),
+(5, 0, 'Sports', 1, '', '', 0, 'Sports'),
+(6, 0, 'Music', 1, '', '', 0, 'Music');
 
 -- --------------------------------------------------------
 
@@ -827,7 +869,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
 --
 -- RELATIONSHIPS FOR TABLE `torrents`:
 --   `category`
---       `torrents_categories` -> `id`
+--       `categories` -> `id`
 --   `owner_id`
 --       `users` -> `id`
 --   `quality_audio`
@@ -866,48 +908,6 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
 --
 -- RELATIONSHIPS FOR TABLE `torrents_buff`:
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `torrents_categories`
---
-
-DROP TABLE IF EXISTS `torrents_categories`;
-CREATE TABLE IF NOT EXISTS `torrents_categories` (
-  `id` mediumint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `parent_id` mediumint(5) NOT NULL DEFAULT '0',
-  `name` varchar(30) NOT NULL,
-  `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `sort_index` smallint(5) NOT NULL DEFAULT '0',
-  `image` varchar(255) NOT NULL DEFAULT '',
-  `class_name` varchar(255) NOT NULL DEFAULT '',
-  `full_path` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `full_path` (`full_path`),
-  KEY `IN_torrentcategories_enabled_sort_index_id` (`enabled`,`sort_index`,`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `torrents_categories`:
---
-
---
--- Truncate table before insert `torrents_categories`
---
-
-TRUNCATE TABLE `torrents_categories`;
---
--- Dumping data for table `torrents_categories`
---
-
-INSERT INTO `torrents_categories` (`id`, `parent_id`, `name`, `enabled`, `sort_index`, `image`, `class_name`, `full_path`) VALUES
-(1, 0, 'Movies', 1, 0, '', '', 'Movies'),
-(2, 0, 'TV', 1, 0, '', '', 'TV'),
-(3, 0, 'Documentary', 1, 0, '', '', 'Documentary'),
-(4, 0, 'Animation', 1, 0, '', '', 'Animation'),
-(5, 0, 'Sports', 1, 0, '', '', 'Sports'),
-(6, 0, 'Music', 1, 0, '', '', 'Music');
 
 -- --------------------------------------------------------
 
@@ -1097,7 +1097,7 @@ ALTER TABLE `snatched`
 -- Constraints for table `torrents`
 --
 ALTER TABLE `torrents`
-  ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `torrents_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_quality_audio` FOREIGN KEY (`quality_audio`) REFERENCES `quality_audio` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_quality_codec` FOREIGN KEY (`quality_codec`) REFERENCES `quality_codec` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

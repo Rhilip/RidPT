@@ -25,7 +25,7 @@ class Category
     {
         $this->categories = app()->redis->hGetAll($this->CacheKey);
         if (empty($this->categories)) {
-            $self = app()->pdo->createCommand("SELECT * FROM `torrents_categories`")->queryAll();
+            $self = app()->pdo->createCommand("SELECT * FROM `categories`")->queryAll();
             $this->categories = array_column($self, 'name', 'id');
             app()->redis->hMset($this->CacheKey, $this->categories);
             app()->redis->expire($this->CacheKey, 3600);

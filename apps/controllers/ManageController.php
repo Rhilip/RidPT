@@ -39,26 +39,9 @@ class ManageController extends Controller
             }
         }
 
-        $parent_id = app()->request->get('parent_id', 0);
-        $parent_category = [];
-        if ($parent_id !== 0) {
-            $parent_category = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE `id` = :id')->bindParams([
-                'id' => $parent_id
-            ])->queryOne();
-        }
+        $categories = app()->pdo->createCommand('SELECT * FROM `categories` ORDER BY `full_path`')->queryAll();
 
-        $categories = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE `parent_id` = :pid ORDER BY `sort_index`,`id`')->bindParams([
-            'pid' => $parent_id
-        ])->queryAll();
-
-        foreach ($categories as &$category) {
-            $child_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `torrents_categories` WHERE `parent_id` = :pid')->bindParams([
-                'pid' => $category['id']
-            ])->queryScalar();
-            $category['child_count'] = $child_count;
-        }
-
-        return $this->render('manage/categories', ['parent_id' => $parent_id, 'parent_category' => $parent_category, 'categories' => $categories]);
+        return $this->render('manage/categories', ['categories' => $categories]);
     }
 
     public function actionQualities()

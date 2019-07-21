@@ -67,7 +67,7 @@ class TorrentUploadForm extends Validator
     {
         $categories = app()->redis->get('site:enabled_torrent_category');
         if (false === $categories) {
-            $categories = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE `enabled` = 1 ORDER BY `parent_id`,`sort_index`,`id`')->queryAll();
+            $categories = app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
             app()->redis->set('site:enabled_torrent_category', $categories, 86400);
         }
         return $categories;
@@ -88,7 +88,7 @@ class TorrentUploadForm extends Validator
     {
         $tags = app()->redis->get('site:pinned_tags');
         if (false === $tags) {
-            $tags = app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1')->queryAll();
+            $tags = app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1 LIMIT 10;')->queryAll();
             app()->redis->set('site:pinned_tags', $tags, 86400);
         }
         return $tags;

@@ -17,7 +17,6 @@ class EditForm extends Validator
     public $cat_parent_id;
     public $cat_name;
     public $cat_enabled = 0;
-    public $cat_sort_index;
     public $cat_image;
     public $cat_class_name;
 
@@ -32,7 +31,6 @@ class EditForm extends Validator
             'cat_parent_id' => 'Required | Integer',
             'cat_name' => 'Required | AlphaNumHyphen',
             'cat_enabled' => 'Integer',
-            'cat_sort_index' => 'Integer',
             'cat_image' => [
                 ['Regex', ['pattern' => '/^[a-z0-9_.\/]*$/']]
             ],
@@ -52,24 +50,30 @@ class EditForm extends Validator
         $this->cat_new_data = [
             'parent_id' => (int)$this->cat_parent_id,
             'name' => $this->cat_name, 'enabled' => $this->cat_enabled,
-            'sort_index' => (int)$this->cat_sort_index,
             'image' => $this->cat_image, 'class_name' => $this->cat_class_name
         ];
 
         // Generate New Full Path Key
-        $parent_cat_fpath = app()->pdo->createCommand('SELECT `full_path` FROM `torrents_categories` WHERE `id` = :pid')->bindParams([
+        $parent_cat_fpath = app()->pdo->createCommand('SELECT `full_path` FROM `categories` WHERE `id` = :pid')->bindParams([
             'pid' => $this->cat_parent_id
         ])->queryScalar();
         if ($parent_cat_fpath === false) {
+            $this->buildCallbackFailMsg('Category:parent', 'The parent category can\'t found.');
+            return;
+        }
+
+        if ($this->cat_parent_id == 0) {
             $full_path = $this->cat_name;
         } else {
             $full_path = $parent_cat_fpath . ' - ' . $this->cat_name;
         }
+
         $this->cat_new_data['full_path'] = $full_path;
+        $this->cat_new_data['level'] = substr_count($full_path, ' - ');
         $flag_check_full_path = true;
 
         if ((int)$this->cat_id !== 0) {  // Check if old links should be update
-            $this->cat_old_data = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE id = :id')->bindParams([
+            $this->cat_old_data = app()->pdo->createCommand('SELECT * FROM `categories` WHERE id = :id')->bindParams([
                 'id' => $this->cat_id
             ])->queryOne();
             if ($this->cat_old_data === false) {
@@ -88,7 +92,7 @@ class EditForm extends Validator
         }
 
         if ($flag_check_full_path) {  // Check if full path key is duplicate or not.
-            $check_full_path = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `torrents_categories` WHERE `full_path` = :fpath')->bindParams([
+            $check_full_path = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `categories` WHERE `full_path` = :fpath')->bindParams([
                 'fpath' => $full_path
             ])->queryScalar();
             if ($check_full_path > 0) {
@@ -101,12 +105,19 @@ class EditForm extends Validator
     public function flush()
     {
         if ((int)$this->cat_id !== 0) {  // to edit exist cat
-            app()->pdo->update('torrents_categories', $this->cat_data_diff, [['id', '=', $this->cat_id]])->execute();
+            app()->pdo->update('categories', $this->cat_data_diff, [['id', '=', $this->cat_id]])->execute();
+            if ($this->cat_parent_id !== 0) {  // Disabled post to parent cat
+                app()->pdo->createCommand('UPDATE `categories` SET `enabled` = 0 WHERE `id` = :pid')->bindParams([
+                    'pid' => $this->cat_parent_id
+                ])->execute();
+            }
             // TODO Add site log
         } else {  // to new a cat
-            app()->pdo->insert('torrents_categories', $this->cat_new_data)->execute();
+            app()->pdo->insert('categories', $this->cat_new_data)->execute();
             // TODO Add site log
         }
+
         // TODO flush Redis Cache
+        app()->redis->del('site:enabled_torrent_category');
     }
 }

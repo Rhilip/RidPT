@@ -5,8 +5,6 @@
  * Date: 7/15/2019
  * Time: 10:40 PM
  * @var League\Plates\Template\Template $this
- * @var int $parent_id
- * @var array $parent_category
  * @var array $categories
  */
 
@@ -20,13 +18,7 @@ $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
 <?php $this->start('container') ?>
 <div class="row">
     <div class="col-md-12">
-        <h2>
-            <?php if ($parent_id == 0) : ?>
-                Manage Category
-            <?php else : ?>
-                Manage Sub Category of <kbd><?= $parent_category['name'] ?></kbd>
-            <?php endif; ?>
-        </h2>
+        <h2>Manage Category</h2>
     </div>
     <div class="col-md-12">
         <div class="pull-right">
@@ -35,37 +27,30 @@ $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
         <table class="table table-hover" id="cat_manager_table">
             <thead>
             <tr>
-                <td>Id</td>
-                <td>Sort Index</td>
-                <td>Name</td>
-                <td>Image</td>
-                <td>Class Name</td>
-                <td>Sub Category</td>
-                <td>Enabled</td>
-                <td>Action</td>
+                <th width="15px"></th>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Class Name</th>
+                <th>Action</th>
             </tr>
             </thead>
             <tbody>
             <?php if (count($categories) > 0): ?>
                 <?php foreach ($categories as $category): ?>
-                    <tr class="<?= $category['enabled'] ? '':'warning' ?>"
-                        data-id="<?= $category['id'] ?>"
+                    <tr data-id="<?= $category['id'] ?>"
                         data-parent_id="<?= $category['parent_id'] ?>"
                         data-enabled="<?= $category['enabled'] ?>"
-                        data-sort_index="<?= $category['sort_index'] ?>"
                         data-name="<?= $category['name'] ?>"
+                        data-full_name="<?= $category['full_path'] ?>"
                         data-image="<?= $category['image'] ?>"
                         data-class_name="<?= $category['class_name'] ?>"
                     >
+                        <td><?= $category['enabled'] ? '<i class="far fa-fw fa-check-square"></i>':'<i class="far fa-fw fa-square"></i>' ?></td>
                         <td><?= $category['id'] ?></td>
-                        <td><?= $category['sort_index'] ?></td>
-                        <td><?= $category['name'] ?></td>
+                        <td><?= str_repeat('&nbsp;', 4 * ($category['level'] + 1)) ?><b><?= $category['name'] ?></b></td>
                         <td><?= $category['image'] ?></td>
                         <td><?= $category['class_name'] ?></td>
-                        <td>
-                            <a href="<?= '?parent_id=' . $category['id'] ?>"><?= $category['child_count'] > 0 ? "${category['child_count']} SubCategories" : 'No SubCategory' ?></a>
-                        </td>
-                        <td><?= $category['enabled'] ? '<i class="far fa-fw fa-check-square"></i>':'<i class="far fa-fw fa-square"></i>' ?></td>
                         <td><a href="javascript:" class="cat-edit" data-id="<?= $category['id'] ?>">Edit</a> |
                             <a href="javascript:" class="cat-remove" data-id="<?= $category['id'] ?>">Remove</a>
                         </td>
@@ -99,7 +84,6 @@ $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
                 <div class="modal-body">
                     <label class="hidden"><input type="text" name="action" value="cat_edit"></label>
                     <label class="hidden"><input type="number" id="cat_id" name="cat_id" value="0"></label>
-                    <label class="hidden"><input type="number" id="cat_parent_id" name="cat_parent_id" value="<?= $this->e($parent_id) ?>"></label>
                     <div class="form-group">
                         <label for="cat_name" class="required">Name</label>
                         <input type="text" class="form-control" id="cat_name" name="cat_name" required>
@@ -112,9 +96,14 @@ $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="cat_sort_index">Sort Index</label>
-                        <input type="number" class="form-control" id="cat_sort_index" name="cat_sort_index" value="0">
-                        <div class="help-block">Ascendantly, i.e. '0' comes first.</div>
+                        <label for="cat_parent_id" class="required">Parent Category</label>
+                        <select id="cat_parent_id" name="cat_parent_id" class="form-control">
+                            <?php foreach ($categories as $category) : ?>
+                                <?php $level = substr_count($category['full_path'],' - '); ?>
+                                <option value="<?= $category['id'] ?>"><?= str_repeat('&nbsp;', 4 * ($category['level'] + 1)) .  $category['name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div class="help-block">Recommended up to two levels of category.</div>
                     </div>
                     <div class="form-group">
                         <label for="cat_image">Image</label>

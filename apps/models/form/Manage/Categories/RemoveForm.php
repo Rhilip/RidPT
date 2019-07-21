@@ -16,6 +16,7 @@ class RemoveForm extends Validator
     public $cat_id;
 
     private $category_data;
+    private $child_count;
 
     public static function inputRules()
     {
@@ -31,7 +32,7 @@ class RemoveForm extends Validator
 
     protected function getExistCategoryData()
     {
-        $this->category_data = app()->pdo->createCommand('SELECT * FROM `torrents_categories` WHERE id = :id')->bindParams([
+        $this->category_data = app()->pdo->createCommand('SELECT * FROM `categories` WHERE id = :id')->bindParams([
             'id' => $this->cat_id
         ])->queryScalar();
         if ($this->category_data === false) {
@@ -41,10 +42,10 @@ class RemoveForm extends Validator
 
     protected function checkChildNode()
     {
-        $child_chount = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `torrents_categories` WHERE `parent_id` = :pid')->bindParams([
+        $this->child_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
             'pid' => $this->cat_id
         ])->queryScalar();
-        if ($child_chount !== 0) {
+        if ($this->child_count !== 0) {
             $this->buildCallbackFailMsg('Categories;child', 'This category has sub category exist, Please clean subcategory first.');
         }
     }
@@ -57,9 +58,23 @@ class RemoveForm extends Validator
         ])->execute();
 
         // Delete it~
-        app()->pdo->createCommand('DELETE FROM `torrents_categories` WHERE id = :id')->bindParams([
+        app()->pdo->createCommand('DELETE FROM `categories` WHERE id = :id')->bindParams([
             'id' => $this->cat_id
         ])->execute();
+
+        // Enabled parent category if no siblings
+        $siblings_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
+            'pid' => $this->category_data['parent_id']
+        ])->queryScalar();
+
+        if ($siblings_count == 0) {
+            app()->pdo->createCommand('UPDATE `categories` SET `enabled` = 1 WHERE `id` = :id')->bindParams([
+                'id' => $this->category_data['parent_id']
+            ])->execute();
+        }
+
+
         // TODO flush Redis cache
+        app()->redis->del('site:enabled_torrent_category');
     }
 }
