@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 21, 2019 at 02:19 PM
+-- Generation Time: Jul 21, 2019 at 03:15 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -619,7 +619,9 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('authority.see_banned_torrent', '40'),
 ('authority.see_extend_debug_log', '90'),
 ('authority.see_pending_torrent', '40'),
-('authority.upload_anonymous', '5'),
+('authority.upload_flag_anonymous', '5'),
+('authority.upload_flag_hr', '40'),
+('authority.upload_nfo_file', '5'),
 ('base.enable_extend_debug', '1'),
 ('base.enable_invite_system', '1'),
 ('base.enable_register_system', '1'),
@@ -679,8 +681,17 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('route.admin_index', '60'),
 ('route.admin_service', '90'),
 ('security.max_login_attempts', '10'),
-('torrent.max_file_size', '3145728'),
-('torrent.max_nfo_size', '65535'),
+('torrent_upload.allow_new_custom_tags', '0'),
+('torrent_upload.enable_anonymous', '1'),
+('torrent_upload.enable_hr', '1'),
+('torrent_upload.enable_quality_audio', '1'),
+('torrent_upload.enable_quality_codec', '1'),
+('torrent_upload.enable_quality_medium', '1'),
+('torrent_upload.enable_quality_resolution', '1'),
+('torrent_upload.enable_subtitle', '1'),
+('torrent_upload.enable_tags', '1'),
+('torrent_upload.enable_teams', '1'),
+('torrent_upload.enable_upload_nfo', '1'),
 ('tracker.cheater_check', '1'),
 ('tracker.enable_announce', '1'),
 ('tracker.enable_maxdlsystem', '1'),
@@ -691,7 +702,9 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('tracker.min_interval', '60'),
 ('tracker.retry_interval', '120'),
 ('tracker.user_max_leech', '1'),
-('tracker.user_max_seed', '3');
+('tracker.user_max_seed', '3'),
+('upload.max_nfo_file_size', '65535'),
+('upload.max_torrent_file_size', '3145728');
 
 -- --------------------------------------------------------
 

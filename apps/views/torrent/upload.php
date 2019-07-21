@@ -31,7 +31,6 @@ use apps\libraries\Site;
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
                             <?php foreach (Site::ruleCategory() as $category) : ?>
-                                <?php if ($category['id'] == 0) { continue; } ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -59,6 +58,7 @@ use apps\libraries\Site;
                 <div class="help-block">You should obey our upload rules. **LINK**</div>
             </td> <!-- FIXME link url -->
         </tr>
+        <?php if (config('torrent_upload.enable_subtitle')): ?>
         <tr>
             <td class="nowrap"><label for="subtitle">Sub Title</label></td>
             <td><input id="subtitle" name="subtitle" class="form-control" type="text"
@@ -66,23 +66,25 @@ use apps\libraries\Site;
                 <div class="help-block">You should obey our upload rules. **LINK**</div>
             </td> <!-- FIXME link url -->
         </tr>
+        <?php endif; ?>
         <tr>
             <td class="nowrap"><label>Quality</label></td>
             <td>
                 <div class="row">
                     <?php foreach (Site::getQualityTableList() as $quality => $title): ?>
+                    <?php if (config('torrent_upload.enable_quality_' . $quality)) : ?>
                     <div class="col-md-3">
                         <div class="input-group">
                             <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
                             <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
                                 <option value="0">[Choose One]</option>
                                 <?php foreach (Site::ruleQuality($quality) as $q): ?>
-                                    <?php if ($q['id'] == 0) { continue; } ?>
                                     <option value="<?= $q['id']; ?>"><?= $q['name']; ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                     </div>
+                    <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             </td> <!-- FIXME link url -->
@@ -97,7 +99,6 @@ use apps\libraries\Site;
                             <select id="team" name="team" class="form-control">
                                 <option value="0" selected>[Choose One]</option>
                                 <?php foreach (Site::ruleCanUsedTeam() as $team) : ?>
-                                    <?php if ($team['id'] == 0){ continue; } ?>
                                     <option value="<?= $team['id'] ?>"><?= $team['name'] ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -106,6 +107,7 @@ use apps\libraries\Site;
                 </div>
             </td> <!-- FIXME link url -->
         </tr>
+        <?php if (config('torrent_upload.enable_upload_nfo') && app()->user->isPrivilege('upload_nfo_file')): ?>
         <tr>
             <td class="nowrap"><label for="nfo">NFO File</label></td>
             <td>
@@ -116,6 +118,7 @@ use apps\libraries\Site;
                     </div>
                 </div>
         </tr>
+        <?php endif ?>
         <tr>
             <td class="nowrap"><label for="descr" class="required">Description</label></td>
             <td>
@@ -123,6 +126,7 @@ use apps\libraries\Site;
                           cols="100" rows="10" required="required"></textarea>
             </td>
         </tr>
+        <?php if (config('torrent_upload.enable_tags')):?>
         <tr>
             <td class="nowrap"><label for="tags">Tags</label></td>
             <td><input id="tags" name="tags" class="form-control" type="text">
@@ -132,15 +136,16 @@ use apps\libraries\Site;
                         <a href="javascript:" class="add-tag label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
                     <?php endforeach; ?>
                 </div>
-            </td> <!-- FIXME link url -->
+            </td>
         </tr>
+        <?php endif; ?>
         <tr>
             <td class="nowrap"><label for="descr">Flags</label></td>
             <td>
                 <div class="row">
                     <div class="col-md-3">
                         <div class="switch<?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled' ?>">
-                            <input type="checkbox" id="uplver" name="uplver" value="1"><label for="uplver">Anonymous Upload</label>
+                            <input type="checkbox" id="anonymous" name="anonymous" value="1"><label for="anonymous">Anonymous Upload</label>
                         </div>
                     </div>
                     <div class="col-md-3">

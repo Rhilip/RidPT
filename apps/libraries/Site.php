@@ -63,18 +63,25 @@ class Site
         }, 86400);
     }
 
+    public static function ruleCanUsedCategory(): array
+    {
+        return array_filter(static::ruleCategory(), function ($cat) {
+            return $cat['enabled'] = 1;
+        });
+    }
+
     public static function ruleQuality($quality): array
     {
         if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
         return static::getStaticCacheValue('enabled_quality_' . $quality, function () use ($quality) {
-            return app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
+            return app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
         }, 86400);
     }
 
     public static function ruleTeam(): array
     {
         return static::getStaticCacheValue('enabled_teams', function () {
-            return app()->pdo->createCommand('SELECT * FROM `teams` WHERE `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
+            return app()->pdo->createCommand('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
         }, 86400);
     }
 
