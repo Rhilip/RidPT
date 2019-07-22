@@ -134,7 +134,6 @@ class TorrentUploadForm extends Validator
             ];
         }
 
-
         return $rules;
     }
 
@@ -146,7 +145,7 @@ class TorrentUploadForm extends Validator
     protected function isValidTorrent()
     {
         try {
-            $this->torrent_dict = Bencode::load($this->file->tmpName);
+            $this->torrent_dict = Bencode::load($this->getData('file')['tmpName']);
             $info = $this->checkTorrentDict($this->torrent_dict, 'info');
             if ($info) {
                 $this->checkTorrentDict($info, 'piece length', 'integer');  // Only Check without use
@@ -169,7 +168,7 @@ class TorrentUploadForm extends Validator
                     foreach ($f_list as $fn) {
                         $ll = $this->checkTorrentDict($fn, 'length', 'integer');
                         $path_key = isset($fn['path.utf-8']) ? 'path.utf-8' : 'path';
-                        $ff = $this->checkTorrentDict($fn, $path_key, 'list');
+                        $ff = $this->checkTorrentDict($fn, $path_key, 'array');  // 'list' or you can say 'indexed_array'
                         $this->torrent_size += $ll;
                         $ffa = [];
                         foreach ($ff as $ffe) {
@@ -178,6 +177,7 @@ class TorrentUploadForm extends Validator
                         }
                         if (!count($ffa)) throw new ParseErrorException('std_filename_errors');
                         $ffe = implode("/", $ffa);
+                        // TODO use regex to check this filename is valid or not
                         $this->torrent_list[] = ['filename' => $ffe, 'size' => $ll];
                     }
                     $this->torrent_type = 'multi';

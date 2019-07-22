@@ -48,6 +48,8 @@ trait UserTrait
     private $seedtime;
     private $leechtime;
 
+    private $invitees;
+    private $pending_invites;
     private $invites;
     private $temp_invites_details;
 

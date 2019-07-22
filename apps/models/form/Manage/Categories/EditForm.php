@@ -47,40 +47,42 @@ class EditForm extends Validator
 
     protected function checkCategoryData()
     {
+        $cat_parent_id = (int)$this->getData('cat_parent_id');
         $this->cat_new_data = [
-            'parent_id' => (int)$this->cat_parent_id,
-            'name' => $this->cat_name, 'enabled' => $this->cat_enabled,
-            'image' => $this->cat_image, 'class_name' => $this->cat_class_name
+            'parent_id' => $cat_parent_id,
+            'name' => $this->getData('cat_name'), 'enabled' => $this->getData('cat_enabled'),
+            'image' => $this->getData('cat_image'), 'class_name' => $this->getData('cat_class_name')
         ];
 
         // Generate New Full Path Key
         $parent_cat_fpath = app()->pdo->createCommand('SELECT `full_path` FROM `categories` WHERE `id` = :pid')->bindParams([
-            'pid' => $this->cat_parent_id
+            'pid' => $cat_parent_id
         ])->queryScalar();
         if ($parent_cat_fpath === false) {
             $this->buildCallbackFailMsg('Category:parent', 'The parent category can\'t found.');
             return;
         }
 
-        if ($this->cat_parent_id == 0) {
-            $full_path = $this->cat_name;
+        if ($cat_parent_id == 0) {
+            $full_path = $this->getData('cat_name');
         } else {
-            $full_path = $parent_cat_fpath . ' - ' . $this->cat_name;
+            $full_path = $parent_cat_fpath . ' - ' . $this->getData('cat_name');
         }
 
         $this->cat_new_data['full_path'] = $full_path;
         $this->cat_new_data['level'] = substr_count($full_path, ' - ');
         $flag_check_full_path = true;
 
-        if ((int)$this->cat_id !== 0) {  // Check if old links should be update
+        $cat_id = (int)$this->getData('cat_id');
+        if ($cat_id !== 0) {  // Check if old links should be update
             $this->cat_old_data = app()->pdo->createCommand('SELECT * FROM `categories` WHERE id = :id')->bindParams([
-                'id' => $this->cat_id
+                'id' => $cat_id
             ])->queryOne();
             if ($this->cat_old_data === false) {
                 $this->buildCallbackFailMsg('Category:exist', 'the link data not found in our database');
                 return;
             }
-            $this->cat_new_data['id'] = (int)$this->cat_id;
+            $this->cat_new_data['id'] = $cat_id;
 
             // Diff old and new data.
             $this->cat_data_diff = array_diff_assoc($this->cat_new_data, $this->cat_old_data);

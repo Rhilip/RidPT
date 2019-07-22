@@ -21,11 +21,6 @@ class NewEditForm extends Validator
     public $notify = 0;
     public $force_read = 0;
 
-    public function buildDefaultValue()
-    {
-        $this->user_id = app()->user->getId();
-    }
-
     public static function inputRules()
     {
         return [
@@ -42,14 +37,15 @@ class NewEditForm extends Validator
 
     public function flush()
     {
+        $userid = app()->user->getId();
         if ($this->id == 0) { // This is new news
             app()->pdo->createCommand('INSERT INTO news (user_id,create_at,title,body,notify,force_read) VALUES (:uid,CURRENT_TIMESTAMP,:title,:body,:notify,:fread);')->bindParams([
-                'uid' => $this->user_id, 'title' => $this->title, 'body' => $this->body,
+                'uid' => $userid, 'title' => $this->title, 'body' => $this->body,
                 'notify' => $this->notify, 'fread' => $this->force_read
             ])->execute();
         } else {  // This is news edit
             app()->pdo->createCommand('UPDATE news SET user_id = :uid, title = :title, body = :body, notify = :notify, force_read = :fread WHERE id=:id')->bindParams([
-                'id' => $this->id, 'uid' => $this->user_id,
+                'id' => $this->id, 'uid' => $userid,
                 'title' => $this->title, 'body' => $this->body,
                 'notify' => $this->notify, 'fread' => $this->force_read
             ])->execute();

@@ -27,11 +27,12 @@ class TorrentsForm extends Validator
     }
 
     protected function isExistTorrent() {
+        $tid = $this->getData('tid');
         $torrent_exist = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `torrents` WHERE `id` = :tid')->bindParams([
-            'tid' => $this->tid
+            'tid' => $tid
         ])->queryScalar();
         if ($torrent_exist == 0) {
-            $this->buildCallbackFailMsg('Torrent', 'The torrent id ('. $this->tid. ') is not exist in our database');
+            $this->buildCallbackFailMsg('Torrent', 'The torrent id ('. $tid. ') is not exist in our database');
         }
     }
 

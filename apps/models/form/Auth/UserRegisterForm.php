@@ -21,22 +21,19 @@ class UserRegisterForm extends Validator
 {
     use CaptchaTrait;
 
-    public $id;
-
+    public $type = 'open';
     public $username;
     public $password;
     public $password_again;
     public $email;
-    public $accept_tos = 0;
-
-    public $type = 'open';
+    public $verify_tos = 0;
+    public $verify_age = 0;
 
     public $invite_by = 0;
     public $invite_hash = "";
-    public $confirm_way;
 
-    public $status;
-
+    private $id;
+    private $status;
     private $passkey;
     private $class;
     private $uploadpos;
@@ -47,10 +44,57 @@ class UserRegisterForm extends Validator
     private $leechtime;
     private $bonus;
     private $invites;
+    private $confirm_way;
 
     protected $_action = 'register';
 
-    public function buildDefaultValue()
+    public static function defaultData()
+    {
+        return [
+            'type' => 'open',
+            'verify_tos' => 0,
+            'verify_age' => 0,
+            'invite_by' => 0,
+            'invite_hash' => '',
+        ];
+    }
+
+    public static function inputRules()
+    {
+        return [
+            'type' => [
+                ['required'],
+                ['InList', ['list' => ['open', 'invite', 'green']], 'The Register Type is not allowed']
+            ],
+            'username' => [
+                ['required'],
+                ['MaxLength', ['max' => 12], 'User name is too log, Max length {max}']
+            ],
+            'password' => [  // TODO The password cannot match your username. ( make change to validator library
+                ['required'],
+                ['length', '6,40'],
+            ],
+            'password_again' => [
+                ['required'],
+                ['Match', ['item' => 'password']]
+            ],
+            'email' => 'required | email',
+            'verify_tos' => 'required | Equal(value=1)',
+            'verify_age' => 'required | Equal(value=1)',
+        ];
+    }
+
+    public static function callbackRules()
+    {
+        return [
+            'validateCaptcha',
+            'isRegisterSystemOpen', 'isMaxUserReached', 'isMaxRegisterIpReached',
+            'isValidUsername', 'isValidEmail',
+            'checkRegisterType'
+        ];
+    }
+
+    public function buildDefaultPropAfterValid()
     {
         $this->status = config('register.user_default_status') ?? User::STATUS_PENDING;
         $this->class = config('register.user_default_class') ?? User::ROLE_USER;
@@ -65,40 +109,19 @@ class UserRegisterForm extends Validator
         $this->invites = config('register.user_default_invites') ?? 0;
     }
 
-    public static function inputRules()
+    public function getId(): int
     {
-        return [
-            'type' => [
-                ['required'],
-                ['InList', ['list' => ['open', 'invite', 'green']], 'The Register Type is not allowed']
-            ],
-            'username' => [
-                ['required'],
-                ['MaxLength', ['max' => 12], 'User name is too log, Max length {max}']
-            ],
-            'password' => [
-                ['required'],
-                ['length', '6,40'],
-                // TODO The password cannot match your username.
-            ],
-            'password_again' => [
-                ['required'],
-                ['Match', ['item' => 'password']]
-            ],
-            'email' => 'required | email',
-            'verify_tos' => 'required | Equal(value=yes)',
-            'verify_age' => 'required | Equal(value=yes)',
-        ];
+        return $this->id;
     }
 
-    public static function callbackRules()
+    public function getStatus(): string
     {
-        return [
-            'validateCaptcha',
-            'isRegisterSystemOpen', 'isMaxUserReached', 'isMaxRegisterIpReached',
-            'isValidUsername', 'isValidEmail',
-            'checkRegisterType'
-        ];
+        return $this->status;
+    }
+
+    public function getConfirmWay(): string
+    {
+        return $this->confirm_way;
     }
 
     protected function isRegisterSystemOpen()
@@ -108,8 +131,8 @@ class UserRegisterForm extends Validator
             return;
         }
 
-        if (config('register.by_' . $this->type) != true) {
-            $this->buildCallbackFailMsg('RegisterSystemOpen',"The register by {$this->type} ways isn't open in this site.");
+        if (config('register.by_' . $this->getData('type')) != true) {
+            $this->buildCallbackFailMsg('RegisterSystemOpen',"The register by {$this->getData('type')} ways isn't open in this site.");
             return;
         }
     }
@@ -139,7 +162,8 @@ class UserRegisterForm extends Validator
 
     protected function isValidUsername()
     {
-        $username = $this->username;
+        $username = $this->getData('username');
+
         // The following characters are allowed in user names
         if (strspn(strtolower($username), 'abcdefghijklmnopqrstuvwxyz0123456789_') != strlen($username)) {
             $this->buildCallbackFailMsg('ValidUsername', 'Invalid characters in user names.');
@@ -160,7 +184,7 @@ class UserRegisterForm extends Validator
 
     protected function isValidEmail()
     {
-        $email = $this->email;
+        $email = $this->getData('email');
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
         if (config('register.check_email_blacklist') &&
             config('register.email_black_list')) {
@@ -170,6 +194,7 @@ class UserRegisterForm extends Validator
                 return;
             }
         }
+
         if (config('register.check_email_whitelist') &&
             config('register.email_white_list')) {
             $email_white_list = explode(",", config('register.email_white_list'));
@@ -179,7 +204,7 @@ class UserRegisterForm extends Validator
             }
         }
 
-        // TODO Check if this email is not in blacklist
+        // TODO Check $email is not in blacklist
 
         $email_check = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `email` = :email")->bindParams([
             "email" => $email
@@ -192,30 +217,28 @@ class UserRegisterForm extends Validator
 
     protected function checkRegisterType()
     {
-        if ($this->type == 'invite') {
-            if (strlen($this->invite_hash) != 32) {
-                $this->buildCallbackFailMsg('Invite', "This invite hash : `$this->invite_hash` is not valid");
+        $type = $this->getData('type');
+        if ($type == 'invite') {
+            $invite_hash = $this->getData('invite_hash');
+            if (strlen($invite_hash) != 32) {
+                $this->buildCallbackFailMsg('Invite', "This invite hash : `$invite_hash` is not valid");
                 return;
             } else {
-                $inviteInfo = app()->pdo->createCommand("SELECT * FROM `invite` WHERE `hash`=:invite_hash")->bindParams([
-                    "invite_hash" => $this->invite_hash
+                $inviteInfo = app()->pdo->createCommand('SELECT * FROM `invite` WHERE `hash`=:invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
+                    'invite_hash' => $invite_hash
                 ])->queryOne();
-                if (!$inviteInfo) {
-                    $this->buildCallbackFailMsg('Invite', "This invite hash : `$this->invite_hash` is not exist");
+                if (false === $inviteInfo) {
+                    $this->buildCallbackFailMsg('Invite', "This invite hash : `$invite_hash` is not exist or may already used or expired.");
                     return;
-                } else {
-                    if ($this->username != $inviteInfo['username']) {
-                        $this->buildCallbackFailMsg('Invite', "This invite username is not match.");
-                        return;
-                    }
+                }
 
-                    if ($inviteInfo["expire_at"] < time()) {
-                        $this->buildCallbackFailMsg('Invite', "This invite hash is expired at " . $inviteInfo["expire_at"] . ".");
-                        return;
-                    }
+                // TODO config key of enable username check
+                if ($this->getData('username') != $inviteInfo['username']) {
+                    $this->buildCallbackFailMsg('Invite', "This invite username is not match.");
+                    return;
                 }
             }
-        } elseif ($this->type == 'green') {
+        } elseif ($type == 'green') {
             /**
              * Function that you used to valid that user can register by green ways
              * By default , It will only throw a NotImplementViolation

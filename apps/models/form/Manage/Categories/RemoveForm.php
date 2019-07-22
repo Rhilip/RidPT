@@ -33,7 +33,7 @@ class RemoveForm extends Validator
     protected function getExistCategoryData()
     {
         $this->category_data = app()->pdo->createCommand('SELECT * FROM `categories` WHERE id = :id')->bindParams([
-            'id' => $this->cat_id
+            'id' => $this->getData('cat_id')
         ])->queryScalar();
         if ($this->category_data === false) {
             $this->buildCallbackFailMsg('Categories:exist', 'This category isn\'t exist in our site.');
@@ -43,7 +43,7 @@ class RemoveForm extends Validator
     protected function checkChildNode()
     {
         $this->child_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
-            'pid' => $this->cat_id
+            'pid' => $this->getData('cat_id')
         ])->queryScalar();
         if ($this->child_count !== 0) {
             $this->buildCallbackFailMsg('Categories;child', 'This category has sub category exist, Please clean subcategory first.');

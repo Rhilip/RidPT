@@ -13,9 +13,11 @@ use Rid\Helpers\StringHelper;
 use Rid\Http\View;
 
 use apps\models\form\Auth\UserRegisterForm;
+use Rid\Validators\CaptchaTrait;
 
 class UserInviteForm extends UserRegisterForm
 {
+    use CaptchaTrait;
 
     public $invite_type;
     public $temp_id;
@@ -51,6 +53,7 @@ class UserInviteForm extends UserRegisterForm
     public static function callbackRules()
     {
         return [
+            'validateCaptcha',
             'isInviteSystemOpen', 'isRegisterSystemOpen', 'isMaxUserReached',
             'isValidUsername', 'isValidEmail',
             'canInvite', 'checkInviteInterval'
@@ -77,9 +80,9 @@ class UserInviteForm extends UserRegisterForm
         }
 
         // If it is temporary invite
-        if ($this->invite_type == self::INVITE_TYPE_TEMPORARILY) {
+        if ($this->getData('invite_type') == self::INVITE_TYPE_TEMPORARILY) {
             $record = app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE id = :id AND user_id = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW()')->bindParams([
-                'id' => $this->temp_id, 'uid' => app()->user->getId()
+                'id' => $this->getData('temp_id'), 'uid' => app()->user->getId()
             ])->queryOne();
             if (false === $record) {
                 $this->buildCallbackFailMsg('Temporary Invitation', 'Temporary Invitation is not exist, it may not belong to you or expired.');
@@ -148,13 +151,13 @@ class UserInviteForm extends UserRegisterForm
             app()->pdo->rollback();
         }
 
-        if ($invite_status === true) {
+        if ($invite_status === true) { // TODO use email queue
             $mail_body = (new View(false))->render('email/user_invite', [
                 'username' => $this->username,
                 'invite_link' => $this->invite_link,
             ]);
             $mail_sender = \apps\libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
-            $mail_sender->send([$this->email], 'Invite To RidPT', $mail_body);
+            $mail_sender->send([$this->email], 'Invite To ' . config('base.site_name'), $mail_body);
         }
         return $invite_status;
     }

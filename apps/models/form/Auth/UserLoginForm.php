@@ -74,26 +74,26 @@ class UserLoginForm extends Validator
     protected function loadUserFromPdo()
     {
         $this->self = app()->pdo->createCommand("SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
-            "uname" => $this->username, "email" => $this->username,
+            "uname" => $this->getData('username'), "email" => $this->getData('username'),
         ])->queryOne();
 
-        if (!$this->self) {  // User is not exist
+        if (false === $this->self) {  // User is not exist
             /** Notice: We shouldn't tell `This User is not exist in this site.` for user information security. */
             $this->buildCallbackFailMsg('User', 'Invalid username/password');
             return;
         }
 
         // User's password is not correct
-        if (!password_verify($this->password, $this->self["password"])) {
+        if (!password_verify($this->getData('password'), $this->self['password'])) {
             $this->buildCallbackFailMsg('User', 'Invalid username/password');
             return;
         }
 
         // User enable 2FA but it's code is wrong
-        if ($this->self["opt"]) {
+        if ($this->self['opt']) {
             try {
-                $tfa = new TwoFactorAuth(config("base.site_name"));
-                if ($tfa->verifyCode($this->self["opt"], $this->opt) == false) {
+                $tfa = new TwoFactorAuth(config('base.site_name'));
+                if ($tfa->verifyCode($this->self['opt'], $this->getData('opt')) == false) {
                     $this->buildCallbackFailMsg('2FA', '2FA Validation failed. Check your device time.');
                     return;
                 }
@@ -104,7 +104,7 @@ class UserLoginForm extends Validator
         }
 
         // User 's status is banned or pending~
-        if (in_array($this->self["status"], [UserInterface::STATUS_BANNED, UserInterface::STATUS_PENDING])) {
+        if (in_array($this->self['status'], [UserInterface::STATUS_BANNED, UserInterface::STATUS_PENDING])) {
             $this->buildCallbackFailMsg('Account', 'User account is not confirmed.');
             return;
         }

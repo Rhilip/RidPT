@@ -46,7 +46,7 @@ class ApplyForm extends Validator
     protected function checkExistLinksByUrl()
     {
         $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `links` WHERE url = :url')->bindParams([
-            'url' => $this->link_url
+            'url' => $this->getData('link_url')
         ])->queryScalar();
         if ($count > 0) {
             $this->buildCallbackFailMsg('Link:exist', 'This link is exist in our site , Please don\'t report it again and again');

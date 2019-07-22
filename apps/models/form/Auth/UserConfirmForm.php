@@ -23,7 +23,6 @@ class UserConfirmForm extends Validator
     const ACTION_REGISTER = 'register';
     const ACTION_RECOVER = 'recover';
 
-
     protected $id;
     private $uid;
     private $email;
@@ -55,7 +54,7 @@ class UserConfirmForm extends Validator
             'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm` 
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
-            'secret' => $this->secret, 'action' => $this->action
+            'secret' => $this->getData('secret'), 'action' => $this->getData('action')
         ])->queryOne();
 
         if ($record == false) {  // It means this confirm key is not exist

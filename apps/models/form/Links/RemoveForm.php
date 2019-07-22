@@ -30,7 +30,7 @@ class RemoveForm extends Validator
     protected function checkExistLinksById()
     {
         $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `links` WHERE id = :id')->bindParams([
-            'id' => $this->link_id
+            'id' => $this->getData('link_id')
         ])->queryScalar();
         if ($count == 0) {
             $this->buildCallbackFailMsg('Link:exist', 'This link is exist in our site , Please don\'t report it again and again');

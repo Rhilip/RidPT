@@ -31,11 +31,11 @@ class AuthController extends Controller
             } else {
                 $register_form->flush();  // Save this user in our database and do clean work~
 
-                if ($register_form->status == User::STATUS_CONFIRMED) {
+                if ($register_form->getStatus() == User::STATUS_CONFIRMED) {
                     return app()->response->redirect('/index');
                 } else {
                     return $this->render('auth/register_pending', [
-                        'confirm_way' => $register_form->confirm_way,
+                        'confirm_way' => $register_form->getConfirmWay(),
                         'email' => $register_form->email
                     ]);
                 }

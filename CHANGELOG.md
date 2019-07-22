@@ -10,6 +10,7 @@
 ### Feat
 - **Category:** Add Categories Support when upload torrent
 - **Category:** Add Categories Manage Pane
+- **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Add `retry in` field when failed
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 

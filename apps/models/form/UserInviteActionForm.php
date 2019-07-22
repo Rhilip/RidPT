@@ -29,9 +29,11 @@ class UserInviteActionForm extends Validator
     const ACTION_CONFIRM = 'confirm';
     const ACTION_RECYCLE = 'recycle';
 
-    public function buildDefaultValue()
+    public static function defaultData()
     {
-        if (is_null($this->uid)) $this->uid = app()->user->getId();
+        return [
+            'uid' => app()->user->getId()
+        ];
     }
 
     public static function inputRules()
@@ -46,7 +48,6 @@ class UserInviteActionForm extends Validator
                 ['MaxLength', ['max' => 12], 'User name is too log, Max length {max}']
             ],
             'email' => 'required | email',
-
             'temp_id' => 'Integer',
         ];
     }
@@ -55,17 +56,18 @@ class UserInviteActionForm extends Validator
     {
         return [
             'checkActionPrivilege',
-            'checkConfirmInfo','checkRecycleInfo'
+            'checkConfirmInfo', 'checkRecycleInfo'
         ];
     }
 
     protected function checkActionPrivilege() {
-        if ($this->action == self::ACTION_CONFIRM) {
+        $action = $this->getData('action');
+        if ($action == self::ACTION_CONFIRM) {
             if (!app()->user->isPrivilege('invite_manual_confirm')) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to confirm pending user.');
             }
-        } elseif ($this->action == self::ACTION_RECYCLE) {
-            $check_recycle_privilege_name = ($this->uid == app()->user->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
+        } elseif ($action == self::ACTION_RECYCLE) {
+            $check_recycle_privilege_name = ($this->getData('uid') == app()->user->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
             if (!app()->user->isPrivilege($check_recycle_privilege_name)) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to recycle user pending invites.');
             }
@@ -73,9 +75,9 @@ class UserInviteActionForm extends Validator
     }
 
     protected function checkConfirmInfo() {
-        if ($this->action == self::ACTION_CONFIRM) {
+        if ($this->getData('action') == self::ACTION_CONFIRM) {
             $this->confirm_info = app()->pdo->createCommand('SELECT `status` FROM users WHERE id= :invitee_id')->bindParams([
-                'invitee_id' => $this->invitee_id
+                'invitee_id' => $this->getData('invitee_id')
             ])->queryScalar();
             if ($this->confirm_info === false || $this->confirm_info !== UserInterface::STATUS_PENDING) {
                 $this->buildCallbackFailMsg('user:confirm','The user to confirm is not exist or already confirmed');
@@ -84,10 +86,10 @@ class UserInviteActionForm extends Validator
     }
 
     protected function checkRecycleInfo() {
-        if ($this->action == self::ACTION_RECYCLE) {
+        if ($this->getData('action') == self::ACTION_RECYCLE) {
             // Get unused invite info
             $this->invite_info = app()->pdo->createCommand('SELECT * FROM `invite` WHERE `id` = :invite_id AND `inviter_id` = :inviter_id AND `used` = 0')->bindParams([
-                'invite_id' => $this->invite_id, 'inviter_id' => $this->uid
+                'invite_id' => $this->getData('invite_id'), 'inviter_id' => $this->getData('uid')
             ])->queryOne();
 
             if (!$this->invite_info) {

@@ -8,16 +8,24 @@
 
 namespace Rid\Validators;
 
+/**
+ * When use this Trait, Add input which name is `captcha` in your form,
+ * which you can simply call it by `<?= $this->insert('layout/captcha') ?>` in template
+ * Add add callback function `validateCaptcha` in callbackRules()
+ *
+ * Trait CaptchaTrait
+ * @package Rid\Validators
+ */
 Trait CaptchaTrait
 {
     public $captcha;
 
     protected function validateCaptcha()
     {
+        $captchaInput = $this->getData('captcha');
         $captchaText = app()->session->get('captchaText');
-        if (strcasecmp($this->captcha, $captchaText) != 0) {
-            $this->_errors['CAPTCHA'] = 'CAPTCHA verification failed.';
-            $this->_success = false;
+        if (strcasecmp($captchaInput, $captchaText) != 0) {
+            $this->buildCallbackFailMsg('CAPTCHA', 'CAPTCHA verification failed.');
             return;
         }
     }

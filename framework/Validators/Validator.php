@@ -12,6 +12,8 @@ use Rid\Http\UploadFile;
  * @package Rid\Validators
  *
  *
+ * Any Properties from user post data MUST be public and use function getData() in CallbackRule function
+ *                other should be private or protected
  * Any CallbackRule function should be protected
  * Any Flush function should be private
  */
@@ -19,7 +21,8 @@ class Validator extends BaseObject
 {
 
     /** @var array Input data */
-    protected $_data;
+    protected $_data = [];
+    protected $_file_data_name = [];
 
     /** @var \Sirius\Validation\Validator */
     protected $_validator;
@@ -30,9 +33,8 @@ class Validator extends BaseObject
     /** @var boolean */
     protected $_success;
 
-    public function __construct(array $config = [])
+    public function onConstruct()
     {
-        parent::__construct($config);
         $this->_validator = new \Sirius\Validation\Validator;
     }
 
@@ -46,6 +48,10 @@ class Validator extends BaseObject
         return [];
     }
 
+    public static function defaultData()
+    {
+        return [];
+    }
 
     private function validateCallbackRules()
     {
@@ -55,46 +61,97 @@ class Validator extends BaseObject
         }
     }
 
-    protected function buildCallbackFailMsg($field, $msg)
+    final protected function buildCallbackFailMsg($field, $msg)
     {
         $this->_success = false;
         $this->_errors[$field] = $msg;
     }
 
-    /** Storage Data in $_data and assign all as object's attribute.
+    /** Storage Data in $_data for valid
      * @param $config
      */
-    public function setData($config)
-    {
-        $this->_data = $config;
-        foreach ($config as $name => $value) {
-            $this->$name = $value;
-        }
-        $this->buildDefaultValue();
-    }
-
-    public function setFileData($config)
+    final public function setData($config)
     {
         $this->_data += $config;
-        foreach ($config as $name => $value) {
-            $this->$name = UploadFile::newInstanceByName($name);
-        }
     }
 
-    public function buildDefaultValue()
+    final public function setFileData($config)
     {
+        $this->setData($config);
+        $this->_file_data_name += array_keys($config);
+    }
 
+    /**
+     * @param $key
+     * @return mixed|UploadFile
+     */
+    final public function getData($key)
+    {
+        if (in_array($key, $this->_file_data_name))
+            return new UploadFile($this->_data[$key]);
+
+        return $this->_data[$key];
+    }
+
+    /**
+     * rewrite data from user for valid by change $this->_data
+     */
+    protected function buildDefaultDataForValid()
+    {
+        \Rid::setDefault($this->_data, static::defaultData());
+        if (env('APP_DEBUG')) var_dump($this->_data);
+    }
+
+    protected function buildDefaultPropBeforeValid()
+    {
+    }
+
+    protected function buildDefaultPropAfterValid()
+    {
+    }
+
+    final protected function releaseDataToProperties()
+    {
+        $this->buildDefaultPropBeforeValid();
+
+        try {
+            // Get public properties by reflection
+            $reflect = new \ReflectionClass($this);
+            $public_props = array_keys($reflect->getProperties(\ReflectionProperty::IS_PUBLIC));
+            $no_change_props = array_keys($reflect->getProperties(\ReflectionProperty::IS_PRIVATE |
+                \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_STATIC));
+
+            foreach ($this->_data as $name => $value) {
+                if (in_array($name, $public_props)) {
+                    if (in_array($name, $this->_file_data_name)) {
+                        $this->$name = new UploadFile($value);
+                    } else {
+                        $this->$name = $value;
+                    }
+                } elseif (in_array($name, $no_change_props)) {
+                    $this->buildCallbackFailMsg('harking', 'User post may hack.');
+                    return;
+                }
+            }
+        } catch (\ReflectionException $e) {
+            $this->buildCallbackFailMsg('internal', 'Release user upload data error when reflection.');
+            return;
+        }
+
+        $this->buildDefaultPropAfterValid();
     }
 
     public function validate()
     {
+        $this->buildDefaultDataForValid();
+
+        // validate rules in static::inputRules()
         $this->_validator->add(static::inputRules());
         $this->_success = $this->_validator->validate($this->_data);
         $this->_errors = $this->_validator->getMessages();
 
-        if ($this->_success) {
-            $this->validateCallbackRules();
-        }
+        if ($this->_success) $this->validateCallbackRules(); // Valid callback rules
+        if ($this->_success) $this->releaseDataToProperties(); // release validate data to class properties which is type if public when valid success
 
         return $this->_success;
     }
@@ -125,6 +182,6 @@ class Validator extends BaseObject
 
     public function flush()
     {
-
+        throw new \RuntimeException('No flush function exist');
     }
 }

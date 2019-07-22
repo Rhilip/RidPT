@@ -53,4 +53,9 @@ class ManageController extends Controller
     {
         // TODO
     }
+
+    public function actionTeams()
+    {
+        // TODO
+    }
 }
