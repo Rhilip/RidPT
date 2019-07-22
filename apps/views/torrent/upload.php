@@ -144,12 +144,12 @@ use apps\libraries\Site;
             <td>
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="switch<?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled' ?>">
+                        <div class="switch<?= app()->user->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
                             <input type="checkbox" id="anonymous" name="anonymous" value="1"><label for="anonymous">Anonymous Upload</label>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="switch<?= app()->user->getClass(true) > config('authority.upload_anonymous') ? '' : ' disabled'  // FIXME Config key ?>">
+                        <div class="switch<?= app()->user->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key ?>">
                             <input type="checkbox" id="hr" name="hr" value="1"><label for="hr">H&R</label>
                         </div>
                     </div>
