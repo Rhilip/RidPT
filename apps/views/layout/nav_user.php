@@ -7,6 +7,7 @@
  */
 ?>
 
+<!-- TODO fix nav miss in sm -->
 <nav id="nav" class="navbar navbar-default navbar-static-top navbar-custom" role="navigation">
     <div class="container">
         <div class="collapse navbar-collapse navbar-collapse-custom">
@@ -44,44 +45,47 @@
         <?php endif; ?>
         <span data-item="favour"><!--suppress HtmlUnknownTarget -->[<a href="/torrents/favour">Favour</a>]</span>
         <span data-item="invite" data-invite="<?= app()->user->getInvites() ?>" data-temp-invite="<?= app()->user->getTempInvitesSum() ?>">
-                <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span>
-                <?= app()->user->getInvites() ?>
+            <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span> <?= app()->user->getInvites() ?>
             <?php if (app()->user->getTempInvitesSum() > 0): ?>
                 <span data-toggle="tooltip" data-placement="bottom" title="Temporarily Invites" class="text-primary">(+<?= app()->user->getTempInvitesSum() ?>)</span>
             <?php endif; ?>
-            </span>
+        </span>
         <span data-item="bonus" data-bonus="">
-                <span class="color-bonus">Bonus: </span> <a href="#">2345234</a> <!-- TODO  -->
-            </span>
+            <span class="color-bonus">Bonus: </span> <a href="#">2345234</a> <!-- TODO  -->
+        </span>
         <span data-item="bet">[<a href="#"><span class="color-bet">Bet(22)</span></a>]</span> <!-- TODO  -->
         <span data-item="blackjack">[<a href="#"><span class="color-blackjack">Blackjack</span></a>]</span> <!-- TODO  -->
         <div class="pull-right">
-                <span data-item="chang_lang">
-                    <a href="#"><span class="flag flag-chn"></span></a>&nbsp;
-                    <a href="#"><span class="flag flag-hkg"></span></a>&nbsp;
-                    <a href="#"><span class="flag flag-gbr"></span></a>&nbsp;
-                </span> <!-- TODO -->
+            <span data-item="chang_lang">
+                <a href="#"><span class="flag flag-chn"></span></a>&nbsp;
+                <a href="#"><span class="flag flag-hkg"></span></a>&nbsp;
+                <a href="#"><span class="flag flag-gbr"></span></a>&nbsp;
+            </span> <!-- TODO -->
             Now: <?= date('H:i (P)') ?>
         </div>
     </div>
     <div id="info_block_line_2">
-            <span data-item="ratio" data-ratio="<?= $this->e(app()->user->getRatio()) ?>">
-                <span class="color-ratio">Ratio:</span> <?= is_string(app()->user->getRatio()) ? app()->user->getRatio() : round(app()->user->getRatio(),3) ?></span>&nbsp;
+        <span data-item="ratio" data-ratio="<?= $this->e(app()->user->getRatio()) ?>">
+            <span class="color-ratio">Ratio:</span> <?= is_string(app()->user->getRatio()) ? app()->user->getRatio() : round(app()->user->getRatio(),3) ?>
+        </span>&nbsp;
         <span data-item="uploaded" data-uploaded="<?= $this->e(app()->user->getUploaded()) ?>">
-                <span class="color-seeding">Uploaded:</span> <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?>
-            </span>&nbsp;
+            <span class="color-seeding">Uploaded:</span> <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?>
+        </span>&nbsp;
         <span data-item="download" data-downloaded="<?= $this->e(app()->user->getDownloaded()) ?>">
-                <span class="color-leeching">Downloaded:</span> <?= $this->e(app()->user->getDownloaded(), 'format_bytes') ?>
-            </span>&nbsp;
-        <span data-item="bt_activity" data-seeding="<?= app()->user->getActiveSeed() ?>" data-leeching="<?= app()->user->getActiveLeech() ?>">
-                BT Activity:
-                <span class="fas fa-arrow-up fa-fw color-seeding"></span>&nbsp;<?= app()->user->getActiveSeed() ?>&nbsp;
-                <span class="fas fa-arrow-down fa-fw color-leeching"></span>&nbsp;<?= app()->user->getActiveLeech() ?>&nbsp;
-            </span>
+            <span class="color-leeching">Downloaded:</span> <?= $this->e(app()->user->getDownloaded(), 'format_bytes') ?>
+        </span>&nbsp;
+        <span data-item="bt_activity">
+            BT Activity:
+            <span class="fas fa-arrow-up fa-fw color-seeding" data-seeding="<?= app()->user->getActiveSeed() ?>">&nbsp;<?= app()->user->getActiveSeed() ?></span>&nbsp;&nbsp;
+            <span class="fas fa-arrow-down fa-fw color-leeching" data-leeching="<?= app()->user->getActiveLeech() ?>">&nbsp;<?= app()->user->getActiveLeech() ?></span>&nbsp;&nbsp;
+            <?php if (app()->user->getActivePartial()): ?>
+            <span class="fas fa-minus fa-fw color-partial" data-partial="<?= app()->user->getActivePartial() ?>">&nbsp;<?= app()->user->getActivePartial() ?></span>&nbsp;&nbsp;
+            <?php endif; ?>
+        </span>
         <span data-item="connectable" data-connectable="IPv4/IPv6">
-                <span class="color-connectable">Connectable:</span>
-                IPv4/IPv6 <!-- TODO -->
-            </span>
+            <span class="color-connectable">Connectable:</span>
+            IPv4/IPv6 <!-- TODO -->
+        </span>&nbsp;
         <div class="pull-right">
             <a href="/user/message"><span class="fas fa-envelope fa-fw red"></span>Message Box (15)</a> <!-- TODO -->
             <a href="#"><span class="fas fa-user-friends fa-fw color-friends"></span></a> <!-- TODO -->

@@ -21,10 +21,10 @@ trait ClassValueCacheUtils
         return 'Cache:default';
     }
 
-    // Get from class, redis cache, then generate closure (may database)
+    // Get from class, redis cache, generate closure (may database) and then cache it in class and redis cache
     final protected function getCacheValue($key, $closure)
     {
-        if (is_null($this->$key)) {
+        if (!isset($this->$key)) {
             $this->$key = app()->redis->hGet($this->getCacheNameSpace(), $key);
             if (false === $this->$key) {
                 $this->$key = $closure();

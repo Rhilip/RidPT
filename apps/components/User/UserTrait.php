@@ -56,6 +56,11 @@ trait UserTrait
     protected $peer_status;
     protected $infoCacheKey;
 
+    protected function getCacheNameSpace(): string
+    {
+        return 'User:' . $this->id . ':base_content';
+    }
+
     public function loadUserContentById($id)
     {
         $this->infoCacheKey = 'User:' . $id . ':base_content';
@@ -69,11 +74,6 @@ trait UserTrait
         }
         $this->importAttributes($self);
 
-    }
-
-    protected function getCacheNameSpace(): string
-    {
-        return 'User:' . $this->id . ':base_content';
     }
 
     public function loadUserContentByName($name)
@@ -292,15 +292,13 @@ trait UserTrait
 
     private function getPeerStatus($seeder = null)
     {
-        $peer_status = $this->peer_status ?? app()->redis->get('User:' . $this->id . ':peer_count');
-        if (is_null($peer_status) || $peer_status === false) {
+        $peer_status = $this->getCacheValue('peer_count', function () {
             $peer_count = app()->pdo->createCommand("SELECT `seeder`, COUNT(id) FROM `peers` WHERE `user_id` = :uid GROUP BY seeder")->bindParams([
                 'uid' => $this->id
             ])->queryAll() ?: [];
-            $peer_status = array_merge(['yes' => 0, 'no' => 0, 'partial' => 0], $peer_count);
-            $this->peer_status = $peer_status;
-            app()->redis->set('User:' . $this->id . ':peer_count', $peer_status, 60);
-        }
+            return array_merge(['yes' => 0, 'no' => 0, 'partial' => 0], $peer_count);
+        });
+
         return $seeder ? (int)$peer_status[$seeder] : $peer_status;
     }
 
@@ -311,7 +309,12 @@ trait UserTrait
 
     public function getActiveLeech()
     {
-        return $this->getPeerStatus('no') + $this->getPeerStatus('partial');
+        return $this->getPeerStatus('no');
+    }
+
+    public function getActivePartial()
+    {
+        return $this->getPeerStatus('partial');
     }
 
     /**

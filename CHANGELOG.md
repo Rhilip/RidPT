@@ -13,6 +13,7 @@
 - **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Add `retry in` field when failed
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
+- **ban:** Add table `ban_usernames` and `ban_emails`
 
 ### Fix
 - **Cookies:** Fix session sep from `%` to `_`

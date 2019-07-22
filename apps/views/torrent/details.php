@@ -102,7 +102,7 @@
                             <a href="/torrents/tags?tag=<?= $tag['tag'] ?>" class="label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
                         <?php endforeach; ?>
                     <?php else: ?>
-                        No tags for this torrent
+                        <span class="text-muted">No tags for this torrent</span>
                     <?php endif; ?>
                 </div>
             </div>
