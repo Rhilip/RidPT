@@ -90,4 +90,13 @@ class Rid
         return new $class($config);
     }
 
+    public static function setDefault(&$array, $defaults)
+    {
+        if (!is_array($array)) $array = [$array];
+        foreach ($defaults as  $key => $default) {
+            if (!array_key_exists($key, $array)) {
+                $array[$key] = $default;
+            }
+        }
+    }
 }

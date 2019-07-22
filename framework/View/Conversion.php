@@ -40,7 +40,7 @@ class Conversion implements ExtensionInterface
 
     public function format_bytes($var)
     {
-        self::setDefault($var, ['precision' => 2, 'separator' => ' ']);
+        \Rid::setDefault($var, ['precision' => 2, 'separator' => ' ']);
         $bytes = array_shift($var);
 
         $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
@@ -56,19 +56,19 @@ class Conversion implements ExtensionInterface
 
     public function format_bytes_compact($var)
     {
-        self::setDefault($var, ['precision' => 2, 'separator' => '<br />']);
+        \Rid::setDefault($var, ['precision' => 2, 'separator' => '<br />']);
         return $this->format_bytes($var);
     }
 
     public function format_bytes_loose($var)
     {
-        self::setDefault($var, ['precision' => 2, 'separator' => '&nbsp;']);
+        \Rid::setDefault($var, ['precision' => 2, 'separator' => '&nbsp;']);
         return $this->format_bytes($var);
     }
 
     public function format_ubbcode($var)
     {
-        self::setDefault($var, ['escapeHtml' => true]);
+        \Rid::setDefault($var, ['escapeHtml' => true]);
         $string = array_shift($var);
 
         $code = new Decoda($string, $var,'Cache:post:' . md5($string));
