@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 21, 2019 at 03:15 PM
+-- Generation Time: Jul 22, 2019 at 06:28 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -131,6 +131,66 @@ CREATE TABLE IF NOT EXISTS `agent_deny_log` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `ban_emails`
+--
+
+DROP TABLE IF EXISTS `ban_emails`;
+CREATE TABLE IF NOT EXISTS `ban_emails` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(80) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `ban_emails`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ban_ips`
+--
+
+DROP TABLE IF EXISTS `ban_ips`;
+CREATE TABLE IF NOT EXISTS `ban_ips` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(255) NOT NULL,
+  `add_by` int(10) UNSIGNED NOT NULL,
+  `add_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `commit` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ip` (`ip`),
+  KEY `FK_ip_ban_operator` (`add_by`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `ban_ips`:
+--   `add_by`
+--       `users` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ban_usernames`
+--
+
+DROP TABLE IF EXISTS `ban_usernames`;
+CREATE TABLE IF NOT EXISTS `ban_usernames` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(16) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `ban_usernames`:
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `bookmarks`
 --
 
@@ -251,30 +311,6 @@ CREATE TABLE IF NOT EXISTS `invite` (
 --
 -- RELATIONSHIPS FOR TABLE `invite`:
 --   `inviter_id`
---       `users` -> `id`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ip_bans`
---
-
-DROP TABLE IF EXISTS `ip_bans`;
-CREATE TABLE IF NOT EXISTS `ip_bans` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ip` varchar(255) NOT NULL,
-  `add_by` int(10) UNSIGNED NOT NULL,
-  `add_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `commit` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ip` (`ip`),
-  KEY `FK_ip_ban_operator` (`add_by`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `ip_bans`:
---   `add_by`
 --       `users` -> `id`
 --
 
@@ -1106,6 +1142,12 @@ ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
 --
 
 --
+-- Constraints for table `ban_ips`
+--
+ALTER TABLE `ban_ips`
+  ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `bookmarks`
 --
 ALTER TABLE `bookmarks`
@@ -1117,12 +1159,6 @@ ALTER TABLE `bookmarks`
 --
 ALTER TABLE `invite`
   ADD CONSTRAINT `FK_invite_inviter_id` FOREIGN KEY (`inviter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `ip_bans`
---
-ALTER TABLE `ip_bans`
-  ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `map_torrents_tags`

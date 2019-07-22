@@ -19,7 +19,7 @@ class IpBanMiddleware
 
         $ip_ban_list = app()->redis->get("SILE:ip_ban_list");
         if ($ip_ban_list === false) {
-            $ip_ban_list = app()->pdo->createCommand("SELECT `ip` FROM `ip_bans`")->queryColumn();
+            $ip_ban_list = app()->pdo->createCommand("SELECT `ip` FROM `ban_ips`")->queryColumn();
             app()->redis->setex("SILE:ip_ban_list", 86400 , $ip_ban_list);
         }
 

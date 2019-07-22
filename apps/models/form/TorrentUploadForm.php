@@ -32,7 +32,7 @@ class TorrentUploadForm extends Validator
     public $descr;
 
     public $anonymous = 0;  // If user upload this torrent Anonymous
-    public $hr = 0;  // TODO This torrent require hr check
+    public $hr = 0;  // If This torrent require hr check
 
     // Quality
     public $audio = 0; /* 0 is default value. */
@@ -58,7 +58,22 @@ class TorrentUploadForm extends Validator
     const TORRENT_TYPE_SINGLE = 'single';
     const TORRENT_TYPE_MULTI = 'multi';
 
-    // 规则
+    const TORRENT_STATUS_DELETED = 'deleted';
+    const TORRENT_STATUS_BANNED = 'banned';
+    const TORRENT_STATUS_PENDING = 'pending';
+    const TORRENT_STATUS_CONFIRMED = 'confirmed';
+
+    public static function defaultData()
+    {
+        return [
+            'subtitle' => '',
+            'anonymous' => 0, 'hr' => 0,
+            'audio' => 0, 'codec' => 0, 'medium' => 0, 'resolution' => 0,
+            'team' => 0,
+            'tags' => ''
+        ];
+    }
+
     public static function inputRules()
     {
         $categories_id_list = array_map(function ($cat) {
@@ -244,11 +259,11 @@ class TorrentUploadForm extends Validator
         if ($count > 0) throw new \Exception('std_torrent_existed');
 
         $nfo_blob = '';
-        if (isset($this->nfo)) {
+        if (isset($this->nfo)) {  // FIXME it seem always be true ???
             $nfo_blob = $this->nfo->getFileContent();
         }
 
-        // TODO update torrent status based on user class or their owned torrents count
+        $this->determineTorrentStatus();
         app()->pdo->beginTransaction();
         try {
             app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`team`,`descr`,`nfo`,`uplver`,`hr`) 
@@ -297,7 +312,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
     // Check and rewrite torrent flags based on site config and user's privilege of upload flags
     private function rewriteFlags()
     {
-        foreach (['anonymous','hr'] as $flag) {
+        foreach (['anonymous', 'hr'] as $flag) {
             $config = config('torrent_upload.enable_' . $flag);
             if ($config == 2) {  // if global config force enabled this flag
                 $this->$flag = 1;
@@ -309,6 +324,11 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
                 }
             }
         }
+    }
+
+    // TODO update torrent status based on user class or their owned torrents count
+    private function determineTorrentStatus() {
+        $this->status = self::TORRENT_STATUS_CONFIRMED;
     }
 
     private function insertTags()
@@ -355,8 +375,16 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
         }
     }
 
+    // TODO sep to Trait
+    private function setTorrentBuff($operator_id = 0, $beneficiary_id = 0, $buff_type = 'mod', $ratio_type = 'Normal', $upload_ratio = 1, $download_ratio = 1)
+    {
+
+    }
+
+
     private function setBuff()
     {
+        $operator_id = 0;  // The buff operator id when torrent upload will be system
         // Add Large Buff and Random Buff
         if (config("buff.enable_large") && $this->file->size > config("buff.large_size")) {
             // TODO app()->pdo->createCommand();
@@ -364,7 +392,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             // TODO app()->pdo->createCommand();
         }
 
-        // TODO get uploader (or you can say torrents owner) buff
+        // TODO set uploader (or you can say torrents owner) buff
 
     }
 

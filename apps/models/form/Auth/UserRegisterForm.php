@@ -170,7 +170,16 @@ class UserRegisterForm extends Validator
             return;
         }
 
-        // TODO Check if this username is not in blacklist
+        // Check if this username is not in blacklist
+        if (!app()->redis->exists('site:username_ban_list')) {
+            $ban_username_list = app()->pdo->createCommand('SELECT `username` from `ban_usernames`')->queryColumn();
+            app()->redis->hMset('site:username_ban_list', $ban_username_list);
+            app()->redis->expire('site:username_ban_list', 86400);
+        }
+        if (app()->redis->hExists('site:username_ban_list', $username)) {
+            $this->buildCallbackFailMsg('ValidUsername', 'This username is in our blacklist.');
+            return;
+        }
 
         // Check this username is exist in Table `users` or not
         $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
@@ -204,7 +213,16 @@ class UserRegisterForm extends Validator
             }
         }
 
-        // TODO Check $email is not in blacklist
+        // Check $email is not in blacklist
+        if (!app()->redis->exists('site:emails_ban_list')) {
+            $ban_email_list = app()->pdo->createCommand('SELECT `email` from `ban_emails`')->queryColumn();
+            app()->redis->hMset('site:emails_ban_list', $ban_email_list);
+            app()->redis->expire('site:emails_ban_list', 86400);
+        }
+        if (app()->redis->hExists('site:emails_ban_list', $email)) {
+            $this->buildCallbackFailMsg('ValidEmail', 'This email is in our blacklist.');
+            return;
+        }
 
         $email_check = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `email` = :email")->bindParams([
             "email" => $email

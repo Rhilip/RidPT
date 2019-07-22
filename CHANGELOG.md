@@ -25,6 +25,7 @@
 
 ### Perf
 - **Tracker:** Use brpoplpush to get announce data from redis
+- **captcha:** simple captcha input
 
 ### Refactor
 - **View:** Rename folder `error` to `action`
