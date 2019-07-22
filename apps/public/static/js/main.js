@@ -50,6 +50,9 @@ jQuery(document).ready(function () {
     const cache_torrent_files = localforage.createInstance({name: 'torrent_files'});
     const cache_torrent_nfo = localforage.createInstance({name: 'torrent_nfo'});
 
+    // Other Global const
+    const $body = $('html, body');
+
     // Init Page
     if ($.zui.browser.ie) $.zui.browser.tip();  // Drop all support of IE 6-11
 
@@ -113,7 +116,18 @@ jQuery(document).ready(function () {
         if (close_btn) close_btn.click();
     });
 
-    // TODO Add Scroll to TOP fixbar
+    // Add Scroll to TOP fixbar
+    let scrollTop = $("#scroll_top");
+    $(window).scroll(function() {
+        let topPos = $(this).scrollTop();         // declare variable
+        scrollTop.css("opacity", topPos > 100 ? 1 : 0);  // if user scrolls down - show scroll to top button
+    }); // scroll END
+    scrollTop.click(function() {
+        $body.animate({
+            scrollTop: 0
+        }, 800);
+        return false;
+    });
 
     // Common Function
     function create_error_notice(text, option) {
@@ -302,6 +316,10 @@ jQuery(document).ready(function () {
     $('.invite-btn').click(function () {
         $('.invite-btn').removeAttr('disabled');
         $('#invite_form:hidden').show();
+
+        $body.animate({
+            scrollTop: $('#invite_form').position().top
+        }, 500);
 
         let that = $(this);
         let invite_type = that.data('type');

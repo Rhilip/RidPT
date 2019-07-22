@@ -102,6 +102,10 @@ $extend_debug_info = config('base.enable_extend_debug') &&
     </div>
 </footer>
 
+<div id="fixbar">
+    <button class="btn" type="button" id="scroll_top"><i class="fas fa-angle-double-up"></i> Scroll Top</button>
+</div>
+
 <?= $this->section('body') ?>
 
 <!-- Javascript of Library -->

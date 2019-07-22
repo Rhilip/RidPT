@@ -9,6 +9,8 @@
 namespace apps\models\form\Links;
 
 
+use apps\libraries\Site;
+
 class EditForm extends ApplyForm
 {
     public $link_id;
@@ -77,10 +79,12 @@ class EditForm extends ApplyForm
     {
         if ($this->link_id !== 0) {  // to edit exist links
             app()->pdo->update('links', $this->link_data_diff, [['id', '=', $this->link_id]])->execute();
-            // TODO Add site log
+            Site::writeLog('The links data of ' . $this->link_old_data['name'] . '( ' . $this->link_old_data['url'] . ' ) is update by ' .
+                app()->user->getUsername() . '(' . app()->user->getId() . ').', Site::LOG_LEVEL_MOD);
         } else {  // to new a links
             app()->pdo->insert('links', $this->link_new_data)->execute();
-            // TODO Add site log
+            Site::writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
+                app()->user->getUsername() . '(' . app()->user->getId() . ').', Site::LOG_LEVEL_MOD);
         }
         app()->redis->del('Site:links');
     }

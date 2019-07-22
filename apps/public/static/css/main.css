@@ -64,6 +64,10 @@ body{background-color:#f6f6f6}
 /* Main Container */
 .main-container{background-color:#eaeaea;padding:20px 10px}
 
+/* Body Part */
+#fixbar{position:fixed;right:15px;bottom:15px;z-index:999999}
+#scroll_top{opacity:0}
+
 /* Footer Menu */
 #footer_menu{background-color:#383838;color:#C3C0B9;font-size:12px;margin-top:30px;padding-bottom:10px;padding-top:15px}
 #footer_menu p{margin:0}

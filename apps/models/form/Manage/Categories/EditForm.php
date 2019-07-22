@@ -119,7 +119,7 @@ class EditForm extends Validator
             // TODO Add site log
         }
 
-        // TODO flush Redis Cache
+        // flush Redis Cache
         app()->redis->del('site:enabled_torrent_category');
     }
 }
