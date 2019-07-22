@@ -107,34 +107,18 @@ $register_type = app()->request->get('type', 'open')
                                 </div>
                                 <?php endif; ?>
 
-                                <div class="form-group">
-                                    <label for="captcha">Captcha</label>
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="input-group">
-                                                <span class="input-group-addon"><span class="fas fa-sync-alt fa-fw"></span></span>
-                                                <input type="text" class="form-control" id="captcha" name="captcha" maxlength="6"
-                                                       required autocomplete="off">
-                                            </div>
-                                            <div class="help-block">Case insensitive.</div>
-                                        </div>
-                                        <?= $this->insert('layout/captcha') ?>
-                                    </div>
-                                </div>
+                                <?= $this->insert('layout/captcha') ?>
 
                                 <div class="form-group">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" name="verify_tos" id="verify_tos" value="yes" title=""> Accept Our TOS and AOP
-                                        </label>
+                                    <div class="switch">
+                                        <input type="checkbox" name="verify_tos" id="verify_tos" value="1" title="">
+                                        <label for="verify_tos">Accept Our TOS and AOP</label>
                                     </div>
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" name="verify_age" id="verify_age" value="yes" title=""> I am at least 13 years old.
-                                        </label>
+                                    <div class="switch">
+                                        <input type="checkbox" name="verify_age" id="verify_age" value="1" title="">
+                                        <label for="verify_age">I am at least 13 years old.</label>
                                     </div>
                                 </div>
-
                                 <div class="text-center">
                                     <button type="submit" value="Register" class="btn btn-primary">Register</button>
                                 </div>

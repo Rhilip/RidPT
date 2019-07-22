@@ -30,20 +30,7 @@
                             <div class="help-block">The Email when your sign account.</div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="captcha">Captcha</label>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><span class="fas fa-sync-alt fa-fw"></span></span>
-                                        <input type="text" class="form-control" id="captcha" name="captcha" maxlength="6"
-                                               required autocomplete="off">
-                                    </div>
-                                    <div class="help-block">Case insensitive.</div>
-                                </div>
-                                <?= $this->insert('layout/captcha') ?>
-                            </div>
-                        </div>
+                        <?= $this->insert('layout/captcha') ?>
 
                         <div class="text-center">
                             <button type="submit" value="Register" class="btn btn-primary">Recover it !!</button>

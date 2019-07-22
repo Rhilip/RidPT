@@ -77,20 +77,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="captcha" class="col-sm-2 required">Captcha</label>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><span class="fas fa-sync-alt fa-fw"></span></span>
-                                    <input type="text" class="form-control" id="captcha" name="captcha" maxlength="6" required
-                                           placeholder="" autocomplete="off">
-                                </div>
-                                <div class="help-block">Case insensitive.</div>
-                            </div>
-                            <?= $this->insert('layout/captcha') ?>
-                        </div>
-                    </div>
+                    <?= $this->insert('layout/captcha', ['inline' => true]) ?>
 
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary">Submit</button>

@@ -59,20 +59,7 @@
                         <div class="help-block">Your 2FA code, leave it blank if you haven't enable 2FA.</div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="captcha">Captcha</label>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="input-group">
-                                    <span class="input-group-addon"><span class="fas fa-sync-alt fa-fw"></span></span>
-                                    <input type="text" class="form-control" id="captcha" name="captcha" maxlength="6" required
-                                           placeholder="" autocomplete="off">
-                                </div>
-                                <div class="help-block">Case insensitive.</div>
-                            </div>
-                            <?= $this->insert('layout/captcha') ?>
-                        </div>
-                    </div>
+                    <?= $this->insert('layout/captcha') ?>
 
                     <fieldset>
                         <legend><a href="#adv_option" data-toggle="collapse" class="btn btn-link">Advanced Options</a></legend>
