@@ -17,7 +17,7 @@ class ProcessHelper
     // 设置进程标题
     public static function setTitle($title)
     {
-        if (PhpInfoHelper::isMac()) {
+        if (SystemInfoHelper::isMac()) {
             return false;
         }
         if (!function_exists('cli_set_process_title')) {

@@ -99,7 +99,6 @@ class Validator extends BaseObject
     protected function buildDefaultDataForValid()
     {
         \Rid::setDefault($this->_data, static::defaultData());
-        if (env('APP_DEBUG')) var_dump($this->_data);
     }
 
     protected function buildDefaultPropBeforeValid()

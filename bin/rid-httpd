@@ -7,8 +7,12 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
-Rid\Base\Env::load(__DIR__ . '/../.env');  // 获取环境变量
+if (!\Rid\Helpers\SystemInfoHelper::isCli())
+    exit('Run in cli like: `php bin/rid-httpd service start`.');
 
-$config   = require __DIR__ . '/../apps/config/httpd.php';
+// 获取环境变量
+Rid\Base\Env::load(__DIR__ . '/../.env');
+
+$config = require __DIR__ . '/../apps/config/httpd.php';
 $exitCode = (new Rid\Console\Application($config))->run();
 exit($exitCode);
