@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 22, 2019 at 06:28 PM
+-- Generation Time: Jul 24, 2019 at 09:07 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -672,7 +672,8 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('base.site_email', 'admin@ridpt.top'),
 ('base.site_generator', 'RidPT'),
 ('base.site_keywords', 'RidPT,Private Tracker'),
-('base.site_muti_tracker_url', ''),
+('base.site_multi_tracker_behaviour', 'union'),
+('base.site_multi_tracker_url', ''),
 ('base.site_name', 'RidPT'),
 ('base.site_tracker_url', 'ridpt.top/tracker'),
 ('base.site_url', 'ridpt.top'),

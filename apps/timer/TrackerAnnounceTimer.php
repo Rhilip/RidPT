@@ -60,7 +60,7 @@ class TrackerAnnounceTimer extends Timer
             // If session is not exist and &event!=stopped, a new session should start
             if ($queries['event'] != 'stopped') {
                 // Then create new session in database
-                // Update `torrents`, if peer's role is a seeder ,so complete +1 , elseif  he is a leecher , so incomplete +1
+                // TODO move to redis: Update `torrents`, if peer's role is a seeder ,so complete +1 , elseif  he is a leecher , so incomplete +1
                 app()->pdo->createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
                     "tid" => $torrentInfo["id"]
                 ])->execute();
@@ -109,7 +109,7 @@ class TrackerAnnounceTimer extends Timer
 
             $this->getTorrentBuff($userInfo['id'], $torrentInfo["id"], $trueUploaded, $trueDownloaded, $thisUploaded, $thisDownloaded);
 
-            // Update Table `peers`, `snatched` by it's event tag
+            // TODO move to redis: Update Table `peers`, `snatched` by it's event tag
             // Notice : there MUST have history record in Table `snatched` if session is exist !!!!!!!!
             if ($queries["event"] === "stopped") {
                 // Update `torrents`, if peer's role is a seeder ,so complete -1 , elseif  he is a leecher , so incomplete -1
@@ -153,7 +153,7 @@ class TrackerAnnounceTimer extends Timer
                 "ip" => $queries['remote_ip'],
                 "uid" => $userInfo["id"], "tid" => $torrentInfo["id"],
             ]);
-            // Update `torrents`, with complete +1  incomplete -1 downloaded +1
+            // TODO move to redis:  Update `torrents`, with complete +1  incomplete -1 downloaded +1
             app()->pdo->createCommand("UPDATE `torrents` SET `complete` = `complete` + 1, `incomplete` = `incomplete` -1 , `downloaded` = `downloaded` + 1 WHERE `id`=:tid")->bindParams([
                 "tid" => $torrentInfo["id"]
             ])->execute();

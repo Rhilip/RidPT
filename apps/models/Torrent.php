@@ -194,17 +194,28 @@ class Torrent
         $dict["announce"] = $scheme . config("base.site_tracker_url") . $announce_suffix;
 
         /** BEP 0012 Multitracker Metadata Extension
-         * See more on : http://www.bittorrent.org/beps/bep_0012.html
+         * @see http://www.bittorrent.org/beps/bep_0012.html
+         * @see https://web.archive.org/web/20190724110959/https://blog.rhilip.info/archives/1108/
+         *      which discuss about multitracker behaviour on common bittorrent client ( Chinese Version )
          */
-        if ($muti_tracker = config("base.site_muti_tracker_url")) {
-            $dict["announce-list"] = [];
+        if ($multi_trackers = config("base.site_multi_tracker_url")) {
+            // Add our main tracker into muti_tracker_list to avoid lost....
+            $multi_trackers = config("base.site_tracker_url") . "," . $multi_trackers;
+            $muti_trackers_list = explode(",", $multi_trackers);
+            $muti_trackers_list = array_unique($muti_trackers_list);  // use array_unique to remove dupe tracker
+            // fulfill each tracker with scheme and suffix about user identity
+            $muti_trackers_list = array_map(function ($uri) use ($scheme, $announce_suffix) {
+                return $scheme . $uri . $announce_suffix;
+            }, $muti_trackers_list);
 
-            // Add our main tracker into muti_tracker_list to avoid lost error....
-            $muti_tracker = config("base.site_tracker_url") . "," . $muti_tracker;
-
-            $muti_tracker_list = explode(",", $muti_tracker);
-            foreach (array_unique($muti_tracker_list) as $tracker) {  // use array_unique to remove dupe tracker
-                $dict["announce-list"][] = [$scheme . $tracker . $announce_suffix];
+            if (config('base.site_multi_tracker_behaviour') == 'separate') {
+                /** d['announce-list'] = [ [tracker1], [backup1], [backup2] ] */
+                foreach ($muti_trackers_list as $tracker) {  // separate each tracker to different tier
+                    $dict["announce-list"][] = [$tracker];  // Make each tracker as tier
+                }
+            } else {  // config('base.site_multi_tracker_behaviour') ==  'union'
+                /** d['announce-list'] = [[ tracker1, tracker2, tracker3 ]] */
+                $dict["announce-list"][] = $muti_trackers_list;
             }
         }
 
