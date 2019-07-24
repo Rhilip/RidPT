@@ -199,23 +199,23 @@ class Torrent
          *      which discuss about multitracker behaviour on common bittorrent client ( Chinese Version )
          */
         if ($multi_trackers = config("base.site_multi_tracker_url")) {
-            // Add our main tracker into muti_tracker_list to avoid lost....
+            // Add our main tracker into multi_tracker_list to avoid lost....
             $multi_trackers = config("base.site_tracker_url") . "," . $multi_trackers;
-            $muti_trackers_list = explode(",", $multi_trackers);
-            $muti_trackers_list = array_unique($muti_trackers_list);  // use array_unique to remove dupe tracker
+            $multi_trackers_list = explode(",", $multi_trackers);
+            $multi_trackers_list = array_unique($multi_trackers_list);  // use array_unique to remove dupe tracker
             // fulfill each tracker with scheme and suffix about user identity
-            $muti_trackers_list = array_map(function ($uri) use ($scheme, $announce_suffix) {
+            $multi_trackers_list = array_map(function ($uri) use ($scheme, $announce_suffix) {
                 return $scheme . $uri . $announce_suffix;
-            }, $muti_trackers_list);
+            }, $multi_trackers_list);
 
             if (config('base.site_multi_tracker_behaviour') == 'separate') {
                 /** d['announce-list'] = [ [tracker1], [backup1], [backup2] ] */
-                foreach ($muti_trackers_list as $tracker) {  // separate each tracker to different tier
+                foreach ($multi_trackers_list as $tracker) {  // separate each tracker to different tier
                     $dict["announce-list"][] = [$tracker];  // Make each tracker as tier
                 }
             } else {  // config('base.site_multi_tracker_behaviour') ==  'union'
                 /** d['announce-list'] = [[ tracker1, tracker2, tracker3 ]] */
-                $dict["announce-list"][] = $muti_trackers_list;
+                $dict["announce-list"][] = $multi_trackers_list;
             }
         }
 

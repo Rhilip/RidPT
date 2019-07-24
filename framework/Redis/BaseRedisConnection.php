@@ -304,7 +304,7 @@ class BaseRedisConnection extends Component
         }
     }
 
-    public function mutiDelete($pattern) {
+    public function multiDelete($pattern) {
         return $this->del($this->keys($pattern));
     }
 

@@ -14,6 +14,7 @@
 - **Tracker:** Add `retry in` field when failed
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 - **ban:** Add table `ban_usernames` and `ban_emails`
+- **system:** can get more system info via class SystemInfoHelper
 
 ### Fix
 - **Cookies:** Fix session sep from `%` to `_`

@@ -724,7 +724,7 @@ class TrackerController
                 "tid" => $torrentInfo["id"]
             ])->queryScalar();
 
-            // Ban one torrent seeding/leech at muti-location due to your site config
+            // Ban one torrent seeding/leech at multi-location due to your site config
             if ($seeder == 'yes') { // if this peer's role is seeder
                 if ($selfCount >= (config('tracker.user_max_seed')))
                     throw new TrackerException(160, [":count" => config('tracker.user_max_seed')]);
