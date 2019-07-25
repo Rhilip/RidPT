@@ -124,25 +124,8 @@ class TrackerController
             }
         } catch (TrackerException $e) {
             // Record agent deny log in Table `agent_deny_log`
-            if ($e->getCode() >= 120) {
-                $raw_header = "";
-                foreach (app()->request->header() as $key => $value) {
-                    $raw_header .= "$key : $value \n";
-                }
-                $req_info = app()->request->server('query_string') . "\n\n" . $raw_header;
-
-                app()->pdo->createCommand("INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`) 
-                VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg) 
-                ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
-                                        `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`), 
-                                        `last_action_at` = NOW();")->bindParams([
-                    "tid" => $torrentInfo ? $torrentInfo["id"] : 0,
-                    'uid' => $userInfo ? $userInfo["id"] : 0,
-                    'ua' => app()->request->header("user-agent", ""),
-                    'peer_id' => app()->request->get("peer_id", ""),
-                    'req_info' => $req_info,
-                    'msg' => $e->getMessage()
-                ])->execute();
+            if ($e->getCode() >= 124) {
+                $this->logException($e, $userInfo, $torrentInfo);
             }
 
             return Bencode::encode([
@@ -150,6 +133,28 @@ class TrackerController
                 'retry in' => config('tracker.retry_interval')
             ]);
         }
+    }
+
+    protected function logException(\Exception $exception, $userInfo = null, $torrentInfo = null)
+    {
+        $raw_header = "";
+        foreach (app()->request->header() as $key => $value) {
+            $raw_header .= "$key : $value \n";
+        }
+        $req_info = app()->request->server('query_string') . "\n\n" . $raw_header;
+
+        app()->pdo->createCommand("INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`) 
+                VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg) 
+                ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
+                                        `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`), 
+                                        `last_action_at` = NOW();")->bindParams([
+            "tid" => $torrentInfo ? $torrentInfo["id"] : 0,
+            'uid' => $userInfo ? $userInfo["id"] : 0,
+            'ua' => app()->request->header("user-agent", ""),
+            'peer_id' => app()->request->get("peer_id", ""),
+            'req_info' => $req_info,
+            'msg' => $exception->getMessage()
+        ])->execute();
     }
 
     /** Check Client's User-Agent, (If not pass this Check , A TrackerException will throw)
