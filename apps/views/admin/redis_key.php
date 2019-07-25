@@ -47,13 +47,13 @@
 <?php if ($type == \Redis::REDIS_STRING): ?>
     <h2>String Value</h2>
     <figure>
-        <pre><code><?= json_encode($value, JSON_PRETTY_PRINT) ?></code></pre>
+        <pre><code><?= is_string($value) ? $value : json_encode($value, JSON_PRETTY_PRINT) ?></code></pre>
     </figure>
 <?php elseif ($type == \Redis::REDIS_LIST): ?>
     <h2>List Values</h2>
     <ol>
         <?php foreach ($value as $item): ?>
-            <li><code><?= $item ?></code></li>
+            <li><code><?= is_string($item) ? $item : json_encode($item, JSON_PRETTY_PRINT) ?></code></li>
         <?php endforeach; ?>
     </ol>
 <?php elseif ($type == \Redis::REDIS_HASH): ?>
@@ -99,7 +99,7 @@
             <tr>
                 <td><?= $index ?></td>
                 <td><code><?= $v ?></code></td>
-                <td><code><?= $k ?></code></td>
+                <td><code><?= is_string($k) ? $k : json_encode($k, JSON_PRETTY_PRINT) ?></code></td>
             </tr>
             <?php $index++ ?>
         <?php endforeach; ?>
