@@ -787,12 +787,12 @@ class TrackerController
          * Don't use json_{encode,decode} for the value of info_hash and peer_id will make
          * those function return FALSE
          */
-        return app()->redis->lPush('Tracker:to_deal_queue', serialize([
+        return app()->redis->lPush('Tracker:to_deal_queue', [
             'timestamp' => time(),
             'queries' => $queries,
             'role' => $role,
             'userInfo' => $userInfo,
             'torrentInfo' => $torrentInfo
-        ]));
+        ]);
     }
 }

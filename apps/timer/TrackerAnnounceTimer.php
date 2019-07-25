@@ -15,14 +15,13 @@ class TrackerAnnounceTimer extends Timer
     public function init()
     {
         while (true) {
-            $data_raw = app()->redis->brpoplpush('Tracker:to_deal_queue', 'Tracker:backup_queue', 5);
-            if ($data_raw !== false) {
-                $data = unserialize($data_raw);
+            $data = app()->redis->brpoplpush('Tracker:to_deal_queue', 'Tracker:backup_queue', 5);
+            if ($data !== false) {
                 app()->pdo->beginTransaction();
                 try {
                     $this->processAnnounceRequest($data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
                     app()->pdo->commit();
-                    app()->redis->lRem('Tracker:backup_queue', $data_raw, 0);
+                    app()->redis->lRem('Tracker:backup_queue', $data, 0);
                 } catch (\Exception $e) {
                     println($e->getMessage());
                     app()->pdo->rollback();
@@ -33,7 +32,6 @@ class TrackerAnnounceTimer extends Timer
             }
         }
     }
-
 
     /** TODO 2018.12.12 Check Muti-Tracker behaviour when a Transaction begin
      * @param $queries
