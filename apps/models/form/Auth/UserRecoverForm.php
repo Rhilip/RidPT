@@ -10,8 +10,9 @@ namespace apps\models\form\Auth;
 
 
 use apps\components\User\UserInterface;
+use apps\libraries\Site;
+
 use Rid\Helpers\StringHelper;
-use Rid\Http\View;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 
@@ -64,12 +65,11 @@ class UserRecoverForm  extends Validator
                     'action' => $this->_action
                 ]);
 
-            $mail_body = (new View(false))->render('email/user_recover', [
-                'username' => $user_info['username'],
-                'confirm_url' => $confirm_url,
-            ]);
-            $mail_sender = \apps\libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
-            $mail_sender->send([$this->email], 'Please confirm your action to recover your password', $mail_body);
+            Site::sendEmail([$this->email], 'Please confirm your action to recover your password',
+                'email/user_recover', [
+                    'username' => $user_info['username'],
+                    'confirm_url' => $confirm_url,
+                ]);
         }
         return true;
     }

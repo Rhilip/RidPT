@@ -9,6 +9,7 @@
 namespace apps\libraries;
 
 
+use Rid\Http\View;
 use Rid\Utils\ClassValueCacheUtils;
 
 class Site
@@ -44,6 +45,13 @@ class Site
         app()->redis->del('user_' . $receiver . '_unread_message_count');
         app()->redis->del('user_' . $receiver . '_inbox_count');
         if ($sender != 0) app()->redis->del('user_' . $sender . '_outbox_count');
+    }
+
+    public static function sendEmail($receivers, $subject, $template, $data = [])
+    {
+        $mail_body = (new View(false))->render($template, $data);
+        $mail_sender = Mailer::newInstanceByConfig('libraries.[mailer]');
+        $mail_sender->send($receivers, $subject, $mail_body);
     }
 
     public static function getQualityTableList()

@@ -8,9 +8,10 @@
 
 namespace apps\models\form\Auth;
 
+use apps\libraries\Site;
 use apps\components\User\UserInterface;
+
 use Rid\Helpers\StringHelper;
-use Rid\Http\View;
 use Rid\Validators\Validator;
 
 
@@ -104,12 +105,11 @@ class UserConfirmForm extends Validator
         $this->update_confirm_status();
 
         // Send user email to tell his new password.
-        $mail_body = (new View(false))->render('email/user_new_password', [
-            'username' => $this->username,
-            'password' => $new_password,
-        ]);
-        $mail_sender = \apps\libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
-        $mail_sender->send([$this->email], 'New Password', $mail_body);
+        Site::sendEmail([$this->email], 'New Password',
+            'email/user_new_password', [
+                'username' => $this->username,
+                'password' => $new_password,
+            ]);
 
         return true;
     }

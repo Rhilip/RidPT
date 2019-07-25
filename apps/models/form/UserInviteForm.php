@@ -9,10 +9,10 @@
 namespace apps\models\form;
 
 
-use Rid\Helpers\StringHelper;
-use Rid\Http\View;
-
+use apps\libraries\Site;
 use apps\models\form\Auth\UserRegisterForm;
+
+use Rid\Helpers\StringHelper;
 use Rid\Validators\CaptchaTrait;
 
 class UserInviteForm extends UserRegisterForm
@@ -152,12 +152,11 @@ class UserInviteForm extends UserRegisterForm
         }
 
         if ($invite_status === true) { // TODO use email queue
-            $mail_body = (new View(false))->render('email/user_invite', [
-                'username' => $this->username,
-                'invite_link' => $this->invite_link,
-            ]);
-            $mail_sender = \apps\libraries\Mailer::newInstanceByConfig('libraries.[mailer]');
-            $mail_sender->send([$this->email], 'Invite To ' . config('base.site_name'), $mail_body);
+            Site::sendEmail([$this->email], 'Invite To ' . config('base.site_name'),
+                'email/user_invite', [
+                    'username' => $this->username,
+                    'invite_link' => $this->invite_link,
+                ]);
         }
         return $invite_status;
     }
