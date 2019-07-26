@@ -8,6 +8,7 @@
 
 namespace apps\timer;
 
+use apps\libraries\Constant;
 use Rid\Base\Timer;
 
 class CronTabTimer extends Timer
@@ -69,6 +70,18 @@ class CronTabTimer extends Timer
         $this->print_log('This Cron Work period Start At ' . $start_time . ', Cost Time: ' . number_format($start_time - $end_time, 10) . 's, With ' . $hit . ' Jobs hits.');
     }
 
+    protected function clean_expired_zset_cache() {
+        // trackerInvalidPasskeyZset
+        $timenow = time();
+        $count_tracker_invalid_passkey = app()->redis->zRemRangeByScore(Constant::trackerInvalidPasskeyZset,0,$timenow);
+        if ($count_tracker_invalid_passkey) $this->print_log('Success Clean ' . $count_tracker_invalid_passkey . ' invalid passkey.');
+
+        $count_tracker_invalid_infohash = app()->redis->zRemRangeByScore(Constant::trackerInvalidInfoHashZset,0,$timenow);
+        if ($count_tracker_invalid_infohash) $this->print_log('Success Clean ' . $count_tracker_invalid_infohash . ' invalid info_hash.');
+
+    }
+
+
     protected function clean_dead_peer()
     {
         $deadtime = floor(config('tracker.interval') * 1.8);
@@ -91,7 +104,7 @@ class CronTabTimer extends Timer
         }
 
         $clean_record_count = app()->redis->zRemRangeByScore('Site:Sessions:to_expire', 0, $timenow);
-        $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) . '), Redis(' . $clean_record_count . ').');
+        if ($clean_record_count) $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) . '), Redis(' . $clean_record_count . ').');
     }
 
     // TODO sync sessions from database to redis to avoid lost (Maybe)...

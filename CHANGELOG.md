@@ -21,11 +21,12 @@
 - **Cookies:** Fix session sep from `%` to `_`
 - **Database:** Fix table `links` miss
 - **Env:** Exit when parse env file failed
-- **Form:** Miss use flag since namespace change
 - **Form:** Link\EditForm Update diff
+- **Form:** Miss use flag since namespace change
 - **Requests:** Fix fullUrl() may add unnecessary `?`
 - **Tracker:** Fix TrackerException Logger
 - **categories:** Remove key `sort_index`
+- **redis_key:** Fix array value cause parser error
 
 ### Perf
 - **Tracker:** Use brpoplpush to get announce data from redis

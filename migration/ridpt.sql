@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 26, 2019 at 11:57 AM
+-- Generation Time: Jul 26, 2019 at 10:58 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -480,13 +480,13 @@ CREATE TABLE IF NOT EXISTS `peers` (
   `seeder` enum('yes','partial','no') NOT NULL DEFAULT 'no',
   `uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
+  `corrupt` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `to_go` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `finished` tinyint(1) NOT NULL DEFAULT '0',
   `started_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_action_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `finish_at` timestamp NULL DEFAULT NULL,
   `agent` varchar(64) NOT NULL,
-  `corrupt` tinyint(1) NOT NULL DEFAULT '0',
   `key` varchar(8) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_peer` (`user_id`,`torrent_id`,`peer_id`),
@@ -781,7 +781,10 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('tracker.enable_scrape', '1'),
 ('tracker.enable_upspeed_check', '1'),
 ('tracker.enable_waitsystem', '0'),
+('tracker.force_compact_model', '0'),
+('tracker.force_no_peer_id_model', '0'),
 ('tracker.interval', '450'),
+('tracker.max_numwant', '50'),
 ('tracker.min_interval', '60'),
 ('tracker.retry_interval', '120'),
 ('tracker.user_max_leech', '1'),

@@ -159,6 +159,7 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 | [flag-css](https://github.com/7kfpun/flag-css): CSS for SVG country flags respecting the original ratio. | <https://kfpun.com/flag-css/> |
 | [zxcvbn](https://github.com/dropbox/zxcvbn): Low-Budget Password Strength Estimation | <https://lowe.github.io/tryzxcvbn/> |
 | [bootstrap-validator](https://github.com/1000hz/bootstrap-validator): A user-friendly HTML5 form validation jQuery plugin for Bootstrap 3 | <http://1000hz.github.io/bootstrap-validator> |
+| [jQuery.Textarea.Autoresize](https://github.com/AndrewDryga/jQuery.Textarea.Autoresize): Smart resizing for textareas using jQuery | <https://github.com/AndrewDryga/jQuery.Textarea.Autoresize> |
 
 ### Backend Library
 
