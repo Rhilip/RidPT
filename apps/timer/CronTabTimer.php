@@ -102,4 +102,16 @@ class CronTabTimer extends Timer
         $count = app()->pdo->getRowCount();
         $this->print_log('Success Expired ' . $count . ' invites');
     }
+
+    protected function update_expired_external_link_info()
+    {
+        $expired_links_res = app()->pdo->createCommand('SELECT `source`,`sid` FROM `external_info` ORDER BY `update_at` ASC LIMIt 5')->queryAll();
+        if ($expired_links_res !== false) {
+            foreach ($expired_links_res as $link_res) {
+                $source = $link_res['source'];
+                $sid = $link_res['sid'];
+                // TODO Pt-Gen
+            }
+        }
+    }
 }

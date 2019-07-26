@@ -14,6 +14,7 @@
 - **Tracker:** Add `retry in` field when failed
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 - **ban:** Add table `ban_usernames` and `ban_emails`
+- **email:** Use Site::sendEmail to simple email sender
 - **system:** can get more system info via class SystemInfoHelper
 
 ### Fix
@@ -23,11 +24,13 @@
 - **Form:** Miss use flag since namespace change
 - **Form:** Link\EditForm Update diff
 - **Requests:** Fix fullUrl() may add unnecessary `?`
+- **Tracker:** Fix TrackerException Logger
 - **categories:** Remove key `sort_index`
 
 ### Perf
 - **Tracker:** Use brpoplpush to get announce data from redis
 - **captcha:** simple captcha input
+- **tracker:** No need to explicit serialize announce data
 
 ### Refactor
 - **View:** Rename folder `error` to `action`

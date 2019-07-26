@@ -29,6 +29,7 @@ class TorrentUploadForm extends Validator
     public $category;
     public $title;
     public $subtitle = '';
+    public $links;
     public $descr;
 
     public $anonymous = 0;  // If user upload this torrent Anonymous
@@ -286,6 +287,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             $this->id = app()->pdo->getLastInsertId();
 
             if (config('torrent_upload.enable_tags')) $this->insertTags();
+            $this->getExternalLinkInfo();
             $this->setBuff();
 
             // Save this torrent
@@ -381,6 +383,12 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
 
     }
 
+    // TODO it may take long time to get link details , so when torrent upload, we just push it to task worker
+    private function getExternalLinkInfo()
+    {
+        if ($this->links)
+            app()->redis->lPush('queue:external_link_via_torrent_upload', ['tid' => $this->id, 'links' => $this->links]);
+    }
 
     private function setBuff()
     {

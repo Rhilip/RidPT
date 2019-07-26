@@ -2,6 +2,7 @@
 
 namespace Rid\Redis;
 
+use apps\controllers\AdminController;
 use Rid\Base\Component;
 
 /**
@@ -46,8 +47,8 @@ use Rid\Base\Component;
  * @method int|bool rPush($key, $value1, $value2 = null, $valueN = null)
  * @method int lPushx($key, $value)
  * @method int rPushx($key, $value)
- * @method string lPop($key)
- * @method string rPop($key)
+ * @method mixed lPop($key)
+ * @method mixed rPop($key)
  * @method array blPop(array $keys, $timeout)
  * @method array brPop(array $keys, $timeout)
  * @method int lLen($key)
@@ -126,7 +127,7 @@ use Rid\Base\Component;
  * @method array mget(array $array)
  * @method int msetnx(array $array)
  * @method string rpoplpush($srcKey, $dstKey)
- * @method string brpoplpush($srcKey, $dstKey, $timeout)
+ * @method mixed brpoplpush($srcKey, $dstKey, $timeout)
  * @method int zAdd($key, $score1, $value1, $score2 = null, $value2 = null, $scoreN = null, $valueN = null)
  * @method array zRange($key, $start, $end, $withscores = null)
  * @method int zRem($key, $member1, $member2 = null, $memberN = null)

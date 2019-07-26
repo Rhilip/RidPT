@@ -22,6 +22,7 @@
     "flag-css": "^0.0.12",
     "zxcvbn": "^4.4.2",
     "bootstrap-validator": "^0.11.9",
-    "localforage": "^1.7.3"
+    "localforage": "^1.7.3",
+    "jquery.textarea.autoresize": "^0.1.1"
   }
 }

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 24, 2019 at 09:07 PM
+-- Generation Time: Jul 26, 2019 at 11:57 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -286,6 +286,28 @@ CREATE TABLE IF NOT EXISTS `cheaters` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `external_info`
+--
+
+DROP TABLE IF EXISTS `external_info`;
+CREATE TABLE IF NOT EXISTS `external_info` (
+  `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `source` enum('douban','bangumi','imdb','steam','indienova','epic') NOT NULL,
+  `sid` varchar(64) NOT NULL,
+  `create_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `data` json NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UN_links_source_sid` (`source`,`sid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `external_info`:
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `invite`
 --
 
@@ -335,6 +357,30 @@ CREATE TABLE IF NOT EXISTS `links` (
 
 --
 -- RELATIONSHIPS FOR TABLE `links`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `map_torrents_externalinfo`
+--
+
+DROP TABLE IF EXISTS `map_torrents_externalinfo`;
+CREATE TABLE IF NOT EXISTS `map_torrents_externalinfo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `torrent_id` int(11) UNSIGNED NOT NULL,
+  `info_id` int(11) UNSIGNED NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_map_tl_to_external_info` (`info_id`),
+  KEY `FK_map_tl_to_torrents` (`torrent_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `map_torrents_externalinfo`:
+--   `info_id`
+--       `external_info` -> `id`
+--   `torrent_id`
+--       `torrents` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -777,7 +823,8 @@ TRUNCATE TABLE `site_crontab`;
 INSERT INTO `site_crontab` (`id`, `job`, `priority`, `job_interval`) VALUES
 (1, 'clean_dead_peer', 1, 600),
 (2, 'clean_expired_session', 1, 600),
-(3, 'expired_temporarily_invites', 1, 600);
+(3, 'expired_temporarily_invites', 1, 600),
+(4, 'update_expired_external_link_info', 1, 600);
 
 -- --------------------------------------------------------
 
@@ -990,7 +1037,10 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
   `start_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `expired_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
-  KEY `t_buff_index` (`beneficiary_id`,`torrent_id`,`start_at`,`expired_at`)
+  KEY `t_buff_index` (`beneficiary_id`,`torrent_id`,`start_at`,`expired_at`),
+  KEY `torrent_id` (`torrent_id`),
+  KEY `operator_id` (`operator_id`),
+  KEY `beneficiary_id` (`beneficiary_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -1160,6 +1210,13 @@ ALTER TABLE `bookmarks`
 --
 ALTER TABLE `invite`
   ADD CONSTRAINT `FK_invite_inviter_id` FOREIGN KEY (`inviter_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `map_torrents_externalinfo`
+--
+ALTER TABLE `map_torrents_externalinfo`
+  ADD CONSTRAINT `FK_map_tl_to_external_info` FOREIGN KEY (`info_id`) REFERENCES `external_info` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_map_tl_to_torrents` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `map_torrents_tags`

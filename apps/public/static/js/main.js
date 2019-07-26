@@ -58,6 +58,7 @@ jQuery(document).ready(function () {
 
     $('[data-toggle="tooltip"]').tooltip();  // Active tooltip
     $('[data-toggle="popover"]').popover();  // Active popover
+    $('textarea[data-autoresize]').autoresize();  // Active autoresize of textarea
 
     // Active Pager which source from remote
     $('ul[data-ride="remote_pager"]').pager({

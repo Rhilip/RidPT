@@ -43,9 +43,9 @@ class TrackerController
     public function actionIndex()
     {
         // Set Response Header ( Format, HTTP Cache )
-        app()->response->setHeader("Content-Type", "text/plain; charset=utf-8");
-        app()->response->setHeader("Connection", "close");
-        app()->response->setHeader("Pragma", "no-cache");
+        app()->response->setHeader('Content-Type', 'text/plain; charset=utf-8');
+        app()->response->setHeader('Connection', 'close');
+        app()->response->setHeader('Pragma', 'no-cache');
 
         $userInfo = null;
         $torrentInfo = null;
@@ -53,14 +53,14 @@ class TrackerController
         try {
             // Block NON-GET requests (Though non-GET request will not match this Route )
             if (!app()->request->isGet())
-                throw new TrackerException(110, [":method" => app()->request->method()]);
+                throw new TrackerException(110, [':method' => app()->request->method()]);
 
-            if (!config("base.enable_tracker_system"))
+            if (!config('base.enable_tracker_system'))
                 throw new TrackerException(100);
 
             $this->blockClient();
 
-            $action = strtolower(app()->request->route("{tracker_action}"));
+            $action = strtolower(app()->request->route('{tracker_action}'));
             $this->checkUserAgent($action == 'scrape');
 
             $this->checkPasskey($userInfo);
@@ -69,7 +69,7 @@ class TrackerController
                 // Tracker Protocol Extension: Scrape - http://www.bittorrent.org/beps/bep_0048.html
                 case 'scrape':
                     {
-                        if (!config("tracker.enable_scrape")) throw new TrackerException(101);
+                        if (!config('tracker.enable_scrape')) throw new TrackerException(101);
 
                         $this->checkScrapeFields($info_hash_array);
                         $this->generateScrapeResponse($info_hash_array, $rep_dict);
@@ -79,7 +79,7 @@ class TrackerController
 
                 case 'announce':
                     {
-                        if (!config("tracker.enable_announce")) throw new TrackerException(102);
+                        if (!config('tracker.enable_announce')) throw new TrackerException(102);
 
                         $this->checkAnnounceFields($queries);
                         if (!env('APP_DEBUG'))
@@ -163,23 +163,18 @@ class TrackerController
     private function blockClient()
     {
         // Miss Header User-Agent is not allowed.
-        if (!app()->request->header("user-agent"))
+        if (!app()->request->header('user-agent'))
             throw new TrackerException(120);
 
-        // Block Browser by check it's User-Agent
-        if (preg_match('/(^Mozilla|Browser|AppleWebKit|^Opera|^Links|^Lynx|[Bb]ot)/', app()->request->header("user-agent"))) {
-            throw new TrackerException(121);
-        }
-
         // Block Other Browser, Crawler (, May Cheater or Faker Client) by check Requests headers
-        if (app()->request->header("accept-language") || app()->request->header('referer')
-            || app()->request->header("accept-charset")
+        if (app()->request->header('accept-language') || app()->request->header('referer')
+            || app()->request->header('accept-charset')
 
             /**
              * This header check may block Non-bittorrent client `Aria2` to access tracker,
              * Because they always add this header which other clients don't have.
              */
-            || app()->request->header("want-digest")
+            || app()->request->header('want-digest')
 
             /**
              * If your tracker is behind the Cloudflare or other CDN (proxy) Server,
@@ -195,13 +190,18 @@ class TrackerController
              * See more on : https://support.cloudflare.com/hc/en-us/articles/200170156
              *
              */
-            //|| app()->request->header("cookie")
+            //|| app()->request->header('cookie')
         )
             throw new TrackerException(122);
 
         // Should also Block those too long User-Agent. ( For Database reason
-        if (strlen(app()->request->header("user-agent")) > 64)
+        if (strlen(app()->request->header('user-agent')) > 64)
             throw new TrackerException(123);
+
+        // Block Browser by check it's User-Agent
+        if (preg_match('/(^Mozilla|Browser|AppleWebKit|^Opera|^Links|^Lynx|[Bb]ot)/', app()->request->header('user-agent'))) {
+            throw new TrackerException(121);
+        }
     }
 
     /** Check Passkey Exist and Valid First, And We Get This Account Info
@@ -210,15 +210,15 @@ class TrackerController
      */
     private function checkPasskey(&$userInfo)
     {
-        $passkey = app()->request->get("passkey");
+        $passkey = app()->request->get('passkey');
 
         // First Check The param `passkey` is exist and valid
         if (is_null($passkey))
-            throw new TrackerException(130, [":attribute" => "passkey"]);
+            throw new TrackerException(130, [':attribute' => 'passkey']);
         if (strlen($passkey) != 32)
-            throw new TrackerException(132, [":attribute" => "passkey", ":rule" => "32"]);
+            throw new TrackerException(132, [':attribute' => 'passkey', ':rule' => '32']);
         if (strspn(strtolower($passkey), 'abcdef0123456789') != 32)
-            throw new TrackerException(131, [":attribute" => "passkey", ":reason" => "The format of passkey isn't correct"]);
+            throw new TrackerException(131, [':attribute' => 'passkey', ':reason' => 'The format of passkey isn\'t correct']);
 
         // If this passkey is exist in no-exist set. (Worked as `Filter`
         if (app()->redis->sIsMember('Tracker:no_exist_user_passkey_set', $passkey))
@@ -229,8 +229,8 @@ class TrackerController
         if ($userInfo === false) {
             // If Cache breakdown , We will get User info from Database and then cache it
             // Notice: if this passkey is not find in Database , a null will be cached.
-            $userInfo = app()->pdo->createCommand("SELECT `id`,`status`,`passkey`,`downloadpos`,`class`,`uploaded`,`downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1")
-                ->bindParams(["passkey" => $passkey])->queryOne();
+            $userInfo = app()->pdo->createCommand('SELECT `id`,`status`,`passkey`,`downloadpos`,`class`,`uploaded`,`downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1')
+                ->bindParams(['passkey' => $passkey])->queryOne();
             if ($userInfo === false) {
                 app()->redis->sAdd('Tracker:no_exist_user_passkey_set', $passkey);
                 throw new TrackerException(140);
@@ -281,11 +281,11 @@ class TrackerController
 
         $info_hash_array = $info_hash_match[1];
         if (count($info_hash_array) < 1) {
-            throw new TrackerException(130, [":attribute" => 'info_hash']);
+            throw new TrackerException(130, [':attribute' => 'info_hash']);
         } else {
             foreach ($info_hash_array as $item) {
                 if (strlen($item) != 20)
-                    throw new TrackerException(133, [":attribute" => 'info_hash', ":rule" => strlen($item)]);
+                    throw new TrackerException(133, [':attribute' => 'info_hash', ':rule' => strlen($item)]);
             }
         }
     }
@@ -298,7 +298,7 @@ class TrackerController
             if (!empty($metadata)) $torrent_details[$item] = $metadata;  // Append it to tmp array only it exist.
         }
 
-        $rep_dict = ["files" => $torrent_details];
+        $rep_dict = ['files' => $torrent_details];
     }
 
     /**
@@ -706,44 +706,44 @@ class TrackerController
     private function checkSession($queries, $seeder, $userInfo, $torrentInfo)
     {
         // Check if exist peer
-        $peer_unique_cache_key = 'Tracker:peer:unique_' . $userInfo["id"] . '_' . $torrentInfo["id"] . '_' . $queries["peer_id"];
+        $peer_unique_cache_key = 'Tracker:peer:unique_' . $userInfo["id"] . '_' . $torrentInfo['id'] . '_' . $queries['peer_id'];
         if (app()->redis->exists($peer_unique_cache_key)) {
             // this peer is already announce before , just expire cache key lifetime and return.
-            app()->redis->expire($peer_unique_cache_key, config("tracker.interval") * 2);
+            app()->redis->expire($peer_unique_cache_key, config('tracker.interval') * 2);
             return;
         } elseif ($queries['event'] != 'stopped') {
             // If session is not exist and &event!=stopped, a new session should start
 
             // Cache may miss
-            $self = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid;")->bindParams([
-                "uid" => $userInfo["id"], "tid" => $torrentInfo["id"], "pid" => $queries["peer_id"]
+            $self = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid;')->bindParams([
+                'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
             ])->queryScalar();
             if ($self !== 0) {  // True MISS
-                app()->redis->set($peer_unique_cache_key, true, config("tracker.interval") * 2);
+                app()->redis->set($peer_unique_cache_key, true, config('tracker.interval') * 2);
                 return;
             }
 
             // First check if this peer can open this NEW session then create it
-            $selfCount = app()->pdo->createCommand("SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;")->bindParams([
-                "uid" => $userInfo["id"],
-                "tid" => $torrentInfo["id"]
+            $selfCount = app()->pdo->createCommand('SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;')->bindParams([
+                'uid' => $userInfo['id'],
+                'tid' => $torrentInfo['id']
             ])->queryScalar();
 
             // Ban one torrent seeding/leech at multi-location due to your site config
             if ($seeder == 'yes') { // if this peer's role is seeder
                 if ($selfCount >= (config('tracker.user_max_seed')))
-                    throw new TrackerException(160, [":count" => config('tracker.user_max_seed')]);
+                    throw new TrackerException(160, [':count' => config('tracker.user_max_seed')]);
             } else {
                 if ($selfCount >= (config('tracker.user_max_leech')))
-                    throw new TrackerException(161, [":count" => config('tracker.user_max_leech')]);
+                    throw new TrackerException(161, [':count' => config('tracker.user_max_leech')]);
             }
 
-            if ($userInfo["class"] < UserInterface::ROLE_VIP) {
-                $ratio = (($userInfo["downloaded"] > 0) ? ($userInfo["uploaded"] / $userInfo["downloaded"]) : 1);
-                $gigs = $userInfo["downloaded"] / (1024 * 1024 * 1024);
+            if ($userInfo['class'] < UserInterface::ROLE_VIP) {
+                $ratio = (($userInfo['downloaded'] > 0) ? ($userInfo['uploaded'] / $userInfo['downloaded']) : 1);
+                $gigs = $userInfo['downloaded'] / (1024 * 1024 * 1024);
 
                 // FIXME Wait System
-                if (config("tracker.enable_waitsystem")) {
+                if (config('tracker.enable_waitsystem')) {
                     if ($gigs > 10) {
                         if ($ratio < 0.4) $wait = 24;
                         elseif ($ratio < 0.5) $wait = 12;
@@ -751,14 +751,14 @@ class TrackerController
                         elseif ($ratio < 0.8) $wait = 3;
                         else $wait = 0;
 
-                        $elapsed = time() - $torrentInfo["added_at"];
+                        $elapsed = time() - $torrentInfo['added_at'];
                         if ($elapsed < $wait)
-                            throw new TrackerException(163, [":sec" => $wait * 3600 - $elapsed]);
+                            throw new TrackerException(163, [':sec' => $wait * 3600 - $elapsed]);
                     }
                 }
 
                 // FIXME Max SLots System
-                if (config("tracker.enable_maxdlsystem")) {
+                if (config('tracker.enable_maxdlsystem')) {
                     $max = 0;
                     if ($gigs > 10) {
                         if ($ratio < 0.5) $max = 1;
@@ -768,10 +768,10 @@ class TrackerController
                     }
                     if ($max > 0) {
                         $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
-                            "uid" => $userInfo["id"]
+                            'uid' => $userInfo['id']
                         ])->queryScalar();
                         if ($count >= $max)
-                            throw new TrackerException(164, [":max" => $max]);
+                            throw new TrackerException(164, [':max' => $max]);
                     }
                 }
             }

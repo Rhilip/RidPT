@@ -113,6 +113,7 @@ $extend_debug_info = config('base.enable_extend_debug') &&
 <script src="/lib/zui/dist/js/zui.min.js"></script>
 <script src="/lib/bootstrap-validator/dist/validator.min.js"></script>
 <script src="/lib/localforage/dist/localforage.min.js"></script>
+<script src="/lib/jquery.textarea.autoresize/js/jquery.textarea.autoresize.js"></script>
 
 <!-- Custom Javascript of this template -->
 <script src="/static/js/main.js?<?= $css_tag ?>"></script>

@@ -120,6 +120,14 @@ use apps\libraries\Site;
         </tr>
         <?php endif ?>
         <tr>
+            <td class="nowrap"><label for="links">Links</label></td>
+            <td>
+                <textarea id="links" name="links" class="form-control" style="width: 99%"
+                          cols="100" rows="1" data-autoresize></textarea>
+                <div class="help-block">Source Links ( One link on line ) from Douban, IMDb, Steam,.... </div>
+            </td>
+        </tr>
+        <tr>
             <td class="nowrap"><label for="descr" class="required">Description</label></td>
             <td>
                 <textarea id="descr" name="descr" class="form-control" style="width: 99%"
