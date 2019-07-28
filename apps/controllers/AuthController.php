@@ -134,7 +134,7 @@ class AuthController extends Controller
     public function actionLogout()
     {
         // TODO add CSRF protect
-        app()->user->deleteUserThisSession();
+        app()->site->getCurUser()->deleteUserThisSession();
         return app()->response->redirect('/auth/login');
     }
 }

@@ -73,7 +73,7 @@
                             <div class="row">
                                 <label for="securelogin" class="col-md-3">Restrict IP</label>
                                 <div class="col-md-6">
-                                    <input type="checkbox"  name="securelogin" id="securelogin" value="yes" title="">Restrict session to my IP
+                                    <input type="checkbox"  name="securelogin" id="securelogin" value="yes" title=""> Restrict session to my IP
                                 </div>
                             </div>
                             <div class="row">

@@ -8,10 +8,9 @@
 
 namespace apps\models\form\Auth;
 
-
-use apps\components\User\UserInterface;
 use apps\libraries\Site;
 
+use apps\models\User;
 use Rid\Helpers\StringHelper;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
@@ -51,7 +50,7 @@ class UserRecoverForm  extends Validator
             'email' => $this->email
         ])->queryOne();
         if ($user_info !== false) {
-            if ($user_info['status'] !== UserInterface::STATUS_CONFIRMED) {
+            if ($user_info['status'] !== User::STATUS_CONFIRMED) {
                 return 'std_user_account_unconfirmed';
             }
 

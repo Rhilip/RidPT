@@ -8,12 +8,13 @@
 - **gitignore:** Add ignore of `/backup` folder
 
 ### Feat
-- **Category:** Add Categories Support when upload torrent
 - **Category:** Add Categories Manage Pane
+- **Category:** Add Categories Support when upload torrent
 - **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Add `retry in` field when failed
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 - **ban:** Add table `ban_usernames` and `ban_emails`
+- **csrf:** Add Csrf Support
 - **email:** Use Site::sendEmail to simple email sender
 - **system:** can get more system info via class SystemInfoHelper
 

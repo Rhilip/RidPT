@@ -8,8 +8,8 @@
 
 namespace apps\controllers;
 
-use apps\components\User\UserInterface;
 use apps\libraries\Constant;
+use apps\models\User;
 use Rid\Utils\IpUtils;
 use Rid\Bencode\Bencode;
 
@@ -400,7 +400,7 @@ class TrackerController
             throw new TrackerException(131, [':attribute' => 'passkey', ':reason' => 'The format of passkey isn\'t correct']);
 
         // If this passkey is exist in Invalid Passkey Zset. (Worked as `Filter`
-        if (app()->redis->zScore(Constant::trackerInvalidPasskeyZset, $passkey) !== false)
+        if (app()->redis->zScore(Constant::invalidUserPasskeyZset, $passkey) !== false)
             throw new TrackerException(140);
 
         // Get userInfo from RedisConnection Cache and then Database
@@ -409,7 +409,7 @@ class TrackerController
             $userInfo = app()->pdo->createCommand('SELECT `id`, `status`, `passkey`, `downloadpos`, `class`, `uploaded`, `downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1')
                 ->bindParams(['passkey' => $passkey])->queryOne();
             if ($userInfo === false) {  // It means this passkey is invalid, and remember it at least 10 minutes
-                app()->redis->zAdd(Constant::trackerInvalidPasskeyZset, time() + 600, $passkey);
+                app()->redis->zAdd(Constant::invalidUserPasskeyZset, time() + 600, $passkey);
                 throw new TrackerException(140);
             }
 
@@ -751,7 +751,7 @@ class TrackerController
                     throw new TrackerException(161, [':count' => config('tracker.user_max_leech')]);
             }
 
-            if ($userInfo['class'] < UserInterface::ROLE_VIP) {
+            if ($userInfo['class'] < User::ROLE_VIP) {
                 $ratio = (($userInfo['downloaded'] > 0) ? ($userInfo['uploaded'] / $userInfo['downloaded']) : 1);
                 $gigs = $userInfo['downloaded'] / (1024 * 1024 * 1024);
 

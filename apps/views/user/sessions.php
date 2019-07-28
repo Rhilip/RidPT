@@ -33,7 +33,7 @@ This is a list of devices that have logged into your account. Revoke any session
             <td class="text-left"><?= $s['user_agent'] ?></td>
             <td class="text-center" data-timestamp="<?= strtotime($s['last_access_at']) ?>"><?= $s['last_access_at'] ?></td>
             <td class="text-center">
-                <?php if ($s['sid'] == app()->user->getSessionId()): ?>
+                <?php if ($s['sid'] == app()->site->getCurUser()->getSessionId()): ?>
                     Current
                 <?php else: ?>
                     <form method="post">

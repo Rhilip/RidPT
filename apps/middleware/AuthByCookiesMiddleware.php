@@ -13,12 +13,11 @@ class AuthByCookiesMiddleware
         list($controller, $action) = $callable;
         $controllerName = get_class($controller);
 
-        app()->user->loadUserFromCookies();
-        $isAnonymousUser = app()->user->isAnonymous();
+        $user = app()->site->getCurUser();
 
         $now_ip = app()->request->getClientIp();
         if ($controllerName === \apps\controllers\AuthController::class) {
-            if (!$isAnonymousUser && in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
+            if ($user !== false && in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
                 return app()->response->redirect("/index");
             } elseif ($action !== "actionLogout") {
                 if ($action == 'actionLogin') {
@@ -30,7 +29,8 @@ class AuthByCookiesMiddleware
                 return $next();
             }
         }
-        if ($isAnonymousUser) {
+
+        if (false === $user) {
             $query = app()->request->server('query_string');
             $to = app()->request->server('path_info') . (strlen($query) > 0 ? '?' . $query : '');
             app()->session->set('login_return_to', $to);
@@ -67,18 +67,18 @@ class AuthByCookiesMiddleware
                 )
             );
             $required_class = config('route.' . $route, false) ?: 1;
-            if (app()->user->getClass(true) < $required_class) {
+            if (app()->site->getCurUser()->getClass(true) < $required_class) {
                 return app()->response->setStatusCode(403);
             }
         }
 
         // We will not update user last_access_ip if it not change or expired
-        $last_access_ip = app()->redis->get('user:' . app()->user->getId() . ":access_ip");
+        $last_access_ip = app()->redis->get('user:' . app()->site->getCurUser()->getId() . ":access_ip");
         if ($last_access_ip === false || $last_access_ip !== $now_ip) {
             app()->pdo->createCommand("UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;")->bindParams([
-                "ip" => app()->request->getClientIp(), "id" => app()->user->getId()
+                "ip" => app()->request->getClientIp(), "id" => app()->site->getCurUser()->getId()
             ])->execute();
-            app()->redis->set('user:' . app()->user->getId() . ":access_ip", $now_ip, 3600);
+            app()->redis->set('user:' . app()->site->getCurUser()->getId() . ":access_ip", $now_ip, 3600);
         }
 
         // 执行下一个中间件

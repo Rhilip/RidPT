@@ -38,22 +38,22 @@ class TorrentsForm extends Validator
 
     public function updateRecord() {
         $bookmark_exist = app()->pdo->createCommand('SELECT `id` FROM `bookmarks` WHERE `uid` = :uid AND `tid` = :tid ')->bindParams([
-            'uid' => app()->user->getId(),
+            'uid' => app()->site->getCurUser()->getId(),
             'tid' => $this->tid
         ])->queryScalar() ?: 0;
         if ($bookmark_exist > 0) {  // Delete the exist record
             app()->pdo->createCommand('DELETE FROM `bookmarks` WHERE `id` = :bid')->bindParams([
                 'bid' => $bookmark_exist
             ])->execute();
-            app()->redis->del('User:' . app()->user->getId() . ':bookmark_array');
+            app()->redis->del('User:' . app()->site->getCurUser()->getId() . ':bookmark_array');
 
             return ['msg' => 'Delete Old Bookmark Success', 'result' => 'deleted'];
         } else {  // Add new record
             app()->pdo->createCommand('INSERT INTO `bookmarks` (`uid`, `tid`) VALUES (:uid, :tid)')->bindParams([
-                'uid' => app()->user->getId(),
+                'uid' => app()->site->getCurUser()->getId(),
                 'tid' => $this->tid
             ])->execute();
-            app()->redis->del('User:' . app()->user->getId() . ':bookmark_array');
+            app()->redis->del('User:' . app()->site->getCurUser()->getId() . ':bookmark_array');
 
             return ['msg' => 'Add New Bookmark Success', 'result' => 'added'];
         }

@@ -15,7 +15,8 @@ use Rid\Utils\ClassValueCacheUtils;
 
 class Torrent
 {
-    use AttributesImportUtils, ClassValueCacheUtils;
+    use AttributesImportUtils;
+    use ClassValueCacheUtils;
 
     private $id = null;
 
@@ -93,12 +94,12 @@ class Torrent
         return $this->id;
     }
 
-    /** FIXME
+    /** FIXME move it to view
      * @return mixed
      */
     public function getOwnerId()
     {
-        if ($this->getUplver() == 'yes' and !app()->user->isPrivilege('see_anonymous_uploader')) {
+        if ($this->getUplver() == 'yes' and !app()->site->getCurUser()->isPrivilege('see_anonymous_uploader')) {
             return 0;
         } else {
             return $this->owner_id;
@@ -107,7 +108,7 @@ class Torrent
 
     public function getOwner()
     {
-        return new User($this->owner_id);
+        return app()->site->getUser($this->owner_id);
     }
 
     /**
@@ -193,7 +194,7 @@ class Torrent
         else if (app()->request->isSecure())
             $scheme = "https://";
 
-        $announce_suffix = "/announce?passkey=" . app()->user->getPasskey();
+        $announce_suffix = "/announce?passkey=" . app()->site->getCurUser()->getPasskey();
         $dict["announce"] = $scheme . config("base.site_tracker_url") . $announce_suffix;
 
         /** BEP 0012 Multitracker Metadata Extension

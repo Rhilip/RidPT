@@ -91,7 +91,7 @@ class I18n extends Component
         if (!is_null(app()->request->get('lang'))) $userLangs[] = app()->request->get('lang');
 
         // 3rd highest priority: SESSION parameter 'lang'
-        if (!is_null(app()->user->getLang())) $userLangs[] = app()->user->getLang();
+        if (!is_null(app()->site->getCurUser()->getLang())) $userLangs[] = app()->site->getCurUser()->getLang();
 
         // 4th highest priority: HTTP_ACCEPT_LANGUAGE
         if (!is_null(app()->request->header('accept_language'))) {

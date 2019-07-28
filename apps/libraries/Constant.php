@@ -13,8 +13,16 @@ class Constant
 {
     const cookie_name = 'rid';
 
+    const mapUsernameToId = 'Map:user_username_to_user_id:hash';
+    const mapUserSessionToId = 'Map:user_session_to_user_id:zset';
+    const mapUserPasskeyToId = 'Map:user_passkey_to_user_id:zset';
+
+    // FIXME
+    const invalidUserIdZset = 'Site:invalid_user_id:zset';
+    const invalidUserSessionZset = 'Session:invalid_user_session:zset';
+    const invalidUserPasskeyZset = 'Tracker:invalid_user_passkey:zset';
+
     // Tracker Use
-    const trackerInvalidPasskeyZset = 'Tracker:invalid_passkey:zset';
     const trackerInvalidInfoHashZset = 'Tracker:invalid_info_hash:zset';
     const trackerAllowedClientList = 'Tracker:allowed_client_list:string';
     const trackerAllowedClientExceptionList = 'Tracker:allowed_client_exception_list:string';
@@ -24,6 +32,12 @@ class Constant
     const trackerValidPeerZset = 'Tracker:valid_peers:zset';
     const trackerToDealQueue = 'Tracker:to_deal_queue:list';
 
+    public static function userContent($uid)
+    {
+        return 'User:user_' . $uid . '_content:hash';
+    }
+
+    // Tracker User
     public static function trackerUserContentByPasskey($passkey)
     {
         return 'Tracker:user_passkey_' . $passkey . '_content:string'; // Used string to store hash

@@ -38,16 +38,16 @@
 
 <div id="info_block">
     <div id="info_block_line_1">
-        Welcome Back, <a href="/user" data-user-id="<?= app()->user->getId() ?>"><?= app()->user->getUsername() ?></a>&nbsp;
+        Welcome Back, <a href="/user" data-user-id="<?= app()->site->getCurUser()->getId() ?>"><?= app()->site->getCurUser()->getUsername() ?></a>&nbsp;
         <span data-item="logout"><!--suppress HtmlUnknownTarget -->[<a href="/auth/logout">Logout</a>]</span>
-        <?php if (app()->user->getClass(true) > \apps\components\User\UserInterface::ROLE_FORUM_MODERATOR): ?>
+        <?php if (app()->site->getCurUser()->getClass(true) > \apps\models\User::ROLE_FORUM_MODERATOR): ?>
             <span><!--suppress HtmlUnknownTarget -->[<a href="/admin">Admin Panel</a>]</span>
         <?php endif; ?>
         <span data-item="favour"><!--suppress HtmlUnknownTarget -->[<a href="/torrents/favour">Favour</a>]</span>
-        <span data-item="invite" data-invite="<?= app()->user->getInvites() ?>" data-temp-invite="<?= app()->user->getTempInvitesSum() ?>">
-            <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span> <?= app()->user->getInvites() ?>
-            <?php if (app()->user->getTempInvitesSum() > 0): ?>
-                <span data-toggle="tooltip" data-placement="bottom" title="Temporarily Invites" class="text-primary">(+<?= app()->user->getTempInvitesSum() ?>)</span>
+        <span data-item="invite" data-invite="<?= app()->site->getCurUser()->getInvites() ?>" data-temp-invite="<?= app()->site->getCurUser()->getTempInvitesSum() ?>">
+            <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span> <?= app()->site->getCurUser()->getInvites() ?>
+            <?php if (app()->site->getCurUser()->getTempInvitesSum() > 0): ?>
+                <span data-toggle="tooltip" data-placement="bottom" title="Temporarily Invites" class="text-primary">(+<?= app()->site->getCurUser()->getTempInvitesSum() ?>)</span>
             <?php endif; ?>
         </span>
         <span data-item="bonus" data-bonus="">
@@ -65,21 +65,21 @@
         </div>
     </div>
     <div id="info_block_line_2">
-        <span data-item="ratio" data-ratio="<?= $this->e(app()->user->getRatio()) ?>">
-            <span class="color-ratio">Ratio:</span> <?= is_string(app()->user->getRatio()) ? app()->user->getRatio() : round(app()->user->getRatio(),3) ?>
+        <span data-item="ratio" data-ratio="<?= $this->e(app()->site->getCurUser()->getRatio()) ?>">
+            <span class="color-ratio">Ratio:</span> <?= is_string(app()->site->getCurUser()->getRatio()) ? app()->site->getCurUser()->getRatio() : round(app()->site->getCurUser()->getRatio(),3) ?>
         </span>&nbsp;
-        <span data-item="uploaded" data-uploaded="<?= $this->e(app()->user->getUploaded()) ?>">
-            <span class="color-seeding">Uploaded:</span> <?= $this->e(app()->user->getUploaded(), 'format_bytes') ?>
+        <span data-item="uploaded" data-uploaded="<?= $this->e(app()->site->getCurUser()->getUploaded()) ?>">
+            <span class="color-seeding">Uploaded:</span> <?= $this->e(app()->site->getCurUser()->getUploaded(), 'format_bytes') ?>
         </span>&nbsp;
-        <span data-item="download" data-downloaded="<?= $this->e(app()->user->getDownloaded()) ?>">
-            <span class="color-leeching">Downloaded:</span> <?= $this->e(app()->user->getDownloaded(), 'format_bytes') ?>
+        <span data-item="download" data-downloaded="<?= $this->e(app()->site->getCurUser()->getDownloaded()) ?>">
+            <span class="color-leeching">Downloaded:</span> <?= $this->e(app()->site->getCurUser()->getDownloaded(), 'format_bytes') ?>
         </span>&nbsp;
         <span data-item="bt_activity">
             BT Activity:
-            <span class="fas fa-arrow-up fa-fw color-seeding" data-seeding="<?= app()->user->getActiveSeed() ?>">&nbsp;<?= app()->user->getActiveSeed() ?></span>&nbsp;&nbsp;
-            <span class="fas fa-arrow-down fa-fw color-leeching" data-leeching="<?= app()->user->getActiveLeech() ?>">&nbsp;<?= app()->user->getActiveLeech() ?></span>&nbsp;&nbsp;
-            <?php if (app()->user->getActivePartial()): ?>
-            <span class="fas fa-minus fa-fw color-partial" data-partial="<?= app()->user->getActivePartial() ?>">&nbsp;<?= app()->user->getActivePartial() ?></span>&nbsp;&nbsp;
+            <span class="fas fa-arrow-up fa-fw color-seeding" data-seeding="<?= app()->site->getCurUser()->getActiveSeed() ?>">&nbsp;<?= app()->site->getCurUser()->getActiveSeed() ?></span>&nbsp;&nbsp;
+            <span class="fas fa-arrow-down fa-fw color-leeching" data-leeching="<?= app()->site->getCurUser()->getActiveLeech() ?>">&nbsp;<?= app()->site->getCurUser()->getActiveLeech() ?></span>&nbsp;&nbsp;
+            <?php if (app()->site->getCurUser()->getActivePartial()): ?>
+            <span class="fas fa-minus fa-fw color-partial" data-partial="<?= app()->site->getCurUser()->getActivePartial() ?>">&nbsp;<?= app()->site->getCurUser()->getActivePartial() ?></span>&nbsp;&nbsp;
             <?php endif; ?>
         </span>
         <span data-item="connectable" data-connectable="IPv4/IPv6">

@@ -9,10 +9,9 @@
 namespace apps\models\form\Auth;
 
 use apps\libraries\Constant;
-use apps\components\User\UserInterface;
+use apps\models\User;
 
 use Rid\Helpers\StringHelper;
-
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 
@@ -48,7 +47,7 @@ class UserLoginForm extends Validator
     public function __construct(array $config = [])
     {
         parent::__construct($config);
-        $this->sessionSaveKey = app()->user->sessionSaveKey;
+        $this->sessionSaveKey = app()->site->getCurUser()->sessionSaveKey;
     }
 
     public static function inputRules()
@@ -104,7 +103,7 @@ class UserLoginForm extends Validator
         }
 
         // User 's status is banned or pending~
-        if (in_array($this->self['status'], [UserInterface::STATUS_BANNED, UserInterface::STATUS_PENDING])) {
+        if (in_array($this->self['status'], [User::STATUS_BANNED, User::STATUS_PENDING])) {
             $this->buildCallbackFailMsg('Account', 'User account is not confirmed.');
             return;
         }

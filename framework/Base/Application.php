@@ -17,7 +17,7 @@ namespace Rid\Base;
  * @property \Rid\Component\Config $config
  * @property \Rid\Pool\ConnectionPool $connectionPool
  * @property \Rid\Component\I18n $i18n
- * @property \apps\components\User\User $user
+ * @property \apps\components\Site $site
  */
 class Application extends BaseObject
 {

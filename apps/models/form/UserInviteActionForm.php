@@ -8,8 +8,7 @@
 
 namespace apps\models\form;
 
-
-use apps\components\User\UserInterface;
+use apps\models\User;
 use Rid\Validators\Validator;
 
 class UserInviteActionForm extends Validator
@@ -32,7 +31,7 @@ class UserInviteActionForm extends Validator
     public static function defaultData()
     {
         return [
-            'uid' => app()->user->getId()
+            'uid' => app()->site->getCurUser()->getId()
         ];
     }
 
@@ -63,12 +62,12 @@ class UserInviteActionForm extends Validator
     protected function checkActionPrivilege() {
         $action = $this->getData('action');
         if ($action == self::ACTION_CONFIRM) {
-            if (!app()->user->isPrivilege('invite_manual_confirm')) {
+            if (!app()->site->getCurUser()->isPrivilege('invite_manual_confirm')) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to confirm pending user.');
             }
         } elseif ($action == self::ACTION_RECYCLE) {
-            $check_recycle_privilege_name = ($this->getData('uid') == app()->user->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
-            if (!app()->user->isPrivilege($check_recycle_privilege_name)) {
+            $check_recycle_privilege_name = ($this->getData('uid') == app()->site->getCurUser()->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
+            if (!app()->site->getCurUser()->isPrivilege($check_recycle_privilege_name)) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to recycle user pending invites.');
             }
         }
@@ -79,7 +78,7 @@ class UserInviteActionForm extends Validator
             $this->confirm_info = app()->pdo->createCommand('SELECT `status` FROM users WHERE id= :invitee_id')->bindParams([
                 'invitee_id' => $this->getData('invitee_id')
             ])->queryScalar();
-            if ($this->confirm_info === false || $this->confirm_info !== UserInterface::STATUS_PENDING) {
+            if ($this->confirm_info === false || $this->confirm_info !== User::STATUS_PENDING) {
                 $this->buildCallbackFailMsg('user:confirm','The user to confirm is not exist or already confirmed');
             }
         }
@@ -109,7 +108,7 @@ class UserInviteActionForm extends Validator
 
     private function flush_confirm() {
         app()->pdo->createCommand('UPDATE `users` SET `status` = :new_status WHERE `id` = :invitee_id')->bindParams([
-            'new_status' => UserInterface::STATUS_CONFIRMED, 'invitee_id' => $this->invitee_id
+            'new_status' => User::STATUS_CONFIRMED, 'invitee_id' => $this->invitee_id
         ])->execute();
         if (app()->pdo->getRowCount() > 1) {
             return 'Confirm Pending User Success!';

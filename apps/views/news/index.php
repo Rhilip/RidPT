@@ -43,7 +43,7 @@
 </div>
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
-        <?php if (app()->user->isPrivilege('manage_news')): ?>
+        <?php if (app()->site->getCurUser()->isPrivilege('manage_news')): ?>
         <div style="margin-bottom: 5px">
             <div class="pull-right">
                 <a class="btn btn-primary" href="/news/new">Add new Site News</a>
@@ -83,7 +83,7 @@
                         <div class="panel-body">
                             <div class="text"><?= $this->batch($new['body'], 'format_ubbcode'); ?></div>
                         </div>
-                        <?php if (app()->user->isPrivilege('manage_news')): ?>
+                        <?php if (app()->site->getCurUser()->isPrivilege('manage_news')): ?>
                             <div class="panel-footer">
                                 <a href="/news/edit?id=<?= $new['id'] ?>"><i class="icon-pencil"></i> Edit</a> &nbsp;
                                 <a href="/news/delete?id=<?= $new['id'] ?>"><i class="icon-remove"></i> Delete</a> &nbsp;

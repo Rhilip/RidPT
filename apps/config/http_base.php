@@ -203,8 +203,8 @@ return [
             'allowedLangSet' => ['en', 'zh-CN']
         ],
 
-        'user' => [
-            'class' => apps\components\User\User::class,
+        'site' => [
+            'class' => \apps\components\Site::class
         ],
     ],
 

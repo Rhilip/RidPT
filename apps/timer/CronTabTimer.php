@@ -73,7 +73,7 @@ class CronTabTimer extends Timer
     protected function clean_expired_zset_cache() {
         // trackerInvalidPasskeyZset
         $timenow = time();
-        $count_tracker_invalid_passkey = app()->redis->zRemRangeByScore(Constant::trackerInvalidPasskeyZset,0,$timenow);
+        $count_tracker_invalid_passkey = app()->redis->zRemRangeByScore(Constant::invalidUserPasskeyZset,0,$timenow);
         if ($count_tracker_invalid_passkey) $this->print_log('Success Clean ' . $count_tracker_invalid_passkey . ' invalid passkey.');
 
         $count_tracker_invalid_infohash = app()->redis->zRemRangeByScore(Constant::trackerInvalidInfoHashZset,0,$timenow);

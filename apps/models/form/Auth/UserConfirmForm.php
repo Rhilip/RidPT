@@ -9,8 +9,8 @@
 namespace apps\models\form\Auth;
 
 use apps\libraries\Site;
-use apps\components\User\UserInterface;
 
+use apps\models\User;
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;
 
@@ -79,12 +79,12 @@ class UserConfirmForm extends Validator
 
     private function flush_register()
     {
-        if ($this->user_status !== UserInterface::STATUS_PENDING) {
+        if ($this->user_status !== User::STATUS_PENDING) {
             return 'user status is not pending , they may already confirmed or banned';  // FIXME msg
         }
 
         app()->pdo->createCommand('UPDATE `users` SET `status` = :s WHERE `id` = :uid')->bindParams([
-            's' => UserInterface::STATUS_CONFIRMED, 'uid' => $this->uid
+            's' => User::STATUS_CONFIRMED, 'uid' => $this->uid
         ])->execute();
         $this->update_confirm_status();
         app()->redis->del('User:content_' . $this->uid);
@@ -93,7 +93,7 @@ class UserConfirmForm extends Validator
 
     private function flush_recover()
     {
-        if ($this->user_status !== UserInterface::STATUS_CONFIRMED) {
+        if ($this->user_status !== User::STATUS_CONFIRMED) {
             return 'user status is not confirmed , they may in pending or banned';  // FIXME msg
         }
 

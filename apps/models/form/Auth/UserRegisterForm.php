@@ -264,7 +264,7 @@ class UserRegisterForm extends Validator
              * if (strpos($user_email,"@rhilip.info") !== false)
              *    // Do something to update $ret_array
              *
-             * If register pass the Green Check , you can also update some status of this Users.
+             * If register pass the Green Check , you can also update some status of this Site.
              * If he don't pass this check , you should `buildCallbackFailMsg` with **enough** message.
              *
              */

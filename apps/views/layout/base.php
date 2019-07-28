@@ -11,7 +11,7 @@
 
 $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
 $extend_debug_info = config('base.enable_extend_debug') &&
-    app()->user->getClass(true) > config('authority.see_extend_debug_log');
+    app()->site->getCurUser()->getClass(true) > config('authority.see_extend_debug_log');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -65,7 +65,7 @@ $extend_debug_info = config('base.enable_extend_debug') &&
     </header>
     <div class="clearfix"></div>
 
-    <?php if (app()->user->isAnonymous()): ?>
+    <?php if (app()->site->getCurUser() === false): ?>
         <?= $this->insert('layout/nav_anonymous') ?>
     <?php else: ?>
         <?= $this->insert('layout/nav_user') ?>

@@ -68,7 +68,7 @@ $time_now = time();
                             <div class="pull-right">
                                 <div class="text-right">
                                     <!--suppress HtmlUnknownTarget --><a href="/torrent/download?id=<?= $torrent->getId() ?>"><i class="fas fa-download fa-fw"></i></a>
-                                    <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->user->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i></a>
+                                    <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->site->getCurUser()->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i></a>
                                 </div>
                             </div>
                         </div>

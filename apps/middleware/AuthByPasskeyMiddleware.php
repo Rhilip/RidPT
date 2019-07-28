@@ -19,8 +19,8 @@ class AuthByPasskeyMiddleware
             return 'missing passkey';
         }
 
-        app()->user->loadUserFromPasskey();
-        if (app()->user->isAnonymous()) {
+        $user = app()->site->getCurUser('passkey');
+        if (!$user) {
             return 'passkey not exist';
         }
 
