@@ -156,9 +156,10 @@ class Application extends \Rid\Base\Application
     }
 
     // 装载全部组件
-    public function loadAllComponents()
+    public function loadAllComponents($components = null)
     {
-        foreach (array_keys($this->components) as $name) {
+        $components = $components ?? $this->components;
+        foreach (array_keys($components) as $name) {
             $this->loadComponent($name);
         }
     }

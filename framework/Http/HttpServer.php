@@ -4,6 +4,7 @@ namespace Rid\Http;
 
 use Rid\Base\BaseObject;
 
+use Rid\Base\Process;
 use Rid\Base\Timer;
 use Rid\Helpers\ProcessHelper;
 
@@ -71,6 +72,9 @@ class HttpServer extends BaseObject
         $this->_server->on('workerExit', [$this, 'onWorkerExit']);
         $this->_server->on('request', [$this, 'onRequest']);
 
+        // 增加自定义进程
+        $this->addCustomProcess();
+
         // 欢迎信息
         $this->welcome();
 
@@ -136,7 +140,7 @@ class HttpServer extends BaseObject
 
         // 进程命名
         if ($workerId < $server->setting['worker_num']) {
-            ProcessHelper::setTitle("rid-httpd: worker #{$workerId}");
+            ProcessHelper::setTitle("rid-httpd: http worker #{$workerId}");
         } else {
             ProcessHelper::setTitle("rid-httpd: task #{$workerId}");
         }
@@ -207,6 +211,31 @@ class HttpServer extends BaseObject
             app()->run();  // 执行请求
         } catch (\Throwable $e) {
             app()->error->handleException($e);
+        }
+    }
+
+    private function addCustomProcess()
+    {
+        foreach (app()->env('process') as $process_name => $process_config) {
+            $process_class = $process_config['class'];
+            $custom_process = new $process_class();
+            if ($custom_process instanceof Process) {
+                $process = new \Swoole\Process(function ($process) use ($process_name, $process_config, $custom_process) {
+
+                    if ($process_config['title']) ProcessHelper::setTitle($process_config['title']);
+
+                    // 实例化App
+                    $config = require $this->virtualHost['configFile'];
+
+                    $app = new Application($config);
+                    $app->setServ($this->_server);
+                    $app->loadAllComponents(array_flip($process_config['components']));
+
+                    $custom_process->run($process_config);
+                });
+
+                $this->_server->addProcess($process);
+            }
         }
     }
 

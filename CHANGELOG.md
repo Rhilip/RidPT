@@ -19,6 +19,7 @@
 - **system:** can get more system info via class SystemInfoHelper
 
 ### Fix
+- **Anonymous:** Fix Auth Page 500 after commit `2cd1a499`
 - **Cookies:** Fix session sep from `%` to `_`
 - **Database:** Fix table `links` miss
 - **Env:** Exit when parse env file failed
