@@ -31,6 +31,7 @@
 - **redis_key:** Fix array value cause parser error
 
 ### Perf
+- **Site:** try to cache re-hit
 - **Tracker:** Use brpoplpush to get announce data from redis
 - **captcha:** simple captcha input
 - **tracker:** No need to explicit serialize announce data
