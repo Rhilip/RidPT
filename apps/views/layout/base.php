@@ -10,8 +10,9 @@
  */
 
 $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
-$extend_debug_info = config('base.enable_extend_debug') &&
-    app()->site->getCurUser()->getClass(true) > config('authority.see_extend_debug_log');
+$extend_debug_info = app()->site->getCurUser()  // Not Anonymous
+    && config('base.enable_extend_debug')  // Enabled Extend Debug
+    && app()->site->getCurUser()->isPrivilege('see_extend_debug_log');  // Privilege is enough
 ?>
 <!DOCTYPE html>
 <html lang="en">
