@@ -29,6 +29,7 @@ class Torrent
     private $complete;
     private $incomplete;
     private $downloaded;
+    private $comments;
 
     private $title;
     private $subtitle;
@@ -47,6 +48,8 @@ class Torrent
     private $torrent_type;
     private $torrent_size;
     private $torrent_structure;
+
+    protected $comment_perpage = 10;
 
     const TORRENT_TYPE_SINGLE = 'single';
     const TORRENT_TYPE_MULTI = 'multi';
@@ -67,7 +70,7 @@ class Torrent
                     "id" => $id
                 ])->queryOne() ?? [];
             app()->redis->hMset('Torrent:' . $id . ':base_content', $self);
-            app()->redis->expire('Torrent:' . $id . ':base_content', 10 * 60);
+            app()->redis->expire('Torrent:' . $id . ':base_content', 900);
         }
         $this->importAttributes($self);
     }
@@ -90,12 +93,12 @@ class Torrent
         return $this->id;
     }
 
-    /**
+    /** FIXME
      * @return mixed
      */
     public function getOwnerId()
     {
-        if ($this->getUplver() == 'yes' and app()->user->getClass(true) < config('authority.see_anonymous_uploader')) {
+        if ($this->getUplver() == 'yes' and !app()->user->isPrivilege('see_anonymous_uploader')) {
             return 0;
         } else {
             return $this->owner_id;
@@ -321,5 +324,19 @@ class Torrent
     public function getNfo()
     {
         return $this->nfo;
+    }
+
+    public function getComments() {
+        return $this->comments;
+    }
+
+    public function getLastCommentsDetails()
+    {
+        return $this->getCacheValue('last_comments_details', function () {
+            $offset = $this->comments / $this->comment_perpage;
+            return app()->pdo->createCommand('SELECT * FROM torrent_comments WHERE torrent_id = :tid LIMIT :o, :l;')->bindParams([
+                'tid' => $this->id, 'o' => intval($offset), 'l' => $this->comment_perpage
+            ])->queryAll();
+        });
     }
 }

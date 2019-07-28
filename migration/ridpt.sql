@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 26, 2019 at 10:58 PM
+-- Generation Time: Jul 28, 2019 at 04:37 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -974,6 +974,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `complete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have completed downloading.',
   `incomplete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have not completed downloading.',
   `downloaded` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of peers that have ever completed downloading.',
+  `comments` int(11) NOT NULL DEFAULT '0',
   `title` varchar(255) NOT NULL DEFAULT '',
   `subtitle` varchar(255) NOT NULL DEFAULT '',
   `category` mediumint(5) UNSIGNED NOT NULL,
@@ -1023,11 +1024,11 @@ CREATE TABLE IF NOT EXISTS `torrents` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `torrents_buff`
+-- Table structure for table `torrent_buffs`
 --
 
-DROP TABLE IF EXISTS `torrents_buff`;
-CREATE TABLE IF NOT EXISTS `torrents_buff` (
+DROP TABLE IF EXISTS `torrent_buffs`;
+CREATE TABLE IF NOT EXISTS `torrent_buffs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `torrent_id` int(11) UNSIGNED NOT NULL COMMENT '`0` means all torrent',
   `operator_id` mediumint(8) UNSIGNED NOT NULL COMMENT '`0` means system',
@@ -1047,7 +1048,34 @@ CREATE TABLE IF NOT EXISTS `torrents_buff` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- RELATIONSHIPS FOR TABLE `torrents_buff`:
+-- RELATIONSHIPS FOR TABLE `torrent_buffs`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `torrent_comments`
+--
+
+DROP TABLE IF EXISTS `torrent_comments`;
+CREATE TABLE IF NOT EXISTS `torrent_comments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `torrent_id` int(10) UNSIGNED NOT NULL,
+  `owner_id` int(10) UNSIGNED NOT NULL,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `edit_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `text` text NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_torrents_commits_tid` (`torrent_id`),
+  KEY `FK_torrents_commits_uid` (`owner_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `torrent_comments`:
+--   `torrent_id`
+--       `torrents` -> `id`
+--   `owner_id`
+--       `users` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -1252,6 +1280,13 @@ ALTER TABLE `torrents`
   ADD CONSTRAINT `FK_torrent_quality_medium` FOREIGN KEY (`quality_medium`) REFERENCES `quality_medium` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_quality_resolution` FOREIGN KEY (`quality_resolution`) REFERENCES `quality_resolution` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_team` FOREIGN KEY (`team`) REFERENCES `teams` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `torrent_comments`
+--
+ALTER TABLE `torrent_comments`
+  ADD CONSTRAINT `FK_torrents_commits_tid` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_torrents_commits_uid` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `user_confirm`

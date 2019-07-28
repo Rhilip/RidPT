@@ -73,7 +73,7 @@ $time_now = time();
                             </div>
                         </div>
                     </td>
-                    <td class="text-center" data-item="t-commit" data-commit="0">0</td> <!-- TODO -->
+                    <td class="text-center" data-item="t-comments" data-comments="<?= $torrent->getComments() ?>"><?= $torrent->getComments() ?></td>
                     <td class="text-center" data-item="t-size" data-size="<?= $torrent->getTorrentSize() ?>"><?= $this->batch($torrent->getTorrentSize(),'format_bytes_compact') ?></td>
                     <td class="text-center" data-item="t-added-date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>" data-ttl="<?= $time_now - strtotime($torrent->getAddedAt()) ?>"><nobr><?= str_replace(' ','<br />',$torrent->getAddedAt()) ?></nobr></td>
                     <td class="text-center" data-item="t-seeder" data-seeder="<?= $this->e($torrent->getComplete()) ?>"><?= number_format($torrent->getComplete()) ?></td>

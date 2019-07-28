@@ -77,7 +77,7 @@ class EditForm extends ApplyForm
 
     public function flush()
     {
-        if ($this->link_id !== 0) {  // to edit exist links
+        if ((int) $this->link_id !== 0) {  // to edit exist links
             app()->pdo->update('links', $this->link_data_diff, [['id', '=', $this->link_id]])->execute();
             Site::writeLog('The links data of ' . $this->link_old_data['name'] . '( ' . $this->link_old_data['url'] . ' ) is update by ' .
                 app()->user->getUsername() . '(' . app()->user->getId() . ').', Site::LOG_LEVEL_MOD);

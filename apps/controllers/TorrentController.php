@@ -67,6 +67,11 @@ class TorrentController extends Controller
         return $torrent->getDownloadDict(true);
     }
 
+    public function actionComments()
+    {
+        // TODO
+    }
+
     public function actionStructure()
     {
         $tid = app()->request->get('id');

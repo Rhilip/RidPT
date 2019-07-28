@@ -842,7 +842,7 @@ class TrackerController
             ['SELECT `port`, `ipv6_port` '],
             // Get ip and ipv6 field in binary or string depend on value of $compact
             [', `ip`, `ipv6` ', 'if' => $compact],
-            [', INET6_NTOA(`ip`) as `ip`,`port`, INET6_NTOA(`ipv6`) as `ipv6` ', 'ip' => !$compact],
+            [', INET6_NTOA(`ip`) as `ip`, INET6_NTOA(`ipv6`) as `ipv6` ', 'ip' => !$compact],
             [', `peer_id` ', 'if' => !$no_peer_id],
             ['FROM `peers` WHERE torrent_id = :tid ', 'params' => ['tid' => $torrentInfo['id']]],
             ['AND peer_id != :pid  ', 'params' => ['pid' => $queries['peer_id']]],  // Don't select user himself

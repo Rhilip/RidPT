@@ -232,7 +232,7 @@ jQuery(document).ready(function () {
                     let v = tree[k];
                     if (typeof v == 'object') {
                         let [in_ret, in_size] = list_worker(v, par + "/" + k);
-                        ret += `<li${par === '' ? ' class="open"' : ''}><a href="#"><b>${k}</b> (<span class="file-size" data-size="${v}">${humanFileSize(in_size)}</span>)</a><ul>${in_ret}</ul></li>`;
+                        ret += `<li${par === '' ? ' class="open"' : ''}><a href="#"><b>${k}</b> (<span class="file-size" data-size="${in_size}">${humanFileSize(in_size)}</span>)</a><ul>${in_ret}</ul></li>`;
                         size += in_size;
                     } else {
                         let ext = k.substr(k.lastIndexOf('.') + 1).toLowerCase();
