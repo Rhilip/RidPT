@@ -34,6 +34,7 @@
 - **tracker:** No need to explicit serialize announce data
 
 ### Refactor
+- **Tracker:** Better Tracker behaviour in multi tracker
 - **View:** Rename folder `error` to `action`
 - **action_success:** Simple The Action Template
 

@@ -142,4 +142,10 @@ class Session extends Component
         return $this->_sessionId;
     }
 
+    public function setCsrfToken()
+    {
+        $csrf = StringHelper::getRandomString(16);
+        $this->set('csrf', $csrf);
+        return $csrf;
+    }
 }
