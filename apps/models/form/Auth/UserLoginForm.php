@@ -35,7 +35,6 @@ class UserLoginForm extends Validator
 
     // Key Information of User Session
     private $sessionLength = 64;
-    private $sessionSaveKey = 'SESSION:user_set';
 
     // Cookie
     private $cookieExpires = 0x7fffffff;
@@ -47,7 +46,6 @@ class UserLoginForm extends Validator
     public function __construct(array $config = [])
     {
         parent::__construct($config);
-        $this->sessionSaveKey = app()->site->getCurUser()->sessionSaveKey;
     }
 
     public static function inputRules()
@@ -128,7 +126,7 @@ class UserLoginForm extends Validator
     {
         $userId = $this->self['id'];
 
-        $exist_session_count = app()->redis->zCount($this->sessionSaveKey, $userId, $userId);
+        $exist_session_count = app()->redis->zCount(Constant::mapUserSessionToId, $userId, $userId);
         if ($exist_session_count < config('base.max_per_user_session')) {
             /**
              * SessionId Format:
@@ -162,7 +160,7 @@ class UserLoginForm extends Validator
             ])->execute();
 
             // Add this session id in Redis Cache
-            app()->redis->zAdd($this->sessionSaveKey, $userId, $userSessionId);
+            app()->redis->zAdd(Constant::mapUserSessionToId, $userId, $userSessionId);
 
             // Set User Cookie
             $cookieExpire = $this->cookieExpires;
