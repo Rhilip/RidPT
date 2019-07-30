@@ -6,12 +6,13 @@
  * Time: 22:19
  */
 
-namespace apps\timer;
+namespace apps\process;
 
 use apps\libraries\Constant;
-use Rid\Base\Timer;
+use Rid\Base\Process;
 
-class CronTabTimer extends Timer
+
+class CronTabProcess extends Process
 {
 
     private $_print_flag = 1;  // FIXME debug model on
@@ -27,10 +28,11 @@ class CronTabTimer extends Timer
     /**
      * @throws \Exception
      */
-    public function init()
+    public function run()
     {
         // Get all run
         $to_run_jobs = app()->pdo->createCommand('SELECT * FROM `site_crontab` WHERE `priority` > 0 AND `next_run_at` < NOW() ORDER BY priority ASC;')->queryAll();
+
         $hit = 0;
         $start_time = time();
         foreach ($to_run_jobs as $job) {
@@ -45,12 +47,10 @@ class CronTabTimer extends Timer
                     $hit++;
 
                     // Update the run information
-                    app()->pdo->createCommand('UPDATE `site_crontab` set last_run_at= NOW() , next_run_at= DATE_ADD(NOW(), interval job_interval second) WHERE id=:id')->bindParams([
-                        'id' => $job['id']
-                    ])->queryOne();
-                    $next_run_at = app()->pdo->createCommand('SELECT `next_run_at` FROM `site_crontab` WHERE id=:id')->bindParams([
-                        'id' => $job['id']
-                    ])->queryScalar();   // FIXME Bad Code
+                    $next_run_at = $job_end_time + $job['job_interval'];
+                    app()->pdo->createCommand('UPDATE `site_crontab` set last_run_at = FROM_UNIXTIME(:last_run_at) , next_run_at = FROM_UNIXTIME(:next_run_at) WHERE id=:id')->bindParams([
+                        'id' => $job['id'], 'last_run_at' => $job_end_time, 'next_run_at' => $next_run_at
+                    ])->execute();
                     $this->print_log('The run job : ' . $job['job'] . ' Finished. ' .
                         'Cost time: ' . number_format($job_end_time - $job_start_time, 10) . 's, ' . 'Next run at : ' . $next_run_at
                     );

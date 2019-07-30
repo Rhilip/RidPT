@@ -50,6 +50,12 @@ return [
             'title' => 'Tracker Announce Worker',
             'components' => ['log', 'pdo', 'redis', 'config', 'site'],
             'sleep' => 5,
+        ],
+        'crontab' => [
+            'class' => \apps\process\CronTabProcess::class,
+            'title' => 'Crontab Worker',
+            'components' => ['log', 'pdo', 'redis', 'config', 'site'],
+            'sleep' => 60,
         ]
     ],
 

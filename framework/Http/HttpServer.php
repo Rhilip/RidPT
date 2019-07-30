@@ -140,9 +140,9 @@ class HttpServer extends BaseObject
 
         // 进程命名
         if ($workerId < $server->setting['worker_num']) {
-            ProcessHelper::setTitle("rid-httpd: http worker #{$workerId}");
+            ProcessHelper::setTitle("rid-httpd: HTTP Worker #{$workerId}");
         } else {
-            ProcessHelper::setTitle("rid-httpd: task #{$workerId}");
+            ProcessHelper::setTitle("rid-httpd: Task #{$workerId}");
         }
 
         // 实例化App
@@ -222,7 +222,7 @@ class HttpServer extends BaseObject
             if ($custom_process instanceof Process) {
                 $process = new \Swoole\Process(function ($process) use ($process_name, $process_config, $custom_process) {
 
-                    if ($process_config['title']) ProcessHelper::setTitle($process_config['title']);
+                    if ($process_config['title']) ProcessHelper::setTitle('rid-httpd: ' . $process_config['title']);
 
                     // FIXME 实例化App
                     $config = require $this->virtualHost['configFile'];

@@ -210,12 +210,12 @@ return [
 
     // 定时器配置
     'timer'            => [
-        'crontab' => [
-            'class' => \apps\timer\CronTabTimer::class,
-            'type' => \Rid\Base\Timer::TICK,
-            'msec' => 1 * 60 * 1000,    // TODO 单位为毫秒，应该为所有crontab worker的最小公倍数（应该在面板有所提醒）
-            'callback' => 'init'
-        ]
+        //'crontab' => [
+        //    'class' => \apps\timer\CronTabProcess::class,
+        //    'type' => \Rid\Base\Timer::TICK,
+        //    'msec' => 1 * 60 * 1000,
+        //    'callback' => 'init'
+        //]
     ],
 
     // 类库配置

@@ -26,7 +26,6 @@ class TrackerAnnounceProcess extends Process
                  *    'userInfo' => $userInfo, 'torrentInfo' => $torrentInfo
                  * ]
                  */
-                var_dump($data);
                 $this->processAnnounceRequest($data['timestamp'], $data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
 
                 app()->pdo->commit();
@@ -60,7 +59,6 @@ class TrackerAnnounceProcess extends Process
         FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid LIMIT 1;')->bindParams([
             'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
         ])->queryOne();
-        var_dump($self);
 
         if ($self === false) {
             // If session is not exist and &event!=stopped, a new session should start
@@ -108,9 +106,7 @@ class TrackerAnnounceProcess extends Process
             // So that , We can calculate Announce data on a exist session
             $trueUploaded = max(0, $queries['uploaded'] - $self['uploaded']);
             $trueDownloaded = max(0, $queries['downloaded'] - $self['downloaded']);
-
             $duration = max(0, $timenow - $self['last_action_at']);
-            var_dump($duration);
             $upSpeed = (($trueUploaded > 0 && $duration > 0) ? $trueUploaded / $duration : 0);
 
             if (config('tracker.enable_upspeed_check')) {
