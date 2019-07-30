@@ -1,5 +1,7 @@
 <?php
 /**
+ * rid-httpd 下运行的 HTTP 服务配置（常驻同步模式）
+ *
  * Created by PhpStorm.
  * User: Rhilip
  * Date: 2018/11/26
@@ -81,31 +83,6 @@ return [
             'maxFileSize' => 0,  // 最大文件尺寸
         ],
 
-        // Token
-        'token'    => [
-            // 类路径
-            'class'         => Rid\Http\Token::class,
-            // 保存处理者
-            'saveHandler'   => [
-                // 类路径
-                'class'    => Rid\Redis\RedisConnection::class,
-                // 主机
-                'host'     => env('REDIS_HOST'),
-                // 端口
-                'port'     => env('REDIS_PORT'),
-                // 数据库
-                'database' => env('REDIS_DATABASE'),
-                // 密码
-                'password' => env('REDIS_PASSWORD'),
-            ],
-            // 保存的Key前缀
-            'saveKeyPrefix' => 'TOKEN:',
-            // 有效期
-            'expiresIn'     => 604800,
-            // token键名
-            'name'          => 'access_token',
-        ],
-
         // Session
         'session'  => [
             // 类路径
@@ -160,7 +137,7 @@ return [
         // 数据库
         'pdo'      => [
             // 类路径
-            'class'         => Rid\Database\PDOConnection::class,
+            'class'         => Rid\Database\Persistent\PDOConnection::class,
             // 数据源格式
             'dsn'           => env('DATABASE_DSN'),
             // 数据库用户名
@@ -177,7 +154,7 @@ return [
         // redis
         'redis'    => [
             // 类路径
-            'class'    => Rid\Redis\RedisConnection::class,
+            'class'    => Rid\Redis\Persistent\RedisConnection::class,
             // 主机
             'host'     => env('REDIS_HOST'),
             // 端口

@@ -71,7 +71,7 @@ return [
             'virtualHost' => [
                 'host'       => '127.0.0.1',
                 'port'       => 9501,
-                'configFile' => __DIR__ . '/http_permanent.php',
+                'configFile' => __DIR__ . '/http_base.php',
             ],
 
             // 运行参数：https://wiki.swoole.com/wiki/page/274.html

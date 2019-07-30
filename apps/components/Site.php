@@ -102,8 +102,9 @@ class Site extends Component
     protected function loadCurUserFromCookies()
     {
         $user_session_id = app()->request->cookie(Constant::cookie_name);
-        $user_id = app()->redis->zScore(Constant::mapUserSessionToId, $user_session_id);
-        if (false === $user_id) {
+        if (is_null($user_session_id)) return false;  // quick return when cookies is not exist
+
+        if (false === $user_id = app()->redis->zScore(Constant::mapUserSessionToId, $user_session_id)) {
             // First check cache
             if (false === app()->redis->zScore(Constant::invalidUserSessionZset, $user_session_id)) {
                 // check session from database to avoid lost
@@ -126,7 +127,7 @@ class Site extends Component
         $passkey = app()->request->get('passkey');
         $user_id = app()->redis->zScore(Constant::mapUserPasskeyToId, $passkey);
         if (false === $user_id) {
-            if (app()->redis->zScore(Constant::invalidUserPasskeyZset, $passkey) !== false) {
+            if (app()->redis->zScore(Constant::invalidUserPasskeyZset, $passkey) === false) {
                 $user_id = app()->pdo->createCommand('SELECT `id` FROM `users` WHERE `passkey` = :passkey LIMIT 1;')->bindParams([
                     'passkey' => $passkey
                 ])->queryScalar();

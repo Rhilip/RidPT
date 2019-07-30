@@ -12,7 +12,7 @@ use apps\libraries\Constant;
 use Rid\Base\Process;
 
 
-class CronTabProcess extends Process
+final class CronTabProcess extends Process
 {
 
     private $_print_flag = 1;  // FIXME debug model on
@@ -67,7 +67,7 @@ class CronTabProcess extends Process
             }
         }
         $end_time = time();
-        $this->print_log('This Cron Work period Start At ' . $start_time . ', Cost Time: ' . number_format($start_time - $end_time, 10) . 's, With ' . $hit . ' Jobs hits.');
+        if ($hit > 0) $this->print_log('This Cron Work period Start At ' . $start_time . ', Cost Time: ' . number_format($end_time - $start_time, 10) . 's, With ' . $hit . ' Jobs hits.');
     }
 
     protected function clean_expired_zset_cache() {
@@ -92,7 +92,7 @@ class CronTabProcess extends Process
         foreach ($clean_list as $item) {
             [$field, $msg] = $item;
             $clean_count = app()->redis->zRemRangeByScore($field, 0, $timenow);
-            if ($clean_list) $this->print_log(sprintf($msg, $clean_count));
+            if ($clean_count > 0) $this->print_log(sprintf($msg, $clean_count));
         }
     }
 
