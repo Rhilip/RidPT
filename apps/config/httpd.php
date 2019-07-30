@@ -43,14 +43,14 @@ return [
 
     ],
 
-    // 用户自定义进程 （用于常驻的任务清理，将会使用Server->addProcess添加到Server上
+    // 用户自定义进程 （用于常驻的任务清理，将会使用Server->addProcess添加到Server
     'process' => [
-        //'tracker' => [
-        //    'class' => \apps\process\EchoProcess::class,
-        //    'title' => 'Test',
-        //    'components' => ['log','pdo','redis','config','site'],
-        //    'sleep' => 5,
-        //]
+        'tracker' => [
+            'class' => \apps\process\TrackerAnnounceProcess::class,
+            'title' => 'Tracker Announce Worker',
+            'components' => ['log', 'pdo', 'redis', 'config', 'site'],
+            'sleep' => 5,
+        ]
     ],
 
     // 类库配置

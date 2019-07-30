@@ -683,9 +683,8 @@ class TrackerController
     private function lockAnnounceDuration()
     {
         $identity = md5(urldecode(app()->request->server('query_string')));
-        app()->redis->zRemRangeByScore(Constant::trackerAnnounceLockZset, 0, $this->timenow);
-        if (false == $check = app()->redis->zScore(Constant::trackerAnnounceLockZset,$identity)) {  // this identity is not lock
-            app()->redis->zAdd(Constant::trackerAnnounceLockZset,time() + 60 , $identity);
+        if (false == $check = app()->redis->zScore(Constant::trackerAnnounceLockZset, $identity)) {  // this identity is not lock
+            app()->redis->zAdd(Constant::trackerAnnounceLockZset, time() + 60, $identity);
         }
         return $check;
     }
@@ -698,7 +697,6 @@ class TrackerController
     private function checkMinInterval($queries)
     {
         $identity = bin2hex($queries['info_hash']) . ':' . $queries['passkey'] . ':' . $queries['peer_id'];
-        app()->redis->zRemRangeByScore(Constant::trackerAnnounceMinIntervalLockZset, 0, $this->timenow);
         if (false == $check = app()->redis->zScore(Constant::trackerAnnounceMinIntervalLockZset, $identity)) {
             $min_interval = intval(config('tracker.min_interval') * (3 / 4));
             app()->redis->zAdd(Constant::trackerAnnounceMinIntervalLockZset, time() + $min_interval, $identity);
@@ -719,7 +717,6 @@ class TrackerController
     {
         // Check if exist peer or not
         $identity = $torrentInfo['id'] . ':' . $userInfo["id"] . ':' . $queries['peer_id'];
-        app()->redis->zRemRangeByScore(Constant::trackerValidPeerZset, 0, $this->timenow);
         if (app()->redis->zScore(Constant::trackerValidPeerZset, $identity)) {
             // this peer is already announce before , just expire cache key lifetime and return.
             app()->redis->zIncrBy(Constant::trackerValidPeerZset, config('tracker.interval') * 2, $identity);

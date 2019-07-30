@@ -8,8 +8,9 @@
 - **gitignore:** Add ignore of `/backup` folder
 
 ### Feat
-- **Category:** Add Categories Manage Pane
 - **Category:** Add Categories Support when upload torrent
+- **Category:** Add Categories Manage Pane
+- **Process:** Add custom Process Support
 - **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Add `retry in` field when failed
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update

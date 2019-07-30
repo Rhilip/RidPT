@@ -71,16 +71,30 @@ class CronTabTimer extends Timer
     }
 
     protected function clean_expired_zset_cache() {
-        // trackerInvalidPasskeyZset
         $timenow = time();
-        $count_tracker_invalid_passkey = app()->redis->zRemRangeByScore(Constant::invalidUserPasskeyZset,0,$timenow);
-        if ($count_tracker_invalid_passkey) $this->print_log('Success Clean ' . $count_tracker_invalid_passkey . ' invalid passkey.');
 
-        $count_tracker_invalid_infohash = app()->redis->zRemRangeByScore(Constant::trackerInvalidInfoHashZset,0,$timenow);
-        if ($count_tracker_invalid_infohash) $this->print_log('Success Clean ' . $count_tracker_invalid_infohash . ' invalid info_hash.');
+        $clean_list = [
+            // Lock
+            [Constant::trackerAnnounceLockZset, 'Success Clean %s tracker announce locks.'],
+            [Constant::trackerAnnounceMinIntervalLockZset, 'Success Clean %s tracker min announce interval locks.'],
 
+            // Invalid Zset
+            [Constant::invalidUserIdZset, 'Success Clean %s invalid user id.'],
+            [Constant::invalidUserSessionZset, 'Success Clean %s invalid user session.'],
+            [Constant::invalidUserPasskeyZset, 'Success Clean %s invalid user passkey.'],
+            [Constant::trackerInvalidInfoHashZset, 'Success Clean %s invalid info_hash.'],
+
+            // Valid Zset
+            [Constant::trackerValidClientZset, 'Success Clean %s valid bittorrent client.'],
+            [Constant::trackerValidPeerZset, 'Success Clean %s valid peers.']
+        ];
+
+        foreach ($clean_list as $item) {
+            [$field, $msg] = $item;
+            $clean_count = app()->redis->zRemRangeByScore($field, 0, $timenow);
+            if ($clean_list) $this->print_log(sprintf($msg, $clean_count));
+        }
     }
-
 
     protected function clean_dead_peer()
     {

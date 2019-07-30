@@ -224,14 +224,14 @@ class HttpServer extends BaseObject
 
                     if ($process_config['title']) ProcessHelper::setTitle($process_config['title']);
 
-                    // 实例化App
+                    // FIXME 实例化App
                     $config = require $this->virtualHost['configFile'];
 
                     $app = new Application($config);
                     $app->setServ($this->_server);
                     $app->loadAllComponents(array_flip($process_config['components']));
 
-                    $custom_process->run($process_config);
+                    $custom_process->start($process_config);
                 });
 
                 $this->_server->addProcess($process);

@@ -14,18 +14,41 @@ class Process implements StaticInstanceInterface
 
     use StaticInstanceTrait;
 
+    private $sleep_time;
     protected $_config;
 
-    public function start() {
+    public function run() {
 
     }
 
-    final public function run($config) {
+    /**
+     * @return mixed
+     */
+    protected function getSleepTime()
+    {
+        return $this->sleep_time;
+    }
+
+    /**
+     * @param mixed $sleep_time
+     */
+    protected function setSleepTime($sleep_time): void
+    {
+        $this->sleep_time = $sleep_time;
+    }
+
+    protected function resetSleepTime()
+    {
+        $this->setSleepTime($this->_config['sleep']);
+    }
+
+    final public function start($config) {
         $this->_config = $config;
+        $this->resetSleepTime();
 
         while (true) {
-            $this->start();
-            sleep($this->_config['sleep']);
+            $this->run();
+            sleep($this->getSleepTime());
         }
     }
 }
