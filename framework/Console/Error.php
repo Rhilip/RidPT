@@ -3,8 +3,6 @@
 namespace Rid\Console;
 
 use Rid\Base\Component;
-use Rid\Helpers\CoroutineHelper;
-use Rid\Helpers\ProcessHelper;
 
 /**
  * Error类
@@ -68,11 +66,7 @@ class Error extends Component
     // 退出
     protected function exit($exitCode)
     {
-        if (!CoroutineHelper::isCoroutine()) {
-            exit($exitCode);
-        } else {
-            ProcessHelper::kill(ProcessHelper::getPid(), SIGKILL);
-        }
+        exit($exitCode);
     }
 
 }

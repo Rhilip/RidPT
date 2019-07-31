@@ -31,6 +31,7 @@ class Constant
     const trackerAnnounceMinIntervalLockZset = 'Tracker:announce_min_interval_lock:zset';
     const trackerValidPeerZset = 'Tracker:valid_peers:zset';
     const trackerToDealQueue = 'Tracker:to_deal_queue:list';
+    const trackerBackupQueue = 'Tracker:backup_queue:list';
 
     public static function userContent($uid)
     {

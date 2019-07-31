@@ -48,13 +48,13 @@ return [
         'tracker' => [
             'class' => \apps\process\TrackerAnnounceProcess::class,
             'title' => 'Tracker Announce Worker',
-            'components' => ['log', 'pdo', 'redis', 'config', 'site'],
+            'components' => ['log', 'pdo', 'redis', 'config'],
             'sleep' => 5,
         ],
         'crontab' => [
             'class' => \apps\process\CronTabProcess::class,
             'title' => 'Crontab Worker',
-            'components' => ['log', 'pdo', 'redis', 'config', 'site'],
+            'components' => ['log', 'pdo', 'redis', 'config'],
             'sleep' => 60,
         ]
     ],

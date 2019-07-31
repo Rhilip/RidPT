@@ -22,12 +22,6 @@ interface ComponentInterface
     // 设置状态
     public function setStatus($status);
 
-    // 获取协程模式
-    public function getCoroutineMode();
-
-    // 设置协程模式
-    public function setCoroutineMode($coroutineMode);
-
     // 请求前置事件
     public function onRequestBefore();
 

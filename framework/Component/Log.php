@@ -39,7 +39,6 @@ class Log extends Component implements LoggerInterface
     public function onInitialize()
     {
         parent::onInitialize();
-        $this->setCoroutineMode(Component::COROUTINE_MODE_REFERENCE);  // 设置协程模式
     }
 
     // 记录日志

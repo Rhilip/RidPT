@@ -41,27 +41,6 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('tgo')) {
-    /** 创建一个带异常捕获的协程
-     * @param $closure
-     */
-    function tgo($closure)
-    {
-        go(function () use ($closure) {
-            $hook = new \Rid\Base\ChannelHook();
-            try {
-                $closure($hook);
-            } catch (\Throwable $e) {
-                // 钩子处理
-                if (!$hook->handle($e)) {
-                    // 输出错误
-                    \Rid::app()->error->handleException($e);
-                }
-            }
-        });
-    }
-}
-
 if (!function_exists('println')) {
     // 输出字符串并换行
     function println($expression)

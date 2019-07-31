@@ -10,6 +10,7 @@
 ### Feat
 - **Category:** Add Categories Support when upload torrent
 - **Category:** Add Categories Manage Pane
+- **Crontab:** Move From Timer to Process
 - **Process:** Add custom Process Support
 - **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Add `retry in` field when failed
@@ -40,6 +41,7 @@
 - **tracker:** No need to explicit serialize announce data
 
 ### Refactor
+- **Coroutine:** Remove Coroutine Model
 - **Tracker:** Better Tracker behaviour in multi tracker
 - **View:** Rename folder `error` to `action`
 - **action_success:** Simple The Action Template

@@ -15,7 +15,7 @@ class TrackerAnnounceProcess extends Process
 {
     public function run()
     {
-        $data = app()->redis->brpoplpush(Constant::trackerToDealQueue, 'Tracker:backup_queue', 5);
+        $data = app()->redis->brpoplpush(Constant::trackerToDealQueue, Constant::trackerBackupQueue, 5);
         if ($data !== false) {
             app()->pdo->beginTransaction();
             try {
@@ -29,7 +29,7 @@ class TrackerAnnounceProcess extends Process
                 $this->processAnnounceRequest($data['timestamp'], $data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
 
                 app()->pdo->commit();
-                app()->redis->lRem('Tracker:backup_queue', $data, 0);
+                app()->redis->lRem(Constant::trackerBackupQueue, $data, 0);
             } catch (\Exception $e) {
                 println($e->getMessage());
                 app()->pdo->rollback();
@@ -38,7 +38,7 @@ class TrackerAnnounceProcess extends Process
         }
     }
 
-    /** TODO 2018.12.12 Check Muti-Tracker behaviour when a Transaction begin
+    /**
      * @param $timenow
      * @param $queries
      * @param $seeder
@@ -48,14 +48,14 @@ class TrackerAnnounceProcess extends Process
     private function processAnnounceRequest($timenow, $queries, $seeder, $userInfo, $torrentInfo)
     {
         $timeKey = ($seeder == 'yes') ? 'seed_time' : 'leech_time';
-        $torrentUpdateKey = ($seeder == 'yes') ? "complete" : "incomplete";
+        $torrentUpdateKey = ($seeder == 'yes') ? 'complete' : 'incomplete';
         $trueUploaded = $trueDownloaded = 0;
         $thisUploaded = $thisDownloaded = 0;
 
         [$ipField, $ipBindField] = $this->getIpField($queries);
 
         // Try to fetch session from Table `peers`
-        $self = app()->pdo->createCommand('SELECT `uploaded`,`downloaded`,UNIX_TIMESTAMP(`last_action_at`) as `last_action_at`
+        $self = app()->pdo->createCommand('SELECT `uploaded`, `downloaded`, UNIX_TIMESTAMP(`last_action_at`) as `last_action_at`
         FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid LIMIT 1;')->bindParams([
             'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
         ])->queryOne();
@@ -77,7 +77,7 @@ class TrackerAnnounceProcess extends Process
                         `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
                         `corrupt` = :corrupt , `key` = :key ;
                         ")->bindParams([
-                        'uid' => $userInfo['id'], 'tid' => $torrentInfo["id"], 'pid' => $queries['peer_id'],
+                        'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id'],
                         'agent' => $queries['user-agent'],
                         'upload' => $trueUploaded, 'download' => $trueDownloaded, 'to_go' => $queries['left'],
                         'started_at' => $timenow, 'last_action_at' => $timenow,
@@ -248,7 +248,7 @@ class TrackerAnnounceProcess extends Process
         }
 
         if ($queries['ipv6'] && $queries['ipv6_port']) {
-            $setField[] = "`ipv6` = INET6_ATON(:ipv6), `ipv6_port` = :ipv6_port";
+            $setField[] = '`ipv6` = INET6_ATON(:ipv6), `ipv6_port` = :ipv6_port';
             $bindField['ipv6'] = $queries['ipv6'];
             $bindField['ipv6_port'] = $queries['ipv6_port'];
         }
