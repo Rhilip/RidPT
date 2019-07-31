@@ -226,7 +226,6 @@ class HttpServer extends BaseObject
 
                     // FIXME 实例化App
                     $config = require $this->virtualHost['configFile'];
-
                     $app = new Application($config);
                     $app->setServ($this->_server);
                     $app->loadAllComponents(array_flip($process_config['components']));

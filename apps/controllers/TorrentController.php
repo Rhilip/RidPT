@@ -23,6 +23,20 @@ class TorrentController extends Controller
         return $this->render('torrent/details', ['torrent' => $torrent]);
     }
 
+    public function actionEdit() // TODO
+    {
+
+    }
+
+    public function actionSnatch()  // TODO
+    {
+        //$tid = app()->request->get('id');
+        //$torrent = new Torrent($tid);
+
+        //return $this->render('torrent/snatch', ['torrent' => $torrent]);
+    }
+
+
     public function actionUpload()
     {
         // TODO Check user upload pos

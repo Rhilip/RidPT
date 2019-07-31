@@ -37,7 +37,7 @@ trait ClassValueCacheUtils
     // Get from redis cache, then generate closure (may database)
     final protected static function getStaticCacheValue($key, $closure, $ttl = 86400)
     {
-        $value = app()->redis->get(static::getStaticCacheNameSpace() . ':' . $key);   // FIXME use zset
+        $value = app()->redis->get(static::getStaticCacheNameSpace() . ':' . $key);
         if (false === $value) {
             $value = $closure();
             app()->redis->set(static::getStaticCacheNameSpace() . ':' . $key, $value, $ttl);

@@ -101,9 +101,41 @@ class User
     private $seedtime;
     private $leechtime;
 
+    private $bonus_seeding;
+    private $bonus_invite;
+    private $bonus_other;
+
     private $invites;
 
     protected $infoCacheKey;
+
+    public function getBonus() {
+        return $this->bonus_seeding + $this->bonus_invite + $this->bonus_other;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBonusSeeding()
+    {
+        return $this->bonus_seeding;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBonusInvite()
+    {
+        return $this->bonus_invite;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBonusOther()
+    {
+        return $this->bonus_other;
+    }
 
     protected function getCacheNameSpace(): string
     {
@@ -438,6 +470,33 @@ class User
             return app()->pdo->createCommand('SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid')->bindParams([
                 'uid' => $this->id
             ])->queryColumn() ?: [];
+        });
+    }
+
+    public function getUnreadMessageCount()
+    {
+        return $this->getCacheValue('unread_message_count', function () {
+            return app()->pdo->createCommand("SELECT COUNT(`id`) FROM `messages` WHERE receiver = :uid AND unread = 'no'")->bindParams([
+                'uid' => $this->id
+            ])->queryScalar();
+        });
+    }
+
+    public function getInboxMessageCount()
+    {
+        return $this->getCacheValue('inbox_count', function () {
+            return app()->pdo->createCommand('SELECT COUNT(`id`) FROM `messages` WHERE `receiver` = :uid')->bindParams([
+                'uid' => $this->id
+            ])->queryScalar();
+        });
+    }
+
+    public function getOutboxMessageCount()
+    {
+        return $this->getCacheValue('outbox_count', function () {
+            return app()->pdo->createCommand('SELECT COUNT(`id`) FROM `messages` WHERE `sender` = :uid')->bindParams([
+                'uid' => $this->id
+            ])->queryScalar();
         });
     }
 

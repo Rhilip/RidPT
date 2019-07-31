@@ -17,6 +17,8 @@ final class CronTabProcess extends Process
 
     private $_print_flag = 1;  // FIXME debug model on
 
+    private $_none_exist_job = [];
+
     private function print_log($log)
     {
         $this->_print_flag = $this->_print_flag ?? config('debug.print_crontab_log');
@@ -63,7 +65,10 @@ final class CronTabProcess extends Process
                     if (env('APP_DEBUG')) throw $e;
                 }
             } else {
-                app()->log->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
+                if (!in_array($job, $this->_none_exist_job)) {
+                    $this->_none_exist_job[] = $job;
+                    app()->log->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
+                }
             }
         }
         $end_time = time();
@@ -121,7 +126,6 @@ final class CronTabProcess extends Process
         if ($clean_record_count) $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) . '), Redis(' . $clean_record_count . ').');
     }
 
-    // TODO sync sessions from database to redis to avoid lost (Maybe)...
     protected function expired_invitee()
     {
         app()->pdo->createCommand('UPDATE `invite` SET `used` = -1 WHERE `expire_at` < NOW() AND `used` = 0')->execute();
