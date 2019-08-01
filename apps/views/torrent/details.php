@@ -44,7 +44,7 @@
                     <?php if ($torrent->getComments()): ?>
                         <section class="comments-list">
                             <?php foreach ($torrent->getLastCommentsDetails() as $commit): ?>
-                                <?php $user = new \apps\models\User($commit['owner_id']); // TODO FIX if this user is upload and is uplver ?>
+                                <?php $user = app()->site->getUser($commit['owner_id']); // TODO FIX if this user is upload and is uplver ?>
                                 <div id="commit_<?= $commit['id'] ?>" class="comment">
                                 <a href="#" class="avatar">
                                     <i class="icon-user icon-2x"></i> <!-- TODO FIX user's avatar -->

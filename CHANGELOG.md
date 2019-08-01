@@ -41,7 +41,7 @@
 - **tracker:** No need to explicit serialize announce data
 
 ### Refactor
-- **Coroutine:** Remove Coroutine Model
+- **Coroutine:** Remove Coroutine Model, Judge part
 - **Coroutine:** Remove Coroutine Model
 - **Tracker:** Better Tracker behaviour in multi tracker
 - **View:** Rename folder `error` to `action`

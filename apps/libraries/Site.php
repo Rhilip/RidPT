@@ -40,10 +40,8 @@ class Site
             'save' => $save, 'location' => $location
         ])->execute();
 
-        // FIXME redis key
-        app()->redis->del('user_' . $receiver . '_unread_message_count');
-        app()->redis->del('user_' . $receiver . '_inbox_count');
-        if ($sender != 0) app()->redis->del('user_' . $sender . '_outbox_count');
+        app()->redis->hDel(Constant::userContent($receiver), 'unread_message_count', 'inbox_count');
+        if ($sender != 0) app()->redis->hDel(Constant::userContent($sender), 'outbox_count');
     }
 
     public static function sendEmail($receivers, $subject, $template, $data = [])

@@ -540,7 +540,7 @@ class TrackerController
 
         $queries['user-agent'] = app()->request->header('user-agent');
 
-        // FIXME Part.3 check Announce *IP* Fields
+        // Part.3 check Announce *IP* Fields
         /**
          * We have `ip` , `ipv6` , `port` ,`ipv6_port` Columns in Table `peers`
          * But peer 's ip can be find in Requests Headers and param like `&ip=` , `&ipv4=` , `&ipv6=`
@@ -752,7 +752,7 @@ class TrackerController
                 $ratio = (($userInfo['downloaded'] > 0) ? ($userInfo['uploaded'] / $userInfo['downloaded']) : 1);
                 $gigs = $userInfo['downloaded'] / (1024 * 1024 * 1024);
 
-                // FIXME Wait System
+                // Wait System
                 if (config('tracker.enable_waitsystem')) {
                     if ($gigs > 10) {
                         if ($ratio < 0.4) $wait = 24;
@@ -767,7 +767,7 @@ class TrackerController
                     }
                 }
 
-                // FIXME Max SLots System
+                // Max SLots System
                 if (config('tracker.enable_maxdlsystem')) {
                     $max = 0;
                     if ($gigs > 10) {

@@ -17,7 +17,7 @@ class Constant
     const mapUserSessionToId = 'Map:user_session_to_user_id:zset';
     const mapUserPasskeyToId = 'Map:user_passkey_to_user_id:zset';
 
-    // FIXME
+    // invalid Zset
     const invalidUserIdZset = 'Site:invalid_user_id:zset';
     const invalidUserSessionZset = 'Session:invalid_user_session:zset';
     const invalidUserPasskeyZset = 'Tracker:invalid_user_passkey:zset';
