@@ -79,7 +79,7 @@ class TorrentUploadForm extends Validator
     {
         $categories_id_list = array_map(function ($cat) {
             return $cat['id'];
-        }, Site::ruleCanUsedCategory());
+        }, app()->site::ruleCanUsedCategory());
 
         $rules = [
             'title' => 'required',
@@ -107,14 +107,14 @@ class TorrentUploadForm extends Validator
         }
 
         // Add Quality Valid
-        foreach (Site::getQualityTableList() as $quality => $title) {
+        foreach (app()->site::getQualityTableList() as $quality => $title) {
             $quality_id_list = [0];
             // IF enabled this quality field , then load it value list from setting
             // Else we just allow the default value 0 to prevent cheating
             if (config('torrent_upload.enable_quality_' . $quality)) {
                 $quality_id_list += array_map(function ($cat) {
                     return $cat['id'];
-                }, Site::ruleQuality($quality));
+                }, app()->site::ruleQuality($quality));
             }
 
             $rules[$quality] = [
@@ -128,7 +128,7 @@ class TorrentUploadForm extends Validator
         if (config('torrent_upload.enable_teams')) {
             $team_id_list += array_map(function ($team) {
                 return $team['id'];
-            }, Site::ruleCanUsedTeam());
+            }, app()->site::ruleCanUsedTeam());
         }
 
         $rules['team'] = [
@@ -308,7 +308,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             throw $e;
         }
 
-        Site::writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : app()->site->getCurUser()->getUsername()));
+       app()->site->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : app()->site->getCurUser()->getUsername()));
     }
 
     // Check and rewrite torrent flags based on site config and user's privilege of upload flags

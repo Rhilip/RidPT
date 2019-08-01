@@ -11,6 +11,8 @@ namespace Rid\Utils;
 
 trait ClassValueCacheUtils
 {
+    static $_StaticCacheValue = [];
+
     protected static function getStaticCacheNameSpace(): string
     {
         return 'Cache:default_static';
@@ -37,11 +39,25 @@ trait ClassValueCacheUtils
     // Get from redis cache, then generate closure (may database)
     final protected static function getStaticCacheValue($key, $closure, $ttl = 86400)
     {
+        $timenow = time();
+        if (array_key_exists($key, static::$_StaticCacheValue)) {
+            if ($timenow > static::$_StaticCacheValue[$key . ':expired_at']) {
+                unset(static::$_StaticCacheValue[$key]);
+                unset(static::$_StaticCacheValue[$key . ':expired_at']);
+            } else {
+                return static::$_StaticCacheValue[$key];
+            }
+        }
+
         $value = app()->redis->get(static::getStaticCacheNameSpace() . ':' . $key);
         if (false === $value) {
             $value = $closure();
             app()->redis->set(static::getStaticCacheNameSpace() . ':' . $key, $value, $ttl);
         }
+
+        static::$_StaticCacheValue[$key] = $value;
+        static::$_StaticCacheValue[$key . ':expired_at'] = $timenow + $ttl;
+
         return $value;
     }
 }

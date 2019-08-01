@@ -19,7 +19,7 @@
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 - **ban:** Add table `ban_usernames` and `ban_emails`
 - **csrf:** Add Csrf Support
-- **email:** Use Site::sendEmail to simple email sender
+- **email:** Use app()->site->sendEmail to simple email sender
 - **system:** can get more system info via class SystemInfoHelper
 
 ### Fix

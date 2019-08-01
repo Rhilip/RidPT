@@ -8,10 +8,12 @@
 
 namespace apps\components;
 
-use apps\libraries\Constant;
-use Rid\Base\Component;
-
 use apps\models\User;
+use apps\libraries\Mailer;
+use apps\libraries\Constant;
+
+use Rid\Http\View;
+use Rid\Base\Component;
 use Rid\Utils\ClassValueCacheUtils;
 
 class Site extends Component
@@ -23,12 +25,22 @@ class Site extends Component
     protected $users = [];
     protected $map_username_to_id = [];
 
+    const LOG_LEVEL_NORMAL = 'normal';
+    const LOG_LEVEL_MOD = 'mod';
+    const LOG_LEVEL_SYSOP = 'sysop';
+    const LOG_LEVEL_LEADER = 'leader';
+
     public function onRequestBefore()
     {
         parent::onRequestBefore();
         $this->cur_user = null;
         $this->users = [];
         $this->map_username_to_id = [];
+    }
+
+    protected static function getStaticCacheNameSpace(): string
+    {
+        return 'Cache:site';
     }
 
     /**
@@ -140,5 +152,89 @@ class Site extends Component
         }
 
         return $user_id;
+    }
+
+    public function writeLog($msg, $level = self::LOG_LEVEL_NORMAL)
+    {
+        app()->pdo->createCommand('INSERT INTO `site_log`(`create_at`,`msg`, `level`) VALUES (CURRENT_TIMESTAMP, :msg, :level)')->bindParams([
+            'msg' => $msg, 'level' => $level
+        ])->execute();
+    }
+
+    public function sendPM($sender, $receiver, $subject, $msg, $save = 'no', $location = 1)
+    {
+        app()->pdo->createCommand('INSERT INTO `messages` (`sender`,`receiver`,`add_at`, `subject`, `msg`, `saved`, `location`) VALUES (:sender,:receiver,`CURRENT_TIMESTAMP`,:subject,:msg,:save,:location)')->bindParams([
+            'sender' => $sender, 'receiver' => $receiver,
+            'subject' => $subject, 'msg' => $msg,
+            'save' => $save, 'location' => $location
+        ])->execute();
+
+        app()->redis->hDel(Constant::userContent($receiver), 'unread_message_count', 'inbox_count');
+        if ($sender != 0) app()->redis->hDel(Constant::userContent($sender), 'outbox_count');
+    }
+
+    public function sendEmail($receivers, $subject, $template, $data = [])
+    {
+        $mail_body = (new View(false))->render($template, $data);
+        $mail_sender = Mailer::newInstanceByConfig('libraries.[mailer]');
+        $mail_sender->send($receivers, $subject, $mail_body);
+    }
+
+    public static function getQualityTableList()
+    {
+        return [
+            'audio' => 'Audio Codec',  // TODO i18n title
+            'codec' => 'Codec',
+            'medium' => 'Medium',
+            'resolution' => 'Resolution'
+        ];
+    }
+
+    public static function ruleCategory(): array
+    {
+        return static::getStaticCacheValue('enabled_torrent_category', function () {
+            return app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
+        }, 86400);
+    }
+
+    public static function ruleCanUsedCategory(): array
+    {
+        return array_filter(static::ruleCategory(), function ($cat) {
+            return $cat['enabled'] = 1;
+        });
+    }
+
+    public static function ruleQuality($quality): array
+    {
+        if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
+        return static::getStaticCacheValue('enabled_quality_' . $quality, function () use ($quality) {
+            return app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
+        }, 86400);
+    }
+
+    public static function ruleTeam(): array
+    {
+        return static::getStaticCacheValue('enabled_teams', function () {
+            return app()->pdo->createCommand('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
+        }, 86400);
+    }
+
+    public static function ruleCanUsedTeam(): array
+    {
+        return array_filter(static::ruleTeam(), function ($team) {
+            return app()->site->getCurUser()->getClass(true) >= $team['class_require'];
+        });
+    }
+
+    public static function rulePinnedTags(): array
+    {
+        return static::getStaticCacheValue('pinned_tags', function () {
+            return app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1 LIMIT 10;')->queryAll();
+        }, 86400);
+    }
+
+    public static function fetchUserCount(): int
+    {
+        return app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users`")->queryScalar();
     }
 }

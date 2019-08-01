@@ -138,7 +138,7 @@ class UserRegisterForm extends Validator
     protected function isMaxUserReached()
     {
         if (config('register.check_max_user') &&
-            Site::fetchUserCount() >= config('base.max_user'))
+            app()->site::fetchUserCount() >= config('base.max_user'))
             $this->buildCallbackFailMsg('MaxUserReached','Max user limit Reached');
     }
 
@@ -282,7 +282,7 @@ class UserRegisterForm extends Validator
          * so that He needn't email (or other way) to confirm his account ,
          * and can access the (super)admin panel to change site config .
          */
-        if (Site::fetchUserCount() == 0) {
+        if (app()->site::fetchUserCount() == 0) {
             $this->status = User::STATUS_CONFIRMED;
             $this->class = User::ROLE_STAFFLEADER;
             $this->confirm_way = "auto";
@@ -314,7 +314,7 @@ class UserRegisterForm extends Validator
             $invitee = new User($this->invite_by);
             $log_text .= '(Invite by ' . $invitee->getUsername() . '(' . $invitee->getId() . ')).';
 
-            Site::sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");
+            app()->site->sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");
         }
 
         if ($this->confirm_way == 'email') {
@@ -327,13 +327,13 @@ class UserRegisterForm extends Validator
                     'action' => $this->_action
                 ]);
 
-            Site::sendEmail([$this->email], 'Please confirm your accent',
+            app()->site->sendEmail([$this->email], 'Please confirm your accent',
                 'email/user_register', [
                     'username' => $this->username,
                     'confirm_url' => $confirm_url,
                 ]);
         }
 
-        Site::writeLog($log_text, Site::LOG_LEVEL_MOD);
+       app()->site->writeLog($log_text, app()->site::LOG_LEVEL_MOD);
     }
 }

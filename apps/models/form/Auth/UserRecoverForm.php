@@ -64,7 +64,7 @@ class UserRecoverForm  extends Validator
                     'action' => $this->_action
                 ]);
 
-            Site::sendEmail([$this->email], 'Please confirm your action to recover your password',
+            app()->site->sendEmail([$this->email], 'Please confirm your action to recover your password',
                 'email/user_recover', [
                     'username' => $user_info['username'],
                     'confirm_url' => $confirm_url,

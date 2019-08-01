@@ -30,7 +30,7 @@ use apps\libraries\Site;
                     <div class="col-md-3">
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
-                            <?php foreach (Site::ruleCategory() as $category) : ?>
+                            <?php foreach (app()->site::ruleCategory() as $category) : ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -71,14 +71,14 @@ use apps\libraries\Site;
             <td class="nowrap"><label>Quality</label></td>
             <td>
                 <div class="row">
-                    <?php foreach (Site::getQualityTableList() as $quality => $title): ?>
+                    <?php foreach (app()->site::getQualityTableList() as $quality => $title): ?>
                     <?php if (config('torrent_upload.enable_quality_' . $quality)) : ?>
                     <div class="col-md-3">
                         <div class="input-group">
                             <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
                             <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
                                 <option value="0">[Choose One]</option>
-                                <?php foreach (Site::ruleQuality($quality) as $q): ?>
+                                <?php foreach (app()->site::ruleQuality($quality) as $q): ?>
                                     <option value="<?= $q['id']; ?>"><?= $q['name']; ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -98,7 +98,7 @@ use apps\libraries\Site;
                             <span class="input-group-addon"><label for="team">Group</label></span>
                             <select id="team" name="team" class="form-control">
                                 <option value="0" selected>[Choose One]</option>
-                                <?php foreach (Site::ruleCanUsedTeam() as $team) : ?>
+                                <?php foreach (app()->site::ruleCanUsedTeam() as $team) : ?>
                                     <option value="<?= $team['id'] ?>"><?= $team['name'] ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -140,7 +140,7 @@ use apps\libraries\Site;
             <td><input id="tags" name="tags" class="form-control" type="text">
                 <div class="tag-help-block" style="margin-top: 4px">
                     Pinned Tags:
-                    <?php foreach (Site::rulePinnedTags() as $tag): ?>
+                    <?php foreach (app()->site::rulePinnedTags() as $tag): ?>
                         <a href="javascript:" class="add-tag label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
                     <?php endforeach; ?>
                 </div>
