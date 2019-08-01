@@ -42,8 +42,10 @@ $time_now = time();
                 <tr data-tid="<?= $torrent->getId() ?>">
                     <td class="text-center" style="margin: 0;padding: 0">
                         <?php $cat = $torrent->getCategory(); ?>
-                        <?php if ($cat['image']): // Show Category's Image with classname ?>
+                        <?php if ($cat['image']): // Show Category's Image as <img> tag with classname ?>
                         <img src="<?= $cat['image'] ?>" class="category <?= $cat['class_name'] ?>"  alt="<?= $cat['name'] ?>">
+                        <?php elseif ($cat['class_name']):  // Show Category's Image as <div> tag with classname ?>
+                        <div class="category <?= $cat['class_name'] ?>"></div>
                         <?php else: // Show Category's Name if image not set ?>
                         <?= $cat['name'] ?>
                         <?php endif; ?>

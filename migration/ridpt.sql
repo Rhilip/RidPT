@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 01, 2019 at 10:50 AM
+-- Generation Time: Aug 01, 2019 at 10:38 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -247,12 +247,12 @@ TRUNCATE TABLE `categories`;
 
 INSERT INTO `categories` (`id`, `parent_id`, `name`, `enabled`, `image`, `class_name`, `level`, `full_path`) VALUES
 (0, 0, 'root', 0, '', '', -1, ''),
-(1, 0, 'Movies', 1, '', '', 0, 'Movies'),
-(2, 0, 'TV', 1, '', '', 0, 'TV'),
-(3, 0, 'Documentary', 1, '', '', 0, 'Documentary'),
-(4, 0, 'Animation', 1, '', '', 0, 'Animation'),
-(5, 0, 'Sports', 1, '', '', 0, 'Sports'),
-(6, 0, 'Music', 1, '', '', 0, 'Music');
+(1, 0, 'Movies', 1, '', 'category-movie', 0, 'Movies'),
+(2, 0, 'TV', 1, '', 'category-tv', 0, 'TV'),
+(3, 0, 'Documentary', 1, '', 'category-documentary', 0, 'Documentary'),
+(4, 0, 'Animation', 1, '', 'category-animation', 0, 'Animation'),
+(5, 0, 'Sports', 1, '', 'category-sports', 0, 'Sports'),
+(6, 0, 'Music', 1, '', 'category-music', 0, 'Music');
 
 -- --------------------------------------------------------
 

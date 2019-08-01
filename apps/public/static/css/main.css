@@ -79,6 +79,14 @@ body{background-color:#f6f6f6}
 .modal-content form{padding:0 10px}
 .switch>label{font-weight:700}
 
+.category{background-image:url(/static/pic/category_sprite.png);max-width:56px}
+.category-animation{width:56px;height:56px;background-position:0 0}
+.category-tv{width:56px;height:56px;background-position:-56px 0}
+.category-sports{width:56px;height:56px;background-position:-112px 0}
+.category-music{width:56px;height:56px;background-position:-168px 0}
+.category-documentary{width:56px;height:56px;background-position:-224px 0}
+.category-movie{width:56px;height:56px;background-position:-280px 0}
+
 /*-----------------------------------------------------------------------------------*/
 /*	3. Page of '/auth'
 /*-----------------------------------------------------------------------------------*/
