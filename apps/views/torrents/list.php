@@ -40,7 +40,14 @@ $time_now = time();
             <tbody>
             <?php foreach ($torrents as $torrent): ?>
                 <tr data-tid="<?= $torrent->getId() ?>">
-                    <td class="text-center" style="margin: 0;padding: 0"><?= ($torrent->getCategory())['name'] ?></td>
+                    <td class="text-center" style="margin: 0;padding: 0">
+                        <?php $cat = $torrent->getCategory(); ?>
+                        <?php if ($cat['image']): // Show Category's Image with classname ?>
+                        <img src="<?= $cat['image'] ?>" class="category <?= $cat['class_name'] ?>"  alt="<?= $cat['name'] ?>">
+                        <?php else: // Show Category's Name if image not set ?>
+                        <?= $cat['name'] ?>
+                        <?php endif; ?>
+                    </td>
                     <td>
                         <div>
                             <div class="name-left">

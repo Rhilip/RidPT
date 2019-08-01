@@ -37,6 +37,7 @@
 - **redis_key:** Fix array value cause parser error
 
 ### Perf
+- **Site:** Move apps/{libraries->components}/Site
 - **Site:** try to cache re-hit
 - **Tracker:** Use brpoplpush to get announce data from redis
 - **captcha:** simple captcha input
