@@ -11,6 +11,7 @@
 - **Category:** Add Categories Manage Pane
 - **Category:** Add Categories Support when upload torrent
 - **Crontab:** Move From Timer to Process
+- **Gravatar:** Add support of gravatar
 - **Process:** Add custom Process Support
 - **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Move From Timer to Process
@@ -19,7 +20,7 @@
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 - **ban:** Add table `ban_usernames` and `ban_emails`
 - **csrf:** Add Csrf Support
-- **email:** Use app()->site->sendEmail to simple email sender
+- **email:** Use Site::sendEmail to simple email sender
 - **system:** can get more system info via class SystemInfoHelper
 
 ### Fix

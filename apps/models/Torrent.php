@@ -285,7 +285,7 @@ class Torrent
      */
     public function getCategory()
     {
-        return (new Category())->setId($this->category);  // FIXME if will call cache every time for each torrent
+        return app()->site::CategoryDetail($this->category);
     }
 
     /**

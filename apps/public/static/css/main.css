@@ -98,7 +98,8 @@ body{background-color:#f6f6f6}
 /* Common */
 .torrent-title-block{margin-bottom: 15px}
 .torrent-title{}
-.name-left{width:95%;}
+.name-left{width:95%;float: left !important;}
+.name-right{width: 5px;float: right !important;}
 #torrents_table td[data-item] {vertical-align: middle;}
 
 #tags_list{margin-top:20px}

@@ -197,6 +197,15 @@ class Site extends Component
         }, 86400);
     }
 
+    public static function CategoryDetail($cat_id): array
+    {
+        return static::getStaticCacheValue('torrent_category_' . $cat_id ,function () use ($cat_id) {
+            return app()->pdo->createCommand('SELECT * FROM `categories` WHERE id= :cid LIMIT 1;')->bindParams([
+                'cid' => $cat_id
+            ])->queryOne();
+        },86400);
+    }
+
     public static function ruleCanUsedCategory(): array
     {
         return array_filter(static::ruleCategory(), function ($cat) {

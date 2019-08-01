@@ -40,10 +40,10 @@ $time_now = time();
             <tbody>
             <?php foreach ($torrents as $torrent): ?>
                 <tr data-tid="<?= $torrent->getId() ?>">
-                    <td class="text-center" style="margin: 0;padding: 0"><?= ($torrent->getCategory())->getName() ?></td>
+                    <td class="text-center" style="margin: 0;padding: 0"><?= ($torrent->getCategory())['name'] ?></td>
                     <td>
                         <div>
-                            <div class="pull-left name-left">
+                            <div class="name-left">
                                 <div data-item="t-main-info">
                                     <span data-item="t-title" data-title="<?= $this->e($torrent->getTitle()) ?>">
                                         <a href="/torrent/details?id=<?= $torrent->getId() ?>" target="_blank"><b><?= $torrent->getTitle() ?></b></a>
@@ -63,7 +63,7 @@ $time_now = time();
                                     <?php endif; ?>
                                 </div>
                             </div>
-                            <div class="pull-right">
+                            <div class="name-right">
                                 <div class="text-right">
                                     <!--suppress HtmlUnknownTarget --><a href="/torrent/download?id=<?= $torrent->getId() ?>"><i class="fas fa-download fa-fw"></i></a>
                                     <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->site->getCurUser()->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i></a>
