@@ -45,7 +45,7 @@ $copyright = "Copyright (c) " . $site_name . " " . (date("Y") != $yearfounded ? 
             <title><![CDATA[<?= $torrent->getTitle() ?>]]></title>
             <link><?= $url.'/torrent/details?id=' . $torrent->getId() ?></link>
             <description><?= $torrent->getDescr() ?></description>
-            <author><?= ($torrent->getUplver() == 'yes' ? 'Anonymous' : $torrent->getOwner()->getUsername()) . '@' . $site_name ?></author>
+            <author><?= ($torrent->getUplver() ? 'Anonymous' : $torrent->getOwner()->getUsername()) . '@' . $site_name ?></author>
             <category domain="<?= $url . '/torrents?cat='.$torrent->getCategoryId()?>">Movie</category>
             <comments><![CDATA[<?= $url. '/torrent/details?id=' . $torrent->getId() . '&cmtpage=0#startcomments' ?>]]></comments>
             <enclosure url="<?= $url . '/torrent/download?id=' . $torrent->getId() . ('') ?>" length="<?= $torrent->getTorrentSize() ?>" type="application/x-bittorrent" />

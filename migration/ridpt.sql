@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 28, 2019 at 04:37 PM
+-- Generation Time: Aug 01, 2019 at 10:50 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -735,6 +735,9 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('buff.random_percent_30%', '0'),
 ('buff.random_percent_50%', '5'),
 ('buff.random_percent_free', '2'),
+('gravatar.base_url', 'https://www.gravatar.com/avatar/'),
+('gravatar.default_fallback', 'identicon'),
+('gravatar.maximum_rating', 'g'),
 ('invite.force_interval', '1'),
 ('invite.interval', '7200'),
 ('invite.recycle_invite_lifetime', '86400'),
@@ -790,7 +793,8 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('tracker.user_max_leech', '1'),
 ('tracker.user_max_seed', '3'),
 ('upload.max_nfo_file_size', '65535'),
-('upload.max_torrent_file_size', '3145728');
+('upload.max_torrent_file_size', '3145728'),
+('user.avatar_provider', 'gravatar');
 
 -- --------------------------------------------------------
 
@@ -803,7 +807,7 @@ CREATE TABLE IF NOT EXISTS `site_crontab` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `job` varchar(64) NOT NULL,
   `priority` int(10) UNSIGNED NOT NULL DEFAULT '100' COMMENT '0 - disable this crontab work, else the lower number job have higher priority, by default 100',
-  `job_interval` int(11) NOT NULL,
+  `job_interval` int(11) UNSIGNED NOT NULL DEFAULT '600',
   `last_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `next_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -824,10 +828,12 @@ TRUNCATE TABLE `site_crontab`;
 --
 
 INSERT INTO `site_crontab` (`id`, `job`, `priority`, `job_interval`) VALUES
-(1, 'clean_dead_peer', 1, 600),
-(2, 'clean_expired_session', 1, 600),
-(3, 'expired_temporarily_invites', 1, 600),
-(4, 'update_expired_external_link_info', 1, 600);
+(1, 'clean_expired_zset_cache', 1, 60),
+(2, 'clean_dead_peer', 1, 600),
+(3, 'calculate_seeding_bonus', 2, 900),
+(4, 'clean_expired_session', 3, 600),
+(5, 'expired_invitee', 3, 600),
+(6, 'update_expired_external_link_info', 100, 1200);
 
 -- --------------------------------------------------------
 

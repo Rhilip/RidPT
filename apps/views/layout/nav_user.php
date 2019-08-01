@@ -4,6 +4,8 @@
  * User: Rhilip
  * Date: 7/21/2019
  * Time: 8:19 AM
+ *
+ * @var League\Plates\Template\Template $this
  */
 
 $user = app()->site->getCurUser();
@@ -40,7 +42,7 @@ $user = app()->site->getCurUser();
 
 <div id="info_block">
     <div id="info_block_line_1">
-        Welcome Back, <a href="/user" data-user-id="<?= $user->getId() ?>"><?= $user->getUsername() ?></a>&nbsp;
+        Welcome Back, <?= $this->insert('helper/username', ['user' => $user, 'user_name_hide' => false, 'user_badge' => true]) ?>
         <span data-item="logout"><!--suppress HtmlUnknownTarget -->[<a href="/auth/logout">Logout</a>]</span>
         <?php if ($user->getClass(true) > \apps\models\User::ROLE_FORUM_MODERATOR): ?>
             <span><!--suppress HtmlUnknownTarget -->[<a href="/admin">Admin Panel</a>]</span>

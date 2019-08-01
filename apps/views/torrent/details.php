@@ -11,8 +11,6 @@
 
 ?>
 
-<?php $this->insert('common/helper') ?>
-
 <?= $this->layout('layout/base') ?>
 
 <?php $this->start('title')?><?= $torrent->getTitle() ?><?php $this->end();?>
@@ -44,11 +42,24 @@
                     <?php if ($torrent->getComments()): ?>
                         <section class="comments-list">
                             <?php foreach ($torrent->getLastCommentsDetails() as $commit): ?>
-                                <?php $user = app()->site->getUser($commit['owner_id']); // TODO FIX if this user is upload and is uplver ?>
-                                <div id="commit_<?= $commit['id'] ?>" class="comment">
-                                <a href="#" class="avatar">
-                                    <i class="icon-user icon-2x"></i> <!-- TODO FIX user's avatar -->
-                                </a>
+                            <?php
+                                $commit_user = app()->site->getUser($commit['owner_id']);
+
+                                // The details of commentator should be hide or not ?
+                                $commentator_hide_flag = false;
+                                if ($torrent->getUplver() &&  // The torrent is uplver
+                                    $commit['owner_id'] == $torrent->getOwnerId() &&  // Commentator is the uploader for this torrent
+                                    !app()->site->getCurUser()->isPrivilege('see_anonymous_uploader')  // CurUser can't see uploader detail
+                                ) $commentator_hide_flag = true;
+                            ?>
+                            <div id="commit_<?= $commit['id'] ?>" class="comment">
+                                <div class="avatar">
+                                    <?php if ($commentator_hide_flag): ?>
+                                        <i class="icon-user icon-3x"></i>
+                                    <?php else: ?>
+                                        <img src="<?= $commit_user->getAvatar() ?>" alt="">
+                                    <?php endif; ?>
+                                </div>
                                 <div class="content">
                                     <div class="pull-right text-muted">
                                         <a href="#commit_<?= $commit['id'] ?>">#<?= $commit['id'] ?></a> -
@@ -58,8 +69,10 @@
                                             <span>Created at <?= $commit['create_at'] ?> </span>
                                         <?php endif; ?>
                                     </div>
-                                    <div><a href="/user/"><strong><?= $user->getUsername(); ?></strong></a></div>
-                                    <div class="text ubbcode-block"><?= $this->batch($commit['text'],'format_ubbcode') ?></div>
+                                    <div class="comment-username">
+                                        <?= $this->insert('helper/username', ['user' => $commit_user, 'torrent' => $torrent, 'user_badge' => true]) ?>
+                                    </div>
+                                    <div class="text ubbcode-block"><?= $this->batch($commit['text'], 'format_ubbcode') ?></div>
                                     <div class="actions pull-right"> <!-- TODO -->
                                         <a href="##">Report</a>
                                         <a href="##">Reply</a>
@@ -73,8 +86,8 @@
                     <?php endif; ?>
                     <footer>
                         <div class="reply-form" id="commentReplyForm1">
-                            <a href="#" class="avatar"><i class="icon-user icon-2x"></i></a>
-                            <form  class="form" method="post" action="/torrent/commit?id=<?= $torrent->getId() ?>">
+                            <div class="avatar"><img src="<?= app()->site->getCurUser()->getAvatar() ?>" alt=""></div>
+                            <form  class="form" method="post" action="/torrent/commit?id=<?= $torrent->getId() ?>"> <!-- FIXME commit point -->
                                 <div class="form-group">
                                     <textarea class="form-control new-comment-text" rows="3" placeholder="Quick Commit Here" data-autoresize></textarea>
                                 </div>
@@ -139,13 +152,21 @@
         <div class="panel" id="torrent_info_panel">
             <div class="panel-heading"><b>Torrent Information</b></div>
             <div class="panel-body" id="torrent_information">
-                <div data-field="added_date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>"><b>Uploaded Date:</b> <?= $torrent->getAddedAt() ?></div>
-                <div data-field="size" data-filesize="<?= $torrent->getTorrentSize() ?>"><b>File size:</b> <?= $this->e($torrent->getTorrentSize(),'format_bytes') ?></div>
-                <div data-field="uploader" data-owner-id="<?= $torrent->getOwnerId() ?>"><b>Uploader:</b> <?= get_torrent_uploader($torrent) ?></div>
-                <div data-field="peers" data-seeders="<?= $torrent->getComplete() ?>" data-leechers="<?= $torrent->getComplete() ?>" data-completed="<?= $torrent->getDownloaded() ?>">
-                    <b>Peers:</b> <span style="color: green;"><i class="fas fa-arrow-up fa-fw"></i> <?= $torrent->getComplete() ?></span> / <span style="color: red;"><i class="fas fa-arrow-down fa-fw"></i> <?= $torrent->getIncomplete() ?></span> / <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
+                <div data-field="added_date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>">
+                    <b>Uploaded Date:</b> <?= $torrent->getAddedAt() ?></div>
+                <div data-field="size" data-filesize="<?= $torrent->getTorrentSize() ?>">
+                    <b>File size:</b> <?= $this->e($torrent->getTorrentSize(), 'format_bytes') ?></div>
+                <div data-field="uploader" data-owner-id="<?= $torrent->getUplver() ? 0 : $torrent->getOwnerId(); ?>">
+                    <b>Uploader:</b> <?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'torrent' => $torrent]) ?>
                 </div>
-                <div data-field="info_hash" data-infohash="<?= $torrent->getInfoHash() ?>"><b>Info Hash:</b> <kbd><?= $torrent->getInfoHash() ?></kbd></div>
+                <div data-field="peers" data-seeders="<?= $torrent->getComplete() ?>" data-leechers="<?= $torrent->getComplete() ?>" data-completed="<?= $torrent->getDownloaded() ?>">
+                    <b>Peers:</b>
+                    <span class="green"><i class="fas fa-arrow-up fa-fw"></i> <?= $torrent->getComplete() ?></span> /
+                    <span class="red"><i class="fas fa-arrow-down fa-fw"></i> <?= $torrent->getIncomplete() ?></span> /
+                    <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
+                </div>
+                <div data-field="info_hash" data-infohash="<?= $torrent->getInfoHash() ?>"><b>Info Hash:</b>
+                    <kbd><?= $torrent->getInfoHash() ?></kbd></div>
             </div>
         </div>
         <div class="panel" id="torrent_tags_panel">

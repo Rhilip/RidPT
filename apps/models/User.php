@@ -201,12 +201,31 @@ class User
     }
 
     /** TODO use gravatar
+     * @param array $opts
      * @return mixed
      */
-    public function getAvatar()
+    public function getAvatar($opts = [])
     {
-        if ($this->avatar == '') {
-            $this->avatar = '/static/avatar/default_avatar.jpg';
+        if (config('user.avatar_provider') === 'gravatar') {
+            /** Get a Gravatar URL for a specified email address.
+             *
+             * @param int|string $s Size in pixels, defaults to 80px [ 1 - 2048 ]
+             * @param string $d Default imageset to use [ 404 | mp | identicon | monsterid | wavatar ]
+             * @param string $r Maximum rating (inclusive) [ g | pg | r | x ]
+             */
+            $url = config('gravatar.base_url') . md5(strtolower(trim($this->email)));
+            $url .= '?' . http_build_query([
+                    's' => $opts['s'] ?? 80,
+                    'd' => $opts['d'] ?? config('gravatar.default_fallback') ?? 'identicon',
+                    'r' => $opts['r'] ?? config('gravatar.maximum_rating') ?? 'g'
+                ]);
+            return $url;
+        }/* elseif (config('user.avatar_provider') === 'remote') {
+            // For example : another Image Hosting
+        }*/ else {  // config('user.avatar_provider') === 'local'
+            if ($this->avatar == '') {
+                $this->avatar = '/static/avatar/default_avatar.jpg';
+            }
         }
 
         return $this->avatar;

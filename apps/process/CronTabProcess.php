@@ -111,6 +111,11 @@ final class CronTabProcess extends Process
         $this->print_log('Success clean ' . $affect_peer_count . ' peers from our peer list');
     }
 
+    protected function calculate_seeding_bonus()
+    {
+        // TODO
+    }
+
     protected function clean_expired_session()
     {
         $timenow = time();
@@ -123,7 +128,7 @@ final class CronTabProcess extends Process
         }
 
         $clean_record_count = app()->redis->zRemRangeByScore('Site:Sessions:to_expire', 0, $timenow);
-        if ($clean_record_count) $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) . '), Redis(' . $clean_record_count . ').');
+        if ($clean_record_count > 0) $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) . '), Redis(' . $clean_record_count . ').');
     }
 
     protected function expired_invitee()

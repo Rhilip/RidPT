@@ -102,16 +102,9 @@ class Torrent
         return $this->id;
     }
 
-    /** FIXME move it to view
-     * @return mixed
-     */
     public function getOwnerId()
     {
-        if ($this->getUplver() == 'yes' and !app()->site->getCurUser()->isPrivilege('see_anonymous_uploader')) {
-            return 0;
-        } else {
-            return $this->owner_id;
-        }
+        return $this->owner_id;
     }
 
     public function getOwner()

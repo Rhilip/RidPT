@@ -15,8 +15,6 @@
 $time_now = time();
 ?>
 
-<?php $this->insert('common/helper') ?>
-
 <?= $this->layout('layout/base') ?>
 
 <?php $this->start('title')?>Torrents List<?php $this->end();?>
@@ -79,7 +77,7 @@ $time_now = time();
                     <td class="text-center" data-item="t-seeder" data-seeder="<?= $this->e($torrent->getComplete()) ?>"><?= number_format($torrent->getComplete()) ?></td>
                     <td class="text-center" data-item="t-leecher" data-leecher="<?= $this->e($torrent->getIncomplete()) ?>"><?= number_format($torrent->getIncomplete()) ?></td>
                     <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>"><?= number_format($torrent->getDownloaded()) ?></td>
-                    <td class="text-center" data-item="t-uploader" data-uploader="<?= $this->e($torrent->getOwnerId()) ?>"><?= get_torrent_uploader($torrent) ?></td>
+                    <td class="text-center" data-item="t-uploader" data-uploader="<?= $this->e($torrent->getUplver() ? 0 : $torrent->getOwnerId()) ?>"><?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'torrent' => $torrent]) ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

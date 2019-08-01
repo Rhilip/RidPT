@@ -8,13 +8,14 @@
 - **gitignore:** Add ignore of `/backup` folder
 
 ### Feat
-- **Category:** Add Categories Support when upload torrent
 - **Category:** Add Categories Manage Pane
+- **Category:** Add Categories Support when upload torrent
 - **Crontab:** Move From Timer to Process
 - **Process:** Add custom Process Support
 - **Redis:** Add mutiDelete() function for Redis
-- **Tracker:** Add `retry in` field when failed
 - **Tracker:** Move From Timer to Process
+- **Tracker:** Add `retry in` field when failed
+- **User:** Add Bonus And Unread Messsage count
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 - **ban:** Add table `ban_usernames` and `ban_emails`
 - **csrf:** Add Csrf Support
