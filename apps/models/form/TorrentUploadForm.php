@@ -161,7 +161,7 @@ class TorrentUploadForm extends Validator
     protected function isValidTorrent()
     {
         try {
-            $this->torrent_dict = Bencode::load($this->getData('file')['tmpName']);
+            $this->torrent_dict = Bencode::load($this->getData('file')->tmpName);
             $info = $this->checkTorrentDict($this->torrent_dict, 'info');
             if ($info) {
                 $this->checkTorrentDict($info, 'piece length', 'integer');  // Only Check without use
