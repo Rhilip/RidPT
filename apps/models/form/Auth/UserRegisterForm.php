@@ -9,7 +9,6 @@
 namespace apps\models\form\Auth;
 
 use apps\models\User;
-use apps\libraries\Site;
 
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;

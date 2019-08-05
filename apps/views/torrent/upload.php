@@ -9,8 +9,6 @@
  *
  * TODO Add notice for users which can't directly upload torrent (in pending status)
  */
-
-use apps\libraries\Site;
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -131,7 +129,7 @@ use apps\libraries\Site;
             <td class="nowrap"><label for="descr" class="required">Description</label></td>
             <td>
                 <textarea id="descr" name="descr" class="form-control" style="width: 99%"
-                          cols="100" rows="10" required="required"></textarea>
+                          cols="100" rows="10"></textarea>
             </td>
         </tr>
         <?php if (config('torrent_upload.enable_tags')):?>

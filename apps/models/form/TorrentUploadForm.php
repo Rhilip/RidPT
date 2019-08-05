@@ -9,7 +9,6 @@
 namespace apps\models\form;
 
 use apps\models\Torrent;
-use apps\libraries\Site;
 
 use Rid\Validators\Validator;
 

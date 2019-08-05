@@ -40,7 +40,7 @@ $time_now = time();
             <tbody>
             <?php foreach ($torrents as $torrent): ?>
                 <tr data-tid="<?= $torrent->getId() ?>">
-                    <td class="text-center" style="margin: 0;padding: 0">
+                    <td class="text-center" data-item="category" style="margin: 0;padding: 0">
                         <?php $cat = $torrent->getCategory(); ?>
                         <?php if ($cat['image']): // Show Category's Image as <img> tag with classname ?>
                         <img src="<?= $cat['image'] ?>" class="category <?= $cat['class_name'] ?>"  alt="<?= $cat['name'] ?>">
@@ -82,7 +82,7 @@ $time_now = time();
                     </td>
                     <td class="text-center" data-item="t-comments" data-comments="<?= $torrent->getComments() ?>"><?= $torrent->getComments() ?></td>
                     <td class="text-center" data-item="t-size" data-size="<?= $torrent->getTorrentSize() ?>"><?= $this->batch($torrent->getTorrentSize(),'format_bytes_compact') ?></td>
-                    <td class="text-center" data-item="t-added-date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>" data-ttl="<?= $time_now - strtotime($torrent->getAddedAt()) ?>"><nobr><?= str_replace(' ','<br />',$torrent->getAddedAt()) ?></nobr></td>
+                    <td class="text-center" data-item="t-added-date"><time class="nowrap" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>" data-ttl="<?= $time_now - strtotime($torrent->getAddedAt()) ?>"><?= str_replace(' ','<br />',$torrent->getAddedAt()) ?></time></td>
                     <td class="text-center" data-item="t-seeder" data-seeder="<?= $this->e($torrent->getComplete()) ?>"><?= number_format($torrent->getComplete()) ?></td>
                     <td class="text-center" data-item="t-leecher" data-leecher="<?= $this->e($torrent->getIncomplete()) ?>"><?= number_format($torrent->getIncomplete()) ?></td>
                     <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>"><?= number_format($torrent->getDownloaded()) ?></td>

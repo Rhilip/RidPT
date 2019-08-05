@@ -8,8 +8,6 @@
 
 namespace apps\models\form\Auth;
 
-use apps\libraries\Site;
-
 use apps\models\User;
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;

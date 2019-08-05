@@ -9,13 +9,11 @@ namespace Rid\Base;
  * @property \Rid\Http\Request $request
  * @property \Rid\Http\Response $response
  * @property \Rid\Http\Error|\Rid\Console\Error $error
- * @property \Rid\Http\Token $token
  * @property \Rid\Http\Session $session
  * @property \Rid\Http\Cookie $cookie
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Component\Config $config
- * @property \Rid\Pool\ConnectionPool $connectionPool
  * @property \Rid\Component\I18n $i18n
  * @property \apps\components\Site $site
  */
