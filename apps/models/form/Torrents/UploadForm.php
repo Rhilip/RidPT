@@ -154,10 +154,10 @@ class UploadForm extends Validator
 
     public static function callbackRules()
     {
-        return ['isValidTorrent'];
+        return ['isValidTorrentFile', 'makePrivateTorrent'];
     }
 
-    protected function isValidTorrent()
+    protected function isValidTorrentFile()
     {
         try {
             $this->torrent_dict = Bencode::load($this->getData('file')->tmpName);
@@ -208,16 +208,17 @@ class UploadForm extends Validator
         $this->torrent_structure = $this->getFileTree();
     }
 
-    public function makePrivateTorrent()
+    protected function makePrivateTorrent()
     {
-        $this->torrent_dict['announce'] = "https://" . config("base.site_tracker_url") . "/announce";
+        $this->torrent_dict['announce'] = 'https://' . config('base.site_tracker_url') . '/announce';
 
         // Remove un-need field in private torrents
         unset($this->torrent_dict['announce-list']); // remove multi-tracker capability
         unset($this->torrent_dict['nodes']); // remove cached peers (Bitcomet & Azareus)
 
-        // Some other change if you need
-        //$this->torrent_dict['commit'] = "";
+        // Rewrite `commit` and `created by` if enabled this config
+        if (config('torrent_upload.rewrite_commit_to')) $this->torrent_dict['commit'] = config('torrent_upload.rewrite_commit_to');
+        if (config('torrent_upload.rewrite_createdby_to')) $this->torrent_dict['created by'] = config('torrent_upload.rewrite_createdby_to');
 
         /**
          * The following line requires uploader to re-download torrents after uploading **Since info_hash change**
@@ -238,10 +239,18 @@ class UploadForm extends Validator
 
         // Make it private and unique by add our source flag
         $this->torrent_dict['info']['private'] = 1;  // add private tracker flag
-        $this->torrent_dict['info']['source'] = "Powered by [" . config("base.site_url") . "] " . config("base.site_name");
+        $this->torrent_dict['info']['source'] = config('torrent_upload.rewrite_source_to') ?: 'Powered by [' . config('base.site_url') . '] ' . config('base.site_name');
 
         // Get info_hash on new torrent content dict['info']
-        $this->info_hash = pack("H*", sha1(Bencode::encode($this->torrent_dict['info'])));
+        $this->info_hash = pack('H*', sha1(Bencode::encode($this->torrent_dict['info'])));
+
+        // Check if this torrent is exist or not before insert.
+        $count = app()->pdo->createCommand('SELECT COUNT(*) FROM torrents WHERE info_hash = :info_hash')->bindParams([
+            'info_hash' => $this->info_hash
+        ])->queryScalar();
+
+        // TODO redirect user to exist torrent details page when this torrent exist.
+        if ($count > 0) $this->buildCallbackFailMsg('Torrent','std_torrent_existed');
     }
 
     /**
@@ -249,20 +258,12 @@ class UploadForm extends Validator
      */
     public function flush()
     {
-        $this->makePrivateTorrent();
-        $this->rewriteFlags();
-
-        // Check if this torrent is exist or not before insert.
-        $count = app()->pdo->createCommand('SELECT COUNT(*) FROM torrents WHERE info_hash = :info_hash')->bindParams([
-            'info_hash' => $this->info_hash
-        ])->queryScalar();
-        if ($count > 0) throw new \Exception('std_torrent_existed');
-
         $nfo_blob = '';
         if (isset($this->nfo)) {  // FIXME it seem always be true ???
             $nfo_blob = $this->nfo->getFileContent();
         }
 
+        $this->rewriteFlags();
         $this->determineTorrentStatus();
         app()->pdo->beginTransaction();
         try {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 06, 2019 at 03:36 PM
+-- Generation Time: Aug 07, 2019 at 12:06 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -778,6 +778,9 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('torrent_upload.enable_tags', '1'),
 ('torrent_upload.enable_teams', '1'),
 ('torrent_upload.enable_upload_nfo', '1'),
+('torrent_upload.rewrite_commit_to', ''),
+('torrent_upload.rewrite_createdby_to', ''),
+('torrent_upload.rewrite_source_to', ''),
 ('tracker.cheater_check', '1'),
 ('tracker.enable_announce', '1'),
 ('tracker.enable_maxdlsystem', '1'),
@@ -867,6 +870,7 @@ CREATE TABLE IF NOT EXISTS `snatched` (
   `user_id` int(11) UNSIGNED NOT NULL,
   `torrent_id` int(11) UNSIGNED NOT NULL,
   `agent` varchar(60) NOT NULL,
+  `ip` varbinary(16) DEFAULT NULL,
   `port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
   `true_uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `true_downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -876,7 +880,7 @@ CREATE TABLE IF NOT EXISTS `snatched` (
   `seed_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `leech_time` int(10) UNSIGNED NOT NULL DEFAULT '0',
   `finished` enum('yes','no') NOT NULL DEFAULT 'no',
-  `finish_ip` varchar(40) DEFAULT NULL,
+  `finish_ip` varbinary(16) DEFAULT NULL,
   `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `last_action_at` timestamp NULL DEFAULT NULL,
   `finish_at` timestamp NULL DEFAULT NULL,
