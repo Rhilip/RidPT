@@ -6,10 +6,7 @@
  * Time: 7:39 PM
  *
  * @var League\Plates\Template\Template $this
- * @var array $tags
- * @var string $search
- * @var int $count
- * @var int $limit
+ * @var \apps\models\form\Torrents\TagsForm $pager
  */
 ?>
 
@@ -26,7 +23,7 @@
                     <div class="input-group">
                         <div class="input-control search-box search-box-circle has-icon-left has-icon-righ"
                              id="tags_search_div">
-                            <input id="tags_search_input" type="text" name="search" class="form-control search-input" value="<?= $search ?? '' ?>">
+                            <input id="tags_search_input" type="text" name="search" class="form-control search-input" value="<?= $pager->search ?? '' ?>">
                             <label for="tags_search_input" class="input-control-icon-left search-icon">
                                 <i class="icon icon-search"></i>
                             </label>
@@ -41,12 +38,12 @@
     </div>
     <div class="col-md-10 col-md-offset-1">
         <div id="tags_list">
-            <?php foreach ($tags as $tag): ?>
+            <?php foreach ($pager->getPagerData() as $tag): ?>
                 <a class="btn" href="/torrents/search?tags=<?= $tag['tag'] ?>"><?= $tag['tag'] ?> <span class="label label-badge <?= $tag['class_name'] ?>"><?= $tag['count'] ?></span></a>
             <?php endforeach; ?>
         </div>
         <div class="text-center">
-            <ul class="pager" data-ride="remote_pager" data-rec-total="<?= $count ?>"  data-rec-per-page="<?= $limit ?? 50 ?>"></ul>
+            <ul class="pager" data-ride="remote_pager" data-rec-total="<?= $pager->getTotal() ?>"  data-rec-per-page="<?= $pager->getLimit() ?>"></ul>
         </div>
     </div>
 </div>

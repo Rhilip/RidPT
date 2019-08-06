@@ -6,10 +6,7 @@
  * Time: 20:40
  *
  * @var League\Plates\Template\Template $this
- * @var array $torrents
- * @var \apps\models\Torrent $torrent
- * @var int $count
- * @var int $limit
+ * @var \apps\models\form\Torrents\SearchForm $pager
  */
 
 $time_now = time();
@@ -38,7 +35,7 @@ $time_now = time();
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($torrents as $torrent): ?>
+            <?php foreach ($pager->getPagerData() as $torrent): /** @var \apps\models\Torrent $torrent */ ?>
                 <tr data-tid="<?= $torrent->getId() ?>">
                     <td class="text-center" data-item="category" style="margin: 0;padding: 0">
                         <?php $cat = $torrent->getCategory(); ?>
@@ -96,7 +93,7 @@ $time_now = time();
             </tbody>
         </table>
         <div class="text-center">
-            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $count ?>"  data-rec-per-page="<?= $limit ?? 50 ?>"></ul>
+            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $pager->getDataTotal() ?>"  data-rec-per-page="<?= $pager->getLimit() ?>"></ul>
         </div>
     </div>
 </div>

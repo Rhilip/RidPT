@@ -72,7 +72,7 @@ class Validator extends BaseObject
      */
     final public function setData($config)
     {
-        $this->_data += $config;
+        $this->_data = array_merge($this->_data, $config);
     }
 
     final public function setFileData($config)
@@ -125,11 +125,7 @@ class Validator extends BaseObject
 
             foreach ($this->_data as $name => $value) {
                 if (in_array($name, $public_props)) {
-                    if (in_array($name, $this->_file_data_name)) {
-                        $this->$name = new UploadFile($value);
-                    } else {
-                        $this->$name = $value;
-                    }
+                    $this->$name = $this->getData($name);
                 } elseif (in_array($name, $no_change_props)) {
                     $this->buildCallbackFailMsg('harking', 'User post may hack.');
                     return;

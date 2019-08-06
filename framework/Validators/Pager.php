@@ -83,13 +83,13 @@ class Pager extends Validator
         if ($limit > static::$max_limit) $limit = static::$max_limit;
         $page = $this->getData('page', static::$default_page);
 
-        self::setData(['limit' => $limit,'page' => $page]);
+        $this->setData(['limit' => $limit, 'page' => $page]);
 
-        $this->total = $total = $this->getDataTotal();
+        $this->total = $this->getDataTotal();
+        $this->offset = ($page - 1) * $limit;
 
-        $offset = ($page - 1) * $limit;
-        if (($offset * $limit) > $total) $offset = intval($total / ($offset * $limit)) * $limit;
-        $this->offset = $offset;
+        // Quick return empty array when offset is much bigger than total, So we needn't hit remote or local data
+        if ($this->offset > $this->total) $this->pager_data = [];
     }
 
     final public function getDataTotal(): int
@@ -101,12 +101,12 @@ class Pager extends Validator
         return $this->pager_data_total;
     }
 
-    public function getRemoteTotal()
+    protected function getRemoteTotal()
     {
         throw new \RuntimeException('function "getRemoteTotal()" not implemented.');
     }
 
-    public function getPagerData()
+    final public function getPagerData()
     {
         if (is_null($this->pager_data)) {
             if (static::$data_source == 'remote') $this->pager_data = $this->getRemoteData();
@@ -115,7 +115,7 @@ class Pager extends Validator
         return $this->pager_data;
     }
 
-    public function getRemoteData()
+    protected function getRemoteData()
     {
         throw new \RuntimeException('function "getRemoteData()" not implemented.');
     }

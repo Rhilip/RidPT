@@ -190,11 +190,7 @@ jQuery(document).ready(function () {
         let help_info = $(this).children('i');
         let old_type_is_password = password_input.attr('type') === 'password';
         password_input.attr('type', old_type_is_password ? 'text' : 'password');
-        if (old_type_is_password) {
-            help_info.removeClass('fa-eye').addClass('fa-eye-slash');
-        } else {
-            help_info.removeClass('fa-eye-slash').addClass('fa-eye');
-        }
+        help_info.toggleClass('fa-eye-slash', old_type_is_password).toggleClass('fa-eye', !old_type_is_password);
     });
 
     // Torrent favour Add/Remove action
