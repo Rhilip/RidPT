@@ -52,6 +52,7 @@ class Process implements StaticInstanceInterface
 
         while (true) {
             $this->run();
+            \Rid::app()->cleanComponents();
             sleep($this->getSleepTime());
         }
     }

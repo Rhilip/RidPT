@@ -139,6 +139,17 @@ final class CronTabProcess extends Process
         $this->print_log('Success Expired ' . $count . ' invites');
     }
 
+    // sync torrents status about complete, incomplete, comments
+    protected function sync_torrents_status()
+    {
+        $cur_peer_status = app()->pdo->createCommand('SELECT `torrent_id`, `seeder`, COUNT(`id`) as `c` FROM `peers` GROUP BY `torrent_id`,`seeder`')->queryAll();
+        $cur_commit_status = app()->pdo->createCommand('SELECT `torrent_id`, COUNT(`id`) as `c` FROM `torrent_comments` GROUP BY `torrent_id`')->queryAll();
+        $cur_torrent_status = app()->pdo->createCommand('SELECT `id`,`complete`,`incomplete`,`comments` FROM `torrents`')->queryAll();
+
+
+    }
+
+
     protected function update_expired_external_link_info()
     {
         $expired_links_res = app()->pdo->createCommand('SELECT `source`,`sid` FROM `external_info` ORDER BY `update_at` ASC LIMIt 5')->queryAll();

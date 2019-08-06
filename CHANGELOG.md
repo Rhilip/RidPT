@@ -33,6 +33,7 @@
 - **Form:** Miss use flag since namespace change
 - **Form:** Link\EditForm Update diff
 - **Requests:** Fix fullUrl() may add unnecessary `?`
+- **Site:** Fix old library Site not remove clean
 - **Tracker:** Fix SQL error
 - **Tracker:** Fix TrackerException Logger
 - **categories:** Remove key `sort_index`

@@ -66,7 +66,7 @@ class BasePDOConnection extends Component
 
     public function onRequestAfter()
     {
-        $this->_sqlExecuteData = [];
+        $this->cleanSqlExecuteData();
     }
 
     // 创建连接
@@ -423,6 +423,11 @@ class BasePDOConnection extends Component
             return $sql;
         }
         return array_shift($sqlPrepareData);
+    }
+
+    public function cleanSqlExecuteData()
+    {
+        $this->_sqlExecuteData = [];
     }
 
     public function getExecuteData() {

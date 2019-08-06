@@ -222,7 +222,7 @@ class BaseRedisConnection extends Component
 
     public function onRequestAfter()
     {
-        $this->_calledData = [];
+        $this->cleanCalledData();
     }
 
     // 创建连接
@@ -312,6 +312,11 @@ class BaseRedisConnection extends Component
     public function getCalledData()
     {
         return $this->_calledData;
+    }
+
+    public function cleanCalledData()
+    {
+        $this->_calledData = [];
     }
 
     /**
