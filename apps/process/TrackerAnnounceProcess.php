@@ -94,10 +94,10 @@ class TrackerAnnounceProcess extends Process
                 ])->queryScalar();
 
                 if ($selfRecordCount == 0) {
-                    app()->pdo->createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`) 
-                        VALUES (:uid,:tid,:agent,:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,FROM_UNIXTIME(:create_at),FROM_UNIXTIME(:last_action_at))")->bindParams([
+                    app()->pdo->createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`ip`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`) 
+                        VALUES (:uid,:tid,:agent,INET6_ATON(:ip),:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,FROM_UNIXTIME(:create_at),FROM_UNIXTIME(:last_action_at))")->bindParams([
                         'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
-                        'agent' => $queries['user-agent'], 'port' => $queries['port'],
+                        'agent' => $queries['user-agent'], 'ip'=>$queries['remote_ip'], 'port' => $queries['port'],
                         'true_up' => 0, 'true_dl' => 0,
                         'this_up' => 0, 'this_dl' => 0,
                         'to_go' => $queries['left'], 'time' => 0,
@@ -147,9 +147,10 @@ class TrackerAnnounceProcess extends Process
             if (app()->pdo->getRowCount() > 0) {   // It means that the delete or update query affected so we can safety update `snatched` table
                 app()->pdo->createCommand("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
                     `this_uploaded` = `this_uploaded` + :this_up, `this_download` = `this_download` + :this_dl, `to_go` = :left, `{$timeKey}`=`{$timeKey}` + :duration,
-                    `agent` = :agent WHERE `torrent_id` = :tid AND `user_id` = :uid")->bindParams([
+                    `ip` = INET6_ATON(:ip),`port` = :port, `agent` = :agent WHERE `torrent_id` = :tid AND `user_id` = :uid")->bindParams([
                     'true_up' => $trueUploaded, 'true_dl' => $trueDownloaded, 'this_up' => $thisUploaded, 'this_dl' => $thisDownloaded,
-                    'left' => $queries['left'], 'duration' => $duration, 'agent' => $queries['user-agent'],
+                    'left' => $queries['left'], 'duration' => $duration,
+                    'ip'=>$queries['remote_ip'],'port' => $queries['port'], 'agent' => $queries['user-agent'],
                     'tid' => $torrentInfo['id'], 'uid' => $userInfo['id']
                 ])->execute();
             }

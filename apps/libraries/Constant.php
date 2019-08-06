@@ -40,7 +40,7 @@ class Constant
 
     public static function torrentContent($tid)
     {
-        return 'Torrent:torrent_' . $tid . 'content:hash';
+        return 'Torrent:torrent_' . $tid . '_content:hash';
     }
 
     // Tracker User

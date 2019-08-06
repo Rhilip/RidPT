@@ -30,10 +30,10 @@ class TorrentController extends Controller
 
     public function actionSnatch()  // TODO
     {
-        //$tid = app()->request->get('id');
-        //$torrent = new Torrent($tid);
+        $tid = app()->request->get('id');
+        $torrent = new Torrent($tid);
 
-        //return $this->render('torrent/snatch', ['torrent' => $torrent]);
+        return $this->render('torrent/snatch', ['torrent' => $torrent]);
     }
 
 

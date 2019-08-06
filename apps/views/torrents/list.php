@@ -85,7 +85,11 @@ $time_now = time();
                     <td class="text-center" data-item="t-added-date"><time class="nowrap" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>" data-ttl="<?= $time_now - strtotime($torrent->getAddedAt()) ?>"><?= str_replace(' ','<br />',$torrent->getAddedAt()) ?></time></td>
                     <td class="text-center" data-item="t-seeder" data-seeder="<?= $this->e($torrent->getComplete()) ?>"><?= number_format($torrent->getComplete()) ?></td>
                     <td class="text-center" data-item="t-leecher" data-leecher="<?= $this->e($torrent->getIncomplete()) ?>"><?= number_format($torrent->getIncomplete()) ?></td>
-                    <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>"><?= number_format($torrent->getDownloaded()) ?></td>
+                    <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>">
+                        <?php if ($torrent->getDownloaded() > 0): ?><a href="/torrent/snatch?id=<?= $torrent->getId() ?>"><?php endif; ?>
+                            <?= number_format($torrent->getDownloaded()) ?>
+                        <?php if ($torrent->getDownloaded() > 0): ?></a><?php endif; ?>
+                    </td>
                     <td class="text-center" data-item="t-uploader" data-uploader="<?= $this->e($torrent->getUplver() ? 0 : $torrent->getOwnerId()) ?>"><?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'torrent' => $torrent]) ?></td>
                 </tr>
             <?php endforeach; ?>

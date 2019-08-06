@@ -381,4 +381,10 @@ class Torrent
             ])->queryAll();
         });
     }
+
+    public function getSnatchDetails() {
+        return app()->pdo->createCommand('SELECT * FROM `snatched` WHERE `torrent_id` = :tid')->bindParams([
+            'tid' => $this->id
+        ])->queryAll();
+    }
 }

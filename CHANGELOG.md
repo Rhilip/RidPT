@@ -16,6 +16,7 @@
 - **Editor:** Support wysibb editor
 - **Gravatar:** Add support of gravatar
 - **Process:** Add custom Process Support
+- **Process:** Clean Components before sleep
 - **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Move From Timer to Process
 - **Tracker:** Add `retry in` field when failed
