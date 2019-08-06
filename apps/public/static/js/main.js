@@ -371,7 +371,7 @@ jQuery(document).ready(function () {
         });
     }
 
-    // Help to insert tags in `/torrent/upload`
+    // Help to insert tags in `/torrents/upload`
     if ($('div.tag-help-block').length) {
         let tags_input = $('input[name="tags"]');
         $('a.add-tag').click(function (e) {

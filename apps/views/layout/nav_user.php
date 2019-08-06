@@ -20,7 +20,7 @@ $user = app()->site->getCurUser();
                 <li><a href="/forums"><?= __('nav_forums') ?></a></li> <!-- TODO  -->
                 <li><a href="/collections"><?= __('nav_collections') ?></a></li> <!-- TODO  -->
                 <li><a href="/torrents"><?= __('nav_torrents') ?></a></li>
-                <li><a href="/torrent/upload"><?= __('nav_upload') ?></a></li>
+                <li><a href="/torrents/upload"><?= __('nav_upload') ?></a></li>
                 <li><a href="/torrents/request"><?= __('nav_requests') ?></a></li> <!-- TODO  -->
                 <li><a href="/subtitles"><?= __('nav_subtitles') ?></a></li> <!-- TODO  -->
                 <li><a href="/site/rules"><?= __('nav_rules') ?></a></li> <!-- TODO  -->

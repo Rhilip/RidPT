@@ -6,7 +6,7 @@
  * Time: 21:45
  */
 
-namespace apps\models\form;
+namespace apps\models\form\Torrents;
 
 use apps\models\Torrent;
 
@@ -15,7 +15,7 @@ use Rid\Validators\Validator;
 use Rid\Bencode\Bencode;
 use Rid\Bencode\ParseErrorException;
 
-class TorrentUploadForm extends Validator
+class UploadForm extends Validator
 {
 
     public $id = 0;

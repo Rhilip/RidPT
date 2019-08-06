@@ -9,7 +9,6 @@
 namespace apps\controllers;
 
 use apps\models\Torrent;
-use apps\models\form\TorrentUploadForm;
 
 use Rid\Http\Controller;
 
@@ -34,32 +33,6 @@ class TorrentController extends Controller
         $torrent = new Torrent($tid);
 
         return $this->render('torrent/snatch', ['torrent' => $torrent]);
-    }
-
-
-    public function actionUpload()
-    {
-        // TODO Check user upload pos
-        if (app()->request->isPost()) {
-            $uploadForm = new TorrentUploadForm();
-            $uploadForm->setData(app()->request->post());
-            $uploadForm->setFileData(app()->request->files());
-            $success = $uploadForm->validate();
-            if (!$success) {
-                return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
-            } else {
-                try {
-                    $uploadForm->flush();
-                } catch (\Exception $e) {
-                    return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
-                }
-
-                return app()->response->redirect('/torrent/details?id=' . $uploadForm->id);
-            }
-        } else {
-            return $this->render('torrent/upload');
-        }
-
     }
 
     public function actionDownload()

@@ -8,10 +8,9 @@
 
 namespace apps\controllers;
 
-use apps\models\form\Torrents\SearchForm;
-use apps\models\form\Torrents\TagsForm;
-use Rid\Http\Controller;
+use apps\models\form\Torrents;
 
+use Rid\Http\Controller;
 
 class TorrentsController extends Controller
 {
@@ -24,7 +23,7 @@ class TorrentsController extends Controller
     public function actionSearch()
     {
         // TODO add URI level Cache
-        $pager = new SearchForm();
+        $pager = new Torrents\SearchForm();
         $pager->setData(app()->request->get());
         $success = $pager->validate();
         if (!$success) {
@@ -34,9 +33,34 @@ class TorrentsController extends Controller
         return $this->render('torrents/list', ['pager' => $pager]);
     }
 
+    public function actionUpload()
+    {
+        // TODO Check user upload pos
+        if (app()->request->isPost()) {
+            $uploadForm = new Torrents\UploadForm();
+            $uploadForm->setData(app()->request->post());
+            $uploadForm->setFileData(app()->request->files());
+            $success = $uploadForm->validate();
+            if (!$success) {
+                return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
+            } else {
+                try {
+                    $uploadForm->flush();
+                } catch (\Exception $e) {
+                    return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
+                }
+
+                return app()->response->redirect('/torrent/details?id=' . $uploadForm->id);
+            }
+        } else {
+            return $this->render('torrents/upload');
+        }
+
+    }
+
     public function actionTags()
     {
-        $pager = new TagsForm();
+        $pager = new Torrents\TagsForm();
         $pager->setData(app()->request->get());
         $success = $pager->validate();
 

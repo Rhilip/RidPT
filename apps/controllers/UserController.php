@@ -8,8 +8,7 @@
 
 namespace apps\controllers;
 
-use apps\models\form\UserInviteForm;
-use apps\models\form\UserInviteActionForm;
+use apps\models\form\User;
 
 use Rid\Http\Controller;
 
@@ -30,7 +29,7 @@ class UserController extends Controller
     {
         $msg = '';
         if (app()->request->isPost()) {
-            $form = new UserInviteForm();
+            $form = new User\InviteForm();
             $form->setData(app()->request->post());
             $success = $form->validate();
             if ($success) {
@@ -53,7 +52,7 @@ class UserController extends Controller
 
         // FIXME By using Form Class
         if (!is_null(app()->request->get('action'))) {
-            $action_form = new UserInviteActionForm();
+            $action_form = new User\InviteActionForm();
             $action_form->setData(app()->request->get());
             $success = $action_form->validate();
             if ($success) {

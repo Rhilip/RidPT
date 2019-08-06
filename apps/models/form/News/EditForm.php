@@ -6,12 +6,11 @@
  * Time: 19:56
  */
 
-namespace apps\models\form;
-
+namespace apps\models\form\News;
 
 use Rid\Validators\Validator;
 
-class NewEditForm extends Validator
+class EditForm extends Validator
 {
     public $id = 0;
 

@@ -15,6 +15,7 @@
 - **Crontab:** Move From Timer to Process
 - **Editor:** Support wysibb editor
 - **Gravatar:** Add support of gravatar
+- **Pager:** Add Pager Support
 - **Process:** Clean Components before sleep
 - **Process:** Add custom Process Support
 - **Redis:** Add mutiDelete() function for Redis

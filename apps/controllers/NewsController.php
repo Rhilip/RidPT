@@ -9,14 +9,13 @@
 namespace apps\controllers;
 
 
-use apps\models\form\NewEditForm;
-use apps\models\form\News\SearchForm;
+use apps\models\form\News;
 use Rid\Http\Controller;
 
 class NewsController extends Controller
 {
     public function actionIndex() {
-        $pager = new SearchForm();
+        $pager = new News\SearchForm();
         $pager->setData(app()->request->get());
 
         $success = $pager->validate();
@@ -29,7 +28,7 @@ class NewsController extends Controller
 
     public function actionNew() {
         if (app()->request->isPost()) {
-            $newform = new NewEditForm();
+            $newform = new News\EditForm();
             $newform->setData(app()->request->post());
             $success = $newform->validate();
             if (!$success) {
@@ -47,7 +46,7 @@ class NewsController extends Controller
     public function actionEdit()
     {
         if (app()->request->isPost()) {
-            $newform = new NewEditForm();
+            $newform = new News\EditForm();
             $newform->setData(app()->request->post());
             $success = $newform->validate();
             if (!$success) {

@@ -6,14 +6,14 @@
  * Time: 21:45
  */
 
-namespace apps\models\form;
+namespace apps\models\form\User;
 
 use apps\models\form\Auth\UserRegisterForm;
 
 use Rid\Helpers\StringHelper;
 use Rid\Validators\CaptchaTrait;
 
-class UserInviteForm extends UserRegisterForm
+class InviteForm extends UserRegisterForm
 {
     use CaptchaTrait;
 

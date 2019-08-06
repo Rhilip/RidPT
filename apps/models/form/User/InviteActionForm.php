@@ -6,12 +6,12 @@
  * Time: 17:59
  */
 
-namespace apps\models\form;
+namespace apps\models\form\User;
 
 use apps\models\User;
 use Rid\Validators\Validator;
 
-class UserInviteActionForm extends Validator
+class InviteActionForm extends Validator
 {
     public $uid;
 

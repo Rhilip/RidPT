@@ -112,7 +112,7 @@ body{background-color:#f6f6f6}
 
 #tags_list{margin-top:20px}
 
-/* '/torrent/upload' */
+/* '/torrents/upload' */
 #torrent_upload_table > tbody > tr > td:first-child{vertical-align:middle;text-align:right}
 
 /* '/torrent/details' */
