@@ -15,27 +15,30 @@ class TrackerAnnounceProcess extends Process
 {
     public function run()
     {
-        $data = app()->redis->brpoplpush(Constant::trackerToDealQueue, Constant::trackerBackupQueue, 5);
-        if ($data !== false) {
-            app()->pdo->beginTransaction();
-            try {
-                /* We got data from Http Server Like
-                 * [
-                 *    'timestamp' => timestamp when controller receive the announce,
-                 *    'queries' => $queries, 'role' => $role,
-                 *    'userInfo' => $userInfo, 'torrentInfo' => $torrentInfo
-                 * ]
-                 */
-                $this->processAnnounceRequest($data['timestamp'], $data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
+        do {
+            $data = app()->redis->brpoplpush(Constant::trackerToDealQueue, Constant::trackerBackupQueue, 5);
+            if ($data !== false) {
+                app()->pdo->beginTransaction();
+                try {
+                    /* We got data from Http Server Like
+                     * [
+                     *    'timestamp' => timestamp when controller receive the announce,
+                     *    'queries' => $queries, 'role' => $role,
+                     *    'userInfo' => $userInfo, 'torrentInfo' => $torrentInfo
+                     * ]
+                     */
+                    $this->processAnnounceRequest($data['timestamp'], $data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
 
-                app()->pdo->commit();
-                app()->redis->lRem(Constant::trackerBackupQueue, $data, 0);
-            } catch (\Exception $e) {
-                println($e->getMessage());
-                app()->pdo->rollback();
-                // TODO deal with the items in backup_queue
+                    app()->pdo->commit();
+                    app()->redis->lRem(Constant::trackerBackupQueue, $data, 0);
+                } catch (\Exception $e) {
+                    println($e->getMessage());
+                    app()->pdo->rollback();
+                    // TODO deal with the items in backup_queue
+                }
             }
-        }
+            \Rid::app()->cleanComponents();
+        } while ($data !== false);
     }
 
     /**

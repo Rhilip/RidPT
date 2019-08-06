@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 01, 2019 at 10:38 PM
+-- Generation Time: Aug 06, 2019 at 03:36 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -833,7 +833,8 @@ INSERT INTO `site_crontab` (`id`, `job`, `priority`, `job_interval`) VALUES
 (3, 'calculate_seeding_bonus', 2, 900),
 (4, 'clean_expired_session', 3, 600),
 (5, 'expired_invitee', 3, 600),
-(6, 'update_expired_external_link_info', 100, 1200);
+(6, 'update_expired_external_link_info', 100, 1200),
+(7, 'sync_torrents_status', 4, 3600);
 
 -- --------------------------------------------------------
 

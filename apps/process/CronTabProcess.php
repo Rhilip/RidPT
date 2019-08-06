@@ -142,13 +142,45 @@ final class CronTabProcess extends Process
     // sync torrents status about complete, incomplete, comments
     protected function sync_torrents_status()
     {
-        $cur_peer_status = app()->pdo->createCommand('SELECT `torrent_id`, `seeder`, COUNT(`id`) as `c` FROM `peers` GROUP BY `torrent_id`,`seeder`')->queryAll();
-        $cur_commit_status = app()->pdo->createCommand('SELECT `torrent_id`, COUNT(`id`) as `c` FROM `torrent_comments` GROUP BY `torrent_id`')->queryAll();
-        $cur_torrent_status = app()->pdo->createCommand('SELECT `id`,`complete`,`incomplete`,`comments` FROM `torrents`')->queryAll();
+        $torrents_update = [];
 
+        $wrong_complete_records = app()->pdo->createCommand("
+            SELECT torrents.`id`, `complete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents` 
+              LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND `peers`.`seeder` = 'yes' 
+            GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
+        if ($wrong_complete_records) {
+            array_walk($wrong_complete_records, function ($arr) use (&$torrents_update) {
+                $torrents_update[$arr['id']]['complete'] = $arr['real'];
+            });
+        }
+        $wrong_incomplete_records = app()->pdo->createCommand("
+            SELECT torrents.`id`, `incomplete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents`
+              LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND (`peers`.`seeder` = 'partial' OR `peers`.`seeder` = 'no') 
+            GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
+        if ($wrong_incomplete_records) {
+            array_walk($wrong_incomplete_records, function ($arr) use (&$torrents_update) {
+                $torrents_update[$arr['id']]['incomplete'] = $arr['real'];
+            });
+        }
 
+        $wrong_comment_records = app()->pdo->createCommand('
+            SELECT t.id, t.comments as `record`, COUNT(tc.id) as `real` FROM torrents t 
+              LEFT JOIN torrent_comments tc on t.id = tc.torrent_id 
+            GROUP BY t.id HAVING `record` != `real`')->queryAll();
+        if ($wrong_comment_records) {
+            array_walk($wrong_comment_records, function ($arr) use (&$torrents_update) {
+                $torrents_update[$arr['id']]['comments'] = $arr['real'];
+            });
+        }
+
+        if ($torrents_update) {
+            foreach ($torrents_update as $tid => $update) {
+                app()->pdo->update('torrents', $update, [['id', '=', $tid]])->execute();
+                app()->redis->del(Constant::torrentContent($tid));
+            }
+            $this->print_log('Fix ' . count($torrents_update) . ' wrong torrents records about complete, incomplete, comments.');
+        }
     }
-
 
     protected function update_expired_external_link_info()
     {

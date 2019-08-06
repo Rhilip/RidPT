@@ -8,6 +8,8 @@
 
 namespace apps\models;
 
+use apps\libraries\Constant;
+
 use Rid\Bencode\Bencode;
 use Rid\Exceptions\NotFoundException;
 use Rid\Utils\AttributesImportUtils;
@@ -59,26 +61,26 @@ class Torrent
     {
         $this->loadTorrentContentById($id);
         if ($this->id == null) {
-            throw new NotFoundException("Not Found");
+            throw new NotFoundException('Not Found');  // FIXME
         }
     }
 
     public function loadTorrentContentById($id)
     {
-        $self = app()->redis->hGetAll('Torrent:' . $id . ':base_content');
+        $self = app()->redis->hGetAll(Constant::torrentContent($id));
         if (empty($self)) {
             $self = app()->pdo->createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
                     "id" => $id
                 ])->queryOne() ?? [];
-            app()->redis->hMset('Torrent:' . $id . ':base_content', $self);
-            app()->redis->expire('Torrent:' . $id . ':base_content', 900);
+            app()->redis->hMset(Constant::torrentContent($id), $self);
+            app()->redis->expire(Constant::torrentContent($id), 1800);
         }
         $this->importAttributes($self);
     }
 
     public static function TorrentFileLoc($id = 0)
     {
-        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $id . ".torrent";
+        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $id . '.torrent';
     }
 
     /**
@@ -91,7 +93,7 @@ class Torrent
 
     protected function getCacheNameSpace(): string
     {
-        return 'Torrent:' . $this->id . ':base_content';
+        return Constant::torrentContent($this->id);
     }
 
     /**
@@ -187,26 +189,26 @@ class Torrent
     {
         $dict = $this->getRawDict();
 
-        $scheme = "http://";
-        if (filter_var(app()->request->get("https"), FILTER_VALIDATE_BOOLEAN))
-            $scheme = "https://";
-        else if (filter_var(app()->request->get("https"), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))
-            $scheme = "http://";
+        $scheme = 'http://';
+        if (filter_var(app()->request->get('https'), FILTER_VALIDATE_BOOLEAN))
+            $scheme = 'https://';
+        else if (filter_var(app()->request->get('https'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))
+            $scheme = 'http://';
         else if (app()->request->isSecure())
-            $scheme = "https://";
+            $scheme = 'https://';
 
-        $announce_suffix = "/announce?passkey=" . app()->site->getCurUser()->getPasskey();
-        $dict["announce"] = $scheme . config("base.site_tracker_url") . $announce_suffix;
+        $announce_suffix = '/announce?passkey=' . app()->site->getCurUser()->getPasskey();
+        $dict['announce'] = $scheme . config('base.site_tracker_url') . $announce_suffix;
 
         /** BEP 0012 Multitracker Metadata Extension
          * @see http://www.bittorrent.org/beps/bep_0012.html
          * @see https://web.archive.org/web/20190724110959/https://blog.rhilip.info/archives/1108/
          *      which discuss about multitracker behaviour on common bittorrent client ( Chinese Version )
          */
-        if ($multi_trackers = config("base.site_multi_tracker_url")) {
+        if ($multi_trackers = config('base.site_multi_tracker_url')) {
             // Add our main tracker into multi_tracker_list to avoid lost....
-            $multi_trackers = config("base.site_tracker_url") . "," . $multi_trackers;
-            $multi_trackers_list = explode(",", $multi_trackers);
+            $multi_trackers = config('base.site_tracker_url') . ',' . $multi_trackers;
+            $multi_trackers_list = explode(',', $multi_trackers);
             $multi_trackers_list = array_unique($multi_trackers_list);  // use array_unique to remove dupe tracker
             // fulfill each tracker with scheme and suffix about user identity
             $multi_trackers_list = array_map(function ($uri) use ($scheme, $announce_suffix) {

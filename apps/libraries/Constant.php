@@ -38,13 +38,19 @@ class Constant
         return 'User:user_' . $uid . '_content:hash';
     }
 
+    public static function torrentContent($tid)
+    {
+        return 'Torrent:torrent_' . $tid . 'content:hash';
+    }
+
     // Tracker User
     public static function trackerUserContentByPasskey($passkey)
     {
         return 'Tracker:user_passkey_' . $passkey . '_content:string'; // Used string to store hash
     }
 
-    public static function trackerTorrentContentByInfoHash($bin2hex_hash){
+    public static function trackerTorrentContentByInfoHash($bin2hex_hash)
+    {
         return 'Tracker:torrent_infohash_' . $bin2hex_hash . '_content:hash';
     }
 
