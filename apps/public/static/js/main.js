@@ -12,6 +12,14 @@ const paswordStrengthText = {
     4: "Strong ☻"  // very unguessable: strong protection from offline slow-hash scenario. (guesses >= 10^10)
 };
 
+const wysibbSetting = {
+    buttons: "bold,italic,underline,strike,sup,sub,|,img,link,|,bullist,numlist,smilebox,|,fontcolor,fontsize,fontfamily,|,justifyleft,justifycenter,justifyright,|,quote,code,table,removeFormat",
+    allButtons: {},
+    smileList: [
+        /* {img: '<img src="/static/pic/smilies/1.gif" class="sm">', bbcode:"[em]1[/em]"}, */
+    ],
+};
+
 function humanFileSize(bytes, fix, si) {
     let thresh = si ? 1000 : 1024;
     if (Math.abs(bytes) < thresh) {
@@ -85,6 +93,14 @@ jQuery(document).ready(function () {
             }
         }
     }
+
+    // Active Editor
+    $('textarea').click(function () {
+        let that = $(this);
+        if (that.hasClass('to-load-editor')) {
+            that.removeClass('to-load-editor').wysibb(wysibbSetting).addClass('loaded-editor');
+        }
+    });
 
     // Captcha Img Re-flush
     let captcha_img_another = $('.captcha_img');

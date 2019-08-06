@@ -8,9 +8,10 @@
 - **gitignore:** Add ignore of `/backup` folder
 
 ### Feat
-- **Category:** Add Categories Support when upload torrent
 - **Category:** Add Image and class_name support
+- **Category:** Add Default sprite image of category
 - **Category:** Add Categories Manage Pane
+- **Category:** Add Categories Support when upload torrent
 - **Crontab:** Move From Timer to Process
 - **Gravatar:** Add support of gravatar
 - **Process:** Add custom Process Support

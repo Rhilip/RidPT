@@ -128,7 +128,7 @@
         <tr>
             <td class="nowrap"><label for="descr" class="required">Description</label></td>
             <td>
-                <textarea id="descr" name="descr" class="form-control" style="width: 99%"
+                <textarea id="descr" name="descr" class="form-control to-load-editor" style="width: 99%"
                           cols="100" rows="10"></textarea>
             </td>
         </tr>

@@ -44,6 +44,7 @@ $extend_debug_info = app()->site->getCurUser()  // Not Anonymous
     <link rel="stylesheet" href="/lib/flag-css/dist/css/flag-css.min.css">
     <link rel="stylesheet" href="/lib/fontAwesome/css/all.min.css">
     <link rel="stylesheet" href="/lib/zui/dist/css/zui.min.css">
+    <link rel="stylesheet" href="/lib/jqjquery-wysibb/theme/default/wbbtheme.css">
 
     <!-- Custom styles of this template -->
     <link rel="stylesheet" href="/static/css/main.css?<?= $css_tag ?>">
@@ -110,10 +111,11 @@ $extend_debug_info = app()->site->getCurUser()  // Not Anonymous
 <?= $this->section('body') ?>
 
 <!-- Javascript of Library -->
+<script src="/lib/localforage/dist/localforage.min.js"></script>
 <script src="/lib/jquery/dist/jquery.min.js"></script>
 <script src="/lib/zui/dist/js/zui.min.js"></script>
+<script src="/lib/jqjquery-wysibb/jquery.wysibb.js"></script>
 <script src="/lib/bootstrap-validator/dist/validator.min.js"></script>
-<script src="/lib/localforage/dist/localforage.min.js"></script>
 <script src="/lib/jquery.textarea.autoresize/js/jquery.textarea.autoresize.js"></script>
 
 <!-- Custom Javascript of this template -->
