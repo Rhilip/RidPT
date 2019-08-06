@@ -61,6 +61,7 @@
 
 ### Style
 - **Auth:** Sort Auth Form
+- **Form:** Sort Forms
 - **js:** merge separate js file to `main.js`
 - **printIn:** Add datetime tag
 

@@ -42,21 +42,15 @@ class TorrentController extends Controller
 
     public function actionDownload()
     {
-        $tid = app()->request->get('id');
-
-        // TODO add download rate limit
-
-        $torrent = new Torrent($tid);  // TODO If torrent is not exist or can't visit , a notfound exception should throw out........
-        $filename = '[' . config('base.site_name') . ']' . $torrent->getTorrentName() . '.torrent';
-
-        app()->response->setHeader('Content-Type', 'application/x-bittorrent');
-        if (strpos(app()->request->header('user-agent'), 'IE')) {
-            app()->response->setHeader('Content-Disposition', 'attachment; filename=' . str_replace('+', '%20', rawurlencode($filename)));
-        } else {
-            app()->response->setHeader('Content-Disposition', "attachment; filename=\"$filename\" ; charset=utf-8");
+        $downloader = new TorrentForm\DownloadForm();
+        $downloader->setData(app()->request->get());
+        $success = $downloader->validate();
+        if (!$success) {
+            return $this->render('action/action_fail');
         }
 
-        return $torrent->getDownloadDict(true);
+        $downloader->setRespHeaders();
+        return $downloader->getDownloadDict();
     }
 
     public function actionComments()
