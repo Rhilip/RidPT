@@ -6,11 +6,7 @@
  * Time: 10:11
  *
  * @var League\Plates\Template\Template $this
- * @var array $news
- * @var string $query
- * @var string $search
- * @var int $count
- * @var int $limit
+ * @var \apps\models\form\News\SearchForm $pager
  */
 ?>
 
@@ -26,12 +22,14 @@
             <div class="panel-body">
                 <form method="get">
                     <div class="form-inline text-center">
-                        <input type="text" class="form-control" name="search" style="width:450px" value="<?= $search ?>">&nbsp;&nbsp;
+                        <label>
+                            <input type="text" class="form-control" name="search" style="width:450px" value="<?= $pager->search ?>">
+                        </label>&nbsp;&nbsp;
                         <label> Range:
                             <select name="query" class="form-control">
-                                <option value="title"<?= $query == 'title' ? ' selected': '' ?>>Title</option>
-                                <option value="body"<?= $query == 'body' ? ' selected': '' ?>>Body</option>
-                                <option value="both"<?= $query == 'both' ? ' selected': '' ?>>Both</option>
+                                <option value="title"<?= $pager->query == 'title' ? ' selected': '' ?>>Title</option>
+                                <option value="body"<?= $pager->query == 'body' ? ' selected': '' ?>>Body</option>
+                                <option value="both"<?= $pager->query == 'both' ? ' selected': '' ?>>Both</option>
                             </select>
                         </label>&nbsp;&nbsp;
                         <input type="submit" class="btn btn-primary" value="给我搜">
@@ -52,7 +50,7 @@
         </div>
         <?php endif; ?>
 
-        <?php if (empty($news)): ?>
+        <?php if (empty($pager->getPagerData())): ?>
             <div class="panel">
                 <div class="panel-body">
                     <div class="text">Not find any news.</div>
@@ -60,7 +58,7 @@
             </div>
         <?php else: ?>
             <div class="panel-group">
-                <?php foreach ($news as $i=> $new): ?>
+                <?php foreach ($pager->getPagerData() as $i=> $new): ?>
                     <div class="panel" id="new_<?= $new['id'] ?>">
                         <div class="panel-heading">
                             <div class="pull-right">
@@ -93,7 +91,7 @@
                 <?php endforeach; ?>
             </div>
             <div class="text-center">
-                <ul class="pager" data-ride="remote_pager" data-rec-total="<?= $count ?>"  data-rec-per-page="<?= $limit ?>"></ul>
+                <ul class="pager" data-ride="remote_pager" data-rec-total="<?= $pager->getTotal() ?>"  data-rec-per-page="<?= $pager->getLimit() ?>"></ul>
             </div>
         <?php endif; ?>
     </div>

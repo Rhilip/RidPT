@@ -8,16 +8,10 @@
 
 namespace apps\models\api\v1\form;
 
+use apps\models\form\Base\TorrentForm;
 
-use apps\models\Torrent;
-use Rid\Validators\Validator;
-
-class TorrentsForm extends Validator
+class TorrentsForm extends TorrentForm
 {
-    public $tid;
-
-    /** @var Torrent */
-    protected $torrent;
 
     public static function inputRules()
     {
@@ -28,18 +22,6 @@ class TorrentsForm extends Validator
 
     public static function callbackRules() {
         return ['isExistTorrent'];
-    }
-
-    protected function isExistTorrent() {
-        $tid = $this->getData('tid');
-        $torrent_exist = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `torrents` WHERE `id` = :tid')->bindParams([
-            'tid' => $tid
-        ])->queryScalar();
-        if ($torrent_exist == 0) {
-            $this->buildCallbackFailMsg('Torrent', 'The torrent id ('. $tid. ') is not exist in our database');
-            return;
-        }
-        $this->torrent = new Torrent($tid);
     }
 
     public function updateRecord() {

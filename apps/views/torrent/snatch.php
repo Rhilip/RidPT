@@ -28,6 +28,16 @@ $timenow = time();
             <div class="panel-heading"><b>Torrent Snatched Details</b></div>
             <div class="panel-body" id="torrent_snatched_details_body">
                 <div id="torrent_snatched_details">
+                    <?php if ($torrent->getSnatchDetails()): ?>
+                    <?php // FIXME by pager
+                    $snatchDetails_all = $torrent->getSnatchDetails();
+                    $count = count($torrent->getSnatchDetails());
+                    $limit = app()->request->get('limit',50);
+                    if ($limit > 50) $limit = 50;
+                    $page = app()->request->get('page',1);
+                    $offset = ($page - 1) * $limit;
+                    if ($offset > $count / $limit) $offset = intval($count/$limit);
+                    ?>
                     <table class="table table-hover table-condensed">
                         <thead>
                         <tr>
@@ -44,9 +54,9 @@ $timenow = time();
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($torrent->getSnatchDetails() as $snatchDetail): ?>
+                        <?php foreach (array_slice($torrent->getSnatchDetails(), $offset, $limit) as $snatchDetail): ?>
                         <tr>
-                            <td><?= $this->insert('helper/username',['torrent'=>$torrent,'user'=>app()->site->getUser($snatchDetail['user_id'])]) ?></td>
+                            <td><?= $this->insert('helper/username',['user'=>app()->site->getUser($snatchDetail['user_id'])]) ?></td>
                             <td><?= inet_ntop($snatchDetail['ip']) ?></td>
                             <td><?= $snatchDetail['finish_ip'] ? inet_ntop($snatchDetail['finish_ip']) : '?' ?></td>
                             <td>
@@ -73,6 +83,12 @@ $timenow = time();
                         <?php endforeach; ?>
                         </tbody>
                     </table>
+                        <div class="text-center">
+                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $count ?>"  data-rec-per-page="50"></ul>
+                        </div>
+                    <?php else: ?>
+                    No Snatched Records exist.
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

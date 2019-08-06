@@ -8,21 +8,22 @@
 - **gitignore:** Add ignore of `/backup` folder
 
 ### Feat
+- **Category:** Add Categories Manage Pane
 - **Category:** Add Default sprite image of category
 - **Category:** Add Image and class_name support
 - **Category:** Add Categories Support when upload torrent
-- **Category:** Add Categories Manage Pane
 - **Crontab:** Move From Timer to Process
 - **Editor:** Support wysibb editor
 - **Gravatar:** Add support of gravatar
-- **Process:** Add custom Process Support
 - **Process:** Clean Components before sleep
+- **Process:** Add custom Process Support
 - **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Move From Timer to Process
 - **Tracker:** Add `retry in` field when failed
 - **User:** Add Bonus And Unread Messsage count
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 - **ban:** Add table `ban_usernames` and `ban_emails`
+- **crontab:** Add torrent status sync
 - **csrf:** Add Csrf Support
 - **email:** Use Site::sendEmail to simple email sender
 - **system:** can get more system info via class SystemInfoHelper

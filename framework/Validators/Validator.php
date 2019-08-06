@@ -83,14 +83,17 @@ class Validator extends BaseObject
 
     /**
      * @param $key
+     * @param mixed $default
      * @return mixed|UploadFile
      */
-    final public function getData($key)
+    final public function getData($key = null,$default = null)
     {
+        if (is_null($key)) return $this->_data;
+
         if (in_array($key, $this->_file_data_name))
             return new UploadFile($this->_data[$key]);
 
-        return $this->_data[$key];
+        return $this->_data[$key] ?? $default;
     }
 
     /**

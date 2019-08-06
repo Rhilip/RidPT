@@ -10,40 +10,21 @@ namespace apps\controllers;
 
 
 use apps\models\form\NewEditForm;
+use apps\models\form\News\SearchForm;
 use Rid\Http\Controller;
 
 class NewsController extends Controller
 {
     public function actionIndex() {
+        $pager = new SearchForm();
+        $pager->setData(app()->request->get());
 
-        $query = app()->request->get('query','title');
-        $search = app()->request->get('search','');
-        if (empty($search)) {
-            $count = app()->pdo->createCommand('SELECT COUNT(*) FROM `news`;')->queryScalar();
+        $success = $pager->validate();
+        if (!$success) {
+            return $this->render('action/action_fail', ['title' => 'Attack', 'msg' => $pager->getError()]);
         } else {
-            $count = app()->pdo->createCommand([
-                ['SELECT COUNT(*) FROM `news` WHERE 1=1 '],
-                ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($query == 'title' && !empty($search))],
-                ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($query == 'body' && !empty($search))],
-                ['AND `title` LIKE :st OR `body` LIKE :sb ', 'params' => ['st' => "%$search%",'sb' => "%$search%"], 'if' => ($query == 'both' && !empty($search))],
-            ])->queryScalar();
+            return $this->render('news/index', ['pager'=>$pager]);
         }
-
-        $page  = app()->request->get('page',1);
-        if (!filter_var($page,FILTER_VALIDATE_INT)) $page = 1;
-        $limit = 10;
-
-        $news = app()->pdo->createCommand([
-            ['SELECT * FROM `news` WHERE 1=1 '],
-            ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($query == 'title' && !empty($search))],
-            ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($query == 'body' && !empty($search))],
-            ['AND `title` LIKE :st OR `body` LIKE :sb ', 'params' => ['st' => "%$search%",'sb' => "%$search%"], 'if' => ($query == 'both' && !empty($search))],
-            ['ORDER BY create_at DESC '],
-            ['LIMIT :offset, :rows', 'params' => ['offset' => ($page - 1) * $limit, 'rows' => $limit]],
-           ])->queryAll();
-
-        return $this->render('news/index', ['news' => $news, 'query' => $query, 'search' => $search, 'count' => $count, 'limit' => $limit]);
-
     }
 
     public function actionNew() {
