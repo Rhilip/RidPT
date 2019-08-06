@@ -3,23 +3,29 @@
  * Created by PhpStorm.
  * User: Rhilip
  * Date: 8/6/2019
- * Time: 5:20 PM
+ * Time: 11:06 PM
  */
 
-namespace apps\models\form\Base;
+namespace apps\models\form\Traits;
 
 
 use apps\models\Torrent;
-use Rid\Validators\Validator;
 
-class TorrentForm extends Validator
+trait isValidTorrentTrait
 {
-
     public $id;
     public $tid;
 
     /** @var Torrent */
     protected $torrent;
+
+    /**
+     * @return Torrent
+     */
+    public function getTorrent(): Torrent
+    {
+        return $this->torrent;
+    }
 
     protected function isExistTorrent() {
         $tid = $this->getData('tid') ?? $this->getData('id');

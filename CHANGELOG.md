@@ -8,14 +8,15 @@
 - **gitignore:** Add ignore of `/backup` folder
 
 ### Feat
+- **Category:** Add Image and class_name support
 - **Category:** Add Categories Manage Pane
 - **Category:** Add Default sprite image of category
-- **Category:** Add Image and class_name support
 - **Category:** Add Categories Support when upload torrent
 - **Crontab:** Move From Timer to Process
 - **Editor:** Support wysibb editor
 - **Gravatar:** Add support of gravatar
 - **Pager:** Add Pager Support
+- **Pager:** Torrents/{SearchForm,TagsForm}
 - **Process:** Clean Components before sleep
 - **Process:** Add custom Process Support
 - **Redis:** Add mutiDelete() function for Redis

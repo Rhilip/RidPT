@@ -93,7 +93,7 @@ $time_now = time();
             </tbody>
         </table>
         <div class="text-center">
-            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $pager->getDataTotal() ?>"  data-rec-per-page="<?= $pager->getLimit() ?>"></ul>
+            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $pager->getTotal() ?>"  data-rec-per-page="<?= $pager->getLimit() ?>"></ul>
         </div>
     </div>
 </div>

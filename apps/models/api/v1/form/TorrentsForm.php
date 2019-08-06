@@ -8,10 +8,13 @@
 
 namespace apps\models\api\v1\form;
 
-use apps\models\form\Base\TorrentForm;
+use apps\models\form\Traits\isValidTorrentTrait;
 
-class TorrentsForm extends TorrentForm
+use Rid\Validators\Validator;
+
+class TorrentsForm extends Validator
 {
+    use isValidTorrentTrait;
 
     public static function inputRules()
     {

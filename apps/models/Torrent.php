@@ -318,8 +318,9 @@ class Torrent
         });
     }
 
-    public function hasNfo() {
-        return (boolean) $this->nfo;
+    public function hasNfo()
+    {
+        return (boolean)$this->nfo;
     }
 
     /**
@@ -368,7 +369,8 @@ class Torrent
         return $s;
     }
 
-    public function getComments() {
+    public function getComments()
+    {
         return $this->comments;
     }
 
@@ -382,11 +384,4 @@ class Torrent
         });
     }
 
-    public function getSnatchDetails() {
-        return $this->getCacheValue('snatched_details', function () {
-            return app()->pdo->createCommand('SELECT * FROM `snatched` WHERE `torrent_id` = :tid ORDER BY finish_at,create_at DESC;')->bindParams([
-                'tid' => $this->id
-            ])->queryAll();
-        });
-    }
 }

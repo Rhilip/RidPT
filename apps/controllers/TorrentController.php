@@ -9,6 +9,7 @@
 namespace apps\controllers;
 
 use apps\models\Torrent;
+use apps\models\form\Torrent as TorrentForm;
 
 use Rid\Http\Controller;
 
@@ -29,10 +30,14 @@ class TorrentController extends Controller
 
     public function actionSnatch()  // TODO
     {
-        $tid = app()->request->get('id');
-        $torrent = new Torrent($tid);
+        $pager = new TorrentForm\SnatchForm();
+        $pager->setData(app()->request->get());
+        $success = $pager->validate();
+        if (!$success) {
+            return $this->render('action/action_fail');
+        }
 
-        return $this->render('torrent/snatch', ['torrent' => $torrent]);
+        return $this->render('torrent/snatch', ['pager' => $pager]);
     }
 
     public function actionDownload()

@@ -6,10 +6,11 @@
  * Time: 17:10
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\Torrent $torrent
+ * @var \apps\models\form\Torrent\SnatchForm $pager
  */
 
 $timenow = time();
+$torrent = $pager->getTorrent();
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -28,16 +29,7 @@ $timenow = time();
             <div class="panel-heading"><b>Torrent Snatched Details</b></div>
             <div class="panel-body" id="torrent_snatched_details_body">
                 <div id="torrent_snatched_details">
-                    <?php if ($torrent->getSnatchDetails()): ?>
-                    <?php // FIXME by pager
-                    $snatchDetails_all = $torrent->getSnatchDetails();
-                    $count = count($torrent->getSnatchDetails());
-                    $limit = app()->request->get('limit',50);
-                    if ($limit > 50) $limit = 50;
-                    $page = app()->request->get('page',1);
-                    $offset = ($page - 1) * $limit;
-                    if ($offset > $count / $limit) $offset = intval($count/$limit);
-                    ?>
+                    <?php if ($pager->getDataTotal()): ?>
                     <table class="table table-hover table-condensed">
                         <thead>
                         <tr>
@@ -54,7 +46,7 @@ $timenow = time();
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach (array_slice($torrent->getSnatchDetails(), $offset, $limit) as $snatchDetail): ?>
+                        <?php foreach ($pager->getPagerData() as $snatchDetail): ?>
                         <tr>
                             <td><?= $this->insert('helper/username',['user'=>app()->site->getUser($snatchDetail['user_id'])]) ?></td>
                             <td><?= inet_ntop($snatchDetail['ip']) ?></td>
@@ -84,7 +76,7 @@ $timenow = time();
                         </tbody>
                     </table>
                         <div class="text-center">
-                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $count ?>"  data-rec-per-page="50"></ul>
+                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $pager->getTotal() ?>"  data-rec-per-page="<?= $pager->getLimit() ?>"></ul>
                         </div>
                     <?php else: ?>
                     No Snatched Records exist.
