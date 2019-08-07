@@ -19,7 +19,7 @@ class SearchForm extends Pager
 
     public static function defaultData()
     {
-        return parent::defaultData() + [
+        return [
             'query' => 'title',
             'search' => ''
         ];
@@ -35,11 +35,6 @@ class SearchForm extends Pager
             ],
             'search' => 'AlphaNumHyphen'
         ];
-    }
-
-    public static function callbackRules()
-    {
-        return ['checkPager'];
     }
 
     public function getRemoteTotal(): int

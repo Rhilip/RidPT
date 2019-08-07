@@ -49,8 +49,7 @@ class TorrentController extends Controller
             return $this->render('action/action_fail');
         }
 
-        $downloader->setRespHeaders();
-        return $downloader->getDownloadDict();
+        return $downloader->sendFileContentToClient();
     }
 
     public function actionComments()

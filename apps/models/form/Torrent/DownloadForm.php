@@ -8,11 +8,16 @@
 
 namespace apps\models\form\Torrent;
 
+use apps\models\form\Traits\FileDownloadTrait;
 use Rid\Bencode\Bencode;
 
 class DownloadForm extends StructureForm
 {
+    use FileDownloadTrait;
+
     public $https;
+
+    protected static $SEND_FILE_CONTENT_TYPE = 'application/x-bittorrent';
 
     public static function inputRules()
     {
@@ -22,18 +27,12 @@ class DownloadForm extends StructureForm
         ];
     }
 
-    public function setRespHeaders() {
-        $filename = '[' . config('base.site_name') . ']' . $this->torrent->getTorrentName() . '.torrent';
-
-        app()->response->setHeader('Content-Type', 'application/x-bittorrent');
-        if (strpos(app()->request->header('user-agent'), 'IE')) {
-            app()->response->setHeader('Content-Disposition', 'attachment; filename=' . str_replace('+', '%20', rawurlencode($filename)));
-        } else {
-            app()->response->setHeader('Content-Disposition', "attachment; filename=\"$filename\" ; charset=utf-8");
-        }
+    protected function getSendFileName(): string
+    {
+        return '[' . config('base.site_name') . ']' . $this->torrent->getTorrentName() . '.torrent';
     }
 
-    public function getDownloadDict() {
+    public function getSendFileContent() {
         $dict = $this->getTorrentFileContentDict();
 
         $scheme = 'http://';
