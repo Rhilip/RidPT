@@ -15,7 +15,7 @@ class TagsForm extends Pager
 {
     public $search;
 
-    static $max_limit = 100;
+    public static $MAX_LIMIT = 100;
 
     public function getRemoteTotal(): int
     {

@@ -29,7 +29,7 @@ $torrent = $snatch->getTorrent();
             <div class="panel-heading"><b>Torrent Snatched Details</b></div>
             <div class="panel-body" id="torrent_snatched_details_body">
                 <div id="torrent_snatched_details">
-                    <?php if ($snatch->getDataTotal()): ?>
+                    <?php if ($snatch->getTotal()): ?>
                     <table class="table table-hover table-condensed">
                         <thead>
                         <tr>

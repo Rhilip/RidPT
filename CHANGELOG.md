@@ -8,17 +8,17 @@
 - **gitignore:** Add ignore of `/backup` folder
 
 ### Feat
+- **Category:** Add Categories Support when upload torrent
 - **Category:** Add Image and class_name support
 - **Category:** Add Categories Manage Pane
 - **Category:** Add Default sprite image of category
-- **Category:** Add Categories Support when upload torrent
 - **Crontab:** Move From Timer to Process
 - **Editor:** Support wysibb editor
 - **Gravatar:** Add support of gravatar
-- **Pager:** Add Pager Support
 - **Pager:** Torrents/{SearchForm,TagsForm}
-- **Process:** Clean Components before sleep
+- **Pager:** Add Pager Support
 - **Process:** Add custom Process Support
+- **Process:** Clean Components before sleep
 - **Redis:** Add mutiDelete() function for Redis
 - **Tracker:** Move From Timer to Process
 - **Tracker:** Add `retry in` field when failed
@@ -29,6 +29,7 @@
 - **csrf:** Add Csrf Support
 - **email:** Use Site::sendEmail to simple email sender
 - **system:** can get more system info via class SystemInfoHelper
+- **torrents:** Use Torrent Form Model in TorrentController
 
 ### Fix
 - **Anonymous:** Fix Auth Page 500 after commit `2cd1a499`
@@ -55,6 +56,7 @@
 ### Refactor
 - **Coroutine:** Remove Coroutine Model, Judge part
 - **Coroutine:** Remove Coroutine Model
+- **Pager:** Separate Pager as Trait
 - **Tracker:** Better Tracker behaviour in multi tracker
 - **View:** Rename folder `error` to `action`
 - **action_success:** Simple The Action Template

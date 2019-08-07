@@ -18,18 +18,33 @@ Trait PagerTrait
     protected $offset;
     protected $total;
 
-    static $default_page = 1;
-    static $default_limit = 50;
-    static $max_limit = 50;
-    static $data_source = 'remote';
-
     protected $pager_data_total;
     protected $pager_data;
 
+    public static function getDefaultPage(): int
+    {
+        return static::$DEFAULT_PAGE ?? 1;
+    }
+
+    public static function getDefaultLimit(): int
+    {
+        return static::$DEFAULT_LIMIT ?? 50;
+    }
+
+    public static function getMaxLimit(): int
+    {
+        return static::$MAX_LIMIT ?? 50;
+    }
+
+    public static function getDataSource(): string
+    {
+        return static::$DATA_SOURCE ?? 'remote';
+    }
+
     public static function defaultData(){
         return [
-            'page' => static::$default_page,
-            'limit' => static::$default_limit
+            'page' => static::getDefaultPage(),
+            'limit' => static::getDefaultLimit()
         ];
     }
 
@@ -46,42 +61,42 @@ Trait PagerTrait
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getPage()
+    public function getPage(): int
     {
         return $this->page;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getOffset()
+    public function getOffset(): int
     {
         return $this->offset;
     }
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getTotal()
+    public function getTotal(): int
     {
         return $this->total;
     }
 
     protected function checkPager()
     {
-        $limit = $this->getData('limit', static::$default_limit);
-        if ($limit > static::$max_limit) $limit = static::$max_limit;
-        $page = $this->getData('page', static::$default_page);
+        $limit = intval($this->getData('limit', static::getDefaultLimit()));
+        if ($limit > static::getMaxLimit()) $limit = static::getMaxLimit();
+        $page = intval($this->getData('page', static::getDefaultPage()));
 
         $this->setData(['limit' => $limit, 'page' => $page]);
 
@@ -92,10 +107,10 @@ Trait PagerTrait
         if ($this->offset > $this->total) $this->pager_data = [];
     }
 
-    final public function getDataTotal(): int
+    final private function getDataTotal(): int
     {
         if (is_null($this->pager_data_total)) {
-            if (static::$data_source == 'remote') $this->pager_data_total = $this->getRemoteTotal();
+            if (static::getDataSource() == 'remote') $this->pager_data_total = $this->getRemoteTotal();
             else $this->pager_data_total = count($this->getData('data', []));
         }
         return $this->pager_data_total;
@@ -109,7 +124,7 @@ Trait PagerTrait
     final public function getPagerData(): array
     {
         if (is_null($this->pager_data)) {
-            if (static::$data_source == 'remote') $this->pager_data = $this->getRemoteData();
+            if (static::getDataSource() == 'remote') $this->pager_data = $this->getRemoteData();
             else $this->pager_data = array_slice($this->getData('data', []), $this->offset, $this->limit);
         }
         return $this->pager_data;

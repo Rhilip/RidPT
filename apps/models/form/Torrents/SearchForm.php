@@ -14,7 +14,7 @@ class SearchForm extends Pager
 {
     public $tags;
 
-    static $max_limit = 100;
+    public static $MAX_LIMIT = 100;
 
     private $_tags;
 

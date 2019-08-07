@@ -8,18 +8,20 @@
 
 namespace apps\models\form\Torrent;
 
-use apps\models\form\Traits\isValidTorrentTrait;
-use Rid\Validators\Pager;
+use Rid\Validators\PagerTrait;
 
-class SnatchForm extends Pager
+class SnatchForm extends DetailsForm
 {
-    use isValidTorrentTrait;
+    use PagerTrait;
+
+    public static $MAX_LIMIT = 100;
 
     public static function inputRules()
     {
-        return array_merge(parent::inputRules(), [
-            'id' => 'required | Integer'
-        ]);
+        return [
+            'id' => 'required | Integer',
+            'page' => 'Integer', 'limit' => 'Integer'
+        ];
     }
 
     public static function callbackRules()
