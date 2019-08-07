@@ -33,6 +33,9 @@ class Validator extends BaseObject
     /** @var boolean */
     protected $_success;
 
+    protected $_autoload_data = false;
+    protected $_autoload_data_from = [];
+
     public function onConstruct()
     {
         $this->_validator = new \Sirius\Validation\Validator;
@@ -139,8 +142,18 @@ class Validator extends BaseObject
         $this->buildDefaultPropAfterValid();
     }
 
+    private function autoloadDataFromRequests()
+    {
+        if ($this->_autoload_data) {
+            if (in_array('get', $this->_autoload_data_from)) $this->setData(app()->request->get());
+            if (in_array('post', $this->_autoload_data_from)) $this->setData(app()->request->post());
+            if (in_array('files', $this->_autoload_data_from)) $this->setFileData(app()->request->files());
+        }
+    }
+
     public function validate()
     {
+        $this->autoloadDataFromRequests();
         $this->buildDefaultDataForValid();
 
         // validate rules in static::inputRules()
@@ -182,4 +195,6 @@ class Validator extends BaseObject
     {
         throw new \RuntimeException('No flush function exist');
     }
+
+
 }
