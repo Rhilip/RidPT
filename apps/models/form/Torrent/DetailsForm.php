@@ -15,6 +15,9 @@ use Rid\Validators\Validator;
 class DetailsForm extends Validator
 {
 
+    protected $_autoload_data = true;
+    protected $_autoload_data_from = ['get'];
+
     use isValidTorrentTrait;
 
     public static function inputRules()
