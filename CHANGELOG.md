@@ -60,6 +60,7 @@
 - **Coroutine:** Remove Coroutine Model
 - **Pager:** Separate Pager as Trait
 - **Tracker:** Better Tracker behaviour in multi tracker
+- **UserInfo:** fix last_access_{ip,at} update time
 - **View:** Rename folder `error` to `action`
 - **action_success:** Simple The Action Template
 

@@ -151,7 +151,7 @@ class Validator extends BaseObject
         }
     }
 
-    public function validate()
+    public function validate(): bool
     {
         $this->autoloadDataFromRequests();
         $this->buildDefaultDataForValid();

@@ -48,7 +48,7 @@ $torrent = $details->getTorrent();
             <div class="panel-heading"><b>Torrent Action</b></div>
             <div class="panel-body" id="torrent_action">
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
-                    <a href="/torrent/download?id=<?= $torrent->getId() ?>"><i class="fa fa-download fa-fw"></i>&nbsp;Download Torrent</a>
+                    <a href="/torrent/download?id=<?= $torrent->getId() ?>" download><i class="fa fa-download fa-fw"></i>&nbsp;Download Torrent</a>
                 </div><!-- Download Torrent -->
                 <div class="torrent-action-item">
                     <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->site->getCurUser()->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i>&nbsp;Add to Favour</a>

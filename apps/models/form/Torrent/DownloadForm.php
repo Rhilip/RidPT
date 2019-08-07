@@ -27,9 +27,21 @@ class DownloadForm extends StructureForm
         ];
     }
 
+    public static function callbackRules()
+    {
+        return ['isExistTorrent', 'rateLimitCheck'];
+    }
+
     protected function getSendFileName(): string
     {
         return '[' . config('base.site_name') . ']' . $this->torrent->getTorrentName() . '.torrent';
+    }
+
+    protected function getRateLimitRules(): array
+    {
+        return [
+            /* ['key' => 'dl_60', 'period' => 60, 'max' => 1] */
+        ];
     }
 
     public function getSendFileContent() {
