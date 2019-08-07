@@ -55,6 +55,8 @@ class UploadForm extends Validator
     private $torrent_type = 'single'; // only in ['single','multi']
     private $torrent_size = 0;  // the count of torrent's content size
 
+    protected $file_name_check_rules;
+
     const TORRENT_TYPE_SINGLE = 'single';
     const TORRENT_TYPE_MULTI = 'multi';
 
@@ -191,8 +193,8 @@ class UploadForm extends Validator
                             $ffa[] = $ffe;
                         }
                         if (!count($ffa)) throw new ParseErrorException('std_filename_errors');
-                        $ffe = implode("/", $ffa);
-                        // TODO use regex to check this filename is valid or not
+                        $this->checkFileName($ffa);
+                        $ffe = implode('/', $ffa);
                         $this->torrent_list[] = ['filename' => $ffe, 'size' => $ll];
                     }
                     $this->torrent_type = 'multi';
@@ -200,12 +202,32 @@ class UploadForm extends Validator
             }
         } catch (ParseErrorException $e) {
             // FIXME Fix message of ParseErrorException
-            $this->buildCallbackFailMsg('Bencode', $e->getMessage());
+            $this->buildCallbackFailMsg('Parse', $e->getMessage());
             return;
         }
 
         $this->torrent_name = $info['name'];
         $this->torrent_structure = $this->getFileTree();
+    }
+
+    protected function getFileNameCheckRules()
+    {
+        if (is_null($this->file_name_check_rules)) {
+            $rules = app()->pdo->createCommand('SELECT `rules` FROM `file_defender` WHERE `category_id` = 0 OR `category_id` = :cat')->bindParams([
+                'cat' => $this->getData('category')  // Fix cat_id
+            ])->queryColumn();
+            $this->file_name_check_rules = '/' . implode('|', $rules) . '/iS';
+        }
+
+        return $this->file_name_check_rules;
+    }
+
+    protected function checkFileName($filenames)
+    {
+        $filename = end($filenames);  // Only Check filename without path info
+        if (preg_match($this->getFileNameCheckRules(), $filename)) {
+            throw new ParseErrorException('filename hit defender.');
+        }
     }
 
     protected function makePrivateTorrent()

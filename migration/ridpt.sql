@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 07, 2019 at 12:06 AM
+-- Generation Time: Aug 07, 2019 at 09:26 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -304,6 +304,57 @@ CREATE TABLE IF NOT EXISTS `external_info` (
 --
 -- RELATIONSHIPS FOR TABLE `external_info`:
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `file_defender`
+--
+
+DROP TABLE IF EXISTS `file_defender`;
+CREATE TABLE IF NOT EXISTS `file_defender` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `category_id` mediumint(5) NOT NULL,
+  `rules` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `file_defender`:
+--
+
+--
+-- Truncate table before insert `file_defender`
+--
+
+TRUNCATE TABLE `file_defender`;
+--
+-- Dumping data for table `file_defender`
+--
+
+INSERT INTO `file_defender` (`id`, `category_id`, `rules`) VALUES
+(1, 0, '\\.torrent$'),
+(2, 0, '\\.xv$'),
+(3, 0, '\\.bhd$'),
+(4, 0, '\\.q[sl]v$'),
+(5, 0, '\\.ifox$'),
+(6, 0, '\\.kux$'),
+(7, 0, '\\.!ut$'),
+(8, 0, '\\.url$'),
+(9, 0, '\\.qdl2$'),
+(10, 0, '\\.baiduyun.*downloading'),
+(11, 0, '\\.BaiduPCS-Go-downloading'),
+(12, 0, '\\.!bn$'),
+(13, 0, '.*uTorrentPartFile'),
+(14, 0, '^_+?padding_file_\\d+_'),
+(15, 0, '^\\..*'),
+(16, 0, '^~\\$'),
+(17, 0, 'Thumbs\\.db$'),
+(18, 0, 'desktop\\.ini$'),
+(19, 0, 'RARBG\\.txt$'),
+(20, 0, '\\.kz$'),
+(21, 0, '\\.bt\\.[xl]?td$'),
+(22, 0, '\\.DS_Store$');
 
 -- --------------------------------------------------------
 
