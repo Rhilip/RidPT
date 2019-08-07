@@ -13,13 +13,13 @@ class AuthByCookiesMiddleware
         list($controller, $action) = $callable;
         $controllerName = get_class($controller);
 
-        $user = app()->site->getCurUser();
+        $curuser = app()->site->getCurUser();
 
         $now_ip = app()->request->getClientIp();
         if ($controllerName === \apps\controllers\AuthController::class) {
-            if ($user !== false && in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
-                return app()->response->redirect("/index");
-            } elseif ($action !== "actionLogout") {
+            if ($curuser !== false && in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
+                return app()->response->redirect('/index');
+            } elseif ($action !== 'actionLogout') {
                 if ($action == 'actionLogin') {
                     $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
                     if ($test_count > config('security.max_login_attempts')) {
@@ -30,7 +30,7 @@ class AuthByCookiesMiddleware
             }
         }
 
-        if (false === $user) {
+        if (false === $curuser) {
             $query = app()->request->server('query_string');
             $to = app()->request->server('path_info') . (strlen($query) > 0 ? '?' . $query : '');
             app()->session->set('login_return_to', $to);
@@ -67,18 +67,18 @@ class AuthByCookiesMiddleware
                 )
             );
             $required_class = config('route.' . $route, false) ?: 1;
-            if (app()->site->getCurUser()->getClass(true) < $required_class) {
-                return app()->response->setStatusCode(403);
+            if ($curuser->getClass(true) < $required_class) {
+                return app()->response->setStatusCode(403);  // FIXME redirect to /error may better
             }
-        }
 
-        // We will not update user last_access_ip if it not change or expired
-        $last_access_ip = app()->redis->get('user:' . app()->site->getCurUser()->getId() . ":access_ip");
-        if ($last_access_ip === false || $last_access_ip !== $now_ip) {
-            app()->pdo->createCommand("UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;")->bindParams([
-                "ip" => app()->request->getClientIp(), "id" => app()->site->getCurUser()->getId()
-            ])->execute();
-            app()->redis->set('user:' . app()->site->getCurUser()->getId() . ":access_ip", $now_ip, 3600);
+            // We will not update user last_access_ip if it not change or expired
+            $last_access_ip = app()->redis->get('user:' . $curuser->getId() . ':access_ip');
+            if ($last_access_ip === false || $last_access_ip !== $now_ip) {
+                app()->pdo->createCommand('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
+                    'ip' => $now_ip, 'id' => $curuser->getId()
+                ])->execute();
+                app()->redis->set('user:' . $curuser->getId() . ':access_ip', $now_ip, 3600);
+            }
         }
 
         // 执行下一个中间件
