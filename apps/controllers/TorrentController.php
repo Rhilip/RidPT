@@ -8,8 +8,7 @@
 
 namespace apps\controllers;
 
-use apps\models\Torrent;
-use apps\models\form\Torrent as TorrentForm;
+use apps\models\form\Torrent;
 
 use Rid\Http\Controller;
 
@@ -17,10 +16,14 @@ class TorrentController extends Controller
 {
     public function actionDetails()
     {
-        $tid = app()->request->get('id');
-        $torrent = new Torrent($tid);
+        $details = new Torrent\DetailsForm();
+        $details->setData(app()->request->get());
+        $success = $details->validate();
+        if (!$success) {
+            return $this->render('action/action_fail');
+        }
 
-        return $this->render('torrent/details', ['torrent' => $torrent]);
+        return $this->render('torrent/details', ['details' => $details]);
     }
 
     public function actionEdit() // TODO
@@ -28,21 +31,21 @@ class TorrentController extends Controller
 
     }
 
-    public function actionSnatch()  // TODO
+    public function actionSnatch()
     {
-        $pager = new TorrentForm\SnatchForm();
-        $pager->setData(app()->request->get());
-        $success = $pager->validate();
+        $snatch = new Torrent\SnatchForm();
+        $snatch->setData(app()->request->get());
+        $success = $snatch->validate();
         if (!$success) {
             return $this->render('action/action_fail');
         }
 
-        return $this->render('torrent/snatch', ['pager' => $pager]);
+        return $this->render('torrent/snatch', ['snatch' => $snatch]);
     }
 
     public function actionDownload()
     {
-        $downloader = new TorrentForm\DownloadForm();
+        $downloader = new Torrent\DownloadForm();
         $downloader->setData(app()->request->get());
         $success = $downloader->validate();
         if (!$success) {
@@ -60,9 +63,13 @@ class TorrentController extends Controller
 
     public function actionStructure()
     {
-        $tid = app()->request->get('id');
+        $structure = new Torrent\StructureForm();
+        $structure->setData(app()->request->get());
+        $success = $structure->validate();
+        if (!$success) {
+            return $this->render('action/action_fail');
+        }
 
-        $torrent = new Torrent($tid);  // If torrent is not exist or can't visit , a notfound exception will throw out........
-        return $this->render('torrent/structure', ['torrent' => $torrent]);
+        return $this->render('torrent/structure', ['structure' => $structure]);
     }
 }

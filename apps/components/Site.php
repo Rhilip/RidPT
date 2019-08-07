@@ -8,7 +8,7 @@
 
 namespace apps\components;
 
-use apps\models\User;
+use apps\models;
 use apps\libraries\Mailer;
 use apps\libraries\Constant;
 
@@ -23,6 +23,7 @@ class Site extends Component
     protected $cur_user;
 
     protected $users = [];
+    protected $torrents = [];
     protected $map_username_to_id = [];
 
     const LOG_LEVEL_NORMAL = 'normal';
@@ -35,6 +36,7 @@ class Site extends Component
         parent::onRequestBefore();
         $this->cur_user = null;
         $this->users = [];
+        $this->torrents = [];
         $this->map_username_to_id = [];
     }
 
@@ -43,16 +45,28 @@ class Site extends Component
         return 'Cache:site';
     }
 
+    public function getTorrent($tid)
+    {
+        if (array_key_exists($tid, $this->torrents)) {
+            $torrent = $this->torrents[$tid];
+        } else {
+            $torrent = new models\Torrent($tid);  // TODO Handing if this user id does not exist
+            $this->torrents[$tid] = $torrent;
+        }
+        return $torrent;
+    }
+
+
     /**
      * @param $uid
-     * @return User|bool return False means this user is not exist
+     * @return models\User|bool return False means this user is not exist
      */
     public function getUser($uid)
     {
         if (array_key_exists($uid, $this->users)) {
             $user = $this->users[$uid];
         } else {
-            $user = new User($uid);  // TODO Handing if this user id does not exist
+            $user = new models\User($uid);  // TODO Handing if this user id does not exist
             $this->users[$uid] = $user;
         }
         return $user;
@@ -60,7 +74,7 @@ class Site extends Component
 
     /**
      * @param $username
-     * @return User|bool
+     * @return models\User|bool
      */
     public function getUserByUserName($username)
     {
@@ -82,7 +96,7 @@ class Site extends Component
 
     /**
      * @param string $grant
-     * @return User|bool return False means this user is anonymous
+     * @return models\User|bool return False means this user is anonymous
      */
     public function getCurUser($grant = 'cookies')
     {
@@ -94,7 +108,7 @@ class Site extends Component
 
     /**
      * @param string $grant
-     * @return User|boolean
+     * @return models\User|boolean
      */
     protected function loadCurUser($grant = 'cookies')
     {
@@ -152,6 +166,11 @@ class Site extends Component
         }
 
         return $user_id;
+    }
+
+    public function getTorrentFileLoc($tid)
+    {
+        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $tid . '.torrent';
     }
 
     public function writeLog($msg, $level = self::LOG_LEVEL_NORMAL)

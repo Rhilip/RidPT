@@ -313,7 +313,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             $this->setBuff();
 
             // Save this torrent
-            $dump_status = Bencode::dump(Torrent::TorrentFileLoc($this->id), $this->torrent_dict);
+            $dump_status = Bencode::dump(app()->site->getTorrentFileLoc($this->id), $this->torrent_dict);
             if ($dump_status == false) {
                 throw new \Exception('std_torrent_cannot_save');
             }
@@ -322,7 +322,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
         } catch (\Exception $e) {
             // Delete the saved torrent file when torrent save success but still get Exception on other side
             if (isset($dump_status) && $dump_status == true) {
-                unlink(Torrent::TorrentFileLoc($this->id));
+                unlink(app()->site->getTorrentFileLoc($this->id));
             }
 
             app()->pdo->rollback();

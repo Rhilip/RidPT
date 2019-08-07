@@ -36,6 +36,7 @@ trait isValidTorrentTrait
             $this->buildCallbackFailMsg('Torrent', 'The torrent id ('. $tid. ') is not exist in our database');
             return;
         }
-        $this->torrent = new Torrent($tid);
+
+        $this->torrent = app()->site->getTorrent($tid);
     }
 }

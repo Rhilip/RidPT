@@ -8,16 +8,11 @@
 
 namespace apps\models\form\Torrent;
 
-
-use apps\models\form\Traits\isValidTorrentTrait;
 use Rid\Bencode\Bencode;
-use Rid\Validators\Validator;
 
-class DownloadForm extends Validator
+class DownloadForm extends StructureForm
 {
     public $https;
-
-    use isValidTorrentTrait;
 
     public static function inputRules()
     {
@@ -25,11 +20,6 @@ class DownloadForm extends Validator
             'id' => 'required | Integer',
             //'passkey' // TODO add support
         ];
-    }
-
-    public static function callbackRules()
-    {
-        return ['isExistTorrent'];
     }
 
     public function setRespHeaders() {
@@ -44,7 +34,7 @@ class DownloadForm extends Validator
     }
 
     public function getDownloadDict() {
-        $dict = $this->torrent->getRawDict();
+        $dict = $this->getTorrentFileContentDict();
 
         $scheme = 'http://';
         if (filter_var($this->https, FILTER_VALIDATE_BOOLEAN))

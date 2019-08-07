@@ -20,7 +20,7 @@ class RssController extends Controller
         $fetch = app()->pdo->createCommand('SELECT `id` FROM torrents ORDER BY added_at DESC LIMIT 50;')->queryColumn();
 
         $torrents = array_map(function ($id) {
-            return new Torrent($id);
+            return app()->site->getTorrent($id);
         }, $fetch);
 
         return $this->render('rss_feed', ['torrents' => $torrents]);

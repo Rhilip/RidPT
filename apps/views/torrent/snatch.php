@@ -6,11 +6,11 @@
  * Time: 17:10
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Torrent\SnatchForm $pager
+ * @var \apps\models\form\Torrent\SnatchForm $snatch
  */
 
 $timenow = time();
-$torrent = $pager->getTorrent();
+$torrent = $snatch->getTorrent();
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -29,7 +29,7 @@ $torrent = $pager->getTorrent();
             <div class="panel-heading"><b>Torrent Snatched Details</b></div>
             <div class="panel-body" id="torrent_snatched_details_body">
                 <div id="torrent_snatched_details">
-                    <?php if ($pager->getDataTotal()): ?>
+                    <?php if ($snatch->getDataTotal()): ?>
                     <table class="table table-hover table-condensed">
                         <thead>
                         <tr>
@@ -46,7 +46,7 @@ $torrent = $pager->getTorrent();
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($pager->getPagerData() as $snatchDetail): ?>
+                        <?php foreach ($snatch->getPagerData() as $snatchDetail): ?>
                         <tr>
                             <td><?= $this->insert('helper/username',['user'=>app()->site->getUser($snatchDetail['user_id'])]) ?></td>
                             <td><?= inet_ntop($snatchDetail['ip']) ?></td>
@@ -76,7 +76,7 @@ $torrent = $pager->getTorrent();
                         </tbody>
                     </table>
                         <div class="text-center">
-                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $pager->getTotal() ?>"  data-rec-per-page="<?= $pager->getLimit() ?>"></ul>
+                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $snatch->getTotal() ?>" data-rec-per-page="<?= $snatch->getLimit() ?>"></ul>
                         </div>
                     <?php else: ?>
                     No Snatched Records exist.

@@ -6,7 +6,7 @@
  * Time: 17:10
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\Torrent $torrent
+ * @var \apps\models\form\Torrent\StructureForm $structure
  */
 
 use Rid\Bencode\Bencode;
@@ -30,6 +30,8 @@ if (!function_exists('torrent_structure_builder')) {
         return $ret;
     }
 }
+
+$torrent = $structure->getTorrent();
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -48,7 +50,7 @@ if (!function_exists('torrent_structure_builder')) {
             <div class="panel-heading"><b>Torrent Structure</b></div>
             <div class="panel-body" id="torrent_structure_body">
                 <div id="torrent_structure">
-                <?= torrent_structure_builder(['root' => $torrent->getRawDict()]); ?>
+                <?= torrent_structure_builder(['root' => $structure->getTorrentFileContentDict()]); ?>
                 </div>
             </div>
         </div>

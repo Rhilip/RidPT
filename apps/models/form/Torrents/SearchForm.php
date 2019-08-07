@@ -56,7 +56,7 @@ class SearchForm extends Pager
         ])->queryColumn();
 
         return array_map(function ($id) {
-            return new Torrent($id);
+            return app()->site->getTorrent($id);
         }, $fetch);
     }
 }

@@ -10,15 +10,13 @@ namespace apps\models;
 
 use apps\libraries\Constant;
 
-use Rid\Bencode\Bencode;
+use Rid\Utils;
 use Rid\Exceptions\NotFoundException;
-use Rid\Utils\AttributesImportUtils;
-use Rid\Utils\ClassValueCacheUtils;
 
 class Torrent
 {
-    use AttributesImportUtils;
-    use ClassValueCacheUtils;
+    use Utils\AttributesImportUtils;
+    use Utils\ClassValueCacheUtils;
 
     private $id = null;
 
@@ -76,11 +74,6 @@ class Torrent
             app()->redis->expire(Constant::torrentContent($id), 1800);
         }
         $this->importAttributes($self);
-    }
-
-    public static function TorrentFileLoc($id = 0)
-    {
-        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $id . '.torrent';
     }
 
     /**
@@ -176,13 +169,6 @@ class Torrent
     public function getDescr()
     {
         return $this->descr;
-    }
-
-    public function getRawDict()
-    {
-        $file = self::TorrentFileLoc($this->id);
-        $dict = Bencode::load($file);
-        return $dict;
     }
 
     /**
