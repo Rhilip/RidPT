@@ -42,7 +42,7 @@ class SearchForm extends Pager
         return ['checkPager'];
     }
 
-    public function getRemoteTotal()
+    public function getRemoteTotal(): int
     {
         $search = $this->getData('search');
         $query = $this->getData('query');
@@ -59,7 +59,7 @@ class SearchForm extends Pager
         return $count;
     }
 
-    public function getRemoteData()
+    public function getRemoteData(): array
     {
         $search = $this->search;
         $query = $this->query;

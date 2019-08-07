@@ -17,7 +17,7 @@ class TagsForm extends Pager
 
     static $max_limit = 100;
 
-    public function getRemoteTotal()
+    public function getRemoteTotal(): int
     {
         return app()->pdo->createCommand([
             ['SELECT COUNT(tags.id) as `count` FROM tags'],
@@ -25,7 +25,7 @@ class TagsForm extends Pager
         ])->queryScalar();
     }
 
-    public function getRemoteData()
+    public function getRemoteData(): array
     {
         $search = $this->search;
         return app()->pdo->createCommand([

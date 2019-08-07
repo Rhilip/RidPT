@@ -27,7 +27,7 @@ class SnatchForm extends Pager
         return ['checkPager', 'isExistTorrent'];
     }
 
-    protected function getRemoteTotal()
+    protected function getRemoteTotal(): int
     {
         $tid = $this->getData('id');
         return app()->pdo->createCommand('SELECT COUNT(`id`) FROM `snatched` WHERE `torrent_id` = :tid')->bindParams([
@@ -35,7 +35,7 @@ class SnatchForm extends Pager
         ])->queryScalar();
     }
 
-    protected function getRemoteData()
+    protected function getRemoteData(): array
     {
         return app()->pdo->createCommand([
             ['SELECT * FROM `snatched` WHERE `torrent_id` = :tid ORDER BY finish_at,create_at DESC ', 'params' => ['tid' => $this->id]],

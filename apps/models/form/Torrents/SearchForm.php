@@ -8,8 +8,6 @@
 
 namespace apps\models\form\Torrents;
 
-
-use apps\models\Torrent;
 use Rid\Validators\Pager;
 
 class SearchForm extends Pager
@@ -30,7 +28,7 @@ class SearchForm extends Pager
         return $this->_tags;
     }
 
-    protected function getRemoteTotal()
+    protected function getRemoteTotal(): int
     {
         $tags = $this->getTagsArray();
 
@@ -42,7 +40,7 @@ class SearchForm extends Pager
         ])->queryScalar();
     }
 
-    protected function getRemoteData()
+    protected function getRemoteData(): array
     {
         $tags = $this->getTagsArray();
 
