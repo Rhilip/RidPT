@@ -2,19 +2,21 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 8/6/2019
- * Time: 8:40 PM
+ * Date: 8/7/2019
+ * Time: 7:55 PM
  */
 
 namespace apps\models\form\Torrent;
 
+
 use Rid\Validators\PagerTrait;
 
-class SnatchForm extends DetailsForm
+class CommentsForm extends DetailsForm
 {
     use PagerTrait;
 
-    public static $MAX_LIMIT = 100;
+    public static $DEFAULT_LIMIT = 20;
+    public static $MAX_LIMIT = 50;
 
     public static function inputRules()
     {
@@ -31,16 +33,13 @@ class SnatchForm extends DetailsForm
 
     protected function getRemoteTotal(): int
     {
-        $tid = $this->getData('id');
-        return app()->pdo->createCommand('SELECT COUNT(`id`) FROM `snatched` WHERE `torrent_id` = :tid')->bindParams([
-            'tid' => $tid
-        ])->queryScalar();
+        return $this->torrent->getComments();
     }
 
     protected function getRemoteData(): array
     {
         return app()->pdo->createCommand([
-            ['SELECT * FROM `snatched` WHERE `torrent_id` = :tid ORDER BY finish_at,create_at DESC ', 'params' => ['tid' => $this->id]],
+            ['SELECT * FROM `torrent_comments` WHERE torrent_id = :tid', 'params' => ['tid' => $this->id]],
             ['LIMIT :offset, :limit', 'params' => ['offset' => $this->offset, 'limit' => $this->limit]]
         ])->queryAll();
     }

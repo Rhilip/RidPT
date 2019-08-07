@@ -37,12 +37,13 @@
 - **Cookies:** Fix session sep from `%` to `_`
 - **Database:** Fix table `links` miss
 - **Env:** Exit when parse env file failed
-- **Form:** Miss use flag since namespace change
 - **Form:** Link\EditForm Update diff
+- **Form:** Miss use flag since namespace change
+- **Pager:** Fix `Class define the same property in the composition of PagerTrait`
 - **Requests:** Fix fullUrl() may add unnecessary `?`
 - **Site:** Fix old library Site not remove clean
-- **Tracker:** Fix SQL error
 - **Tracker:** Fix TrackerException Logger
+- **Tracker:** Fix SQL error
 - **categories:** Remove key `sort_index`
 - **redis_key:** Fix array value cause parser error
 

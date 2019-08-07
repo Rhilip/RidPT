@@ -55,7 +55,13 @@ class TorrentController extends Controller
 
     public function actionComments()
     {
-        // TODO
+        $comments = new Torrent\CommentsForm();
+        $success = $comments->validate();
+        if (!$success) {
+            return $this->render('action/action_fail');
+        }
+
+        return $this->render('torrent/comments', ['comments' => $comments]);
     }
 
     public function actionStructure()

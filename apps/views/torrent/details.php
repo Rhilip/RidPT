@@ -33,79 +33,13 @@ $torrent = $details->getTorrent();
         </div> <!-- END //*[@id="torrent_descr"] -->
         <div class="panel" id="torrent_commit_panel">
             <div class="panel-heading">
-                <b>Torrent Commit</b>
-                <?php if ($torrent->getComments() !== count($torrent->getLastCommentsDetails())): ?>
-                    <div class="pull-right"><a href="/torrent/comments?tid=<?= $torrent->getId() ?>">[See more comments]</a></div>
+                <b>Last Torrent Commit</b>
+                <?php if ($torrent->getComments() > 0): ?>
+                    <div class="pull-right"><a href="/torrent/comments?id=<?= $torrent->getId() ?>">[See all comments]</a></div>
                 <?php endif; ?>
             </div>
             <div class="panel-body" id="torrent_commit">
-                <div class="comments">
-                    <?php if ($torrent->getComments()): ?>
-                        <section class="comments-list">
-                            <?php foreach ($torrent->getLastCommentsDetails() as $commit): ?>
-                            <?php
-                                $commit_user = app()->site->getUser($commit['owner_id']);
-
-                                // The details of commentator should be hide or not ?
-                                $commentator_hide_flag = false;
-                                if ($torrent->getUplver() &&  // The torrent is uplver
-                                    $commit['owner_id'] == $torrent->getOwnerId() &&  // Commentator is the uploader for this torrent
-                                    !app()->site->getCurUser()->isPrivilege('see_anonymous_uploader')  // CurUser can't see uploader detail
-                                ) $commentator_hide_flag = true;
-                            ?>
-                            <div id="commit_<?= $commit['id'] ?>" class="comment">
-                                <div class="avatar">
-                                    <?php if ($commentator_hide_flag): ?>
-                                        <i class="icon-user icon-3x"></i>
-                                    <?php else: ?>
-                                        <img src="<?= $commit_user->getAvatar() ?>" alt="">
-                                    <?php endif; ?>
-                                </div>
-                                <div class="content">
-                                    <div class="pull-right text-muted">
-                                        <a href="#commit_<?= $commit['id'] ?>">#<?= $commit['id'] ?></a> -
-                                        <?php if ($commit['create_at'] != $commit['edit_at']): ?>
-                                            <span>Edited at <?= $commit['edit_at'] ?> </span>
-                                        <?php else: ?>
-                                            <span>Created at <?= $commit['create_at'] ?> </span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="comment-username">
-                                        <?= $this->insert('helper/username', ['user' => $commit_user, 'torrent' => $torrent, 'user_badge' => true]) ?>
-                                    </div>
-                                    <div class="text ubbcode-block"><?= $this->batch($commit['text'], 'format_ubbcode') ?></div>
-                                    <div class="actions pull-right"> <!-- TODO -->
-                                        <a href="##">Report</a>
-                                        <a href="##">Reply</a>
-                                        <a href="##">Edit</a>
-                                        <a href="##">Delete</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php endforeach; ?>
-                        </section>
-                    <?php endif; ?>
-                    <footer>
-                        <div class="reply-form" id="commentReplyForm1">
-                            <div class="avatar"><img src="<?= app()->site->getCurUser()->getAvatar() ?>" alt=""></div>
-                            <form  class="form" method="post" action="/torrent/commit?id=<?= $torrent->getId() ?>"> <!-- FIXME commit point -->
-                                <div class="form-group">
-                                    <textarea class="form-control new-comment-text" rows="3" placeholder="Quick Commit Here" data-autoresize></textarea>
-                                </div>
-                                <div class="form-group comment-user">
-                                    <div class="row">
-                                        <div class="col-md-10">
-                                            <div id="quote_help_block"></div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <button type="submit" class="btn btn-block btn-primary"><i class="far fa-paper-plane"></i>&nbsp;&nbsp;Send</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </footer>
-                </div>
+                <?= $this->insert('torrent/comments_field', ['torrent' => $torrent, 'comments' => $torrent->getLastCommentsDetails()]) ?>
             </div>
         </div>
     </div>

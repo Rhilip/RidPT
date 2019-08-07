@@ -25,6 +25,7 @@ body{background-color:#f6f6f6}
 .required:after{position: static}
 
 .captcha_img_load{width:150px;height:40px}
+
 .pager-unset-margin{margin: unset}
 
 /*-----------------------------------------------------------------------------------*/
