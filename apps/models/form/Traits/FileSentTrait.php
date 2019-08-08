@@ -9,7 +9,7 @@
 namespace apps\models\form\Traits;
 
 
-trait FileDownloadTrait
+trait FileSentTrait
 {
 
     use actionRateLimitCheckTrait;
@@ -29,8 +29,19 @@ trait FileDownloadTrait
         return static::$SEND_FILE_CONTENT_TYPE ?? 'application/octet-stream';
     }
 
+    protected function getSendFileCacheControlStatus(): bool
+    {
+        return static::$SEND_FILE_CACHE_CONTROL ?? false;
+    }
+
     final private function setRespHeaders()
     {
+        if ($this->getSendFileCacheControlStatus()) {
+            app()->response->setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+            app()->response->setHeader('Pragma', 'no-cache');
+            app()->response->setHeader('Expires', '0');
+        }
+
         app()->response->setHeader('Content-Type', $this->getSendFileContentType());
         if ($this->getSendFileContentLength() != 0)
             app()->response->setHeader('Content-Length', $this->getSendFileContentLength());
@@ -45,8 +56,13 @@ trait FileDownloadTrait
 
     abstract protected function getSendFileContent();
 
-    public function sendFileContentToClient()
+    protected function hookFileContentSend()
     {
+    }
+
+    final public function sendFileContentToClient()
+    {
+        $this->hookFileContentSend();
         $this->setRespHeaders();
         return $this->getSendFileContent();
     }

@@ -8,16 +8,17 @@
 
 namespace apps\models\form\Torrent;
 
-use apps\models\form\Traits\FileDownloadTrait;
+use apps\models\form\Traits\FileSentTrait;
 use Rid\Bencode\Bencode;
 
 class DownloadForm extends StructureForm
 {
-    use FileDownloadTrait;
+    use FileSentTrait;
 
     public $https;
 
     protected static $SEND_FILE_CONTENT_TYPE = 'application/x-bittorrent';
+    protected static $SEND_FILE_CACHE_CONTROL = true;
 
     public static function inputRules()
     {
@@ -44,7 +45,8 @@ class DownloadForm extends StructureForm
         ];
     }
 
-    public function getSendFileContent() {
+    public function getSendFileContent()
+    {
         $dict = $this->getTorrentFileContentDict();
 
         $scheme = 'http://';

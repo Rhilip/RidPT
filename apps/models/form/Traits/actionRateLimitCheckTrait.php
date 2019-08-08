@@ -14,7 +14,7 @@ use apps\libraries\Constant;
 /**
  * Trait actionRateLimitCheckTrait
  * @package apps\models\form\Traits
- * @method buildCallbackFailMsg <-- Need this to prevent phpStorm's "member has private access" inspection errors.
+ * @method buildCallbackFailMsg <-- Need this to prevent phpStorm's "member has protect access" inspection errors.
  */
 trait actionRateLimitCheckTrait
 {
