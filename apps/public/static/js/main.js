@@ -436,4 +436,18 @@ jQuery(document).ready(function () {
             cat_remove_form.submit();
         }
     });
+
+    $('.subs_delete').click(function () {
+        let that = $(this), subs_delete_form = $('#subs_delete_form');
+        let sub_id = that.data('id');
+        let reason = prompt("What's delete reason?");
+
+        if (reason.length > 0 && subs_delete_form) {
+            subs_delete_form.find("input[name='id']").val(sub_id);
+            subs_delete_form.find("input[name='reason']").val(reason);
+            subs_delete_form.submit();
+        } else {
+            alert('Empty delete reason or no subtitle delete form exist.')
+        }
+    })
 });

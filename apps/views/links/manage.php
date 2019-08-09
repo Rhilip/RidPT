@@ -27,12 +27,12 @@
                 <table class="table" id="links_manager_table">
                     <thead>
                     <tr>
-                        <td>Id</td>
-                        <td>Link</td>
-                        <td>Status</td>
-                        <td>Contact</td>
-                        <td>Reason</td>
-                        <td>Modify</td>
+                        <th>Id</th>
+                        <th>Link</th>
+                        <th>Status</th>
+                        <th>Contact</th>
+                        <th>Reason</th>
+                        <th>Modify</th>
                     </tr>
                     </thead>
                     <tbody>

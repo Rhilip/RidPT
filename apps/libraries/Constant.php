@@ -33,6 +33,9 @@ class Constant
     const trackerToDealQueue = 'Tracker:to_deal_queue:list';
     const trackerBackupQueue = 'Tracker:backup_queue:list';
 
+    // Site Status
+    const siteSubtitleSize = 'Site:subtitle_size:string';
+
     public static function userContent($uid)
     {
         return 'User:user_' . $uid . '_content:hash';

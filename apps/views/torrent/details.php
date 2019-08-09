@@ -60,6 +60,9 @@ $torrent = $details->getTorrent();
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                     <a class="torrent-edit" href="/torrent/edit?id=<?= $torrent->getId() ?>"><i class="fas fa-edit fa-fw"></i>&nbsp;Edit/Remove this Torrent</a>
                 </div><!-- TODO Edit/Remove this Torrent -->
+                <div class="torrent-action-item">
+                    <a class="torrent-subtitles" href="/subtitles/search?tid=<?= $torrent->getId() ?>"><i class="fas fa-closed-captioning fa-fw"></i>&nbsp;Add/View Torrent's Subtitles</a>
+                </div>
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                     <a class="torrent-report" href="/report?type=torrent&id=<?= $torrent->getId() ?>"><i class="fa fa-bug fa-fw"></i>&nbsp;Report this Torrent</a>
                 </div><!-- TODO Report this Torrent -->

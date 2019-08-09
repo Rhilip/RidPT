@@ -8,10 +8,62 @@
 
 namespace apps\models\form\Subtitles;
 
+use apps\libraries\Constant;
+use apps\models\form\Traits\isValidSubtitleTrait;
 
 use Rid\Validators\Validator;
 
 class DeleteForm extends Validator
 {
-    // TODO
+
+    use isValidSubtitleTrait;
+
+    public $reason;
+
+    protected $_autoload_data = true;
+    protected $_autoload_data_from = ['post'];
+
+    public static function inputRules()
+    {
+        return [
+            'id' => 'required | Integer',
+            'reason' => 'required'
+        ];
+    }
+
+    public static function callbackRules()
+    {
+        return ['isValidSubtitle', 'canCurUserManagerSubs'];
+    }
+
+    protected function canCurUserManagerSubs()
+    {
+        $curuser = app()->site->getCurUser();
+        if (!$curuser->isPrivilege('manage_subtitles') ||  // not submanage_class
+            $this->subtitle['uppd_by'] != $curuser->getId()  // not Subtitle 'owner'
+        ) {
+            $this->buildCallbackFailMsg('Privilege', 'You can\'t Modify Subtitle.');
+        }
+    }
+
+    public function flush()
+    {
+        $filename = $this->id . '.' . $this->subtitle['ext'];
+        $file_loc = app()->getPrivatePath('subs') . DIRECTORY_SEPARATOR . $filename;
+
+        app()->pdo->createCommand('DELETE FROM subtitles WHERE id = :sid')->bindParams([
+            'sid' => $this->subtitle['id']
+        ])->execute();
+        unlink($file_loc);
+
+        // TODO Delete uploader bonus
+
+        if ($this->subtitle['uppd_by'] != app()->site->getCurUser()->getId()) {
+            app()->site->sendPM(0,$this->subtitle['uppd_by'],'msg_your_sub_deleted','msg_deleted_your_sub');
+        }
+
+        // TODO add user detail
+        app()->site->writeLog('Subtitle \'' . $this->subtitle['title'] . '\'(' . $this->subtitle['id'] .') was deleted by ' . app()->site->getCurUser()->getUsername());
+        app()->redis->del(Constant::siteSubtitleSize);
+    }
 }

@@ -9,6 +9,7 @@
 namespace apps\models\form\Subtitles;
 
 
+use apps\libraries\Constant;
 use apps\models\form\Traits\isValidTorrentTrait;
 use Rid\Http\UploadFile;
 use Rid\Validators\Validator;
@@ -30,6 +31,8 @@ class UploadForm extends Validator
     protected $_autoload_data = true;
     protected $_autoload_data_from = ['post', 'files'];
 
+    const SubtitleExtension = ['sub', 'srt', 'zip', 'rar', 'ace', 'txt', 'ssa', 'ass', 'cue'];
+
     public static function defaultData()
     {
         return [
@@ -44,7 +47,7 @@ class UploadForm extends Validator
             'file' => [
                 ['Required'],
                 ['Upload\Required'],
-                ['Upload\Extension', ['allowed' => ['sub', 'srt', 'zip', 'rar', 'ace', 'txt', 'ssa', 'ass', 'cue']]],
+                ['Upload\Extension', ['allowed' => static::SubtitleExtension]],
                 ['Upload\Size', ['size' => config('upload.max_subtitle_file_size') . 'B']]
             ],
             'anonymous' => [
@@ -82,7 +85,6 @@ class UploadForm extends Validator
 
         app()->pdo->beginTransaction();
         try {
-
             $ext = $this->file->getExtension();
             app()->pdo->createCommand('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`) 
 VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)')->bindParams([
@@ -100,6 +102,6 @@ VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)
             app()->pdo->rollback();
             throw $e;
         }
-        app()->redis->del('Site:subtitle_sub_size:string');
+        app()->redis->del(Constant::siteSubtitleSize);
     }
 }
