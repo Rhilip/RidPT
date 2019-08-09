@@ -8,12 +8,13 @@
 - **gitignore:** Add ignore of `/backup` folder
 
 ### Feat
-- **Category:** Add Default sprite image of category
 - **Category:** Add Image and class_name support
-- **Category:** Add Categories Manage Pane
 - **Category:** Add Categories Support when upload torrent
+- **Category:** Add Categories Manage Pane
+- **Category:** Add Default sprite image of category
 - **Crontab:** Move From Timer to Process
 - **Editor:** Support wysibb editor
+- **File/Send:** Add Cache Control Headers support
 - **Gravatar:** Add support of gravatar
 - **Pager:** Torrents/{SearchForm,TagsForm}
 - **Pager:** Add Pager Support
@@ -22,6 +23,8 @@
 - **RateLimit:** Add actionRateLimitCheckTrait
 - **Redis:** Add mutiDelete() function for Redis
 - **Subtitle:** Add Base Subtitle Page
+- **Subtitle/Delete:** Add Subtitle Delete support
+- **Torrent/Form:** Add requests data autoload for Validator
 - **Tracker:** Move From Timer to Process
 - **Tracker:** Add `retry in` field when failed
 - **User:** Add Bonus And Unread Messsage count
@@ -31,11 +34,32 @@
 - **crontab:** Add torrent status sync
 - **csrf:** Add Csrf Support
 - **email:** Use Site::sendEmail to simple email sender
+- **js/captcha:** add new random string to load captcha image
+- **js/scroll:** add scrollToTop
 - **system:** can get more system info via class SystemInfoHelper
+- **torrent/comment:** Prepare torrent comment field
+- **torrent/comments:** Add page torrent/comments?id=
+- **torrent/download:** Add multi tracker behaviour
+- **torrent/nfo:** Show nfo in details page
+- **torrent/snatch:** Add view of torrent/snatch
+- **torrent/tags:** Add tags show in page torrent_detail,torrents_list
+- **torrent/tags:** Add tags support of torrent upload
+- **torrent/upload:** Add base Quality Select Support
+- **torrent/upload:** Add teams support
+- **torrent/upload:** Add nfo,hr support
+- **torrent/upload:** Add more config key to control behaviour
 - **torrents:** Use Torrent Form Model in TorrentController
+- **torrents/tags:** Add tags page
+- **torrents/tags:** Add direct function to get pinned tags
+- **torrents/upload:** Add Filename Defend Checker
+- **upload/links:** Field of external resource link support
+- **user/bar:** Show partial seeding when eixst
+- **user/trait:** Use class cache, split real down,up,ratio function
+- **views/layout :** Add Quick Csrf Input refs
 
 ### Fix
 - **Anonymous:** Fix Auth Page 500 after commit `2cd1a499`
+- **Auth/Login:** Fix User Can't Login
 - **Cookies:** Fix session sep from `%` to `_`
 - **Database:** Fix table `links` miss
 - **Env:** Exit when parse env file failed
@@ -44,10 +68,17 @@
 - **Pager:** Fix `Class define the same property in the composition of PagerTrait`
 - **Requests:** Fix fullUrl() may add unnecessary `?`
 - **Site:** Fix old library Site not remove clean
-- **Tracker:** Fix TrackerException Logger
+- **Torrent/Upload:** Fix Cannot use object as array
 - **Tracker:** Fix SQL error
+- **Tracker:** Fix TrackerException Logger
+- **admin/redis_key:** Use print_r($v, true) instead of json_encode($v, JSON_PRETTY_PRINT)
 - **categories:** Remove key `sort_index`
+- **class/cache:** Fix magic call may cause exception
+- **js/debug:** Fix may fail to parse sql debug data
 - **redis_key:** Fix array value cause parser error
+- **security/validator:** Only assign user post data to the public props of class validator
+- **tags/search:** Fix search count and unique search tag redirect condition
+- **view/torrent_upload:** fix config key of upload flags
 
 ### Perf
 - **Category:** Remove apps/models/Category
@@ -55,20 +86,33 @@
 - **Site:** try to cache re-hit
 - **Tracker:** Use brpoplpush to get announce data from redis
 - **captcha:** simple captcha input
+- **js/nav_active:** Active nav status frontend
 - **tracker:** No need to explicit serialize announce data
+- **view/layout:** Judge visitor is anonymous or not in view
 
 ### Refactor
 - **Coroutine:** Remove Coroutine Model, Judge part
 - **Coroutine:** Remove Coroutine Model
+- **File/Download:** Seperate client download file function to FileDownloadTrait
 - **Pager:** Separate Pager as Trait
+- **Torrent/Download:** Make multi tracker behaviour more readable
+- **Torrent/Nfo:** move nfoConvert from api model to class Torrent
 - **Tracker:** Better Tracker behaviour in multi tracker
 - **UserInfo:** fix last_access_{ip,at} update time
 - **View:** Rename folder `error` to `action`
 - **action_success:** Simple The Action Template
+- **array/function:** move setDefault to \Rid class
+- **auth/error:** merge `auth/error` page to `action/action_success`
+- **class/cache:** Use trait to simple class value cache
+- **site/torrent_upload_rule:** Move rule loader to \library\Site::class
+- **torrent/download:** Separate Torrent::getDownloadDict to torrent\DownloadForm
+- **torrent/snatch:** Separate Torrent::getSnatchDetails to torrent\SnatchForm Pager
+- **torrents/upload:** check info_hash in valid function but not flush
 
 ### Style
 - **Auth:** Sort Auth Form
 - **Form:** Sort Forms
+- **fix/typo:** fix typo about word 'multi' from word 'muti'
 - **js:** merge separate js file to `main.js`
 - **printIn:** Add datetime tag
 
