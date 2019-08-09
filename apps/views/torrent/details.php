@@ -95,7 +95,7 @@ $torrent = $details->getTorrent();
                 <div data-field="size" data-filesize="<?= $torrent->getTorrentSize() ?>">
                     <b>File size:</b> <?= $this->e($torrent->getTorrentSize(), 'format_bytes') ?></div>
                 <div data-field="uploader" data-owner-id="<?= $torrent->getUplver() ? 0 : $torrent->getOwnerId(); ?>">
-                    <b>Uploader:</b> <?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'torrent' => $torrent]) ?>
+                    <b>Uploader:</b> <?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'hide' => $torrent->getUplver()]) ?>
                 </div>
                 <div data-field="peers" data-seeders="<?= $torrent->getComplete() ?>" data-leechers="<?= $torrent->getComplete() ?>" data-completed="<?= $torrent->getDownloaded() ?>">
                     <b>Peers:</b>

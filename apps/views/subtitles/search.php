@@ -154,7 +154,7 @@ $upload_mode = $upload_mode ?? false;
                             <td><time class="nowrap"><?= $this->e($datum['added_at']) ?></time></td>
                             <td><span class="nowrap"><?= $this->e($datum['size'],'format_bytes') ?></span></td>
                             <td class="text-right"><span class="nowrap"><?= $this->e($datum['hits']) ?></span></td>
-                            <td class="text-center"><span class="nowrap"><?= $this->insert('helper/username', ['user' => app()->site->getUser($datum['uppd_by'])]) ?></span>
+                            <td class="text-center"><span class="nowrap"><?= $this->insert('helper/username', ['user' => app()->site->getUser($datum['uppd_by']), 'hide' => $datum['anonymous']]) ?></span>
                             </td>
                             <td><a class="nowrap" href="#">Report</a></td>
                         </tr>

@@ -48,7 +48,7 @@ $torrent = $snatch->getTorrent();
                         <tbody>
                         <?php foreach ($snatch->getPagerData() as $snatchDetail): ?>
                         <tr>
-                            <td><?= $this->insert('helper/username',['user'=>app()->site->getUser($snatchDetail['user_id'])]) ?></td>
+                            <td><?= $this->insert('helper/username', ['user' => app()->site->getUser($snatchDetail['user_id'])]) ?></td> <!-- TODO hide username when user has Strong Privacy  -->
                             <td><?= inet_ntop($snatchDetail['ip']) ?></td>
                             <td><?= $snatchDetail['finish_ip'] ? inet_ntop($snatchDetail['finish_ip']) : '?' ?></td>
                             <td>

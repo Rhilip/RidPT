@@ -87,7 +87,7 @@ $time_now = time();
                             <?= number_format($torrent->getDownloaded()) ?>
                         <?php if ($torrent->getDownloaded() > 0): ?></a><?php endif; ?>
                     </td>
-                    <td class="text-center" data-item="t-uploader" data-uploader="<?= $this->e($torrent->getUplver() ? 0 : $torrent->getOwnerId()) ?>"><?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'torrent' => $torrent]) ?></td>
+                    <td class="text-center" data-item="t-uploader" data-uploader="<?= $this->e($torrent->getUplver() ? 0 : $torrent->getOwnerId()) ?>"><?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'hide' => $torrent->getUplver()]) ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>

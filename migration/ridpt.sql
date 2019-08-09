@@ -749,7 +749,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('authority.manage_subtitles', '80'),
 ('authority.pass_invite_interval_check', '60'),
 ('authority.pass_tracker_upspeed_check', '60'),
-('authority.see_anonymous_uploader', '40'),
+('authority.see_anonymous_info', '60'),
 ('authority.see_banned_torrent', '40'),
 ('authority.see_extend_debug_log', '90'),
 ('authority.see_pending_torrent', '40'),

@@ -44,7 +44,7 @@ $enabled_editor = $enabled_editor ?? false;
                             <?php endif; ?>
                         </div>
                         <div class="comment-username">
-                            <?= $this->insert('helper/username', ['user' => $commit_user, 'torrent' => $torrent, 'user_badge' => true]) ?>
+                            <?= $this->insert('helper/username', ['user' => $commit_user, 'hide' => $commentator_hide_flag, 'show_badge' => true]) ?>
                         </div>
                         <div class="text ubbcode-block"><?= $this->batch($commit['text'], 'format_ubbcode') ?></div>
                         <div class="actions pull-right"> <!-- TODO -->
