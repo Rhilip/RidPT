@@ -149,8 +149,6 @@ class UploadForm extends Validator
             ];
         }
 
-        print_r($rules);
-
         return $rules;
     }
 

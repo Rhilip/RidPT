@@ -7,7 +7,7 @@ class Rid
 {
 
     // 版本号
-    const VERSION = 'v0.1.4-alpha';
+    const VERSION = 'v0.1.5-alpha';
 
     // App实例
     protected static $_app;
@@ -15,6 +15,7 @@ class Rid
     /**
      * 返回App，并设置组件命名空间
      *
+     * @param null $prefix
      * @return \Rid\Http\Application|\Rid\Console\Application
      */
     public static function app($prefix = null)
@@ -74,7 +75,11 @@ class Rid
         return $config;
     }
 
-    // 导入属性
+    /**
+     * 导入属性
+     * 注意此处只能向object导入public属性，如果object本身有private或者protected 属性需要导入，
+     * 请使用 trait Rid\Utils\AttributesImportUtils
+     */
     public static function importAttributes($object, $config)
     {
         foreach ($config as $name => $value) {

@@ -1,11 +1,18 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v0.1.5-alpha"></a>
+## [v0.1.5-alpha] - 2019-08-09
 ### Build
 - **Composer:** Update mirror address
 
 ### Chore
 - **gitignore:** Add ignore of `/backup` folder
+
+### Docs
+- **CHANGELOG:** fix git-chglog HeaderPattern
+- **Database:** Add miss table `subtitles`
 
 ### Feat
 - **Category:** Add Image and class_name support
@@ -115,6 +122,16 @@
 - **fix/typo:** fix typo about word 'multi' from word 'muti'
 - **js:** merge separate js file to `main.js`
 - **printIn:** Add datetime tag
+
+### BREAKING CHANGE
+
+COLUMN `corrupt` in `users` TABLE changed
+
+Rename Table `ip_bans` to `ban_ips`
+
+Table `torrents_categories` rename to `categories`
+
+Table `torrents` structure change
 
 
 <a name="v0.1.4-alpha"></a>
@@ -352,7 +369,8 @@ Structure of Table `users_session_log` Change
 <a name="v0.1.0-alpha"></a>
 ## v0.1.0-alpha - 2019-01-30
 
-[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.4-alpha...HEAD
+[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.5-alpha...HEAD
+[v0.1.5-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.4-alpha...v0.1.5-alpha
 [v0.1.4-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.3-alpha...v0.1.4-alpha
 [v0.1.3-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.2-alpha...v0.1.3-alpha
 [v0.1.2-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.1-alpha...v0.1.2-alpha
