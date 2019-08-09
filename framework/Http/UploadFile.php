@@ -62,6 +62,10 @@ class UploadFile
         return $this->name;
     }
 
+    public function getFileName(){
+        return pathinfo($this->name)['filename'];
+    }
+
     // 获取扩展名
     public function getExtension()
     {

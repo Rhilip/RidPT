@@ -13,11 +13,17 @@ use apps\models\Torrent;
 
 trait isValidTorrentTrait
 {
-    public $id;
+    public $torrent_id;
     public $tid;
+    public $id;
 
     /** @var Torrent */
     protected $torrent;
+
+    public static function callbackRules()
+    {
+        return ['isExistTorrent'];
+    }
 
     /**
      * @return Torrent
@@ -28,7 +34,7 @@ trait isValidTorrentTrait
     }
 
     protected function isExistTorrent() {
-        $tid = $this->getData('tid') ?? $this->getData('id');
+        $tid = $this->getData('torrent_id') ?? $this->getData('tid') ?? $this->getData('id');
         $torrent_exist = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `torrents` WHERE `id` = :tid')->bindParams([
             'tid' => $tid
         ])->queryScalar();

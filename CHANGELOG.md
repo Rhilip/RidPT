@@ -9,19 +9,20 @@
 
 ### Feat
 - **Category:** Add Categories Manage Pane
-- **Category:** Add Image and class_name support
 - **Category:** Add Categories Support when upload torrent
+- **Category:** Add Image and class_name support
 - **Category:** Add Default sprite image of category
 - **Crontab:** Move From Timer to Process
 - **Editor:** Support wysibb editor
 - **Gravatar:** Add support of gravatar
-- **Pager:** Add Pager Support
 - **Pager:** Torrents/{SearchForm,TagsForm}
+- **Pager:** Add Pager Support
 - **Process:** Add custom Process Support
 - **Process:** Clean Components before sleep
+- **RateLimit:** Add actionRateLimitCheckTrait
 - **Redis:** Add mutiDelete() function for Redis
-- **Tracker:** Move From Timer to Process
 - **Tracker:** Add `retry in` field when failed
+- **Tracker:** Move From Timer to Process
 - **User:** Add Bonus And Unread Messsage count
 - **UserInfo:** Add Cache Lock of user access_{time,ip} update
 - **Validator:** Add autoload from requests function

@@ -84,6 +84,7 @@ return [
                 'max_request'      => 3000, // 进程的最大任务数
                 'max_wait_time'    => 60, // 退出等待时间
                 'package_max_length' => 6242880, // 最大上传包大小，单位 Bytes
+                'buffer_output_size' => 33554432,  // 发送缓存区大小，影响向用户发送文件的最大大小，单位 Bytes
                 'reload_async'     => true, // 异步安全重启
                 /* 'user'        => 'www',  // 子进程运行用户  */
             ],
