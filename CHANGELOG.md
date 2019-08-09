@@ -5,123 +5,124 @@
 <a name="v0.1.5-alpha"></a>
 ## [v0.1.5-alpha] - 2019-08-09
 ### Build
-- **Composer:** Update mirror address
+- **Composer:** Update mirror address (e968948)
 
 ### Chore
-- **gitignore:** Add ignore of `/backup` folder
+- **gitignore:** Add ignore of `/backup` folder (83517b2)
 
 ### Docs
-- **CHANGELOG:** fix git-chglog HeaderPattern
-- **Database:** Add miss table `subtitles`
+- **CHANGELOG:** fix git-chglog HeaderPattern (ddc474f)
+- **Database:** Add miss table `subtitles` (29d7fa0)
+- **release:** v0.1.5-alpha (eca61b1)
 
 ### Feat
-- **Category:** Add Image and class_name support
-- **Category:** Add Categories Support when upload torrent
-- **Category:** Add Categories Manage Pane
-- **Category:** Add Default sprite image of category
-- **Crontab:** Move From Timer to Process
-- **Editor:** Support wysibb editor
-- **File/Send:** Add Cache Control Headers support
-- **Gravatar:** Add support of gravatar
-- **Pager:** Torrents/{SearchForm,TagsForm}
-- **Pager:** Add Pager Support
-- **Process:** Add custom Process Support
-- **Process:** Clean Components before sleep
-- **RateLimit:** Add actionRateLimitCheckTrait
-- **Redis:** Add mutiDelete() function for Redis
-- **Subtitle:** Add Base Subtitle Page
-- **Subtitle/Delete:** Add Subtitle Delete support
-- **Torrent/Form:** Add requests data autoload for Validator
-- **Tracker:** Move From Timer to Process
-- **Tracker:** Add `retry in` field when failed
-- **User:** Add Bonus And Unread Messsage count
-- **UserInfo:** Add Cache Lock of user access_{time,ip} update
-- **Validator:** Add autoload from requests function
-- **ban:** Add table `ban_usernames` and `ban_emails`
-- **crontab:** Add torrent status sync
-- **csrf:** Add Csrf Support
-- **email:** Use Site::sendEmail to simple email sender
-- **js/captcha:** add new random string to load captcha image
-- **js/scroll:** add scrollToTop
-- **system:** can get more system info via class SystemInfoHelper
-- **torrent/comment:** Prepare torrent comment field
-- **torrent/comments:** Add page torrent/comments?id=
-- **torrent/download:** Add multi tracker behaviour
-- **torrent/nfo:** Show nfo in details page
-- **torrent/snatch:** Add view of torrent/snatch
-- **torrent/tags:** Add tags show in page torrent_detail,torrents_list
-- **torrent/tags:** Add tags support of torrent upload
-- **torrent/upload:** Add base Quality Select Support
-- **torrent/upload:** Add teams support
-- **torrent/upload:** Add nfo,hr support
-- **torrent/upload:** Add more config key to control behaviour
-- **torrents:** Use Torrent Form Model in TorrentController
-- **torrents/tags:** Add tags page
-- **torrents/tags:** Add direct function to get pinned tags
-- **torrents/upload:** Add Filename Defend Checker
-- **upload/links:** Field of external resource link support
-- **user/bar:** Show partial seeding when eixst
-- **user/trait:** Use class cache, split real down,up,ratio function
-- **views/layout :** Add Quick Csrf Input refs
+- **Category:** Add Image and class_name support (6f4f318)
+- **Category:** Add Categories Support when upload torrent (db9b99c)
+- **Category:** Add Categories Manage Pane (77aba91)
+- **Category:** Add Default sprite image of category (722eaab)
+- **Crontab:** Move From Timer to Process (6ac4ff4)
+- **Editor:** Support wysibb editor (c81b8c9)
+- **File/Send:** Add Cache Control Headers support (5555dbb)
+- **Gravatar:** Add support of gravatar (4252f8d)
+- **Pager:** Torrents/{SearchForm,TagsForm} (07820ea)
+- **Pager:** Add Pager Support (8dcd064)
+- **Process:** Add custom Process Support (7057f26)
+- **Process:** Clean Components before sleep (7497623)
+- **RateLimit:** Add actionRateLimitCheckTrait (25b0520)
+- **Redis:** Add mutiDelete() function for Redis (c9dc659)
+- **Subtitle:** Add Base Subtitle Page (4fe52e5)
+- **Subtitle/Delete:** Add Subtitle Delete support (e3a0b18)
+- **Torrent/Form:** Add requests data autoload for Validator (ed31c17)
+- **Tracker:** Move From Timer to Process (f2ab1b0)
+- **Tracker:** Add `retry in` field when failed (5d18d4f)
+- **User:** Add Bonus And Unread Messsage count (113ae95)
+- **UserInfo:** Add Cache Lock of user access_{time,ip} update (bb9b623)
+- **Validator:** Add autoload from requests function (16825fc)
+- **ban:** Add table `ban_usernames` and `ban_emails` (7251651)
+- **crontab:** Add torrent status sync (1e600a0)
+- **csrf:** Add Csrf Support (9bddfa8)
+- **email:** Use Site::sendEmail to simple email sender (b018663)
+- **js/captcha:** add new random string to load captcha image (91a2e33)
+- **js/scroll:** add scrollToTop (5536392)
+- **system:** can get more system info via class SystemInfoHelper (6dc1028)
+- **torrent/comment:** Prepare torrent comment field (164de39)
+- **torrent/comments:** Add page torrent/comments?id= (2c8dbd3)
+- **torrent/download:** Add multi tracker behaviour (837ba64)
+- **torrent/nfo:** Show nfo in details page (a1f1d64)
+- **torrent/snatch:** Add view of torrent/snatch (259c5f1)
+- **torrent/tags:** Add tags show in page torrent_detail,torrents_list (f621685)
+- **torrent/tags:** Add tags support of torrent upload (e198704)
+- **torrent/upload:** Add base Quality Select Support (675fd0c)
+- **torrent/upload:** Add teams support (b74982f)
+- **torrent/upload:** Add nfo,hr support (a3eb839)
+- **torrent/upload:** Add more config key to control behaviour (bb01120)
+- **torrents:** Use Torrent Form Model in TorrentController (e786e9e)
+- **torrents/tags:** Add tags page (10be2f8)
+- **torrents/tags:** Add direct function to get pinned tags (21f81d0)
+- **torrents/upload:** Add Filename Defend Checker (10ccd92)
+- **upload/links:** Field of external resource link support (2ed6f8a)
+- **user/bar:** Show partial seeding when eixst (d871952)
+- **user/trait:** Use class cache, split real down,up,ratio function (886b207)
+- **views/layout :** Add Quick Csrf Input refs (2c3a2fd)
 
 ### Fix
-- **Anonymous:** Fix Auth Page 500 after commit `2cd1a499`
-- **Auth/Login:** Fix User Can't Login
-- **Cookies:** Fix session sep from `%` to `_`
-- **Database:** Fix table `links` miss
-- **Env:** Exit when parse env file failed
-- **Form:** Link\EditForm Update diff
-- **Form:** Miss use flag since namespace change
-- **Pager:** Fix `Class define the same property in the composition of PagerTrait`
-- **Requests:** Fix fullUrl() may add unnecessary `?`
-- **Site:** Fix old library Site not remove clean
-- **Torrent/Upload:** Fix Cannot use object as array
-- **Tracker:** Fix SQL error
-- **Tracker:** Fix TrackerException Logger
-- **admin/redis_key:** Use print_r($v, true) instead of json_encode($v, JSON_PRETTY_PRINT)
-- **categories:** Remove key `sort_index`
-- **class/cache:** Fix magic call may cause exception
-- **js/debug:** Fix may fail to parse sql debug data
-- **redis_key:** Fix array value cause parser error
-- **security/validator:** Only assign user post data to the public props of class validator
-- **tags/search:** Fix search count and unique search tag redirect condition
-- **view/torrent_upload:** fix config key of upload flags
+- **Anonymous:** Fix Auth Page 500 after commit `2cd1a499` (4e60ee8)
+- **Auth/Login:** Fix User Can't Login (3ca05fc)
+- **Cookies:** Fix session sep from `%` to `_` (f3e8e3f)
+- **Database:** Fix table `links` miss (4578963)
+- **Env:** Exit when parse env file failed (fc19504)
+- **Form:** Link\EditForm Update diff (fd7b241)
+- **Form:** Miss use flag since namespace change (77da0fd)
+- **Pager:** Fix `Class define the same property in the composition of PagerTrait` (90dde55)
+- **Requests:** Fix fullUrl() may add unnecessary `?` (722734c)
+- **Site:** Fix old library Site not remove clean (9a18e20)
+- **Torrent/Upload:** Fix Cannot use object as array (134153f)
+- **Tracker:** Fix SQL error (abbef65)
+- **Tracker:** Fix TrackerException Logger (b4543b1)
+- **admin/redis_key:** Use print_r($v, true) instead of json_encode($v, JSON_PRETTY_PRINT) (3f767de)
+- **categories:** Remove key `sort_index` (f8c1475)
+- **class/cache:** Fix magic call may cause exception (5d1434c)
+- **js/debug:** Fix may fail to parse sql debug data (3f31b88)
+- **redis_key:** Fix array value cause parser error (4bf5dad)
+- **security/validator:** Only assign user post data to the public props of class validator (d0dd439)
+- **tags/search:** Fix search count and unique search tag redirect condition (a423577)
+- **view/torrent_upload:** fix config key of upload flags (854722a)
 
 ### Perf
-- **Category:** Remove apps/models/Category
-- **Site:** Move apps/{libraries->components}/Site
-- **Site:** try to cache re-hit
-- **Tracker:** Use brpoplpush to get announce data from redis
-- **captcha:** simple captcha input
-- **js/nav_active:** Active nav status frontend
-- **tracker:** No need to explicit serialize announce data
-- **view/layout:** Judge visitor is anonymous or not in view
+- **Category:** Remove apps/models/Category (d411770)
+- **Site:** Move apps/{libraries->components}/Site (8620279)
+- **Site:** try to cache re-hit (2cd1a49)
+- **Tracker:** Use brpoplpush to get announce data from redis (8cac8fd)
+- **captcha:** simple captcha input (9119bf7)
+- **js/nav_active:** Active nav status frontend (c327d0e)
+- **tracker:** No need to explicit serialize announce data (68e4550)
+- **view/layout:** Judge visitor is anonymous or not in view (b54da2f)
 
 ### Refactor
-- **Coroutine:** Remove Coroutine Model, Judge part
-- **Coroutine:** Remove Coroutine Model
-- **File/Download:** Seperate client download file function to FileDownloadTrait
-- **Pager:** Separate Pager as Trait
-- **Torrent/Download:** Make multi tracker behaviour more readable
-- **Torrent/Nfo:** move nfoConvert from api model to class Torrent
-- **Tracker:** Better Tracker behaviour in multi tracker
-- **UserInfo:** fix last_access_{ip,at} update time
-- **View:** Rename folder `error` to `action`
-- **action_success:** Simple The Action Template
-- **array/function:** move setDefault to \Rid class
-- **auth/error:** merge `auth/error` page to `action/action_success`
-- **class/cache:** Use trait to simple class value cache
-- **site/torrent_upload_rule:** Move rule loader to \library\Site::class
-- **torrent/download:** Separate Torrent::getDownloadDict to torrent\DownloadForm
-- **torrent/snatch:** Separate Torrent::getSnatchDetails to torrent\SnatchForm Pager
-- **torrents/upload:** check info_hash in valid function but not flush
+- **Coroutine:** Remove Coroutine Model, Judge part (fc454c9)
+- **Coroutine:** Remove Coroutine Model (87b12e3)
+- **File/Download:** Seperate client download file function to FileDownloadTrait (456ea04)
+- **Pager:** Separate Pager as Trait (4442bb7)
+- **Torrent/Download:** Make multi tracker behaviour more readable (e366938)
+- **Torrent/Nfo:** move nfoConvert from api model to class Torrent (0736c63)
+- **Tracker:** Better Tracker behaviour in multi tracker (1477ced)
+- **UserInfo:** fix last_access_{ip,at} update time (e9b8d8d)
+- **View:** Rename folder `error` to `action` (f5344af)
+- **action_success:** Simple The Action Template (9facda1)
+- **array/function:** move setDefault to \Rid class (b49d529)
+- **auth/error:** merge `auth/error` page to `action/action_success` (9f02aae)
+- **class/cache:** Use trait to simple class value cache (9913873)
+- **site/torrent_upload_rule:** Move rule loader to \library\Site::class (ed01663)
+- **torrent/download:** Separate Torrent::getDownloadDict to torrent\DownloadForm (4b617ca)
+- **torrent/snatch:** Separate Torrent::getSnatchDetails to torrent\SnatchForm Pager (853a743)
+- **torrents/upload:** check info_hash in valid function but not flush (32967c4)
 
 ### Style
-- **Auth:** Sort Auth Form
-- **Form:** Sort Forms
-- **fix/typo:** fix typo about word 'multi' from word 'muti'
-- **js:** merge separate js file to `main.js`
-- **printIn:** Add datetime tag
+- **Auth:** Sort Auth Form (35691fc)
+- **Form:** Sort Forms (ae72ce3)
+- **fix/typo:** fix typo about word 'multi' from word 'muti' (8821b08)
+- **js:** merge separate js file to `main.js` (4d641ee)
+- **printIn:** Add datetime tag (689b922)
 
 ### BREAKING CHANGE
 
@@ -137,80 +138,80 @@ Table `torrents` structure change
 <a name="v0.1.4-alpha"></a>
 ## [v0.1.4-alpha] - 2019-06-28
 ### Chore
-- **User:** Make User component as Part of App but not framework
+- **User:** Make User component as Part of App but not framework (233e62d)
 
 ### Docs
-- **Licence:** Add Licence Checker By FOSSA
-- **Migration:** Update Nginx config
-- **README:** Fix Mailer Env typo
-- **release:**  v0.1.4-alpha
+- **Licence:** Add Licence Checker By FOSSA (295205c)
+- **Migration:** Update Nginx config (900c999)
+- **README:** Fix Mailer Env typo (1c1f31b)
+- **release:**  v0.1.4-alpha (fb8c96f)
 
 ### Feat
-- **Auth:** Add UserRecover Form
-- **Auth:** Add full Advanced Options for Login
-- **Cleanup:** Add disable cleanup job by set priority to 0
-- **Cleanup:** Cleanup dead peers
-- **Debug:** Add extend debug output
-- **Debug:** Remove DebugMiddleware
-- **Email:** Add email template
-- **Form Validator:** Add library bootstrap-validator library
-- **Frontend:** Add localforage As Cache Provider
-- **Invite:** Finish invite system
-- **Invite:** Add base invite table
-- **Links:** Add full Links manage
-- **News:** Fix news tag not appear in index
-- **News:** Add Site News model
-- **Register:** Can't copy password and paste to retyep_password
-- **Response:** Add redirect code
-- **Task:** Add task process support
-- **Timer:** Add Timer Example
-- **Torrent:** Add folder size sum in torrent file modal
-- **Typo:** Fix Typo of `secret`
-- **framework:** Remove Swoole Task Support
+- **Auth:** Add UserRecover Form (ecf68a9)
+- **Auth:** Add full Advanced Options for Login (a184a65)
+- **Cleanup:** Add disable cleanup job by set priority to 0 (be94de3)
+- **Cleanup:** Cleanup dead peers (0d83408)
+- **Debug:** Add extend debug output (9d4f0cb)
+- **Debug:** Remove DebugMiddleware (07c7fd1)
+- **Email:** Add email template (af4c102)
+- **Form Validator:** Add library bootstrap-validator library (2476921)
+- **Frontend:** Add localforage As Cache Provider (f830f22)
+- **Invite:** Finish invite system (904476c)
+- **Invite:** Add base invite table (c556644)
+- **Links:** Add full Links manage (68a5ac5)
+- **News:** Fix news tag not appear in index (51dfebc)
+- **News:** Add Site News model (e9397fb)
+- **Register:** Can't copy password and paste to retyep_password (2cb15e6)
+- **Response:** Add redirect code (5d8742d)
+- **Task:** Add task process support (241ef8d)
+- **Timer:** Add Timer Example (4413b46)
+- **Torrent:** Add folder size sum in torrent file modal (3072c39)
+- **Typo:** Fix Typo of `secret` (f3f6206)
+- **framework:** Remove Swoole Task Support (8188df9)
 
 ### Fix
-- **Admin Panel:** Fix index num in Redis Keys Page
-- **Auth:** Fix Broken Auth page after frontend framework change
-- **Captcha:** Fix style of captcha
-- **DATABASE:** Fix CURRENT_TIMESTAMP Extra error
-- **Email:** Fix Email Can't Send
-- **Error:** Fix Error Handler
-- **Invite:** Add Fine-grained control of recycle pending
-- **Links:** Remove extra meta section
-- **Register:** Add captcha checker
-- **TorrentUpload:** Fix length 0 file cause ParseErrorException
-- **Tracker:** Add miss port check for field ipv6_port
-- **View:** Fix Conversion::setDefault()
-- **View:** remove view helper function `get_torrent_uploader_id`
-- **View:** Fix view function redeclare
+- **Admin Panel:** Fix index num in Redis Keys Page (b8ca4c4)
+- **Auth:** Fix Broken Auth page after frontend framework change (21dca47)
+- **Captcha:** Fix style of captcha (a43f9be)
+- **DATABASE:** Fix CURRENT_TIMESTAMP Extra error (096333b)
+- **Email:** Fix Email Can't Send (5e5634e)
+- **Error:** Fix Error Handler (3fd6821)
+- **Invite:** Add Fine-grained control of recycle pending (c56a705)
+- **Links:** Remove extra meta section (50f0728)
+- **Register:** Add captcha checker (bacee6d)
+- **TorrentUpload:** Fix length 0 file cause ParseErrorException (e580577)
+- **Tracker:** Add miss port check for field ipv6_port (ff6351d)
+- **View:** Fix Conversion::setDefault() (bec2fc0)
+- **View:** remove view helper function `get_torrent_uploader_id` (65f09ff)
+- **View:** Fix view function redeclare (81c8aff)
 
 ### Perf
-- **BBCode:** Use mjohnson/decoda to parse and cache BBCode
-- **Config:** Add quick ref config()
-- **Config:** Remove `configTable_construct_lock`
-- **DATABASE:** Drop Table `files`
-- **Tracker:** Use Task process to quick response Tracker Announce Action
-- **Tracker:** Add passkey and info_hash Filter
+- **BBCode:** Use mjohnson/decoda to parse and cache BBCode (fbc98ad)
+- **Config:** Add quick ref config() (ae2a359)
+- **Config:** Remove `configTable_construct_lock` (a9cd0b9)
+- **DATABASE:** Drop Table `files` (c3e329d)
+- **Tracker:** Use Task process to quick response Tracker Announce Action (671a551)
+- **Tracker:** Add passkey and info_hash Filter (c28d695)
 
 ### Refactor
-- **InviteAction:** Use InviteActionFrom instead of func in Controller
-- **Mailer:** Use phpmailer to replace swiftmailer
-- **Redis:** Add more Redis arguments in debug output
-- **Session:** Add Session Format Docs
-- **SiteConfig:** change namespace `authority.route_` to `route.`
-- **Tracker:** Separate announce data update function
-- **Validator:** Add function buildDefaultValue()
-- **ext2Icon:** Add more File format
-- **timer:** Change Namespace of Timer
+- **InviteAction:** Use InviteActionFrom instead of func in Controller (7fa7069)
+- **Mailer:** Use phpmailer to replace swiftmailer (c7e66db)
+- **Redis:** Add more Redis arguments in debug output (8b887f8)
+- **Session:** Add Session Format Docs (a2a1ce1)
+- **SiteConfig:** change namespace `authority.route_` to `route.` (037ca71)
+- **Tracker:** Separate announce data update function (22d69bc)
+- **Validator:** Add function buildDefaultValue() (d263c6c)
+- **ext2Icon:** Add more File format (e8c9962)
+- **timer:** Change Namespace of Timer (766d823)
 
 ### Revert
-- **Http:** Remove Request::getUserAgent()
+- **Http:** Remove Request::getUserAgent() (ada223c)
 
 ### Style
-- **Admin Panel:** Fix Broken View Admin Panel
-- **Auth:** Not output extend debug info for anonymous. (In route `/auth`)
-- **Frontend:** Back frontend framework to Zui
-- **View:** Add top util by layui.util
+- **Admin Panel:** Fix Broken View Admin Panel (e834831)
+- **Auth:** Not output extend debug info for anonymous. (In route `/auth`) (152331b)
+- **Frontend:** Back frontend framework to Zui (b08c2ed)
+- **View:** Add top util by layui.util (282d5a4)
 
 ### Pull Requests
 - Merge pull request [#2](https://github.com/Rhilip/ridpt/issues/2) from fossabot/master
@@ -237,91 +238,91 @@ dbstructure of `site_crontab` Change
 <a name="v0.1.3-alpha"></a>
 ## [v0.1.3-alpha] - 2019-03-16
 ### Build
-- **Compatible:** Remove Compatible Model
-- **Environment:** Upgrade Dependency of Mysql and PHP
+- **Compatible:** Remove Compatible Model (f1ca9d9)
+- **Environment:** Upgrade Dependency of Mysql and PHP (4324780)
 
 ### Chore
-- **Git:** Fix gitkeep file lost
-- **Server:** Change the server printing
-- **Static File:** Move fonts to public path
+- **Git:** Fix gitkeep file lost (6c995d8)
+- **Server:** Change the server printing (ec68e4a)
+- **Static File:** Move fonts to public path (7c61422)
 
 ### Docs
-- **Debug:** End Error Handle Debug
-- **Demo:** Change demo site link
-- **Readme:** Add Demo Site Information
-- **Readme:** Update Readme.md
-- **Release:** Release v0.1.3-alpha
+- **Debug:** End Error Handle Debug (94906eb)
+- **Demo:** Change demo site link (0eed6a0)
+- **Readme:** Add Demo Site Information (f599825)
+- **Readme:** Update Readme.md (7ae98b5)
+- **Release:** Release v0.1.3-alpha (8b4031b)
 
 ### Feat
-- **Favour:** Add full favour support
-- **Framework:** Add Record of execute sql and redis key hit
-- **Front:** Add lib `notice.js`
-- **Helper:** Add Simple String crypt helper
-- **RSS:** Start Build rss feed
-- **Torrent:** Save Torrent File Structure in Table `torrents`
-- **Torrent:** Clean temp upload torrent file after success upload
-- **Torrent:** Add Torrent FileList View
-- **Torrent:** Finish Torrent's Structure part
-- **Torrent:** Add Torrent Content Cache
-- **Torrent Upload:** Add utf-8 path support for torrent upload
-- **UBB:** Add ubb converter
-- **User:** Add User Active Seed/Leech Count
-- **User:** Add User Confirm Support
-- **User:** Add user load by passkey
-- **View:** Add ram use status in footer
-- **i18n:** Add i18n Support
+- **Favour:** Add full favour support (1c83715)
+- **Framework:** Add Record of execute sql and redis key hit (4799813)
+- **Front:** Add lib `notice.js` (a4fcfff)
+- **Helper:** Add Simple String crypt helper (ef5fab2)
+- **RSS:** Start Build rss feed (4e38460)
+- **Torrent:** Save Torrent File Structure in Table `torrents` (96e110e)
+- **Torrent:** Clean temp upload torrent file after success upload (ffca1e7)
+- **Torrent:** Add Torrent FileList View (3101a63)
+- **Torrent:** Finish Torrent's Structure part (b95112b)
+- **Torrent:** Add Torrent Content Cache (0038a7d)
+- **Torrent Upload:** Add utf-8 path support for torrent upload (1901e17)
+- **UBB:** Add ubb converter (59ffa46)
+- **User:** Add User Active Seed/Leech Count (e22b04c)
+- **User:** Add User Confirm Support (9277978)
+- **User:** Add user load by passkey (b93d94c)
+- **View:** Add ram use status in footer (ec415ac)
+- **i18n:** Add i18n Support (2a48b4c)
 
 ### Fix
-- **Auth:** Fix layout fo Auth Point
-- **Auth:** Fix 'errors/action_fail' view should not be touch in AuthController
-- **Auth:** Update description texts in `/auth/login`
-- **Bencode:** Add full parse check
-- **Compatible:** Fix Compatible Model not work
-- **Database:** Change Foreign Key behaviour
-- **Nameplace:** Fix error nameplace of compatible
-- **Namespace:** Namespace miss change
-- **Torrent:** Fix Torrent Download Dict miss
-- **Upload:** Fix Upload Torrent can't save in database
-- **UserTrackerStatus:** Fix redis cache key miss
-- **View:** Fix View Don't change after service reload
-- **View:** Fix `admin/redis_key` of wrong array echo
-- **View:** Fix cost time miss in render
+- **Auth:** Fix layout fo Auth Point (7f36ddf)
+- **Auth:** Fix 'errors/action_fail' view should not be touch in AuthController (e2f1bbb)
+- **Auth:** Update description texts in `/auth/login` (cbff703)
+- **Bencode:** Add full parse check (a24638b)
+- **Compatible:** Fix Compatible Model not work (a1fb974)
+- **Database:** Change Foreign Key behaviour (e263e07)
+- **Nameplace:** Fix error nameplace of compatible (3daf17b)
+- **Namespace:** Namespace miss change (4262301)
+- **Torrent:** Fix Torrent Download Dict miss (3a1780b)
+- **Upload:** Fix Upload Torrent can't save in database (26d3902)
+- **UserTrackerStatus:** Fix redis cache key miss (0ad2d64)
+- **View:** Fix View Don't change after service reload (2119c2c)
+- **View:** Fix `admin/redis_key` of wrong array echo (6447136)
+- **View:** Fix cost time miss in render (9cd155b)
 
 ### Perf
-- **Admin:** Call redis key info only when pattern give
-- **Bencode:** Remove Bencode Library `sandfoxme/bencode`
-- **Config:** Create \Swoole\Table as Dynamic Config Provider in Master Process
-- **Error:** Fix Error Page
-- **Mailer:** Make Mailer Provider extends BaseObject but not Component
-- **Middleware:** Fix Middleware behaviour
-- **Psr:** Use Psr\Log to simple Rid\Log Component
-- **Session:** Not resend set-cookies header for session
-- **User:** Quickly get user peer status
-- **Validator:** load base rules from call parent method
-- **i18n:** Quick load
+- **Admin:** Call redis key info only when pattern give (22b1e80)
+- **Bencode:** Remove Bencode Library `sandfoxme/bencode` (0e1a6ab)
+- **Config:** Create \Swoole\Table as Dynamic Config Provider in Master Process (0a7bfba)
+- **Error:** Fix Error Page (c58c8bb)
+- **Mailer:** Make Mailer Provider extends BaseObject but not Component (6dc635a)
+- **Middleware:** Fix Middleware behaviour (eb9c905)
+- **Psr:** Use Psr\Log to simple Rid\Log Component (342300f)
+- **Session:** Not resend set-cookies header for session (8fa31bc)
+- **User:** Quickly get user peer status (020a96f)
+- **Validator:** load base rules from call parent method (9d7191b)
+- **i18n:** Quick load (20b8a15)
 
 ### Refactor
-- **DynamicConfig:** Remove DynamicConfig provider by Redis
-- **Framework:** Resort Component folder
-- **Framework:** Rename Mix to Rid
-- **Framework:** Refactor framework from upstream
-- **Helpers:** Remove JsonHelper
-- **Output:** Remove \Rid\Console\Output
-- **Route:** Fix Route of Torrent
-- **Validator:** Change Validator Provider
-- **View:** Change template system
-- **XML:** Remove XML support
+- **DynamicConfig:** Remove DynamicConfig provider by Redis (d644d0b)
+- **Framework:** Resort Component folder (80c7608)
+- **Framework:** Rename Mix to Rid (9c0350d)
+- **Framework:** Refactor framework from upstream (605e111)
+- **Helpers:** Remove JsonHelper (df5d57e)
+- **Output:** Remove \Rid\Console\Output (2ffc1ac)
+- **Route:** Fix Route of Torrent (c2282ec)
+- **Validator:** Change Validator Provider (6d56295)
+- **View:** Change template system (ae2a7b7)
+- **XML:** Remove XML support (169440c)
 
 ### Revert
-- **CSS_TAG:** re-add debug for css_tag
-- **Config:** Add back Dynamic Config provider by Redis
-- **UploadFile:** Add back some attributes of UploadFile
+- **CSS_TAG:** re-add debug for css_tag (e143301)
+- **Config:** Add back Dynamic Config provider by Redis (043ad5c)
+- **UploadFile:** Add back some attributes of UploadFile (f6f9e6c)
 
 ### Style
-- **CSS:** Add css tag
-- **Git:** Fix git style in private path
-- **Validator:** Separate File and Captcha Validate to Trait object
-- **View:** Change View Layout
+- **CSS:** Add css tag (c6e9211)
+- **Git:** Fix git style in private path (5bffbd9)
+- **Validator:** Separate File and Captcha Validate to Trait object (58b86ac)
+- **View:** Change View Layout (ac91bf3)
 
 ### BREAKING CHANGE
 
@@ -341,22 +342,22 @@ Mysql Version changes from 5.7 to 8.0
 <a name="v0.1.2-alpha"></a>
 ## [v0.1.2-alpha] - 2019-02-01
 ### Docs
-- **Release:** Release v0.1.2-alpha
-- **changelog:** Use `git-chglog` to generate CHANGELOG.md
+- **Release:** Release v0.1.2-alpha (3db0f5e)
+- **changelog:** Use `git-chglog` to generate CHANGELOG.md (ac461b0)
 
 ### Feat
-- **Login:** Add Support for max login ip test to avoid floor attack
-- **User:** User can manager their own sessions
+- **Login:** Add Support for max login ip test to avoid floor attack (961ff1e)
+- **User:** User can manager their own sessions (f3c38a7)
 
 ### Fix
-- **Auth:** Fix may redirect twice in `/auth/login`
-- **Auth:** Fix Login redirect too much
+- **Auth:** Fix may redirect twice in `/auth/login` (83cac6e)
+- **Auth:** Fix Login redirect too much (18eed6d)
 
 ### Refactor
-- **Table:** use `agent` to replace `browser` and `platform`
+- **Table:** use `agent` to replace `browser` and `platform` (ef846a0)
 
 ### Style
-- **Admin Panel:** replace _ to backspace in render
+- **Admin Panel:** replace _ to backspace in render (857dc20)
 
 ### BREAKING CHANGE
 
