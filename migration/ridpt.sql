@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 07, 2019 at 09:26 AM
+-- Generation Time: Aug 09, 2019 at 10:44 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -746,6 +746,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('authority.invite_recycle_other_pending', '90'),
 ('authority.invite_recycle_self_pending', '70'),
 ('authority.manage_news', '80'),
+('authority.manage_subtitles', '80'),
 ('authority.pass_invite_interval_check', '60'),
 ('authority.pass_tracker_upspeed_check', '60'),
 ('authority.see_anonymous_uploader', '40'),
@@ -847,6 +848,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('tracker.user_max_leech', '1'),
 ('tracker.user_max_seed', '3'),
 ('upload.max_nfo_file_size', '65535'),
+('upload.max_subtitle_file_size', '10485760'),
 ('upload.max_torrent_file_size', '3145728'),
 ('user.avatar_provider', 'gravatar');
 
@@ -946,6 +948,33 @@ CREATE TABLE IF NOT EXISTS `snatched` (
 --       `torrents` -> `id`
 --   `user_id`
 --       `users` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `subtitles`
+--
+
+DROP TABLE IF EXISTS `subtitles`;
+CREATE TABLE IF NOT EXISTS `subtitles` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `torrent_id` int(11) UNSIGNED NOT NULL,
+  `hashs` varchar(32) NOT NULL DEFAULT '',
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `filename` varchar(255) NOT NULL DEFAULT '',
+  `added_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `size` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
+  `uppd_by` int(11) UNSIGNED NOT NULL,
+  `anonymous` tinyint(1) NOT NULL DEFAULT '0',
+  `hits` mediumint(8) UNSIGNED NOT NULL DEFAULT '0',
+  `ext` varchar(10) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `hashs` (`hashs`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `subtitles`:
 --
 
 -- --------------------------------------------------------

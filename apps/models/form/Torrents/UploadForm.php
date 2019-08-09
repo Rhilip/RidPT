@@ -8,8 +8,6 @@
 
 namespace apps\models\form\Torrents;
 
-use apps\models\Torrent;
-
 use Rid\Validators\Validator;
 
 use Rid\Bencode\Bencode;
@@ -109,11 +107,11 @@ class UploadForm extends Validator
 
         // Add Quality Valid
         foreach (app()->site::getQualityTableList() as $quality => $title) {
-            $quality_id_list = [0];
+            $quality_id_list = [];
             // IF enabled this quality field , then load it value list from setting
             // Else we just allow the default value 0 to prevent cheating
             if (config('torrent_upload.enable_quality_' . $quality)) {
-                $quality_id_list += array_map(function ($cat) {
+                $quality_id_list = array_map(function ($cat) {
                     return $cat['id'];
                 }, app()->site::ruleQuality($quality));
             }
@@ -150,6 +148,8 @@ class UploadForm extends Validator
                 ['InList', ['list' => [0, 1]]]
             ];
         }
+
+        print_r($rules);
 
         return $rules;
     }
