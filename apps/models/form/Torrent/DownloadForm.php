@@ -70,19 +70,17 @@ class DownloadForm extends StructureForm
             $multi_trackers = config('base.site_tracker_url') . ',' . $multi_trackers;
             $multi_trackers_list = explode(',', $multi_trackers);
             $multi_trackers_list = array_unique($multi_trackers_list);  // use array_unique to remove dupe tracker
-            // fulfill each tracker with scheme and suffix about user identity
-            $multi_trackers_list = array_map(function ($uri) use ($scheme, $announce_suffix) {
-                return $scheme . $uri . $announce_suffix;
-            }, $multi_trackers_list);
 
-            if (config('base.site_multi_tracker_behaviour') == 'separate') {
-                /** d['announce-list'] = [ [tracker1], [backup1], [backup2] ] */
-                foreach ($multi_trackers_list as $tracker) {  // separate each tracker to different tier
+            $dict["announce-list"] = [];
+            foreach ($multi_trackers_list as $uri) {
+                $tracker = $scheme . $uri . $announce_suffix;  // fulfill each tracker with scheme and suffix about user identity
+                if (config('base.site_multi_tracker_behaviour') == 'separate') {
+                    /** d['announce-list'] = [ [tracker1], [backup1], [backup2] ] */
                     $dict["announce-list"][] = [$tracker];  // Make each tracker as tier
+                } else {  // config('base.site_multi_tracker_behaviour') ==  'union'
+                    /** d['announce-list'] = [[ tracker1, tracker2, tracker3 ]] */
+                    $dict["announce-list"][0][] = $tracker;  // all tracker in tier 0
                 }
-            } else {  // config('base.site_multi_tracker_behaviour') ==  'union'
-                /** d['announce-list'] = [[ tracker1, tracker2, tracker3 ]] */
-                $dict["announce-list"][] = $multi_trackers_list;
             }
         }
 
