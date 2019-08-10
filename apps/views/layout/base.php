@@ -81,10 +81,10 @@ $extend_debug_info = app()->site->getCurUser()  // Not Anonymous
 </div>
 
 <footer id="footer_menu">
-    <div class="container" align="center">
+    <div class="container text-center">
         <div class="row">
             <p class="copyright">
-                &copy; <a href="/" target="_self"><?= config('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT">RidPT</a>
+                &copy; <a href="/" target="_self"><?= config('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT" target="_blank">RidPT</a>
             </p>
             <p class="debug-info">
                 [ Page created in <b><?= number_format(microtime(true) - app()->request->start_at, 6) ?></b> sec
@@ -109,6 +109,16 @@ $extend_debug_info = app()->site->getCurUser()  // Not Anonymous
 </div>
 
 <?= $this->section('body') ?>
+
+<!-- noscript alert -->
+<noscript>
+    <style type="text/css">
+        body > div, footer {display:none;}
+    </style>
+    <div class="noscriptmsg">
+        You don't have javascript enabled.
+    </div>
+</noscript>
 
 <!-- Javascript of Library -->
 <script src="/lib/localforage/dist/localforage.min.js"></script>

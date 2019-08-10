@@ -64,22 +64,28 @@
                     <fieldset>
                         <legend><a href="#adv_option" data-toggle="collapse" class="btn btn-link">Advanced Options</a></legend>
                         <div id="adv_option" class="collapse">
-                            <div class="row">
-                                <label for="logout" class="col-md-3">Auto Logout</label>
-                                <div class="col-md-6">
-                                    <input type="checkbox"  name="logout" id="logout" value="yes" title=""> Log me out after 15 minutes
+                            <div class="form-group">
+                                <?php // 0 - disable -> 'disabled' ; 1 - option -> '' ; 2 - force -> 'checked disabled' ?>
+                                <div class="switch">
+                                    <input type="checkbox" name="logout" id="logout" value="yes"
+                                           <?php if (config('security.auto_logout') > 1): ?>checked<?php endif; ?>
+                                           <?php if (config('security.auto_logout') != 1): ?>disabled<?php endif; ?>
+                                    >
+                                    <label for="logout">Automatically Log me out after 15 minutes</label>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <label for="securelogin" class="col-md-3">Restrict IP</label>
-                                <div class="col-md-6">
-                                    <input type="checkbox"  name="securelogin" id="securelogin" value="yes" title=""> Restrict session to my IP
+                                <div class="switch">
+                                    <input type="checkbox" name="securelogin" id="securelogin" value="yes"
+                                           <?php if (config('security.secure_login') > 1): ?>checked<?php endif; ?>
+                                           <?php if (config('security.secure_login') != 1): ?>disabled<?php endif; ?>
+                                    >
+                                    <label for="securelogin">Restrict session to my login IP</label>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <label for="ssl" class="col-md-3">SSL (HTTPS)</label>
-                                <div class="col-md-6">
-                                    <input type="checkbox"  name="ssl" id="ssl" value="yes" title=""<?= app()->request->isSecure() ? ' checked disabled': '' ?>> Enable SSL
+                                <div class="switch">
+                                    <input type="checkbox" name="ssl" id="ssl" value="yes"
+                                           <?php if (app()->request->isSecure() || config('security.ssl_login') > 1): ?>checked<?php endif; ?>
+                                           <?php if (app()->request->isSecure() || config('security.ssl_login') != 1): ?>disabled<?php endif; ?>
+                                    >
+                                    <label for="ssl">Enable SSL (HTTPS)</label>
                                 </div>
                             </div>
                         </div>

@@ -18,4 +18,3 @@
         </ul> <!-- END .navbar-nav -->
     </div><!-- END .navbar-collapse -->
 </nav> <!-- END /nav -->
-<div class="clearfix"></div>

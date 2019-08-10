@@ -5,11 +5,11 @@ const api_point = '/api/v1';
 const _location_search = new URLSearchParams(window.location.search);  // Short and parse location.search
 
 const paswordStrengthText = {
-    0: "Worst ☹",  // too guessable: risky password. (guesses < 10^3)
-    1: "Bad ☹",    // too guessable: risky password. (guesses < 10^3)
-    2: "Weak ☹",   // somewhat guessable: protection from unthrottled online attacks. (guesses < 10^8)
-    3: "Good ☺",   // safely unguessable: moderate protection from offline slow-hash scenario. (guesses < 10^10)
-    4: "Strong ☻"  // very unguessable: strong protection from offline slow-hash scenario. (guesses >= 10^10)
+    0: "Worst",  // too guessable: risky password. (guesses < 10^3)
+    1: "Bad",    // too guessable: risky password. (guesses < 10^3)
+    2: "Weak",   // somewhat guessable: protection from unthrottled online attacks. (guesses < 10^8)
+    3: "Good",   // safely unguessable: moderate protection from offline slow-hash scenario. (guesses < 10^10)
+    4: "Strong"  // very unguessable: strong protection from offline slow-hash scenario. (guesses >= 10^10)
 };
 
 const wysibbSetting = {
@@ -45,12 +45,21 @@ function randomString(length = 16, charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
     return result;
 }
 
-function location_search_replace(new_params) {
+function locationSearchReplace(new_params) {
     let search = _location_search;
     for (let i in new_params) {
         search.set(i, new_params[i]);
     }
     return '?' + search.toString();
+}
+
+function checkCookie() {
+    let cookieEnabled = navigator.cookieEnabled;
+    if (!cookieEnabled) {
+        document.cookie = "cookiebar";
+        cookieEnabled = document.cookie.indexOf("cookiebar") !== -1;
+    }
+    return cookieEnabled;
 }
 
 jQuery(document).ready(function () {
@@ -63,6 +72,7 @@ jQuery(document).ready(function () {
 
     // Init Page
     if ($.zui.browser.ie) $.zui.browser.tip();  // Drop all support of IE 6-11
+    if (!checkCookie()) $.zui.browser.tip('Cookie support are required for visit our site.');
 
     $('[data-toggle="tooltip"]').tooltip();  // Active tooltip
     $('[data-toggle="popover"]').popover();  // Active popover
@@ -74,7 +84,7 @@ jQuery(document).ready(function () {
         maxNavCount: 8,
         elements: ['first_icon', 'prev_icon', 'pages', 'next_icon', 'last_icon'],
         linkCreator: function (page, pager) {
-            return location_search_replace({
+            return locationSearchReplace({
                 'page': page,
                 'limit': pager.recPerPage
             });

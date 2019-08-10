@@ -7,6 +7,9 @@
 ### Feat
 - **ban_ips:** Store banned ip in components/Site (01084c9)
 
+### Fix
+- **User:** Fix User Class miss in string format (3680444)
+
 ### Refactor
 - **Config:** Remove params `$throw` in Config()->get() (706cc9a)
 - **RateLimit:** Change last param of isRateLimitHit and rate limit store Namespace (4dd571d)

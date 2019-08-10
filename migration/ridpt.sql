@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 10, 2019 at 10:24 PM
+-- Generation Time: Aug 11, 2019 at 12:05 AM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -820,7 +820,10 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('register.user_default_uploadpos', '1'),
 ('route.admin_index', '60'),
 ('route.admin_service', '90'),
+('security.auto_logout', '1'),
 ('security.max_login_attempts', '10'),
+('security.secure_login', '1'),
+('security.ssl_login', '1'),
 ('torrent_upload.allow_new_custom_tags', '0'),
 ('torrent_upload.enable_anonymous', '1'),
 ('torrent_upload.enable_hr', '1'),

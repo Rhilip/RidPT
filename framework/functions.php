@@ -35,7 +35,7 @@ if (!function_exists('__')) {
 }
 
 if (!function_exists('config')) {
-    function config($config)
+    function config(string $config)
     {
         return app()->config->get($config);
     }
