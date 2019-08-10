@@ -66,8 +66,8 @@ class AuthByCookiesMiddleware
                     $controllerName . '_' . $action
                 )
             );
-            $required_class = config('route.' . $route, false) ?: 1;
-            if ($curuser->getClass(true) < $required_class) {
+            $required_class = config('route.' . $route) ?: 1;
+            if ($curuser->getClass() < $required_class) {
                 return app()->response->setStatusCode(403);  // FIXME redirect to /error may better
             }
 

@@ -149,7 +149,7 @@ class HttpServer extends BaseObject
         $config = require $this->virtualHost['configFile'];
         $app = new Application($config);
         $app->setServ($this->_server);
-        $app->setWorker($workerId);
+        $app->setWorkerId($workerId);
         $app->loadAllComponents();
 
         if ($workerId == 0) {  // 将系统设置中的 Timer 添加到 worker #0 中

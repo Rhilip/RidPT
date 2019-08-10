@@ -23,25 +23,28 @@ class Config extends Component
         // Get \Swoole\Table object From \Server, So that we can share same dynamic config
         $this->cacheTable = app()->getServ()->configTable;
 
-        if ($this->cacheTable->count() == 0 && app()->getWorker() == 0) {
-            $configs = app()->pdo->createCommand("SELECT `name`,`value` FROM  `site_config`")->queryAll();
+        if ($this->cacheTable->count() == 0 && app()->getWorkerId() == 0) {
+            $configs = app()->pdo->createCommand('SELECT `name`,`value` FROM  `site_config`')->queryAll();
             foreach ($configs as $config) {
-                $this->cacheTable->set($config["name"], [$this->valueField => $config["value"]]);
+                $this->cacheTable->set($config['name'], [$this->valueField => $config['value']]);
             }
+            println('Load Dynamic Site Config Success, Get ' . count($configs) . ' configs.');
         }
     }
 
-    public function get(string $name, bool $throw = true)
+    public function get(string $name)
     {
-        $setting = $this->cacheTable->get($name, $this->valueField);
-        // First Check config stored in RedisConnection Cache, If it exist , then just return the cached key
-        if (false === $setting) {
-            // Get config From Database
-            $setting = app()->pdo->createCommand("SELECT `value` from `site_config` WHERE `name` = :name")
-                ->bindParams(["name" => $name])->queryScalar();
-            // In this case (Load config From Database Failed) , A Exception should throw
-            if ($setting === false && $throw)
-                throw new ConfigException(sprintf("Dynamic Setting \"%s\" couldn't be found.", $name));
+        // First Check config stored in Swoole Table. If it exist , then just return the cached key
+        if (false === $setting = $this->cacheTable->get($name, $this->valueField)) {
+            // Deal with config with prefix `route.`
+            if (strpos($name,'route.') !== 0) {
+                // Get config From Database
+                $setting = app()->pdo->createCommand('SELECT `value` from `site_config` WHERE `name` = :name')
+                    ->bindParams(['name' => $name])->queryScalar();
+                // In this case (Load config From Database Failed) , A Exception should throw
+                if ($setting === false)
+                    throw new ConfigException(sprintf('Dynamic Setting "%s" couldn\'t be found.', $name));
+            }
 
             $this->cacheTable->set($name, [$this->valueField => $setting]);
         }

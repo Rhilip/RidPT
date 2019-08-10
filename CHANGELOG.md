@@ -4,6 +4,9 @@
 ### Docs
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
+### Refactor
+- **view:** Fix helper/username params (720f37e)
+
 
 <a name="v0.1.5-alpha"></a>
 ## [v0.1.5-alpha] - 2019-08-09

@@ -199,18 +199,12 @@ class Application extends \Rid\Base\Application
         $this->_serv = $serv;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getWorker()
+    public function getWorkerId():int
     {
-        return $this->_worker;
+        return $this->_worker ?? -1;
     }
 
-    /**
-     * @param mixed $worker
-     */
-    public function setWorker($worker): void
+    public function setWorkerId(int $worker): void
     {
         $this->_worker = $worker;
     }
