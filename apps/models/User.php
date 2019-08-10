@@ -191,13 +191,9 @@ class User
         return $this->email;
     }
 
-    /**
-     * @param bool $raw
-     * @return mixed
-     */
-    public function getClass($raw = false)
+    public function getClass(): int
     {
-        return $raw ? $this->class : self::ROLE[$this->class];
+        return $this->class;
     }
 
     /** TODO use gravatar
@@ -540,11 +536,10 @@ class User
     public function deleteUserThisSession()
     {
         $user_session_id = app()->request->cookie(Constant::cookie_name);
-        $success = app()->redis->zRem(Constant::mapUserSessionToId, $user_session_id);
         app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
             'sid' => $user_session_id
         ])->execute();
         app()->cookie->delete(Constant::cookie_name);
-        return $success ? true : false;
+        return true;
     }
 }
