@@ -10,12 +10,8 @@ namespace apps\models\form\Traits;
 
 
 use apps\libraries\Constant;
+use Redis;
 
-/**
- * Trait actionRateLimitCheckTrait
- * @package apps\models\form\Traits
- * @method buildCallbackFailMsg <-- Need this to prevent phpStorm's "member has protect access" inspection errors.
- */
 trait actionRateLimitCheckTrait
 {
 
@@ -26,12 +22,12 @@ trait actionRateLimitCheckTrait
         ];
     }
 
-    private function isRateLimitHit($action_key, $period, $max_count,$uid = null): bool
+    private function isRateLimitHit($action_key, $period, $max_count, $pool = null): bool
     {
-        $uid = $uid ?? app()->site->getCurUser()->getId();
-        $key = Constant::rateLimitPool($uid, $action_key);
+        $pool = $pool ?? 'user_' . app()->site->getCurUser()->getId();
+        $key = Constant::rateLimitPool($pool, $action_key);
         $now_ts = time() * 1000;
-        $pipe = app()->redis->multi(\Redis::PIPELINE);
+        $pipe = app()->redis->multi(Redis::PIPELINE);
 
         $pipe->zAdd($key, $now_ts, $now_ts);
         $pipe->zRemRangeByScore($key, 0, $now_ts - $period * 1000);

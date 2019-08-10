@@ -42,8 +42,7 @@ trait ClassValueCacheUtils
         $timenow = time();
         if (array_key_exists($key, static::$_StaticCacheValue)) {
             if ($timenow > static::$_StaticCacheValue[$key . ':expired_at']) {
-                unset(static::$_StaticCacheValue[$key]);
-                unset(static::$_StaticCacheValue[$key . ':expired_at']);
+                static::cleanStaticCacheValue($key);
             } else {
                 return static::$_StaticCacheValue[$key];
             }
@@ -55,9 +54,24 @@ trait ClassValueCacheUtils
             app()->redis->set(static::getStaticCacheNameSpace() . ':' . $key, $value, $ttl);
         }
 
+        static::setStaticCacheValue($key, $value, $ttl, false);
+        return $value;
+    }
+
+    final protected static function setStaticCacheValue($key, $value, $ttl, $clean_first = true)
+    {
+        $timenow = time();
+        if ($clean_first) static::cleanStaticCacheValue($key);
         static::$_StaticCacheValue[$key] = $value;
         static::$_StaticCacheValue[$key . ':expired_at'] = $timenow + $ttl;
+    }
 
-        return $value;
+    final protected static function cleanStaticCacheValue($key)
+    {
+        if (array_key_exists($key, static::$_StaticCacheValue)) {
+            unset(static::$_StaticCacheValue[$key]);
+            unset(static::$_StaticCacheValue[$key . ':expired_at']);
+            app()->redis->del(static::getStaticCacheNameSpace() . ':' . $key);
+        }
     }
 }

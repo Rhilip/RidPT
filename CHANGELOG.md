@@ -9,6 +9,7 @@
 
 ### Refactor
 - **Config:** Remove params `$throw` in Config()->get() (706cc9a)
+- **View:** Make View extends BaseObject (0865cf9)
 - **view:** Fix helper/username params (720f37e)
 
 

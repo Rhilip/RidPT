@@ -57,8 +57,8 @@ class Constant
         return 'Tracker:torrent_infohash_' . $bin2hex_hash . '_content:hash';
     }
 
-    public static function rateLimitPool($uid,$action)
+    public static function rateLimitPool($pool, $action)
     {
-        return 'Rate:user_' . $uid . '_action_' . $action . '_limit:zset';
+        return 'Rate:pool_' . $pool . '_action_' . $action . '_limit:zset';
     }
 }
