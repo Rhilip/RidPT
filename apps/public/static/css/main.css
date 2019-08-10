@@ -17,16 +17,16 @@ body{background-color:#f6f6f6}
 .black{color:black}
 .white{color:white}
 
-.bgred{background-color:red !important}
-.bggreen{background-color:green !important}
+.bgred{background-color:red!important}
+.bggreen{background-color:green!important}
 
-.nowrap {white-space: nowrap;}
+.nowrap{white-space:nowrap}
 
-.required:after{position: static}
+.required:after{position:static}
 
 .captcha_img_load{width:150px;height:40px}
 
-.pager-unset-margin{margin: unset}
+.pager-unset-margin{margin:unset}
 
 /*-----------------------------------------------------------------------------------*/
 /*	2.	Layout of Header, Navigation & Menus
@@ -122,16 +122,10 @@ body{background-color:#f6f6f6}
 #torrent_extend_info_panel_group hr{margin:10px 0}
 
 /* '/torrent/structure' */
-#torrent_structure ul{}
-#torrent_structure ul,#torrent_structure li{list-style-type:none;color:#000}
-#torrent_structure li div.string{padding:3px}
-#torrent_structure li div.integer{padding:3px}
-#torrent_structure li div.dictionary{padding:3px}
-#torrent_structure li div.list{padding:3px}
-#torrent_structure li div.string span.icon{color:#090;padding:2px}
-#torrent_structure li div.integer span.icon{color:#990;padding:2px}
-#torrent_structure li div.dictionary span.icon{color:#909;padding:2px}
-#torrent_structure li div.list span.icon{color:#009;padding:2px}
-#torrent_structure li span.title{font-weight:bold}
+#torrent_structure li span.type[data-type=string]{color:#090}
+#torrent_structure li span.type[data-type=integer]{color:#990}
+#torrent_structure li span.type[data-type=dictionary]{color:#909}
+#torrent_structure li span.type[data-type=list]{color:#009}
+#torrent_structure li span.title{font-weight:700}
 
 #subs_search {margin-bottom: 20px}

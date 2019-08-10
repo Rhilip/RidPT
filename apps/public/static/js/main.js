@@ -317,14 +317,6 @@ jQuery(document).ready(function () {
         });
     });
 
-
-    // For torrents structure page
-    if ($('#torrent_structure').length) {
-        $('#torrent_structure div.dictionary,div.list').click(function () {
-            $(this).next('ul').toggle();
-        });
-    }
-
     // User Invite
     $('.invite-btn').click(function () {
         $('.invite-btn').removeAttr('disabled');

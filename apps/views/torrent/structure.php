@@ -19,12 +19,12 @@ if (!function_exists('torrent_structure_builder')) {
             $value_length = strlen(Bencode::encode($value));
             if (is_iterable($value)) {  // It may `dictionary` or `list`
                 $type = is_indexed_array($value) ? 'list' : 'dictionary';
-                $ret .= "<li><div align='left' class='" . $type . "'><a href='javascript:'> + <span class=title>[" . $item . "]</span> <span class='icon'>(" . ucfirst($type) . ")</span> <span class=length>[" . $value_length . "]</span></a></div>";
-                $ret .= "<ul style='display:none'>" . torrent_structure_builder($value, $item) . "</ul></li>";
-            } else { // It may `interger` or `string`
+                $ret .= "<li" . (($item=='root' || $item == 'info') ? ' class="open"' : '') . "><a href='#'><span class='title'>[" . $item . "]</span> <span class='type' data-type='" . $type ."'>(" . ucfirst($type) . ")</span> <span class=length>[" . $value_length . "]</span></a>";
+                $ret .= "<ul>" . torrent_structure_builder($value, $item) . "</ul></li>";
+            } else { // It may `integer` or `string`
                 $type = is_integer($value) ? 'integer' : 'string';
                 $value = ($parent == 'info' && $item == 'pieces') ? "0x" . bin2hex(substr($value, 0, 25)) . "..." : $value;  // Cut the info pieces....
-                $ret .= "<li><div align=left class=" . $type . "> - <span class=title>[" . $item . "]</span> <span class=icon>(" . ucfirst($type) . ")</span> <span class=length>[" . $value_length . "]</span>: <span class=value>" . $value . "</span></div></li>";
+                $ret .= "<li><span class='title'>[" . $item . "]</span> <span class='type' data-type='" . $type ."'>(" . ucfirst($type) . ")</span> <span class=length>[" . $value_length . "]</span>: <span class=value>" . $value . "</span></li>";
             }
         }
         return $ret;
@@ -50,7 +50,9 @@ $torrent = $structure->getTorrent();
             <div class="panel-heading"><b>Torrent Structure</b></div>
             <div class="panel-body" id="torrent_structure_body">
                 <div id="torrent_structure">
-                <?= torrent_structure_builder(['root' => $structure->getTorrentFileContentDict()]); ?>
+                    <ul class="tree tree-lines tree-angles" data-ride="tree" data-animate="true">
+                        <?= torrent_structure_builder(['root' => $structure->getTorrentFileContentDict()]); ?>
+                    </ul>
                 </div>
             </div>
         </div>

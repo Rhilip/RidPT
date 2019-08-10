@@ -8,7 +8,7 @@
 - **ban_ips:** Store banned ip in components/Site (01084c9)
 
 ### Refactor
-- **Config:** Remove params `$throw` in Config()->get() (4acfcec)
+- **Config:** Remove params `$throw` in Config()->get() (706cc9a)
 - **view:** Fix helper/username params (720f37e)
 
 
