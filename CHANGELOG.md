@@ -5,6 +5,7 @@
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
 ### Feat
+- **Auth:** Use JWT to set cookies content (bf897c6)
 - **ban_ips:** Store banned ip in components/Site (01084c9)
 
 ### Fix

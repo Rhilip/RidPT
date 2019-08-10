@@ -276,17 +276,17 @@ class Site extends Component
     public static function ruleCategory(): array
     {
         return static::getStaticCacheValue('enabled_torrent_category', function () {
-            return app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
+            $cats_raw = app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
+
+            $cats = [];
+            foreach ($cats_raw as $cat_raw) $cats[$cat_raw['id']] = $cat_raw;
+            return $cats;
         }, 86400);
     }
 
     public static function CategoryDetail($cat_id): array
     {
-        return static::getStaticCacheValue('torrent_category_' . $cat_id, function () use ($cat_id) {
-            return app()->pdo->createCommand('SELECT * FROM `categories` WHERE id= :cid LIMIT 1;')->bindParams([
-                'cid' => $cat_id
-            ])->queryOne();
-        }, 86400);
+        return static::ruleCategory()[$cat_id];
     }
 
     public static function ruleCanUsedCategory(): array
