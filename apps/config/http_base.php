@@ -181,7 +181,7 @@ return [
         ],
 
         'site' => [
-            'class' => \apps\components\Site::class
+            'class' => apps\components\Site::class
         ],
     ],
 
@@ -198,7 +198,7 @@ return [
     // 类库配置
     'libraries'           => [
         'mailer' => [
-            'class'   => \apps\libraries\Mailer::class,
+            'class'   => apps\libraries\Mailer::class,
             'debug'   => env('MAILER_DEBUG'),
             'host'    => env('MAILER_HOST'),
             'port'    => env('MAILER_PORT'),

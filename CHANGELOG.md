@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Docs
+- **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
+
 
 <a name="v0.1.5-alpha"></a>
 ## [v0.1.5-alpha] - 2019-08-09

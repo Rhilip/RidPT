@@ -45,6 +45,13 @@ class Site extends Component
         return 'Cache:site';
     }
 
+    public function getBanIpsList(): array
+    {
+        return $this->getCacheValue('ip_ban_list', function () {
+            return app()->pdo->createCommand('SELECT `ip` FROM `ban_ips`')->queryColumn();
+        });
+    }
+
     public function getTorrent($tid)
     {
         if (array_key_exists($tid, $this->torrents)) {
@@ -250,7 +257,7 @@ class Site extends Component
     public static function ruleCanUsedTeam(): array
     {
         return array_filter(static::ruleTeam(), function ($team) {
-            return app()->site->getCurUser()->getClass(true) >= $team['class_require'];
+            return app()->site->getCurUser()->getClass() >= $team['class_require'];
         });
     }
 
