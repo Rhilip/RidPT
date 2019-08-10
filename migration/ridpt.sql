@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 10, 2019 at 11:21 AM
+-- Generation Time: Aug 10, 2019 at 10:24 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -1184,7 +1184,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `password` varchar(60) NOT NULL,
   `opt` varchar(40) DEFAULT NULL,
   `email` varchar(80) NOT NULL,
-  `status` enum('banned','pending','parked','confirmed') NOT NULL DEFAULT 'pending',
+  `status` enum('disabled','pending','parked','confirmed') NOT NULL DEFAULT 'pending',
   `class` smallint(6) UNSIGNED NOT NULL DEFAULT '1',
   `passkey` varchar(32) NOT NULL,
   `invite_by` int(11) UNSIGNED NOT NULL DEFAULT '0',

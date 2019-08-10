@@ -31,25 +31,10 @@ class AuthByCookiesMiddleware
         }
 
         if (false === $curuser) {
-            $query = app()->request->server('query_string');
-            $to = app()->request->server('path_info') . (strlen($query) > 0 ? '?' . $query : '');
-            app()->session->set('login_return_to', $to);
+            app()->cookie->delete(Constant::cookie_name);  // Delete exist cookies
+            app()->session->set('login_return_to', app()->request->fullUrl());  // Store the url which visitor want to hit
             return app()->response->redirect('/auth/login');
         } else {
-            /**
-             * Check if session is locked with IP
-             */
-            $userSessionId = app()->request->cookie(Constant::cookie_name);
-            if (substr($userSessionId, 0, 1) === '1') {
-                $record_ip_crc = substr($userSessionId, 2, 8);
-                $this_ip_crc = sprintf('%08x', crc32($now_ip));
-
-                if (strcasecmp($record_ip_crc, $this_ip_crc) !== 0) {  // The Ip isn't matched
-                    app()->cookie->delete(Constant::cookie_name);
-                    return app()->response->redirect('/auth/login');
-                }
-            }
-
             /** Check User Permission to this route
              *
              * When user visit - /admin -> Controller : \apps\controllers\AdminController  Action: actionIndex

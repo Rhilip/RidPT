@@ -98,33 +98,26 @@ class AuthController extends Controller
 
         if (app()->request->isPost()) {
             $login = new Auth\UserLoginForm();
-            $login->setData(app()->request->post());
-            $success = $login->validate();
-
-            if (!$success) {
+            if (false === $success = $login->validate()) {
                 $login->LoginFail();
                 return $this->render('auth/login', [
-                    "username" => $login->username,
-                    "error_msg" => $login->getError(),
+                    'username' => $login->username,
+                    'error_msg' => $login->getError(),
                     'left_attempts' => $left_attempts
                 ]);
             } else {
-                $success = $login->createUserSession();
-                if ($success === true) {
-                    $login->updateUserLoginInfo();
+                $login->flush();
 
-                    $return_to = app()->session->pop('login_return_to') ?? '/index';
-                    if (!app()->request->isSecure() && $login->ssl === 'yes') {  // Upgrade the scheme with full url
-                        $return_to = 'https://' . app()->request->header('host') . $return_to;
-                    }
-
-                    return app()->response->redirect($return_to);
-                } else {
-                    return $this->render('action_fail', [
-                        'title' => 'Login Failed',
-                        'msg' => $success
-                    ]);
+                $return_to = app()->session->pop('login_return_to') ?? '/index';
+                if ($login->ssl === 'yes'   // User want secure access
+                    && !app()->request->isSecure()    // User requests is not secure
+                    // && true // TODO our site support ssl feature
+                ) {  // Upgrade the scheme with full url
+                    $return_to = str_replace('http://', 'https://', $return_to);
+                    app()->response->setHeader('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
                 }
+
+                return app()->response->redirect($return_to);
             }
         } else {
             return $this->render('auth/login', ['left_attempts' => $left_attempts]);
@@ -133,7 +126,7 @@ class AuthController extends Controller
 
     public function actionLogout()
     {
-        // TODO add CSRF protect
+        // TODO add CSRF protect and Logout Form
         app()->site->getCurUser()->deleteUserThisSession();
         return app()->response->redirect('/auth/login');
     }

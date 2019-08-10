@@ -15,36 +15,50 @@ use Redis;
 trait actionRateLimitCheckTrait
 {
 
-    protected function getRateLimitRules(): array
+    protected static function getRateLimitRules(): array
     {
+        /** @noinspection PhpUnusedLocalVariableInspection */
+        $pool = 'user_' . app()->site->getCurUser()->getId();
         return [
-            /* ['key' => 'dl_60', 'period' => 60, 'max' => 5] */
+            /* ['key' => 'dl_60', 'period' => 60, 'max' => 5, 'pool' => $pool] */
         ];
     }
 
-    private function isRateLimitHit($action_key, $period, $max_count, $pool = null): bool
+    private function isRateLimitHit($limit_status)
     {
-        $pool = $pool ?? 'user_' . app()->site->getCurUser()->getId();
-        $key = Constant::rateLimitPool($pool, $action_key);
-        $now_ts = time() * 1000;
+        $pool = $limit_status['pool'] ?? 'default_';
+        $action = $limit_status['key'] ?? 'default';
+        $key = Constant::rateLimitPool($pool, $action);
+
+        $period = $limit_status['period'] ?? 60;
+
+        $now_ts = time();
         $pipe = app()->redis->multi(Redis::PIPELINE);
 
         $pipe->zAdd($key, $now_ts, $now_ts);
-        $pipe->zRemRangeByScore($key, 0, $now_ts - $period * 1000);
+        $pipe->zRemRangeByScore($key, 0, $now_ts - $period);
         $pipe->zCard($key);
         $pipe->expire($key, $period + 1);
 
         $replies = $pipe->exec();
         $count = $replies[2];
-        return $count <= $max_count;
+        return [$count <= ($limit_status['max'] ?? 10), $count];
     }
 
+    protected function hookRateLimitCheckFailed($limit_status, $count)
+    {
+    }
+
+    /** @noinspection PhpUnused */
     protected function rateLimitCheck()
     {
-        if (empty($this->getRateLimitRules())) return;  // It seems we don't need rate limit
+        if (empty($this::getRateLimitRules())) return;  // It seems we don't need rate limit
 
-        foreach ($this->getRateLimitRules() as $limit_status) {
-            if (!$this->isRateLimitHit($limit_status['key'], $limit_status['period'], $limit_status['max'])) {
+        foreach ($this::getRateLimitRules() as $limit_status) {
+            list($vary, $count) = $this->isRateLimitHit($limit_status);
+
+            if (false === $vary) {
+                $this->hookRateLimitCheckFailed($limit_status, $count);
                 $this->buildCallbackFailMsg('rate', 'rate limit hit');
                 return;
             }

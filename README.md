@@ -168,6 +168,7 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 | [MixPHP](https://github.com/mix-php/mix-framework/tree/v1) | Framework | <https://www.kancloud.cn/onanying/mixphp1/379324> ( Chinese Version ) |
 | [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | <http://www.sirius.ro/php/sirius/validation/> |
 | [league/plates](https://github.com/thephpleague/plates) | Template system | <http://platesphp.com/> |
+| [firebase/php-jwt](https://github.com/firebase/php-jwt) | JWT | <https://github.com/firebase/php-jwt>, <https://jwt.io/> |
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_large)

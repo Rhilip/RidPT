@@ -11,6 +11,7 @@ namespace apps\models\form\Auth;
 use apps\libraries\Constant;
 use apps\models\User;
 
+use Firebase\JWT\JWT;
 use Rid\Helpers\StringHelper;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
@@ -43,10 +44,10 @@ class UserLoginForm extends Validator
     private $cookieSecure = false;  // Notice : Only change this value when you first run !!!!
     private $cookieHttpOnly = true;
 
-    public function __construct(array $config = [])
-    {
-        parent::__construct($config);
-    }
+    private $jwt_payload;
+
+    protected $_autoload_data = true;
+    protected $_autoload_data_from = ['post'];
 
     public static function inputRules()
     {
@@ -65,13 +66,24 @@ class UserLoginForm extends Validator
 
     public static function callbackRules()
     {
-        return ['validateCaptcha', 'loadUserFromPdo', 'isMaxLoginIpReached'];
+        return ['validateCaptcha', 'isMaxLoginIpReached', 'loadUserFromPdo', 'isMaxUserSessionsReached'];
     }
 
+    /** @noinspection PhpUnused */
+    protected function isMaxLoginIpReached()  // FIXME may use Trait
+    {
+        $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
+        if ($test_count > config('security.max_login_attempts')) {
+            $this->buildCallbackFailMsg('Login Attempts', 'User Max Login Attempts Archived.');
+            return;
+        }
+    }
+
+    /** @noinspection PhpUnused */
     protected function loadUserFromPdo()
     {
-        $this->self = app()->pdo->createCommand("SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1")->bindParams([
-            "uname" => $this->getData('username'), "email" => $this->getData('username'),
+        $this->self = app()->pdo->createCommand('SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1')->bindParams([
+            'uname' => $this->getData('username'), 'email' => $this->getData('username'),
         ])->queryOne();
 
         if (false === $this->self) {  // User is not exist
@@ -101,18 +113,21 @@ class UserLoginForm extends Validator
         }
 
         // User 's status is banned or pending~
-        if (in_array($this->self['status'], [User::STATUS_BANNED, User::STATUS_PENDING])) {
-            $this->buildCallbackFailMsg('Account', 'User account is not confirmed.');
+        if (in_array($this->self['status'], [User::STATUS_DISABLED, User::STATUS_PENDING])) {
+            $this->buildCallbackFailMsg('Account', 'User account is disabled or may not confirmed.');
             return;
         }
     }
 
-    protected function isMaxLoginIpReached()
+    /** @noinspection PhpUnused */
+    protected function isMaxUserSessionsReached()
     {
-        $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
-        if ($test_count > config('security.max_login_attempts')) {
-            $this->buildCallbackFailMsg('Login Attempts', 'User Max Login Attempts Archived.');
-            return;
+        $exist_session_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE uid = :uid AND expired = 0')->bindParams([
+            'uid' => $this->self['id']
+        ])->queryScalar();
+
+        if ($exist_session_count >= config('base.max_per_user_session')) {
+            $this->buildCallbackFailMsg('max_per_user_session', 'Reach the limit of Max User Session.');
         }
     }
 
@@ -122,69 +137,71 @@ class UserLoginForm extends Validator
         app()->redis->hIncrBy('SITE:fail_login_ip_count', app()->request->getClientIp(), 1);
     }
 
-    public function createUserSession()
+    public function flush()
     {
-        $userId = $this->self['id'];
-
-        $exist_session_count = app()->redis->zCount(Constant::mapUserSessionToId, $userId, $userId);
-        if ($exist_session_count < config('base.max_per_user_session')) {
-            /**
-             * SessionId Format:
-             *      /^(?P<secure_login_flag>[01])_(?P<ip_crc>[a-z0-9]{8})_\w+$/
-             * The first character of sessionId is the Flag of secure login,
-             * if secure login, The second param is the sprintf('%08x',crc32($id))
-             *            else, Another random string with length 8
-             * The prefix of sessionId is in lowercase
-             *
-             */
-            if ($this->securelogin === 'yes') {
-                $sid_prefix = '1_' . sprintf('%08x', crc32(app()->request->getClientIp())) . '_';
-            } else {
-                $sid_prefix = '0_' . StringHelper::getRandomString(8) . '_';
-            }
-            $sid_prefix = strtolower($sid_prefix);
-            do { // To make sure this session is unique !
-                $userSessionId = $sid_prefix . StringHelper::getRandomString($this->sessionLength - strlen($sid_prefix));
-
-                $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE sid = :sid')->bindParams([
-                    'sid' => $userSessionId
-                ])->queryScalar();
-            } while ($count != 0);
-
-            // store user login information , ( for example `login ip`,`user_agent`,`last activity at` )
-            app()->pdo->createCommand('INSERT INTO `user_session_log`(`uid`, `sid`, `login_ip`, `user_agent` ,`login_at`, `last_access_at`) ' .
-                'VALUES (:uid,:sid,INET6_ATON(:login_ip),:ua,NOW(), NOW())')->bindParams([
-                'uid' => $userId, 'sid' => $userSessionId,
-                'login_ip' => app()->request->getClientIp(),
-                'ua' => app()->request->header('user-agent')
-            ])->execute();
-
-            // Add this session id in Redis Cache
-            app()->redis->zAdd(Constant::mapUserSessionToId, $userId, $userSessionId);
-
-            // Set User Cookie
-            $cookieExpire = $this->cookieExpires;
-            if ($this->logout === 'yes') {
-                $cookieExpire = time() + 15 * 60;
-                app()->redis->zAdd('Site:Sessions:to_expire', $cookieExpire, $userSessionId);
-            }
-
-            app()->response->setCookie(Constant::cookie_name, $userSessionId, $cookieExpire, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
-            return true;
-        } else {
-            return 'Reach the limit of Max User Session.';
-        }
+        $this->createUserSession();
+        $this->updateUserLoginInfo();
+        $this->noticeUser();
     }
 
-    public function updateUserLoginInfo()
+    /**
+     * Use jwt ways to generate user identity
+     */
+    private function createUserSession()
     {
+        $timenow = time();
+        $key = env('APP_SECRET_KEY');
+        $login_ip = app()->request->getClientIp();
+
+        do { // Generate unique JWT ID
+            $jti = StringHelper::getRandomString(64);
+            $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE sid = :sid;')->bindParams([
+                'sid' => $jti
+            ])->queryScalar();
+        } while ($count != 0);
+
+        // Official Payload key
+        $payload = [
+            'iss' => config('base.site_url'),
+            'iat' => $timenow,
+            'jti' => $jti,
+        ];
+
+        $cookieExpire = $this->cookieExpires;
+        if ($this->logout === 'yes') {
+            $payload['exp'] = $cookieExpire = $timenow + 15 * 60;  // 15 minutes
+        }
+
+        // Custom Payload key
+        $payload['user_id'] = $this->self['id'];  // Store User Id so we can quick load their information
+        if ($this->securelogin === 'yes') $payload['secure_login_ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
+        if ($this->ssl) $payload['ssl'] = true;  // FIXME Check if site support this feature , Store User want full ssl protect
+
+        // Generate JWT content
+        $this->jwt_payload = $payload;
+        $jwt = JWT::encode($payload, $key);
+
+        // Sent JWT content AS Cookie
+        app()->response->setCookie(Constant::cookie_name, $jwt, $cookieExpire, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
+    }
+
+    private function updateUserLoginInfo()
+    {
+        // FIXME change store data, Store User Login Information in database
+        app()->pdo->createCommand('INSERT INTO `user_session_log`(`uid`, `sid`, `login_ip`, `user_agent` ,`login_at`, `last_access_at`) ' .
+            'VALUES (:uid, :sid, INET6_ATON(:login_ip), :ua, NOW(), NOW())')->bindParams([
+            'uid' => $this->jwt_payload['user_id'], 'sid' => $this->jwt_payload['jti'],
+            'login_ip' => app()->request->getClientIp(),
+            'ua' => app()->request->header('user-agent')
+        ])->execute();
+
         // TODO or move to task queue...
         app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
             "ip" => app()->request->getClientIp(), "id" => $this->self["id"]
         ])->execute();
     }
 
-    public function noticeUser()
+    private function noticeUser()
     {
         // TODO send email to tail user login
     }

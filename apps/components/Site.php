@@ -12,9 +12,14 @@ use apps\models;
 use apps\libraries\Mailer;
 use apps\libraries\Constant;
 
+use Exception;
+use Firebase\JWT\ExpiredException;
 use Rid\Http\View;
 use Rid\Base\Component;
 use Rid\Utils\ClassValueCacheUtils;
+
+use Firebase\JWT\JWT;
+use RuntimeException;
 
 class Site extends Component
 {
@@ -35,6 +40,7 @@ class Site extends Component
     {
         parent::onRequestBefore();
         $this->cur_user = null;
+
         $this->users = [];
         $this->torrents = [];
         $this->map_username_to_id = [];
@@ -47,9 +53,9 @@ class Site extends Component
 
     public function getBanIpsList(): array
     {
-        return $this->getCacheValue('ip_ban_list', function () {
+        return static::getStaticCacheValue('ip_ban_list', function () {
             return app()->pdo->createCommand('SELECT `ip` FROM `ban_ips`')->queryColumn();
-        });
+        }, 86400);
     }
 
     public function getTorrent($tid)
@@ -120,42 +126,93 @@ class Site extends Component
     protected function loadCurUser($grant = 'cookies')
     {
         $user_id = false;
-        if ($grant == 'cookies') $user_id = $this->loadCurUserFromCookies();
-        elseif ($grant == 'passkey') $user_id = $this->loadCurUserFromPasskey();
-        // elseif ($grant == 'oath2') $user_id = $this->loadCurUserFromOAth2();
+        if ($grant == 'cookies') $user_id = $this->loadCurUserIdFromCookies();
+        elseif ($grant == 'passkey') $user_id = $this->loadCurUserIdFromPasskey();
+        // elseif ($grant == 'oath2') $user_id = $this->loadCurUserIdFromOAth2();
 
         if ($user_id !== false) {
             $user_id = intval($user_id);
-            return $this->getUser($user_id);
+            $curuser = $this->getUser($user_id);
+            if ($curuser->getStatus() !== models\User::STATUS_DISABLED)  // user status shouldn't be disabled
+                return $this->getUser($user_id);
         }
 
         return false;
     }
 
-    protected function loadCurUserFromCookies()
+    protected function loadCurUserIdFromCookies()
     {
+        $timenow = time();
         $user_session_id = app()->request->cookie(Constant::cookie_name);
         if (is_null($user_session_id)) return false;  // quick return when cookies is not exist
 
-        if (false === $user_id = app()->redis->zScore(Constant::mapUserSessionToId, $user_session_id)) {
-            // First check cache
-            if (false === app()->redis->zScore(Constant::invalidUserSessionZset, $user_session_id)) {
-                // check session from database to avoid lost
-                $user_id = app()->pdo->createCommand('SELECT `uid` FROM `user_session_log` WHERE `sid` = :sid LIMIT 1;')->bindParams([
-                    'sid' => $user_session_id
-                ])->queryScalar();
-                if (false === $user_id) {  // This session is not exist
-                    app()->redis->zAdd(Constant::invalidUserSessionZset, time() + 86400, $user_session_id);
-                } else {  // Remember it
-                    app()->redis->zAdd(Constant::mapUserSessionToId, $user_id, $user_session_id);
+        $key = env('APP_SECRET_KEY');
+
+        try {
+            $decoded = JWT::decode($user_session_id, $key, ['HS256']);
+        } catch (Exception $e) {
+            if ($e instanceof ExpiredException) {  // Lazy Expired Check .....
+                // Since in this case , we can't get payload with jti information directly, we should manually decode jwt content
+                list($headb64, $bodyb64, $cryptob64) = explode('.', $user_session_id);
+                $payload = JWT::jsonDecode(JWT::urlsafeB64Decode($bodyb64));
+                $jti = $payload->jti ?? '';
+                if ($jti && strlen($jti) === 64) {
+                    app()->redis->zAdd(Constant::invalidUserSessionZset, $timenow + 86400, $jti);
+                    app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE `sid` = :sid')->bindParams([
+                        'sid' => $jti
+                    ])->execute();
                 }
             }
+            app()->session->set('jwt_error_msg', $e->getMessage());  // Store error msg
+            return false;
         }
 
-        return $user_id;
+        $decoded_array = (array)$decoded;  // jwt valid data in array
+
+        if (!isset($decoded_array['jti'])) return false;
+
+        // Check if user lock access ip ?
+        if (isset($decoded_array['secure_login_ip'])) {
+            $now_ip_crc = sprintf('%08x', crc32(app()->request->getClientIp()));
+            if (strcasecmp($decoded_array['secure_login_ip'], $now_ip_crc) !== 0) return false;
+        }
+
+        // Check if user want secure access but his environment is not secure
+        if (isset($decoded_array['ssl']) && $decoded_array['ssl'] && // User want secure access
+            !app()->request->isSecure() // User requests is not secure
+            // TODO our site support ssl feature
+        ) {
+            app()->response->redirect(str_replace('http://', 'https://', app()->request->fullUrl()));
+            app()->response->setHeader('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
+        }
+
+        // Verity $jti is force expired or not ?
+        $jti = $decoded_array['jti'];
+        if ($jti !== app()->session->get('jti')) { // Not Match Session record
+            if (false === app()->redis->zScore(Constant::validUserSessionZset, $jti)) {  // Not Record in valid cache
+                // if this $jti not in valid cache , then check invalid cache
+                if (app()->redis->zScore(Constant::invalidUserSessionZset, $jti) !== false) {
+                    return false;   // This $jti has been marked as invalid
+                } else {  // Invalid cache still not hit, then check $jti from database to avoid lost
+                    $exist_jti = app()->pdo->createCommand('SELECT `id` FROM `user_session_log` WHERE `sid` = :sid AND `expired` = 0 LIMIT 1;')->bindParams([
+                        'sid' => $jti
+                    ])->queryScalar();
+
+                    if (false === $exist_jti) {  // Absolutely This $jti is not exist or expired
+                        app()->redis->zAdd(Constant::invalidUserSessionZset, $timenow + 86400, $jti);
+                        return false;
+                    }
+                }
+
+                app()->redis->zAdd(Constant::validUserSessionZset, $decoded_array['exp'] ?? $timenow + 43200, $jti);  // Store in valid cache
+            }
+            app()->session->set('jti', $jti);  // Store the $jti value in session so we can visit $jti in other place
+        }
+
+        return $decoded_array['user_id'] ?? false;
     }
 
-    protected function loadCurUserFromPasskey()
+    protected function loadCurUserIdFromPasskey()
     {
         $passkey = app()->request->get('passkey');
         $user_id = app()->redis->zScore(Constant::mapUserPasskeyToId, $passkey);
@@ -225,11 +282,11 @@ class Site extends Component
 
     public static function CategoryDetail($cat_id): array
     {
-        return static::getStaticCacheValue('torrent_category_' . $cat_id ,function () use ($cat_id) {
+        return static::getStaticCacheValue('torrent_category_' . $cat_id, function () use ($cat_id) {
             return app()->pdo->createCommand('SELECT * FROM `categories` WHERE id= :cid LIMIT 1;')->bindParams([
                 'cid' => $cat_id
             ])->queryOne();
-        },86400);
+        }, 86400);
     }
 
     public static function ruleCanUsedCategory(): array
@@ -241,7 +298,7 @@ class Site extends Component
 
     public static function ruleQuality($quality): array
     {
-        if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
+        if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new RuntimeException('Unregister quality : ' . $quality);
         return static::getStaticCacheValue('enabled_quality_' . $quality, function () use ($quality) {
             return app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
         }, 86400);

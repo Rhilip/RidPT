@@ -68,7 +68,7 @@ class User
     ];
 
     // User Status
-    public const STATUS_BANNED = 'banned';
+    public const STATUS_DISABLED = 'disabled';
     public const STATUS_PENDING = 'pending';
     public const STATUS_PARKED = 'parked';
     public const STATUS_CONFIRMED = 'confirmed';
@@ -135,6 +135,14 @@ class User
     public function getBonusOther()
     {
         return $this->bonus_other;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 
     protected function getCacheNameSpace(): string
@@ -530,12 +538,11 @@ class User
     }
 
     public function getSessionId() {
-        return app()->request->cookie(Constant::cookie_name);
+        return app()->session->get('jti');
     }
 
-    public function deleteUserThisSession()
-    {
-        $user_session_id = app()->request->cookie(Constant::cookie_name);
+    public function deleteUserThisSession () {  // FIXME
+        $user_session_id = app()->session->get('jti');
         app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
             'sid' => $user_session_id
         ])->execute();
