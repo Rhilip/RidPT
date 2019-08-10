@@ -2,29 +2,30 @@
 
 namespace Rid\Http;
 
+use Rid\Base\BaseObject;
+
 use League\Plates\Engine;
-use League\Plates\Extension\URI;
 
 /**
  * Class View
  * @author Rhilip
  */
-class View
+class View extends BaseObject
 {
 
-    protected $templates;
+    /** @var Engine */
+    protected $_templates;
 
-    public function __construct($url = true)
+    public function onConstruct()
     {
-        $this->templates = new Engine(app()->getViewPath());
-        if ($url) $this->templates->loadExtension(new URI(app()->request->server('path_info')));
-        $this->templates->loadExtension(new \Rid\View\Conversion());
+        $this->_templates = new Engine(app()->getViewPath());
+        $this->_templates->loadExtension(new \Rid\View\Conversion());
     }
 
     public function render($__template__, array $__data__ = null)
     {
         ob_start();
-        echo $this->templates->render($__template__, $__data__);
+        echo $this->_templates->render($__template__, $__data__);
         return ob_get_clean();
     }
 }

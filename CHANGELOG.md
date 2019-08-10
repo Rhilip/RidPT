@@ -4,7 +4,11 @@
 ### Docs
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
+### Feat
+- **ban_ips:** Store banned ip in components/Site (01084c9)
+
 ### Refactor
+- **Config:** Remove params `$throw` in Config()->get() (4acfcec)
 - **view:** Fix helper/username params (720f37e)
 
 
