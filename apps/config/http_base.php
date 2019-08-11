@@ -87,19 +87,6 @@ return [
         'session'  => [
             // 类路径
             'class'          => Rid\Http\Session::class,
-            // 保存处理者
-            'saveHandler'    => [
-                // 类路径
-                'class'    => Rid\Redis\RedisConnection::class,
-                // 主机
-                'host'     => env('REDIS_HOST'),
-                // 端口
-                'port'     => env('REDIS_PORT'),
-                // 数据库
-                'database' => env('REDIS_DATABASE'),
-                // 密码
-                'password' => env('REDIS_PASSWORD'),
-            ],
             // 保存的Key前缀
             'saveKeyPrefix'  => 'SESSION:',
             // 生存时间

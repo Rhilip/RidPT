@@ -61,7 +61,7 @@ class UserLoginForm extends Validator
                 ['Required'],
                 ['Length', ['min' => 6, 'max' => 40]]
             ],
-            'opt' => ['Length', ['min' => 6, 'max' => 6]],
+            'opt' => [['Length', ['max' => 6]]],
             'securelogin' => 'Equal(value=yes)',
             'logout' => 'Equal(value=yes)',
             'ssl' => 'Equal(value=yes)',

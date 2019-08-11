@@ -10,11 +10,6 @@ use Rid\Helpers\StringHelper;
  */
 class Session extends Component
 {
-
-    // 保存处理者
-    /** @var \Rid\Redis\BaseRedisConnection */
-    public $saveHandler;
-
     // 保存的Key前缀
     public $saveKeyPrefix = 'SESSION:';
 
@@ -63,7 +58,7 @@ class Session extends Component
     {
         parent::onRequestAfter();
         // 关闭连接
-        $this->saveHandler->disconnect();
+        app()->redis->disconnect();
     }
 
     // 载入session_id
@@ -75,8 +70,8 @@ class Session extends Component
             $this->_sessionId = StringHelper::getRandomString($this->_sessionIdLength);
         }
         $this->_sessionKey = $this->saveKeyPrefix . $this->_sessionId;
-        // 延长session有效期
-        $this->saveHandler->expire($this->_sessionKey, $this->maxLifetime);
+
+        if (!$this->_isNewSession) app()->redis->expire($this->_sessionKey, $this->maxLifetime); // 延长session有效期
     }
 
     // 创建SessionId
@@ -85,14 +80,14 @@ class Session extends Component
         do {
             $this->_sessionId  = StringHelper::getRandomString($this->_sessionIdLength);
             $this->_sessionKey = $this->saveKeyPrefix . $this->_sessionId;
-        } while ($this->saveHandler->exists($this->_sessionKey));
+        } while (app()->redis->exists($this->_sessionKey));
     }
 
     // 赋值
     public function set($name, $value)
     {
-        $success = $this->saveHandler->hmset($this->_sessionKey, [$name => $value]);
-        $this->saveHandler->expire($this->_sessionKey, $this->maxLifetime);
+        $success = app()->redis->hmset($this->_sessionKey, [$name => $value]);
+        app()->redis->expire($this->_sessionKey, $this->maxLifetime);
         $success and $this->_isNewSession and \Rid::app()->response->setCookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
         return $success ? true : false;
     }
@@ -101,24 +96,24 @@ class Session extends Component
     public function get($name = null)
     {
         if (is_null($name)) {
-            $result = $this->saveHandler->hgetall($this->_sessionKey);
+            $result = app()->redis->hgetall($this->_sessionKey);
             return $result ?: [];
         }
-        $value = $this->saveHandler->hget($this->_sessionKey, $name);
+        $value = app()->redis->hget($this->_sessionKey, $name);
         return $value === false ? null : $value;
     }
 
     // 判断是否存在
     public function has($name)
     {
-        $exist = $this->saveHandler->hexists($this->_sessionKey, $name);
+        $exist = app()->redis->hexists($this->_sessionKey, $name);
         return $exist ? true : false;
     }
 
     // 删除
     public function delete($name)
     {
-        $success = $this->saveHandler->hdel($this->_sessionKey, $name);
+        $success = app()->redis->hdel($this->_sessionKey, $name);
         return $success ? true : false;
     }
 
@@ -132,7 +127,7 @@ class Session extends Component
     // 清除session
     public function clear()
     {
-        $success = $this->saveHandler->del($this->_sessionKey);
+        $success = app()->redis->del($this->_sessionKey);
         return $success ? true : false;
     }
 
