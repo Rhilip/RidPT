@@ -1,27 +1,59 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: Rhilip
+ * Date: 8/11/2019
+ * Time: 2019
+ */
 
 namespace apps\middleware;
 
-
+use apps\controllers;
 use apps\libraries\Constant;
 
-class AuthByCookiesMiddleware
+class AuthMiddleware
 {
+    const authByPasskeyControllers = [
+        controllers\RssController::class
+    ];
 
+    /** @noinspection PhpUnused */
     public function handle($callable, \Closure $next)
     {
+        list($controller, $action) = $callable;
+        $controllerName = get_class($controller);
+
+        $authby = in_array($controllerName, self::authByPasskeyControllers) ? 'passkey' : 'cookies';
+        $curuser = app()->site->getCurUser($authby, true);
+
+        if (config('base.prevent_anonymous') && $curuser === false) return app()->response->setStatusCode(403);
+        if (config('base.maintenance') && !$curuser->isPrivilege('bypass_maintenance')) return app()->response->redirect('/maintenance');
+        return $this->{'authBy' . ucfirst($authby)}($callable, $next);
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function authByPasskey($callable, \Closure $next) {
+        if (false === $curuser = app()->site->getCurUser('passkey')) {
+            return 'invalid Passkey';
+        }
+        return $next();
+    }
+
+    /** @noinspection PhpUnusedPrivateMethodInspection */
+    private function authByCookies($callable, \Closure $next) {
         list($controller, $action) = $callable;
         $controllerName = get_class($controller);
 
         $curuser = app()->site->getCurUser();
 
         $now_ip = app()->request->getClientIp();
-        if ($controllerName === \apps\controllers\AuthController::class) {
+        if ($controllerName === controllers\AuthController::class) {
             if ($curuser !== false && in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
+                /** Don't allow Logged in user visit the auth/{login, register, confirm} */
                 return app()->response->redirect('/index');
             } elseif ($action !== 'actionLogout') {
-                if ($action == 'actionLogin') {
-                    $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
+                if ($action == 'actionLogin') {  // TODO add register confirm fail ip count check
+                    $test_count = app()->redis->hGet('SITE:fail_login_ip_count', $now_ip) ?: 0;
                     if ($test_count > config('security.max_login_attempts')) {
                         return app()->response->setStatusCode(403);
                     }
@@ -69,5 +101,4 @@ class AuthByCookiesMiddleware
         // 执行下一个中间件
         return $next();
     }
-
 }

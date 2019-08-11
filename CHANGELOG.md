@@ -10,6 +10,7 @@
 - **ban_ips:** Store banned ip in components/Site (01084c9)
 
 ### Fix
+- **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)
 - **User:** Fix User Class miss in string format (3680444)
 
 ### Refactor

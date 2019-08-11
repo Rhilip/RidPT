@@ -400,7 +400,7 @@ class TrackerController
             throw new TrackerException(131, [':attribute' => 'passkey', ':reason' => 'The format of passkey isn\'t correct']);
 
         // If this passkey is exist in Invalid Passkey Zset. (Worked as `Filter`
-        if (app()->redis->zScore(Constant::invalidUserPasskeyZset, $passkey) !== false)
+        if (app()->redis->zScore(Constant::mapUserPasskeyToId, $passkey) === (double) 0)
             throw new TrackerException(140);
 
         // Get userInfo from RedisConnection Cache and then Database
@@ -408,8 +408,8 @@ class TrackerController
         if ($userInfo === false) {  // If Cache is not exist , We will get User info from Database
             $userInfo = app()->pdo->createCommand('SELECT `id`, `status`, `passkey`, `downloadpos`, `class`, `uploaded`, `downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1')
                 ->bindParams(['passkey' => $passkey])->queryOne();
-            if ($userInfo === false) {  // It means this passkey is invalid, and remember it at least 10 minutes
-                app()->redis->zAdd(Constant::invalidUserPasskeyZset, time() + 600, $passkey);
+            if ($userInfo === false) {  // It means this passkey is invalid , so we remember it
+                app()->redis->zAdd(Constant::mapUserPasskeyToId, 0, $passkey);
                 throw new TrackerException(140);
             }
 

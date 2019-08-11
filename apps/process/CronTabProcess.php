@@ -86,7 +86,6 @@ final class CronTabProcess extends Process
 
             // Invalid Zset
             [Constant::invalidUserIdZset, 'Success Clean %s invalid user id.'],
-            [Constant::invalidUserPasskeyZset, 'Success Clean %s invalid user passkey.'],
             [Constant::trackerInvalidInfoHashZset, 'Success Clean %s invalid info_hash.'],
 
             // Valid Zset

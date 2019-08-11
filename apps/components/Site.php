@@ -107,11 +107,12 @@ class Site extends Component
 
     /**
      * @param string $grant
+     * @param bool $flush
      * @return models\User|bool return False means this user is anonymous
      */
-    public function getCurUser($grant = 'cookies')
+    public function getCurUser($grant = 'cookies', $flush = false)
     {
-        if (is_null($this->cur_user)) {
+        if (is_null($this->cur_user) || $flush) {
             $this->cur_user = $this->loadCurUser($grant);
         }
         return $this->cur_user;
@@ -126,13 +127,12 @@ class Site extends Component
         $user_id = false;
         if ($grant == 'cookies') $user_id = $this->loadCurUserIdFromCookies();
         elseif ($grant == 'passkey') $user_id = $this->loadCurUserIdFromPasskey();
-        // elseif ($grant == 'oath2') $user_id = $this->loadCurUserIdFromOAth2();
 
-        if ($user_id !== false) {
+        if ($user_id !== false && is_int($user_id) && $user_id > 0) {
             $user_id = intval($user_id);
             $curuser = $this->getUser($user_id);
             if ($curuser->getStatus() !== models\User::STATUS_DISABLED)  // user status shouldn't be disabled
-                return $this->getUser($user_id);
+                return $curuser;
         }
 
         return false;
@@ -171,21 +171,17 @@ class Site extends Component
     protected function loadCurUserIdFromPasskey()
     {
         $passkey = app()->request->get('passkey');
+        if (is_null($passkey)) return false;
+
         $user_id = app()->redis->zScore(Constant::mapUserPasskeyToId, $passkey);
         if (false === $user_id) {
-            if (app()->redis->zScore(Constant::invalidUserPasskeyZset, $passkey) === false) {
-                $user_id = app()->pdo->createCommand('SELECT `id` FROM `users` WHERE `passkey` = :passkey LIMIT 1;')->bindParams([
-                    'passkey' => $passkey
-                ])->queryScalar();
-                if (false === $user_id) {
-                    app()->redis->zAdd(Constant::invalidUserPasskeyZset, time() + 600, $passkey);
-                } else {
-                    app()->redis->zAdd(Constant::mapUserPasskeyToId, $user_id, $passkey);
-                }
-            }
+            $user_id = app()->pdo->createCommand('SELECT `id` FROM `users` WHERE `passkey` = :passkey LIMIT 1;')->bindParams([
+                'passkey' => $passkey
+            ])->queryScalar() ?: 0;
+            app()->redis->zAdd(Constant::mapUserPasskeyToId, $user_id, $passkey);
         }
 
-        return $user_id;
+        return $user_id > 0 ? $user_id : false;
     }
 
     public function getTorrentFileLoc($tid)

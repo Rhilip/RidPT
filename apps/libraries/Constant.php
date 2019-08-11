@@ -18,13 +18,12 @@ class Constant
 
     // --- invalid Zset  ---
     const invalidUserIdZset = 'Site:invalid_user_id:zset';
-    const invalidUserPasskeyZset = 'Tracker:invalid_user_passkey:zset';
 
     // --- invalid Set   ---
-    const invalidUserSessionSet = 'Session:invalid_user_session:set';  // Store the force invalid session data
+    const invalidUserSessionSet = 'Site:invalid_user_session:set';  // Store the force invalid session data
 
     // Tracker Use
-    const trackerInvalidInfoHashZset = 'Tracker:invalid_torrent_info_hash:zset';
+    const trackerInvalidInfoHashZset = 'Tracker:invalid_torrent_info_hash:zset';  // FIXME use set instead
     const trackerAllowedClientList = 'Tracker:allowed_client_list:string';
     const trackerAllowedClientExceptionList = 'Tracker:allowed_client_exception_list:string';
     const trackerValidClientZset = 'Tracker:valid_clients:zset';
