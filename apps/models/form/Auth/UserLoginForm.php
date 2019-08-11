@@ -11,8 +11,8 @@ namespace apps\models\form\Auth;
 use apps\libraries\Constant;
 use apps\models\User;
 
-use Firebase\JWT\JWT;
 use Rid\Helpers\StringHelper;
+use Rid\Helpers\JWTHelper;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 
@@ -61,7 +61,9 @@ class UserLoginForm extends Validator
                 ['Required'],
                 ['Length', ['min' => 6, 'max' => 40]]
             ],
-            'opt' => [['Length', ['max' => 6]]],
+            'opt' => [
+                ['Length', ['max' => 6]]
+            ],
             'securelogin' => 'Equal(value=yes)',
             'logout' => 'Equal(value=yes)',
             'ssl' => 'Equal(value=yes)',
@@ -102,8 +104,14 @@ class UserLoginForm extends Validator
             return;
         }
 
+        // User input 2FA code but not enabled in fact
+        if ($this->getData('opt') && is_null($this->self['opt'])) {
+            $this->buildCallbackFailMsg('User', 'Invalid username/password');
+            return;
+        }
+
         // User enable 2FA but it's code is wrong
-        if ($this->self['opt']) {
+        if (!is_null($this->self['opt'])) {
             try {
                 $tfa = new TwoFactorAuth(config('base.site_name'));
                 if ($tfa->verifyCode($this->self['opt'], $this->getData('opt')) == false) {
@@ -111,7 +119,7 @@ class UserLoginForm extends Validator
                     return;
                 }
             } catch (TwoFactorAuthException $e) {
-                $this->buildCallbackFailMsg('2FA', '2FA Validation failed. Tell our support team.');
+                $this->buildCallbackFailMsg('2FA', '2FA Validation failed for unknown reason. Tell our support team.');
                 return;
             }
         }
@@ -154,7 +162,6 @@ class UserLoginForm extends Validator
     private function createUserSession()
     {
         $timenow = time();
-        $key = env('APP_SECRET_KEY');
         $login_ip = app()->request->getClientIp();
 
         do { // Generate unique JWT ID
@@ -183,7 +190,7 @@ class UserLoginForm extends Validator
 
         // Generate JWT content
         $this->jwt_payload = $payload;
-        $jwt = JWT::encode($payload, $key);
+        $jwt = JWTHelper::encode($payload);
 
         // Sent JWT content AS Cookie
         app()->response->setCookie(Constant::cookie_name, $jwt, $cookieExpire, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
@@ -191,17 +198,19 @@ class UserLoginForm extends Validator
 
     private function updateUserLoginInfo()
     {
-        // FIXME change store data, Store User Login Information in database
-        app()->pdo->createCommand('INSERT INTO `user_session_log`(`uid`, `sid`, `login_ip`, `user_agent` ,`login_at`, `last_access_at`) ' .
-            'VALUES (:uid, :sid, INET6_ATON(:login_ip), :ua, NOW(), NOW())')->bindParams([
+        $ip = app()->request->getClientIp();
+
+        // Store User Login Session Information in database
+        app()->pdo->createCommand('INSERT INTO `user_session_log`(`uid`, `sid`, `login_ip`, `user_agent` ,`login_at`, `last_access_at`,`expired`) ' .
+            'VALUES (:uid, :sid, INET6_ATON(:login_ip), :ua, NOW(), NOW(), :expired)')->bindParams([
             'uid' => $this->jwt_payload['user_id'], 'sid' => $this->jwt_payload['jti'],
-            'login_ip' => app()->request->getClientIp(),
-            'ua' => app()->request->header('user-agent')
+            'login_ip' => $ip, 'ua' => app()->request->header('user-agent'),
+            'expired' => ($this->logout === 'yes') ? 0 : -1,  // -1 -> never expired , 0 -> auto_expire after 15 minutes, 1 -> expired
         ])->execute();
 
-        // TODO or move to task queue...
-        app()->pdo->createCommand("UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id")->bindParams([
-            "ip" => app()->request->getClientIp(), "id" => $this->self["id"]
+        // Update User Tables
+        app()->pdo->createCommand('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([
+            'ip' => $ip, 'id' => $this->self['id']
         ])->execute();
     }
 

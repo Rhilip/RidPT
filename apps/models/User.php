@@ -531,7 +531,7 @@ class User
     public function isPrivilege($require_class)
     {
         if (is_string($require_class)) {
-            $require_class = config('authority.' . $require_class, false) ?: 1;
+            $require_class = config('authority.' . $require_class) ?: 1;
         }
 
         return $this->class >= $require_class;
@@ -539,14 +539,5 @@ class User
 
     public function getSessionId() {
         return app()->session->get('jti');
-    }
-
-    public function deleteUserThisSession () {  // FIXME
-        $user_session_id = app()->session->get('jti');
-        app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
-            'sid' => $user_session_id
-        ])->execute();
-        app()->cookie->delete(Constant::cookie_name);
-        return true;
     }
 }

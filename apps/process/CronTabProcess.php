@@ -33,7 +33,7 @@ final class CronTabProcess extends Process
     public function run()
     {
         // Get all run
-        $to_run_jobs = app()->pdo->createCommand('SELECT * FROM `site_crontab` WHERE `priority` > 0 AND `next_run_at` < NOW() ORDER BY priority ASC;')->queryAll();
+        $to_run_jobs = app()->pdo->createCommand('SELECT * FROM `site_crontab` WHERE `priority` > 0 AND `next_run_at` < NOW() ORDER BY priority;')->queryAll();
 
         $hit = 0;
         $start_time = time();
@@ -75,6 +75,7 @@ final class CronTabProcess extends Process
         if ($hit > 0) $this->print_log('This Cron Work period Start At ' . $start_time . ', Cost Time: ' . number_format($end_time - $start_time, 10) . 's, With ' . $hit . ' Jobs hits.');
     }
 
+    /** @noinspection PhpUnused */
     protected function clean_expired_zset_cache() {
         $timenow = time();
 
@@ -85,12 +86,10 @@ final class CronTabProcess extends Process
 
             // Invalid Zset
             [Constant::invalidUserIdZset, 'Success Clean %s invalid user id.'],
-            [Constant::invalidUserSessionZset, 'Success Clean %s invalid user session.'],
             [Constant::invalidUserPasskeyZset, 'Success Clean %s invalid user passkey.'],
             [Constant::trackerInvalidInfoHashZset, 'Success Clean %s invalid info_hash.'],
 
             // Valid Zset
-            [Constant::validUserSessionZset,'Success Clean $s valid user session'],
             [Constant::trackerValidClientZset, 'Success Clean %s valid bittorrent client.'],
             [Constant::trackerValidPeerZset, 'Success Clean %s valid peers.']
         ];
@@ -102,6 +101,7 @@ final class CronTabProcess extends Process
         }
     }
 
+    /** @noinspection PhpUnused */
     protected function clean_dead_peer()
     {
         $deadtime = floor(config('tracker.interval') * 1.8);
@@ -112,32 +112,30 @@ final class CronTabProcess extends Process
         $this->print_log('Success clean ' . $affect_peer_count . ' peers from our peer list');
     }
 
+    /** @noinspection PhpUnused */
+    protected function clean_expired_items_database() {
+        $clean_sqls = [
+            [  // expired session
+                'UPDATE `user_session_log` SET `expired` = 1 WHERE `expired` = 0 AND `login_at` < DATE_SUB(NOW(), INTERVAL 15 MINUTE)',
+                'Success clean %s expired sessions'
+            ],
+            [  // expired invitee
+                'UPDATE `invite` SET `used` = -1 WHERE `used` = 0 AND `expire_at` < NOW()',
+                'Success clean %s expired invites'
+            ]
+        ];
+
+        foreach ($clean_sqls as $item) {
+            [$clean_sql, $msg] = $item;
+            app()->pdo->createCommand($clean_sql)->execute();
+            $clean_count =  app()->pdo->getRowCount();
+            if ($clean_count > 0) $this->print_log(sprintf($msg, $clean_count));
+        }
+    }
+
     protected function calculate_seeding_bonus()
     {
         // TODO
-    }
-
-    protected function clean_expired_session()
-    {
-        $timenow = time();
-
-        $expired_sessions = app()->redis->zRangeByScore('Site:Sessions:to_expire', 0, $timenow);
-        foreach ($expired_sessions as $session) {
-            app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
-                'sid' => $session
-            ])->execute();
-        }
-
-        $clean_record_count = app()->redis->zRemRangeByScore('Site:Sessions:to_expire', 0, $timenow);
-        if ($clean_record_count > 0) $this->print_log('Success clean expired Sessions: Database(' . count($expired_sessions) . '), Redis(' . $clean_record_count . ').');
-    }
-
-    protected function expired_invitee()
-    {
-        app()->pdo->createCommand('UPDATE `invite` SET `used` = -1 WHERE `expire_at` < NOW() AND `used` = 0')->execute();
-
-        $count = app()->pdo->getRowCount();
-        $this->print_log('Success Expired ' . $count . ' invites');
     }
 
     // sync torrents status about complete, incomplete, comments

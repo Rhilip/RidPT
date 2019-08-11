@@ -16,13 +16,12 @@ class Constant
     const mapUsernameToId = 'Map:user_username_to_user_id:hash';
     const mapUserPasskeyToId = 'Map:user_passkey_to_user_id:zset';
 
-    // invalid Zset
+    // --- invalid Zset  ---
     const invalidUserIdZset = 'Site:invalid_user_id:zset';
-    const invalidUserSessionZset = 'Session:invalid_user_session:zset';
     const invalidUserPasskeyZset = 'Tracker:invalid_user_passkey:zset';
 
-    // valid Zset
-    const validUserSessionZset = 'Session:valid_user_session:zset';
+    // --- invalid Set   ---
+    const invalidUserSessionSet = 'Session:invalid_user_session:set';  // Store the force invalid session data
 
     // Tracker Use
     const trackerInvalidInfoHashZset = 'Tracker:invalid_torrent_info_hash:zset';

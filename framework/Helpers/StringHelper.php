@@ -10,11 +10,11 @@ class StringHelper
 
     /** Get RandomString
      * @param $length
+     * @param string $chars
      * @return string
      */
-    public static function getRandomString($length)
+    public static function getRandomString($length , $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz')
     {
-        $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz';
         $last = 61;
         $str = '';
         for ($i = 0; $i < $length; $i++) {

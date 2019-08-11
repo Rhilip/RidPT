@@ -354,7 +354,7 @@ class TrackerController
 
         if ($onlyCheckUA) {
             if (!$agentAccepted) throw new TrackerException(126, [':ua' => $userAgent]);
-            app()->redis->zAdd(Constant::trackerValidClientZset, time() + rand(3600, 7200), $client_identity);
+            app()->redis->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
             // app()->redis->rawCommand('bf.add', [Constant::trackerValidClientZset, $client_identity]);
             return;
         }
@@ -375,7 +375,7 @@ class TrackerController
                     )
                         throw new TrackerException(127, [':ua' => $userAgent, ':comment' => $exceptionItem['comment']]);
                 }
-                app()->redis->zAdd(Constant::trackerValidClientZset, time() + rand(3600, 7200), $client_identity);
+                app()->redis->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
                 // app()->redis->rawCommand('bf.add', [Constant::trackerValidClientZset, $client_identity]);
             }
         } else {

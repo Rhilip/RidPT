@@ -12,13 +12,11 @@ use apps\models;
 use apps\libraries\Mailer;
 use apps\libraries\Constant;
 
-use Exception;
-use Firebase\JWT\ExpiredException;
 use Rid\Http\View;
 use Rid\Base\Component;
+use Rid\Helpers\JWTHelper;
 use Rid\Utils\ClassValueCacheUtils;
 
-use Firebase\JWT\JWT;
 use RuntimeException;
 
 class Site extends Component
@@ -142,74 +140,32 @@ class Site extends Component
 
     protected function loadCurUserIdFromCookies()
     {
-        $timenow = time();
-        $user_session_id = app()->request->cookie(Constant::cookie_name);
-        if (is_null($user_session_id)) return false;  // quick return when cookies is not exist
+        $user_session = app()->request->cookie(Constant::cookie_name);
+        if (is_null($user_session)) return false;  // quick return when cookies is not exist
 
-        $key = env('APP_SECRET_KEY');
-
-        try {
-            $decoded = JWT::decode($user_session_id, $key, ['HS256']);
-        } catch (Exception $e) {
-            if ($e instanceof ExpiredException) {  // Lazy Expired Check .....
-                // Since in this case , we can't get payload with jti information directly, we should manually decode jwt content
-                list($headb64, $bodyb64, $cryptob64) = explode('.', $user_session_id);
-                $payload = JWT::jsonDecode(JWT::urlsafeB64Decode($bodyb64));
-                $jti = $payload->jti ?? '';
-                if ($jti && strlen($jti) === 64) {
-                    app()->redis->zAdd(Constant::invalidUserSessionZset, $timenow + 86400, $jti);
-                    app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE `sid` = :sid')->bindParams([
-                        'sid' => $jti
-                    ])->execute();
-                }
-            }
-            app()->session->set('jwt_error_msg', $e->getMessage());  // Store error msg
-            return false;
-        }
-
-        $decoded_array = (array)$decoded;  // jwt valid data in array
-
-        if (!isset($decoded_array['jti'])) return false;
+        $payload = JWTHelper::decode($user_session);
+        if ($payload === false) return false;
+        if (!isset($payload['jti']) || !isset($payload['user_id'])) return false;
 
         // Check if user lock access ip ?
-        if (isset($decoded_array['secure_login_ip'])) {
+        if (isset($payload['secure_login_ip'])) {
             $now_ip_crc = sprintf('%08x', crc32(app()->request->getClientIp()));
-            if (strcasecmp($decoded_array['secure_login_ip'], $now_ip_crc) !== 0) return false;
+            if (strcasecmp($payload['secure_login_ip'], $now_ip_crc) !== 0) return false;
         }
 
+        // Verity $jti is force expired or not by check invalidUserSessionSet
+        if (app()->redis->sIsMember(Constant::invalidUserSessionSet, $payload['jti'])) return false;
+
         // Check if user want secure access but his environment is not secure
-        if (isset($decoded_array['ssl']) && $decoded_array['ssl'] && // User want secure access
-            !app()->request->isSecure() // User requests is not secure
-            // TODO our site support ssl feature
-        ) {
+        if (!app()->request->isSecure() &&                     // if User requests is not secure , then
+            ((isset($payload['ssl']) && $payload['ssl'] &&     //   if User want secure access
+              config('security.ssl_login') > 0          //      and if Our site support ssl feature
+             ) || config('security.ssl_login') > 1)) {  //   or if  Our site FORCE enabled ssl feature
             app()->response->redirect(str_replace('http://', 'https://', app()->request->fullUrl()));
             app()->response->setHeader('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
         }
 
-        // Verity $jti is force expired or not ?
-        $jti = $decoded_array['jti'];
-        if ($jti !== app()->session->get('jti')) { // Not Match Session record
-            if (false === app()->redis->zScore(Constant::validUserSessionZset, $jti)) {  // Not Record in valid cache
-                // if this $jti not in valid cache , then check invalid cache
-                if (app()->redis->zScore(Constant::invalidUserSessionZset, $jti) !== false) {
-                    return false;   // This $jti has been marked as invalid
-                } else {  // Invalid cache still not hit, then check $jti from database to avoid lost
-                    $exist_jti = app()->pdo->createCommand('SELECT `id` FROM `user_session_log` WHERE `sid` = :sid AND `expired` = 0 LIMIT 1;')->bindParams([
-                        'sid' => $jti
-                    ])->queryScalar();
-
-                    if (false === $exist_jti) {  // Absolutely This $jti is not exist or expired
-                        app()->redis->zAdd(Constant::invalidUserSessionZset, $timenow + 86400, $jti);
-                        return false;
-                    }
-                }
-
-                app()->redis->zAdd(Constant::validUserSessionZset, $decoded_array['exp'] ?? $timenow + 43200, $jti);  // Store in valid cache
-            }
-            app()->session->set('jti', $jti);  // Store the $jti value in session so we can visit $jti in other place
-        }
-
-        return $decoded_array['user_id'] ?? false;
+        return $payload['user_id'];
     }
 
     protected function loadCurUserIdFromPasskey()

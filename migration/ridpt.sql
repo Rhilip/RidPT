@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 11, 2019 at 12:05 AM
+-- Generation Time: Aug 11, 2019 at 08:42 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -762,9 +762,11 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('base.enable_invite_system', '1'),
 ('base.enable_register_system', '1'),
 ('base.enable_tracker_system', '1'),
+('base.maintenance', '0'),
 ('base.max_news_sum', '5'),
 ('base.max_per_user_session', '10'),
 ('base.max_user', '5000'),
+('base.prevent_anonymous', '0'),
 ('base.site_author', 'Rhilip'),
 ('base.site_copyright', 'RidPT Group'),
 ('base.site_css_update_date', '201903100001'),
@@ -891,11 +893,10 @@ TRUNCATE TABLE `site_crontab`;
 INSERT INTO `site_crontab` (`id`, `job`, `priority`, `job_interval`) VALUES
 (1, 'clean_expired_zset_cache', 1, 60),
 (2, 'clean_dead_peer', 1, 600),
-(3, 'calculate_seeding_bonus', 2, 900),
-(4, 'clean_expired_session', 3, 600),
-(5, 'expired_invitee', 3, 600),
-(6, 'update_expired_external_link_info', 100, 1200),
-(7, 'sync_torrents_status', 4, 3600);
+(3, 'clean_expired_items_database', 3, 3600),
+(4, 'calculate_seeding_bonus', 2, 900),
+(5, 'sync_torrents_status', 4, 3600),
+(6, 'update_expired_external_link_info', 100, 1200);
 
 -- --------------------------------------------------------
 

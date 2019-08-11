@@ -13,7 +13,7 @@ trait CsrfTrait
 {
     public $csrf;
 
-    protected function validateCaptcha()
+    protected function validateCsrf()
     {
         $csrfInput = $this->getData('csrf');
         $csrfText = app()->session->pop('csrfText');
