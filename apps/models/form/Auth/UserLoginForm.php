@@ -124,7 +124,7 @@ class UserLoginForm extends Validator
     /** @noinspection PhpUnused */
     protected function isMaxUserSessionsReached()
     {
-        $exist_session_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE uid = :uid AND expired = -1')->bindParams([
+        $exist_session_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE uid = :uid AND expired != 1')->bindParams([
             'uid' => $this->self['id']
         ])->queryScalar();
 

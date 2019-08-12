@@ -15,12 +15,12 @@ class TrackerAnnounceProcess extends Process
 {
     public function run()
     {
-        do {
+        while (true) {
             $data = app()->redis->brpoplpush(Constant::trackerToDealQueue, Constant::trackerBackupQueue, 5);
             if ($data !== false) {
                 app()->pdo->beginTransaction();
                 try {
-                    /* We got data from Http Server Like
+                    /** We got data from Http Server Like
                      * [
                      *    'timestamp' => timestamp when controller receive the announce,
                      *    'queries' => $queries, 'role' => $role,
@@ -37,8 +37,7 @@ class TrackerAnnounceProcess extends Process
                     // TODO deal with the items in backup_queue
                 }
             }
-            \Rid::app()->cleanComponents();
-        } while ($data !== false);
+        }
     }
 
     /**

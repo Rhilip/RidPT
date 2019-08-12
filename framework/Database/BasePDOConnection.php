@@ -45,6 +45,7 @@ class BasePDOConnection extends Component
     // sql原始数据
     protected $_sqlPrepareData = [];
 
+    protected $_recordData = true;
     protected $_sqlExecuteData = [];
 
     // 默认驱动连接选项
@@ -66,7 +67,7 @@ class BasePDOConnection extends Component
 
     public function onRequestAfter()
     {
-        $this->cleanSqlExecuteData();
+        $this->_recordData && $this->cleanSqlExecuteData();
     }
 
     // 创建连接
@@ -202,7 +203,7 @@ class BasePDOConnection extends Component
     // 清扫预处理数据
     protected function clearPrepare()
     {
-        $this->_sqlExecuteData[] = $this->getRawSql();
+        if ($this->_recordData) $this->_sqlExecuteData[] = $this->getRawSql();
         $this->_sql    = '';
         $this->_params = [];
         $this->_values = [];
@@ -432,5 +433,13 @@ class BasePDOConnection extends Component
 
     public function getExecuteData() {
         return $this->_sqlExecuteData;
+    }
+
+    /**
+     * @param bool $recordData
+     */
+    public function setRecordData(bool $recordData): void
+    {
+        $this->_recordData = $recordData;
     }
 }

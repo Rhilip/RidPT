@@ -201,7 +201,7 @@ class BaseRedisConnection extends Component
     // 默认驱动连接选项
     protected $_defaultDriverOptions = [
         \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,  // 默认做序列化
-        \Redis::OPT_PREFIX => "",
+        \Redis::OPT_PREFIX => '',
     ];
 
     // 驱动连接选项
@@ -211,6 +211,7 @@ class BaseRedisConnection extends Component
     /** @var \Redis */
     protected $_redis;
 
+    protected $_recordData = true;
     protected $_calledData = [];
 
     // 初始化事件
@@ -269,17 +270,19 @@ class BaseRedisConnection extends Component
 
         $this->autoConnect();   // 自动连接
 
-        $arg_text = '';
-        foreach ($arguments as $arg) {
-            if (!is_string($arg)) $arg = '[Array]';
-            $arg_text .= ' ' . $arg;
-        }
+        if ($this->_recordData) {
+            $arg_text = '';
+            foreach ($arguments as $arg) {
+                if (!is_string($arg)) $arg = '[Array]';
+                $arg_text .= ' ' . $arg;
+            }
 
-        $calling = $name . ($arguments ? ' ' . $arg_text : '');
-        if (isset($this->_calledData[$calling])) {
-            $this->_calledData[$calling] += 1;
-        } else {
-            $this->_calledData[$calling] = 1;
+            $calling = $name . ($arguments ? ' ' . $arg_text : '');
+            if (isset($this->_calledData[$calling])) {
+                $this->_calledData[$calling] += 1;
+            } else {
+                $this->_calledData[$calling] = 1;
+            }
         }
 
         return call_user_func_array([$this->_redis, $name], $arguments);  // 执行命令
@@ -316,7 +319,15 @@ class BaseRedisConnection extends Component
 
     public function cleanCalledData()
     {
-        $this->_calledData = [];
+        $this->_recordData && $this->_calledData = [];
+    }
+
+    /**
+     * @param bool $recordData
+     */
+    public function setRecordData(bool $recordData): void
+    {
+        $this->_recordData = $recordData;
     }
 
     /**
