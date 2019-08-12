@@ -67,9 +67,10 @@ class UserRegisterForm extends Validator
                 ['required'],
                 ['MaxLength', ['max' => 12], 'User name is too log, Max length {max}']
             ],
-            'password' => [  // TODO The password cannot match your username. ( make change to validator library
+            'password' => [
                 ['required'],
                 ['length', '6,40'],
+                ['NotMatch', ['item' => 'username']]
             ],
             'password_again' => [
                 ['required'],

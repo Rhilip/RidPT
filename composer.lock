@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8610af97db6a716b46a2b048c9e7f552",
+    "content-hash": "161772be41e2eddc3783c36c034a7638",
     "packages": [
         {
             "name": "firebase/php-jwt",
@@ -306,16 +306,16 @@
         },
         {
             "name": "robthree/twofactorauth",
-            "version": "1.6.6",
+            "version": "1.6.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RobThree/TwoFactorAuth.git",
-                "reference": "7477d5d65625b7fe33cb338b98e419d394e9e9fd"
+                "reference": "3407c33775391fa8c36f7d766f26c5e59a736374"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RobThree/TwoFactorAuth/zipball/7477d5d65625b7fe33cb338b98e419d394e9e9fd",
-                "reference": "7477d5d65625b7fe33cb338b98e419d394e9e9fd",
+                "url": "https://api.github.com/repos/RobThree/TwoFactorAuth/zipball/3407c33775391fa8c36f7d766f26c5e59a736374",
+                "reference": "3407c33775391fa8c36f7d766f26c5e59a736374",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -343,8 +343,8 @@
             "authors": [
                 {
                     "name": "Rob Janssen",
-                    "homepage": "http://robiii.me",
-                    "role": "Developer"
+                    "role": "Developer",
+                    "homepage": "http://robiii.me"
                 }
             ],
             "description": "Two Factor Authentication",
@@ -359,20 +359,20 @@
                 "php",
                 "tfa"
             ],
-            "time": "2019-03-19T21:51:19+00:00"
+            "time": "2019-06-21T08:51:04+00:00"
         },
         {
             "name": "siriusphp/validation",
-            "version": "2.2.3",
+            "version": "2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/siriusphp/validation.git",
-                "reference": "3c601f2f1bd3997fc6f5695f1564ce6e6c077c25"
+                "reference": "fa93b302802616b1dcf7e38244a70e324c121fb4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/siriusphp/validation/zipball/3c601f2f1bd3997fc6f5695f1564ce6e6c077c25",
-                "reference": "3c601f2f1bd3997fc6f5695f1564ce6e6c077c25",
+                "url": "https://api.github.com/repos/siriusphp/validation/zipball/fa93b302802616b1dcf7e38244a70e324c121fb4",
+                "reference": "fa93b302802616b1dcf7e38244a70e324c121fb4",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -385,7 +385,7 @@
                 "php": ">=5.3"
             },
             "require-dev": {
-                "phpunit/phpunit": "^3.7"
+                "phpunit/phpunit": "^4.8"
             },
             "type": "library",
             "autoload": {
@@ -411,7 +411,7 @@
                 "security",
                 "validation"
             ],
-            "time": "2019-04-03T08:57:10+00:00"
+            "time": "2019-08-11T13:55:53+00:00"
         },
         {
             "name": "soundasleep/html2text",
@@ -477,16 +477,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/wudi/swoole-ide-helper.git",
-                "reference": "d03e7e2d8ffd12e054555cae6dda8b2b3683d934"
+                "reference": "fceabb51fca645166fdc3d885bb582eb3352335e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wudi/swoole-ide-helper/zipball/d03e7e2d8ffd12e054555cae6dda8b2b3683d934",
-                "reference": "d03e7e2d8ffd12e054555cae6dda8b2b3683d934",
+                "url": "https://api.github.com/repos/wudi/swoole-ide-helper/zipball/fceabb51fca645166fdc3d885bb582eb3352335e",
+                "reference": "fceabb51fca645166fdc3d885bb582eb3352335e",
                 "shasum": "",
                 "mirrors": [
                     {
-                        "url": "https://dl.laravel-china.org/%package%/%reference%.%type%",
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
                         "preferred": true
                     }
                 ]
@@ -515,7 +515,7 @@
                 "sublime",
                 "swoole"
             ],
-            "time": "2019-04-02T09:53:11+00:00"
+            "time": "2019-07-18T01:21:48+00:00"
         }
     ],
     "aliases": [],

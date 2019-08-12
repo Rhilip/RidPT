@@ -7,6 +7,7 @@
 ### Feat
 - **Auth:** Use JWT to set cookies content (bf897c6)
 - **Auth/Login:** Add full Advanced Options support (6009dc8)
+- **Secret:** Check session and user_id match or not in jwt payload (358ba5d)
 - **Secret:** Protect jwt key for env('APP_SECRET_KEY') (dfa67da)
 - **ban_ips:** Store banned ip in components/Site (01084c9)
 
