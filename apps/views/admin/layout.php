@@ -25,7 +25,6 @@
                     <ul>
                         <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=mysql"><cite>Mysql Status</cite></a></li>
                         <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis"><cite>Redis Service Status</cite></a></li>
-                        <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis&panel=keys"><cite>Redis Keys Status</cite></a></li>
                     </ul>
                 </li>
             </ul>

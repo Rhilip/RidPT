@@ -28,7 +28,10 @@ Test Account Information:
     - Swoole 4.2.12
     - Redis 5.0.3 Stable
     - Bower 1.8.4 (A package manager for the web)
- 
+    - *Suggest*
+      - [phpmyadmin/phpmyadmin](<https://github.com/phpmyadmin/phpmyadmin>)
+      - [erikdubbelboer/phpRedisAdmin](<https://github.com/erikdubbelboer/phpRedisAdmin>)
+
 2. After you prepare those base environment well
 
     - run below command to clone this repo or you can download from our release.

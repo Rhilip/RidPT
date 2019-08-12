@@ -62,7 +62,6 @@ final class CronTabProcess extends Process
                 } catch (\Exception $e) {
                     app()->pdo->rollback();
                     app()->log->critical('The run job throw Exception : ' . $e->getMessage());
-                    if (env('APP_DEBUG')) throw $e;
                 }
             } else {
                 if (!in_array($job, $this->_none_exist_job)) {
