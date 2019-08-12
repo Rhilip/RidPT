@@ -14,13 +14,11 @@ class Constant
     const cookie_name = 'rid';
 
     const mapUsernameToId = 'Map:user_username_to_user_id:hash';
-    const mapUserPasskeyToId = 'Map:user_passkey_to_user_id:zset';
+    const mapUserPasskeyToId = 'Map:user_passkey_to_user_id:zset';  // (double) 0 means invalid
+    const mapUserSessionToId = 'Map:user_session_to_user_id:zset';  // (double) 0 means invalid
 
     // --- invalid Zset  ---
     const invalidUserIdZset = 'Site:invalid_user_id:zset';
-
-    // --- invalid Set   ---
-    const invalidUserSessionSet = 'Site:invalid_user_session:set';  // Store the force invalid session data
 
     // Tracker Use
     const trackerInvalidInfoHashZset = 'Tracker:invalid_torrent_info_hash:zset';  // FIXME use set instead

@@ -133,7 +133,7 @@ class UserLoginForm extends Validator
         }
     }
 
-    public function LoginFail()
+    public function LoginFail()  // FIXME
     {
         app()->redis->zAdd('SITE:fail_login_ip_zset', time(), app()->request->getClientIp());
         app()->redis->hIncrBy('SITE:fail_login_ip_count', app()->request->getClientIp(), 1);
@@ -164,11 +164,12 @@ class UserLoginForm extends Validator
         // Official Payload key
         $payload = [
             'iss' => config('base.site_url'),
+            'sub' => config('base.site_generator'),
             'iat' => $timenow,
             'jti' => $jti,
         ];
 
-        $cookieExpire = 0x7fffffff;  // for never
+        $cookieExpire = 0x7fffffff;  // Tuesday, January 19, 2038 3:14:07 AM (though it is not security)
         if ($this->logout === 'yes' || config('security.auto_logout') > 1) {
             $cookieExpire = $timenow + 15 * 60;  // for 15 minutes
         }

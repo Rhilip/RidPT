@@ -15,6 +15,7 @@
 
 ### Refactor
 - **Auth/JWT:** Better for auth by JWT (36f49a0)
+- **Auth/Middleware:** merge Old Auth{ByCookies, ByPasskey}Middleware (71cd7d7)
 - **Config:** Remove params `$throw` in Config()->get() (706cc9a)
 - **RateLimit:** Change last param of isRateLimitHit and rate limit store Namespace (4dd571d)
 - **Site:** Simple Category Detail get function (ffa6855)

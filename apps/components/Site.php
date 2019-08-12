@@ -153,8 +153,15 @@ class Site extends Component
             if (strcasecmp($payload['secure_login_ip'], $now_ip_crc) !== 0) return false;
         }
 
-        // Verity $jti is force expired or not by check invalidUserSessionSet
-        if (app()->redis->sIsMember(Constant::invalidUserSessionSet, $payload['jti'])) return false;
+        // Verity $jti is force expired or not by checking mapUserSessionToId
+        $expired_check = app()->redis->zScore(Constant::mapUserSessionToId, $payload['jti']);
+        if ($expired_check === false) {  // session is not see in Zset Cache (may lost or first time init), load from database ( Lazy load... )
+            $uid = app()->pdo->createCommand('SELECT `uid` FROM `user_session_log` WHERE sid = :sid AND `expired` != 1 LIMIT 1')->bindParams([
+                'sid' => $payload['jti']
+            ])->queryScalar();
+            app()->redis->zAdd(Constant::mapUserSessionToId, $uid ?: 0, $payload['jti']);  // Store 0 if session -> uid is invalid
+            if ($uid === false) return false;  // this session is not exist or marked as expired
+        } elseif ($expired_check != $payload['user_id']) return false;    // may return (double) 0 , which means already make invalid ; or it check if user obtain this session (may Overdesign)
 
         // Check if user want secure access but his environment is not secure
         if (!app()->request->isSecure() &&                     // if User requests is not secure , then

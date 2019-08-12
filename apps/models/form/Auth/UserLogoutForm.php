@@ -66,15 +66,12 @@ class UserLogoutForm extends Validator
 
     private function invalidSession()
     {
-        // Set this session is expired
+        app()->cookie->delete(Constant::cookie_name);   // Clean cookie
+        app()->redis->zAdd(Constant::mapUserSessionToId,  0, $this->sid);   // Quick Mark this invalid in cache
+
+        // Set this session expired
         app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
             'sid' => $this->sid
         ])->execute();
-
-        // Clean cookie
-        app()->cookie->delete(Constant::cookie_name);
-
-        // Mark this invalid
-        app()->redis->sAdd(Constant::invalidUserSessionSet, $this->sid);
     }
 }
