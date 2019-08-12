@@ -80,8 +80,8 @@ class UserController extends Controller
     public function actionSessions()
     {
         if (app()->request->isPost()) {
-            $action = app()->request->post('action');
-            if ($action == 'delsession') {
+            $action = app()->request->post('action');  // FIXME
+            if ($action == 'revoke') {
                 $to_del_session = app()->request->post('session');
 
                 // expired it from Database first
@@ -100,7 +100,7 @@ class UserController extends Controller
 
         $session_list = new User\SessionsListForm();
         if (false === $session_list->validate()) {
-            return $this->render('action/action_fail',['msg' => $session_list->getError()]);
+            return $this->render('action/action_fail', ['msg' => $session_list->getError()]);
         }
 
         return $this->render('user/sessions', ['session_list' => $session_list]);
