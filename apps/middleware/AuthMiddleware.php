@@ -67,7 +67,9 @@ class AuthMiddleware
             app()->session->set('login_return_to', app()->request->fullUrl());  // Store the url which visitor want to hit
             return app()->response->redirect('/auth/login');
         } else {
-            /** Check User Permission to this route
+            /**
+             * TODO move to Auth Component
+             * Check User Permission to this route
              *
              * When user visit - /admin -> Controller : \apps\controllers\AdminController  Action: actionIndex
              * it will check the dynamic config key `authority.route_admin_index` and compare with curuser class ,
@@ -86,15 +88,6 @@ class AuthMiddleware
             $required_class = config('route.' . $route) ?: 1;
             if ($curuser->getClass() < $required_class) {
                 return app()->response->setStatusCode(403);  // FIXME redirect to /error may better
-            }
-
-            // We will not update user last_access_ip if it not change or expired
-            $last_access_ip = app()->redis->get('user:' . $curuser->getId() . ':access_ip');
-            if ($last_access_ip === false || $last_access_ip !== $now_ip) {
-                app()->pdo->createCommand('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
-                    'ip' => $now_ip, 'id' => $curuser->getId()
-                ])->execute();
-                app()->redis->set('user:' . $curuser->getId() . ':access_ip', $now_ip, 3600);
             }
         }
 

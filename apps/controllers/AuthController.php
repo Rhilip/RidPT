@@ -116,13 +116,14 @@ class AuthController extends Controller
         }
     }
 
+    /** @noinspection PhpUnused */
     public function actionLogout()
     {
         $logout = new Auth\UserLogoutForm();
         if (false === $logout->validate()) {
             return $this->render('action/action_fail', ['msg' => $logout->getError()]);
         } else {
-            $logout->validate();
+            $logout->flush();
         }
 
         return app()->response->redirect('/auth/login');

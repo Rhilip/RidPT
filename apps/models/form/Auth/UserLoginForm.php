@@ -124,7 +124,7 @@ class UserLoginForm extends Validator
     /** @noinspection PhpUnused */
     protected function isMaxUserSessionsReached()
     {
-        $exist_session_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE uid = :uid AND expired != 1')->bindParams([
+        $exist_session_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM sessions WHERE uid = :uid AND expired != 1')->bindParams([
             'uid' => $this->self['id']
         ])->queryScalar();
 
@@ -156,7 +156,7 @@ class UserLoginForm extends Validator
 
         do { // Generate unique JWT ID
             $jti = StringHelper::getRandomString(64);
-            $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE sid = :sid;')->bindParams([
+            $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM sessions WHERE session = :sid;')->bindParams([
                 'sid' => $jti
             ])->queryScalar();
         } while ($count != 0);
@@ -195,10 +195,9 @@ class UserLoginForm extends Validator
         $ip = app()->request->getClientIp();
 
         // Store User Login Session Information in database
-        app()->pdo->createCommand('INSERT INTO `user_session_log`(`uid`, `sid`, `login_ip`, `user_agent` ,`login_at`, `last_access_at`,`expired`) ' .
-            'VALUES (:uid, :sid, INET6_ATON(:login_ip), :ua, NOW(), NOW(), :expired)')->bindParams([
-            'uid' => $this->jwt_payload['user_id'], 'sid' => $this->jwt_payload['jti'],
-            'login_ip' => $ip, 'ua' => app()->request->header('user-agent'),
+        app()->pdo->createCommand('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
+            'VALUES (:uid, :sid, INET6_ATON(:login_ip), NOW(), :expired)')->bindParams([
+            'uid' => $this->jwt_payload['user_id'], 'sid' => $this->jwt_payload['jti'], 'login_ip' => $ip,
             'expired' => ($this->logout === 'yes') ? 0 : -1,  // -1 -> never expired , 0 -> auto_expire after 15 minutes, 1 -> expired
         ])->execute();
 

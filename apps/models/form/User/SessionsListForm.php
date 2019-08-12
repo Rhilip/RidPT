@@ -49,7 +49,7 @@ class SessionsListForm extends Pager
     {
         var_dump($this->getData('expired'));
         return app()->pdo->createCommand([
-            ['SELECT COUNT(`id`) FROM `user_session_log` WHERE uid = :uid ', 'params' => ['uid' => $this->getData('uid')]],
+            ['SELECT COUNT(`id`) FROM sessions WHERE uid = :uid ', 'params' => ['uid' => $this->getData('uid')]],
             ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->getData('expired')]],
         ])->queryScalar();
     }
@@ -57,7 +57,7 @@ class SessionsListForm extends Pager
     protected function getRemoteData(): array
     {
         return app()->pdo->createCommand([
-            ['SELECT `id`, `sid`, `login_at`, `login_ip`, `user_agent`, `last_access_at`, `expired` FROM `user_session_log` WHERE 1=1 '],
+            ['SELECT `id`, session, `login_at`, `login_ip`, `expired` FROM sessions WHERE 1=1 '],
             ['AND `uid` = :uid ', 'params' => ['uid' => app()->auth->getCurUser()->getId()]],
             ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->expired]],
             ['ORDER BY `expired`, `id` DESC'],

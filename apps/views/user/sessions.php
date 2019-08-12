@@ -21,27 +21,25 @@
         <table class="table table-hover table-striped">
             <thead>
             <tr>
+                <td class="text-center">Id</td>
                 <td class="text-center">Login At</td>
                 <td class="text-center">Login IP</td>
-                <td class="text-center">User Agent</td>
-                <td class="text-center nowrap">Last access at</td>
                 <td class="text-center">Revoke</td>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($session_list->getPagerData() as $s): ?>
                 <tr<?php if ($s['expired'] == 0):?> class="warning" data-toggle="tooltip" data-placement="bottom" title="This session will expired automatically."<?php endif;?>>
-                    <td class="text-center nowrap"><?= $s['login_at'] ?></td>
+                    <td><?= $s['id'] ?></td>
+                    <td class="text-center"><time class="nowrap"><?= $s['login_at'] ?></time></td>
                     <td class="text-center"><?= inet_ntop($s['login_ip']) ?></td>
-                    <td class="text-left"><?= $s['user_agent'] ?></td>
-                    <td class="text-center" data-timestamp="<?= strtotime($s['last_access_at']) ?>"><?= $s['last_access_at'] ?></td>
                     <td class="text-center">
-                        <?php if ($s['sid'] == app()->auth->getCurUserSessionId()): ?>
+                        <?php if ($s['session'] == app()->auth->getCurUserJIT()): ?>
                             Current
                         <?php else: ?>
                             <form method="post">
                                 <input type="hidden" name="action" value="revoke"/>
-                                <input type="hidden" name="session" value="<?= $s['sid'] ?>"/>
+                                <input type="hidden" name="session" value="<?= $s['session'] ?>"/>
                                 <button class="btn btn-default" type="submit"
                                         onclick="return confirm('Are you sure you want to delete this session?');">
                                     <i class="far fa-trash-alt"></i>

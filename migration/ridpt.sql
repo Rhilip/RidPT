@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 11, 2019 at 08:42 PM
+-- Generation Time: Aug 12, 2019 at 10:18 PM
 -- Server version: 8.0.16
 -- PHP Version: 7.3.7
 
@@ -717,6 +717,54 @@ INSERT INTO `quality_resolution` (`id`, `name`, `enabled`, `sort_index`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `sessions`
+--
+
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE IF NOT EXISTS `sessions` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `uid` int(10) UNSIGNED NOT NULL,
+  `session` varchar(64) NOT NULL,
+  `login_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `login_ip` varbinary(16) NOT NULL,
+  `expired` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `sid` (`session`),
+  KEY `uid` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `sessions`:
+--   `uid`
+--       `users` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `session_log`
+--
+
+DROP TABLE IF EXISTS `session_log`;
+CREATE TABLE IF NOT EXISTS `session_log` (
+  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  `sid` int(10) UNSIGNED NOT NULL,
+  `access_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `access_ip` varbinary(16) NOT NULL,
+  `user_agent` varchar(512) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `FK_session_id` (`sid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `session_log`:
+--   `sid`
+--       `sessions` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `site_config`
 --
 
@@ -743,6 +791,7 @@ TRUNCATE TABLE `site_config`;
 
 INSERT INTO `site_config` (`name`, `value`) VALUES
 ('authority.apply_for_links', '5'),
+('authority.bypass_maintenance', '90'),
 ('authority.invite_manual_confirm', '70'),
 ('authority.invite_recycle_other_pending', '90'),
 ('authority.invite_recycle_self_pending', '70'),
@@ -824,7 +873,7 @@ INSERT INTO `site_config` (`name`, `value`) VALUES
 ('route.admin_service', '90'),
 ('security.auto_logout', '1'),
 ('security.max_login_attempts', '10'),
-('security.secure_login', '1'),
+('security.secure_login', '0'),
 ('security.ssl_login', '1'),
 ('torrent_upload.allow_new_custom_tags', '0'),
 ('torrent_upload.enable_anonymous', '1'),
@@ -1274,33 +1323,6 @@ CREATE TABLE IF NOT EXISTS `user_invitations` (
 --       `users` -> `id`
 --
 
--- --------------------------------------------------------
-
---
--- Table structure for table `user_session_log`
---
-
-DROP TABLE IF EXISTS `user_session_log`;
-CREATE TABLE IF NOT EXISTS `user_session_log` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `uid` int(10) UNSIGNED NOT NULL,
-  `sid` varchar(64) NOT NULL,
-  `login_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `login_ip` varbinary(16) NOT NULL,
-  `user_agent` varchar(512) NOT NULL DEFAULT '',
-  `last_access_at` timestamp NOT NULL,
-  `expired` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `sid` (`sid`),
-  KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `user_session_log`:
---   `uid`
---       `users` -> `id`
---
-
 --
 -- Indexes for dumped tables
 --
@@ -1360,6 +1382,18 @@ ALTER TABLE `news`
   ADD CONSTRAINT `FK_news_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
 
 --
+-- Constraints for table `sessions`
+--
+ALTER TABLE `sessions`
+  ADD CONSTRAINT `FK_session_user_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `session_log`
+--
+ALTER TABLE `session_log`
+  ADD CONSTRAINT `FK_session_id` FOREIGN KEY (`sid`) REFERENCES `sessions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `snatched`
 --
 ALTER TABLE `snatched`
@@ -1396,10 +1430,4 @@ ALTER TABLE `user_confirm`
 --
 ALTER TABLE `user_invitations`
   ADD CONSTRAINT `FK_invitations_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `user_session_log`
---
-ALTER TABLE `user_session_log`
-  ADD CONSTRAINT `FK_session_user_id` FOREIGN KEY (`uid`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;

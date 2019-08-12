@@ -115,7 +115,7 @@ final class CronTabProcess extends Process
     protected function clean_expired_items_database() {
         $clean_sqls = [
             [  // expired session
-                'UPDATE `user_session_log` SET `expired` = 1 WHERE `expired` = 0 AND `login_at` < DATE_SUB(NOW(), INTERVAL 15 MINUTE)',
+                'UPDATE `sessions` SET `expired` = 1 WHERE `expired` = 0 AND `login_at` < DATE_SUB(NOW(), INTERVAL 15 MINUTE)',
                 'Success clean %s expired sessions'
             ],
             [  // expired invitee

@@ -8,6 +8,7 @@
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
 ### Feat
+- **Auth:** Sep Auth part from Site to new components (f36884e)
 - **Auth:** Use JWT to set cookies content (bf897c6)
 - **Auth/Login:** Add full Advanced Options support (6009dc8)
 - **Secret:** Check session and user_id match or not in jwt payload (358ba5d)

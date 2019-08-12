@@ -46,7 +46,7 @@ class UserLogoutForm extends Validator
     protected function getUserSessionId() {
         $session = app()->request->cookie(Constant::cookie_name);
         if (is_null($session)) {
-            $this->buildCallbackFailMsg('session','How can you post data without cookies?');
+            $this->buildCallbackFailMsg('session','How can you hit here without cookies?');
             return;
         }
 
@@ -70,7 +70,7 @@ class UserLogoutForm extends Validator
         app()->redis->zAdd(Constant::mapUserSessionToId,  0, $this->sid);   // Quick Mark this invalid in cache
 
         // Set this session expired
-        app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE sid = :sid')->bindParams([
+        app()->pdo->createCommand('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
             'sid' => $this->sid
         ])->execute();
     }
