@@ -6,6 +6,13 @@ use Rid\Base\Component;
 
 /**
  * App类
+ *
+ * @property \Rid\Http\Session $session
+ * @property \Rid\Http\Cookie $cookie
+ * @property \Rid\Http\Route $route
+ * @property \Rid\Http\Request $request
+ * @property \Rid\Http\Response $response
+ * @property \apps\components\Auth $auth
  */
 class Application extends \Rid\Base\Application
 {

@@ -5,7 +5,7 @@
  * Date: 2019/2/22
  * Time: 17:46
  *
- * @var array $sessions
+ * @var \apps\models\form\User\SessionsListForm $session_list
  */
 ?>
 
@@ -21,19 +21,19 @@ This is a list of devices that have logged into your account. Revoke any session
         <td class="text-center">Login At</td>
         <td class="text-center">Login IP</td>
         <td class="text-center">User Agent</td>
-        <td class="text-center">Last access at</td>
-        <td class="text-center">Action</td>
+        <td class="text-center nowrap">Last access at</td>
+        <td class="text-center">Revoke</td>
     </tr>
     </thead>
     <tbody>
-    <?php foreach ($sessions as $s): ?>
+    <?php foreach ($session_list->getPagerData() as $s): ?>
         <tr>
-            <td class="text-center"><?= $s['login_at'] ?></td>
+            <td class="text-center nowrap"><?= $s['login_at'] ?></td>
             <td class="text-center"><?= inet_ntop($s['login_ip']) ?></td>
             <td class="text-left"><?= $s['user_agent'] ?></td>
             <td class="text-center" data-timestamp="<?= strtotime($s['last_access_at']) ?>"><?= $s['last_access_at'] ?></td>
             <td class="text-center">
-                <?php if ($s['sid'] == app()->site->getCurUser()->getSessionId()): ?>
+                <?php if ($s['sid'] == app()->auth->getCurUserSessionId()): ?>
                     Current
                 <?php else: ?>
                     <form method="post">
@@ -50,5 +50,4 @@ This is a list of devices that have logged into your account. Revoke any session
     <?php endforeach; ?>
     </tbody>
 </table>
-
 <?php $this->stop() ?>

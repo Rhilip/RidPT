@@ -96,7 +96,7 @@ class UploadForm extends Validator
         ];
 
         if (config('torrent_upload.enable_upload_nfo') &&  // Enable nfo upload
-            app()->site->getCurUser()->isPrivilege('upload_nfo_file') &&  // This user can upload nfo
+            app()->auth->getCurUser()->isPrivilege('upload_nfo_file') &&  // This user can upload nfo
             app()->request->post('nfo')  // Nfo file upload
         ) {
             $rules['nfo'] = [
@@ -289,7 +289,7 @@ class UploadForm extends Validator
         try {
             app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`team`,`descr`,`nfo`,`uplver`,`hr`) 
 VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution,:team, :descr,:nfo ,:uplver, :hr)')->bindParams([
-                'owner_id' => app()->site->getCurUser()->getId(),
+                'owner_id' => app()->auth->getCurUser()->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
                 'title' => $this->title, 'subtitle' => $this->subtitle,
@@ -328,7 +328,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             throw $e;
         }
 
-       app()->site->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : app()->site->getCurUser()->getUsername()));
+       app()->site->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : app()->auth->getCurUser()->getUsername()));
     }
 
     // Check and rewrite torrent flags based on site config and user's privilege of upload flags
@@ -341,7 +341,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             } elseif ($config == 0) {                 // if global config disabled this flag
                 $this->$flag = 0;
             } else {  // check if user can use this flag
-                if (!app()->site->getCurUser()->isPrivilege('upload_flag_' . $flag)) {
+                if (!app()->auth->getCurUser()->isPrivilege('upload_flag_' . $flag)) {
                     $this->$flag = 0;
                 }
             }

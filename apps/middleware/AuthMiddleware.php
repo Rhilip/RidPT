@@ -24,7 +24,7 @@ class AuthMiddleware
         $controllerName = get_class($controller);
 
         $authby = in_array($controllerName, self::authByPasskeyControllers) ? 'passkey' : 'cookies';
-        $curuser = app()->site->getCurUser($authby, true);
+        $curuser = app()->auth->getCurUser($authby, true);
 
         if (config('base.prevent_anonymous') && $curuser === false) return app()->response->setStatusCode(403);
         if (config('base.maintenance') && !$curuser->isPrivilege('bypass_maintenance')) return app()->response->redirect('/maintenance');
@@ -33,7 +33,7 @@ class AuthMiddleware
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
     private function authByPasskey($callable, \Closure $next) {
-        if (false === $curuser = app()->site->getCurUser('passkey')) {
+        if (false === $curuser = app()->auth->getCurUser('passkey')) {
             return 'invalid Passkey';
         }
         return $next();
@@ -44,7 +44,7 @@ class AuthMiddleware
         list($controller, $action) = $callable;
         $controllerName = get_class($controller);
 
-        $curuser = app()->site->getCurUser();
+        $curuser = app()->auth->getCurUser();
 
         $now_ip = app()->request->getClientIp();
         if ($controllerName === controllers\AuthController::class) {

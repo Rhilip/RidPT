@@ -8,7 +8,7 @@
  * @var League\Plates\Template\Template $this
  */
 
-$user = app()->site->getCurUser();
+$user = app()->auth->getCurUser();
 ?>
 
 <!-- TODO fix nav miss in sm -->

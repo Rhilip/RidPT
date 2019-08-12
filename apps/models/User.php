@@ -464,7 +464,7 @@ class User
     {
         return $this->getCacheValue('temp_invites_details', function () {
                 return app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
-                    "uid" => app()->site->getCurUser()->getId()
+                    "uid" => app()->auth->getCurUser()->getId()
                 ])->queryAll() ?: [];
             }) ?? [];
     }
@@ -535,9 +535,5 @@ class User
         }
 
         return $this->class >= $require_class;
-    }
-
-    public function getSessionId() {
-        return app()->session->get('jti');
     }
 }

@@ -24,7 +24,7 @@
         </div>
     </div>
     <div class="col-md-9">
-        <?php $this->section('panel'); ?>
+        <?= $this->section('panel') ?>
     </div>
 </div>
 <?php $this->stop() ?>

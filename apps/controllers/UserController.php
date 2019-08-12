@@ -40,10 +40,10 @@ class UserController extends Controller
             }
         }
 
-        $user = app()->site->getCurUser();
+        $user = app()->auth->getCurUser();
         $uid = app()->request->get('uid');
-        if (!is_null($uid) && $uid != app()->site->getCurUser()->getId()) {
-            if (app()->site->getCurUser()->isPrivilege('view_invite')) {
+        if (!is_null($uid) && $uid != app()->auth->getCurUser()->getId()) {
+            if (app()->auth->getCurUser()->isPrivilege('view_invite')) {
                 $user = app()->site->getUser($uid);
             } else {
                 return $this->render('action/action_fail', ['title' => 'Fail', 'msg' => 'Privilege is not enough to see other people\'s invite status.']);
@@ -69,10 +69,10 @@ class UserController extends Controller
     public function actionPanel()
     {
         $uid = app()->request->get('id');
-        if ($uid && $uid != app()->site->getCurUser()->getId()) {
+        if ($uid && $uid != app()->auth->getCurUser()->getId()) {
             $user = app()->site->getUser($uid);
         } else {
-            $user = app()->site->getCurUser();
+            $user = app()->auth->getCurUser();
         }
         return $this->render('user/panel', ['user' => $user]);
     }
@@ -86,21 +86,23 @@ class UserController extends Controller
 
                 // expired it from Database first
                 app()->pdo->createCommand('UPDATE `user_session_log` SET `expired` = 1 WHERE uid = :uid AND sid = :sid')->bindParams([
-                    'uid' => app()->site->getCurUser()->getId(), 'sid' => $to_del_session
+                    'uid' => app()->auth->getCurUser()->getId(), 'sid' => $to_del_session
                 ])->execute();
                 $success = app()->pdo->getRowCount();
 
                 if ($success > 0) {
-                    app()->redis->zRem(app()->site->getCurUser()->sessionSaveKey, $to_del_session);
+                    app()->redis->zRem(app()->auth->getCurUser()->sessionSaveKey, $to_del_session);
                 } else {
                     return $this->render('action/action_fail', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
                 }
             }
         }
 
-        $sessions = app()->pdo->createCommand('SELECT sid,login_at,login_ip,user_agent,last_access_at FROM user_session_log WHERE uid = :uid and expired = 0')->bindParams([
-            'uid' => app()->site->getCurUser()->getId()
-        ])->queryAll();
-        return $this->render('user/sessions', ['sessions' => $sessions]);
+        $session_list = new User\SessionsListForm();
+        if (false === $session_list->validate()) {
+            return $this->render('action/action_fail',['msg' => $session_list->getError()]);
+        }
+
+        return $this->render('user/sessions', ['session_list' => $session_list]);
     }
 }

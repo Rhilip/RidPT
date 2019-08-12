@@ -38,7 +38,7 @@ class DeleteForm extends Validator
 
     protected function canCurUserManagerSubs()
     {
-        $curuser = app()->site->getCurUser();
+        $curuser = app()->auth->getCurUser();
         if (!$curuser->isPrivilege('manage_subtitles') ||  // not submanage_class
             $this->subtitle['uppd_by'] != $curuser->getId()  // not Subtitle 'owner'
         ) {
@@ -58,12 +58,12 @@ class DeleteForm extends Validator
 
         // TODO Delete uploader bonus
 
-        if ($this->subtitle['uppd_by'] != app()->site->getCurUser()->getId()) {
+        if ($this->subtitle['uppd_by'] != app()->auth->getCurUser()->getId()) {
             app()->site->sendPM(0,$this->subtitle['uppd_by'],'msg_your_sub_deleted','msg_deleted_your_sub');
         }
 
         // TODO add user detail
-        app()->site->writeLog('Subtitle \'' . $this->subtitle['title'] . '\'(' . $this->subtitle['id'] .') was deleted by ' . app()->site->getCurUser()->getUsername());
+        app()->site->writeLog('Subtitle \'' . $this->subtitle['title'] . '\'(' . $this->subtitle['id'] .') was deleted by ' . app()->auth->getCurUser()->getUsername());
         app()->redis->del(Constant::siteSubtitleSize);
     }
 }

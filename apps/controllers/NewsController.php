@@ -37,7 +37,7 @@ class NewsController extends Controller
                 $newform->flush();  // Save the news
                 return app()->response->redirect('/news');
             }
-        } elseif (app()->site->getCurUser()->isPrivilege('manage_news')) {
+        } elseif (app()->auth->getCurUser()->isPrivilege('manage_news')) {
             return $this->render('news/edit');
         }
         return $this->render('action/action_fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
@@ -55,7 +55,7 @@ class NewsController extends Controller
                 $newform->flush();  // Save the news
                 return app()->response->redirect('/news');
             }
-        } elseif (app()->site->getCurUser()->isPrivilege('manage_news')) {
+        } elseif (app()->auth->getCurUser()->isPrivilege('manage_news')) {
             $id = app()->request->get('id', 0);
             if (filter_var($id, FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check
@@ -67,7 +67,7 @@ class NewsController extends Controller
     }
 
     public function actionDelete() {
-        if (app()->site->getCurUser()->isPrivilege('manage_news')) {
+        if (app()->auth->getCurUser()->isPrivilege('manage_news')) {
             $id = app()->request->get('id',0);
             if (filter_var($id,FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check

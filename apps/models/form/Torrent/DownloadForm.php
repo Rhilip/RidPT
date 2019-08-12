@@ -57,7 +57,7 @@ class DownloadForm extends StructureForm
         else if (app()->request->isSecure())
             $scheme = 'https://';
 
-        $announce_suffix = '/announce?passkey=' . app()->site->getCurUser()->getPasskey();
+        $announce_suffix = '/announce?passkey=' . app()->auth->getCurUser()->getPasskey();
         $dict['announce'] = $scheme . config('base.site_tracker_url') . $announce_suffix;
 
         /** BEP 0012 Multitracker Metadata Extension

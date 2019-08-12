@@ -15,6 +15,9 @@
 - **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)
 - **User:** Fix User Class miss in string format (3680444)
 
+### Perf
+- **Process:** Disable Pdo And Redis called data in custom process (b744e81)
+
 ### Refactor
 - **Auth/JWT:** Better for auth by JWT (36f49a0)
 - **Auth/Middleware:** merge Old Auth{ByCookies, ByPasskey}Middleware (71cd7d7)

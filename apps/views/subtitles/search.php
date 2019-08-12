@@ -141,7 +141,7 @@ $upload_mode = $upload_mode ?? false;
                         <tr>
                             <td>
                                 <div class="pull-right">
-                                    <?php if (app()->site->getCurUser()->isPrivilege('manage_subtitles')):?>
+                                    <?php if (app()->auth->getCurUser()->isPrivilege('manage_subtitles')):?>
                                         <!--suppress HtmlUnknownTarget -->
                                         <a class="subs_delete" href="javascript:" data-id="<?= $datum['id'] ?>">[Delete]</a>
                                     <?php endif; ?>
@@ -176,7 +176,7 @@ $upload_mode = $upload_mode ?? false;
 </div>
 <?php $this->end(); ?>
 
-<?php if (app()->site->getCurUser()->isPrivilege('manage_subtitles')):?>
+<?php if (app()->auth->getCurUser()->isPrivilege('manage_subtitles')):?>
 <?php $this->push('body'); ?>
     <form method="post" action="/subtitles/delete" id="subs_delete_form" class="hidden">
         <label><input type="number" name="id" value=""></label>

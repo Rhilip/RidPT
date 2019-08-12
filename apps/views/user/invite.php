@@ -35,7 +35,7 @@
                         <td class="text-right">Downloaded</td>
                         <td class="text-center">Ratio</td>
                         <td class="text-center">Status</td>
-                        <?php if (app()->site->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
+                        <?php if (app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
                         <td class="text-center">Confirm</td>
                         <?php endif; ?>
                     </tr>
@@ -49,7 +49,7 @@
                         <td class="text-right"><?= $this->batch($invitee['downloaded'],'format_bytes') ?></td>
                         <td class="text-center"><?= number_format($invitee['uploaded']/($invitee['downloaded'] + 1),3) ?></td>
                         <td class="text-center"><?= $invitee['status'] ?></td>
-                        <?php if (app()->site->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
+                        <?php if (app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
                         <td class="text-center">
                             <?php if ($invitee['status'] == \apps\models\User::STATUS_PENDING): ?>
                             <a class="btn btn-info btn-sm" href="?action=confirm&uid=<?= $this->e($invitee['id']) ?>" onclick="return confirm('Really?')">Confirm</a>
@@ -70,9 +70,9 @@
             <div class="panel-heading">Pending Invite</div>
             <div class="panel-body">
                 <?php if ($user->getPendingInvites()): ?>
-                <?php $can_recyle = $user->getId() === app()->site->getCurUser()->getId() ?
-                        app()->site->getCurUser()->isPrivilege('invite_recycle_self_pending') :
-                        app()->site->getCurUser()->isPrivilege('invite_recycle_other_pending'); ?>
+                <?php $can_recyle = $user->getId() === app()->auth->getCurUser()->getId() ?
+                        app()->auth->getCurUser()->isPrivilege('invite_recycle_self_pending') :
+                        app()->auth->getCurUser()->isPrivilege('invite_recycle_other_pending'); ?>
                     <table class="table table-hover table-striped">
                         <thead>
                         <tr>
@@ -106,7 +106,7 @@
             </div>
         </div> <!-- User's Pending Invite -->
 
-        <?php if ($user->getId() === app()->site->getCurUser()->getId()): // Same User, use $user as quick call ?>
+        <?php if ($user->getId() === app()->auth->getCurUser()->getId()): // Same User, use $user as quick call ?>
         <?php $can_invite = config('base.enable_invite_system') && ($user->getInvites() + $user->getTempInvitesSum() > 0); ?>
         <div class="panel">
             <div class="panel-heading"><span class="text-red">Invite Warning!!!</span></div>

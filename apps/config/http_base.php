@@ -171,6 +171,10 @@ return [
         'site' => [
             'class' => apps\components\Site::class
         ],
+
+        'auth' => [
+            'class' => apps\components\Auth::class
+        ],
     ],
 
     // 定时器配置

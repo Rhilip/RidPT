@@ -14,7 +14,7 @@ $show_badge = $show_badge ?? false;
 ?>
 <?php if ($hide): ?>
     <i>Anonymous</i>
-    <?php if (app()->site->getCurUser()->isPrivilege('see_anonymous_info')): ?>
+    <?php if (app()->auth->getCurUser()->isPrivilege('see_anonymous_info')): ?>
         (<?= $this->insert('helper/username', ['user' => $user, 'hide' => false, 'user_badge' => $show_badge]) ?>)
     <?php endif; ?>
 <?php else: ?>

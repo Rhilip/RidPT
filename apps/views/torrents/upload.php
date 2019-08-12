@@ -105,7 +105,7 @@
                 </div>
             </td> <!-- FIXME link url -->
         </tr>
-        <?php if (config('torrent_upload.enable_upload_nfo') && app()->site->getCurUser()->isPrivilege('upload_nfo_file')): ?>
+        <?php if (config('torrent_upload.enable_upload_nfo') && app()->auth->getCurUser()->isPrivilege('upload_nfo_file')): ?>
         <tr>
             <td class="nowrap"><label for="nfo">NFO File</label></td>
             <td>
@@ -150,12 +150,12 @@
             <td>
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="switch<?= app()->site->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
+                        <div class="switch<?= app()->auth->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
                             <input type="checkbox" id="anonymous" name="anonymous" value="1"><label for="anonymous">Anonymous Upload</label>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="switch<?= app()->site->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key ?>">
+                        <div class="switch<?= app()->auth->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key ?>">
                             <input type="checkbox" id="hr" name="hr" value="1"><label for="hr">H&R</label>
                         </div>
                     </div>

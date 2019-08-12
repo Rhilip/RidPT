@@ -71,7 +71,7 @@ class InviteForm extends UserRegisterForm
     protected function canInvite()
     {
         // if user have enough invite number
-        $invite_sum = app()->site->getCurUser()->getInvites() + app()->site->getCurUser()->getTempInvitesSum();
+        $invite_sum = app()->auth->getCurUser()->getInvites() + app()->auth->getCurUser()->getTempInvitesSum();
         if ($invite_sum <= 0) {
             $this->buildCallbackFailMsg('Invitation qualification', 'No enough invite qualification');
             return;
@@ -80,7 +80,7 @@ class InviteForm extends UserRegisterForm
         // If it is temporary invite
         if ($this->getData('invite_type') == self::INVITE_TYPE_TEMPORARILY) {
             $record = app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE id = :id AND user_id = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW()')->bindParams([
-                'id' => $this->getData('temp_id'), 'uid' => app()->site->getCurUser()->getId()
+                'id' => $this->getData('temp_id'), 'uid' => app()->auth->getCurUser()->getId()
             ])->queryOne();
             if (false === $record) {
                 $this->buildCallbackFailMsg('Temporary Invitation', 'Temporary Invitation is not exist, it may not belong to you or expired.');
@@ -92,7 +92,7 @@ class InviteForm extends UserRegisterForm
 
     protected function checkInviteInterval()
     {
-        if (!app()->site->getCurUser()->isPrivilege('pass_invite_interval_check')) {
+        if (!app()->auth->getCurUser()->isPrivilege('pass_invite_interval_check')) {
             $count = app()->pdo->createCommand([
                 ['SELECT COUNT(`id`) FROM `invite` WHERE `create_at` > DATE_SUB(NOW(),INTERVAL :wait_second SECOND) ', 'params' => ['wait_second' => config('invite.interval')]],
                 ['AND `used` = 0', 'if' => !config('invite.force_interval')]
@@ -119,7 +119,7 @@ class InviteForm extends UserRegisterForm
             ]);
 
         app()->pdo->createCommand('INSERT INTO `invite` (`inviter_id`,`username`,`invite_type`, `hash`, `create_at`, `expire_at`) VALUES (:inviter_id,:username,:invite_type,:hash,NOW(),DATE_ADD(NOW(),INTERVAL :timeout SECOND))')->bindParams([
-            'inviter_id' => app()->site->getCurUser()->getId(), 'username' => $this->username, 'invite_type' => $this->invite_type,
+            'inviter_id' => app()->auth->getCurUser()->getId(), 'username' => $this->username, 'invite_type' => $this->invite_type,
             'hash' => $invite_hash, 'timeout' => config('invite.timeout')
         ])->execute();
     }
@@ -135,12 +135,12 @@ class InviteForm extends UserRegisterForm
                 ])->execute();
             } else {  // Consume user privilege invite
                 app()->pdo->createCommand('UPDATE `users` SET `invites` = `invites` - 1 WHERE `id` = :uid')->bindParams([
-                    'uid' => app()->site->getCurUser()->getId()
+                    'uid' => app()->auth->getCurUser()->getId()
                 ])->execute();
             }
 
             $this->insertInviteRecord();
-            app()->redis->del('User:' . app()->site->getCurUser()->getId() . ':base_content');  // flush it's cache
+            app()->redis->del('User:' . app()->auth->getCurUser()->getId() . ':base_content');  // flush it's cache
 
             $invite_status = true;
             app()->pdo->commit();

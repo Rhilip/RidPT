@@ -31,7 +31,7 @@ class InviteActionForm extends Validator
     public static function defaultData()
     {
         return [
-            'uid' => app()->site->getCurUser()->getId()
+            'uid' => app()->auth->getCurUser()->getId()
         ];
     }
 
@@ -62,12 +62,12 @@ class InviteActionForm extends Validator
     protected function checkActionPrivilege() {
         $action = $this->getData('action');
         if ($action == self::ACTION_CONFIRM) {
-            if (!app()->site->getCurUser()->isPrivilege('invite_manual_confirm')) {
+            if (!app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to confirm pending user.');
             }
         } elseif ($action == self::ACTION_RECYCLE) {
-            $check_recycle_privilege_name = ($this->getData('uid') == app()->site->getCurUser()->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
-            if (!app()->site->getCurUser()->isPrivilege($check_recycle_privilege_name)) {
+            $check_recycle_privilege_name = ($this->getData('uid') == app()->auth->getCurUser()->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
+            if (!app()->auth->getCurUser()->isPrivilege($check_recycle_privilege_name)) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to recycle user pending invites.');
             }
         }

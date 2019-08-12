@@ -23,7 +23,7 @@ $enabled_editor = $enabled_editor ?? false;
                 $commentator_hide_flag = false;
                 if ($torrent->getUplver() &&  // The torrent is uplver
                     $commit['owner_id'] == $torrent->getOwnerId() &&  // Commentator is the uploader for this torrent
-                    !app()->site->getCurUser()->isPrivilege('see_anonymous_uploader')  // CurUser can't see uploader detail
+                    !app()->auth->getCurUser()->isPrivilege('see_anonymous_uploader')  // CurUser can't see uploader detail
                 ) $commentator_hide_flag = true;
                 ?>
                 <div id="commit_<?= $commit['id'] ?>" class="comment">
@@ -60,7 +60,7 @@ $enabled_editor = $enabled_editor ?? false;
     <?php endif; ?>
     <footer>
         <div class="reply-form" id="commentReplyForm1">
-            <div class="avatar"><img src="<?= app()->site->getCurUser()->getAvatar() ?>" alt=""></div>
+            <div class="avatar"><img src="<?= app()->auth->getCurUser()->getAvatar() ?>" alt=""></div>
             <form class="form" method="post" action="/torrent/commit?id=<?= $torrent->getId() ?>">
                 <!-- FIXME commit point -->
                 <div class="form-group">

@@ -51,7 +51,7 @@ $torrent = $details->getTorrent();
                     <a href="/torrent/download?id=<?= $torrent->getId() ?>" download><i class="fa fa-download fa-fw"></i>&nbsp;Download Torrent</a>
                 </div><!-- Download Torrent -->
                 <div class="torrent-action-item">
-                    <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->site->getCurUser()->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i>&nbsp;Add to Favour</a>
+                    <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= app()->auth->getCurUser()->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i>&nbsp;Add to Favour</a>
                 </div><!-- Add to Favour -->
                 <div class="torrent-action-item">
                     <a class="torrent-myrss" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="fas fa-rss fa-fw"></i>&nbsp;Add to RSS Basket</a>

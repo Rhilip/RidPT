@@ -90,7 +90,7 @@ class UploadForm extends Validator
 VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)')->bindParams([
                 'tid' => $this->torrent_id, 'hashs' => $this->hashs,
                 'title' => $title, 'filename' => $this->file->getBaseName(),
-                'size' => $this->file->size, 'upper' => app()->site->getCurUser()->getId(),
+                'size' => $this->file->size, 'upper' => app()->auth->getCurUser()->getId(),
                 'anonymous' => $this->anonymous, 'ext' => $ext
             ])->execute();
             $id = app()->pdo->getLastInsertId();

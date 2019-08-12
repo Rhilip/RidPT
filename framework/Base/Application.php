@@ -3,14 +3,10 @@
 namespace Rid\Base;
 
 /**
+ *
+ * @property \Rid\Http\Error|\Rid\Console\Error $error
  * @property \Rid\Component\Log $log
  * @property \Rid\Console\Input $input
- * @property \Rid\Http\Route $route
- * @property \Rid\Http\Request $request
- * @property \Rid\Http\Response $response
- * @property \Rid\Http\Error|\Rid\Console\Error $error
- * @property \Rid\Http\Session $session
- * @property \Rid\Http\Cookie $cookie
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Component\Config $config
