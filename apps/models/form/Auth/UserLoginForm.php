@@ -34,16 +34,6 @@ class UserLoginForm extends Validator
 
     private $self;
 
-    // Key Information of User Session
-    private $sessionLength = 64;
-
-    // Cookie
-    private $cookieExpires = 0x7fffffff;
-    private $cookiePath = '/';
-    private $cookieDomain = '';
-    private $cookieSecure = false;  // Notice : Only change this value when you first run !!!!
-    private $cookieHttpOnly = true;
-
     private $jwt_payload;
 
     protected $_autoload_data = true;
@@ -134,7 +124,7 @@ class UserLoginForm extends Validator
     /** @noinspection PhpUnused */
     protected function isMaxUserSessionsReached()
     {
-        $exist_session_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE uid = :uid AND expired = 0')->bindParams([
+        $exist_session_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `user_session_log` WHERE uid = :uid AND expired = -1')->bindParams([
             'uid' => $this->self['id']
         ])->queryScalar();
 
@@ -178,22 +168,25 @@ class UserLoginForm extends Validator
             'jti' => $jti,
         ];
 
-        $cookieExpire = $this->cookieExpires;
-        if ($this->logout === 'yes') {
-            $payload['exp'] = $cookieExpire = $timenow + 15 * 60;  // 15 minutes
+        $cookieExpire = 0x7fffffff;  // for never
+        if ($this->logout === 'yes' || config('security.auto_logout') > 1) {
+            $cookieExpire = $timenow + 15 * 60;  // for 15 minutes
         }
+        $payload['exp'] = $cookieExpire;
 
         // Custom Payload key
         $payload['user_id'] = $this->self['id'];  // Store User Id so we can quick load their information
-        if ($this->securelogin === 'yes') $payload['secure_login_ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
-        if ($this->ssl) $payload['ssl'] = true;  // FIXME Check if site support this feature , Store User want full ssl protect
+        if ($this->securelogin === 'yes' || config('security.secure_login') > 1)
+            $payload['secure_login_ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
+        if ($this->ssl || config('security.ssl_login') > 1)
+            $payload['ssl'] = true;  // Store User want full ssl protect
 
         // Generate JWT content
         $this->jwt_payload = $payload;
         $jwt = JWTHelper::encode($payload);
 
         // Sent JWT content AS Cookie
-        app()->response->setCookie(Constant::cookie_name, $jwt, $cookieExpire, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
+        app()->response->setCookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true);
     }
 
     private function updateUserLoginInfo()

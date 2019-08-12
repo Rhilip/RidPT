@@ -38,7 +38,7 @@ class StringHelper
         $secret_key = env('APP_SECRET_KEY');
         $secret_iv = env('APP_SECRET_IV');
 
-        $encrypt_method = "AES-256-CBC";
+        $encrypt_method = 'AES-256-CBC';
         $key = hash('sha256', $secret_key);
         $iv = substr(hash('sha256', $secret_iv), 0, 16);
 
