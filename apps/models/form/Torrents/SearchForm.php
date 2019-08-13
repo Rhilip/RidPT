@@ -18,11 +18,19 @@ class SearchForm extends Pager
 
     private $_tags;
 
+    /**
+     * user input may '&tags=<tag1>,<tag2>' (string)
+     *             or '&tags[]=<tag1>&tags[]=<tag2>' (array)
+     * We deal those with an `AND` operation -> 'AND JSON_CONTAINS(`tags`, JSON_ARRAY(:tags))'
+     *
+     */
     private function getTagsArray()
     {
         if (is_null($this->_tags)) {
-            $tags = $this->getInput('tags');
-            $this->_tags = $tags ? array_map('trim', explode(',', $tags)) : [];
+            $tags = $this->getInput('tags') ?? [];
+
+            if (is_string($tags)) $tags = explode(',', $tags);
+            $this->_tags = array_map('trim', $tags);
         }
 
         return $this->_tags;
@@ -33,10 +41,8 @@ class SearchForm extends Pager
         $tags = $this->getTagsArray();
 
         return app()->pdo->createCommand([
-            ['SELECT COUNT(t.`id`) FROM `torrents` t '],
-            ['INNER JOIN map_torrents_tags mtt on t.id = mtt.torrent_id INNER JOIN tags t2 on mtt.tag_id = t2.id ', 'if' => count($tags)],
-            ['WHERE 1=1 '],
-            ['AND t2.tag IN(:tags) ', 'if' => count($tags), 'params' => ['tags' => $tags]],
+            ['SELECT COUNT(`id`) FROM `torrents` WHERE 1=1 '],
+            ['AND JSON_CONTAINS(`tags`, JSON_ARRAY(:tags))', 'if' => count($tags), 'params' => ['tags' => $tags]],
         ])->queryScalar();
     }
 
@@ -45,11 +51,9 @@ class SearchForm extends Pager
         $tags = $this->getTagsArray();
 
         $fetch = app()->pdo->createCommand([
-            ['SELECT DISTINCT t.`id`, t.`added_at` FROM `torrents` t '],
-            ['INNER JOIN map_torrents_tags mtt on t.id = mtt.torrent_id INNER JOIN tags t2 on mtt.tag_id = t2.id ', 'if' => count($tags)],
-            ['WHERE 1=1 '],
-            ['AND t2.tag IN(:tags) ', 'if' => count($tags), 'params' => ['tags' => $tags]],
-            ['ORDER BY `t`.`added_at` DESC '],
+            ['SELECT `id`, `added_at` FROM `torrents` WHERE 1=1 '],
+            ['AND JSON_CONTAINS(`tags`, JSON_ARRAY(:tags))', 'if' => count($tags), 'params' => ['tags' => $tags]],
+            ['ORDER BY `added_at` DESC '],
             ['LIMIT :offset, :rows', 'params' => ['offset' => $this->offset, 'rows' => $this->limit]],
         ])->queryColumn();
 

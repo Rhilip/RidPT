@@ -23,7 +23,7 @@ Test Account Information:
 1. We test our RidPT project on this environment :
 
     - Nginx 1.14.2
-    - MySQL 8.0.14
+    - MySQL 8.0.17 **(At least)** 
     - PHP 7.3.1 (With other extension which your can see in `composer.json`)
     - Swoole 4.2.12
     - Redis 5.0.3 Stable

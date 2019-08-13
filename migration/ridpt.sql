@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 12, 2019 at 10:18 PM
--- Server version: 8.0.16
+-- Generation Time: Aug 13, 2019 at 09:03 PM
+-- Server version: 8.0.17
 -- PHP Version: 7.3.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -430,30 +430,6 @@ CREATE TABLE IF NOT EXISTS `map_torrents_externalinfo` (
 -- RELATIONSHIPS FOR TABLE `map_torrents_externalinfo`:
 --   `info_id`
 --       `external_info` -> `id`
---   `torrent_id`
---       `torrents` -> `id`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `map_torrents_tags`
---
-
-DROP TABLE IF EXISTS `map_torrents_tags`;
-CREATE TABLE IF NOT EXISTS `map_torrents_tags` (
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `torrent_id` int(10) UNSIGNED NOT NULL,
-  `tag_id` int(10) UNSIGNED NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_map_tt_to_torrents` (`torrent_id`),
-  KEY `FK_map_tt_to_tags` (`tag_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `map_torrents_tags`:
---   `tag_id`
---       `tags` -> `id`
 --   `torrent_id`
 --       `torrents` -> `id`
 --
@@ -1044,6 +1020,7 @@ CREATE TABLE IF NOT EXISTS `tags` (
   `tag` varchar(64) NOT NULL DEFAULT '',
   `class_name` varchar(64) NOT NULL DEFAULT '',
   `pinned` tinyint(1) NOT NULL DEFAULT '0',
+  `count` int(10) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `tag` (`tag`),
   KEY `pinned` (`pinned`)
@@ -1062,12 +1039,12 @@ TRUNCATE TABLE `tags`;
 -- Dumping data for table `tags`
 --
 
-INSERT INTO `tags` (`id`, `tag`, `class_name`, `pinned`) VALUES
-(1, 'Internal', 'label-primary', 1),
-(2, 'DIY', 'label-primary', 1),
-(3, 'Premiere', 'label-primary', 1),
-(4, 'Exclusive', 'label-primary', 1),
-(5, 'Request', 'label-primary', 1);
+INSERT INTO `tags` (`id`, `tag`, `class_name`, `pinned`, `count`) VALUES
+(1, 'Internal', 'label-primary', 1, 0),
+(2, 'DIY', 'label-primary', 1, 0),
+(3, 'Premiere', 'label-primary', 1, 0),
+(4, 'Exclusive', 'label-primary', 1, 0),
+(5, 'Request', 'label-primary', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -1133,6 +1110,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `quality_codec` int(11) NOT NULL DEFAULT '0',
   `quality_medium` int(11) NOT NULL DEFAULT '0',
   `quality_resolution` int(11) NOT NULL DEFAULT '0',
+  `tags` json NOT NULL,
   `team` int(11) NOT NULL DEFAULT '0',
   `descr` text,
   `nfo` blob NOT NULL,
@@ -1367,13 +1345,6 @@ ALTER TABLE `invite`
 ALTER TABLE `map_torrents_externalinfo`
   ADD CONSTRAINT `FK_map_tl_to_external_info` FOREIGN KEY (`info_id`) REFERENCES `external_info` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_map_tl_to_torrents` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `map_torrents_tags`
---
-ALTER TABLE `map_torrents_tags`
-  ADD CONSTRAINT `FK_map_tt_to_tags` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `FK_map_tt_to_torrents` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `news`

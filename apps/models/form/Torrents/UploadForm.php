@@ -116,7 +116,7 @@ class UploadForm extends Validator
             // IF enabled this quality field , then load it value list from setting
             // Else we just allow the default value 0 to prevent cheating
             if (config('torrent_upload.enable_quality_' . $quality)) {
-                $quality_id_list = array_map(function ($cat) {
+                $quality_id_list = [0] + array_map(function ($cat) {
                     return $cat['id'];
                 }, app()->site::ruleQuality($quality));
             }
@@ -130,7 +130,7 @@ class UploadForm extends Validator
         // Add Team id Valid
         $team_id_list = [0];
         if (config('torrent_upload.enable_teams')) {
-            $team_id_list += array_map(function ($team) {
+            $team_id_list = [0] + array_map(function ($team) {
                 return $team['id'];
             }, app()->site::ruleCanUsedTeam());
         }
@@ -294,8 +294,10 @@ class UploadForm extends Validator
         $this->determineTorrentStatus();
         app()->pdo->beginTransaction();
         try {
-            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`team`,`descr`,`nfo`,`uplver`,`hr`) 
-VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution,:team, :descr,:nfo ,:uplver, :hr)')->bindParams([
+            $tags = $this->getTags();
+
+            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`tags`,`team`,`descr`,`nfo`,`uplver`,`hr`) 
+VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution, JSON_ARRAY(:tags) ,:team, :descr,:nfo ,:uplver, :hr)')->bindParams([
                 'owner_id' => app()->auth->getCurUser()->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
@@ -306,6 +308,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
                 'torrent_size' => $this->torrent_size, 'torrent_structure' => $this->torrent_structure,
                 'quality_audio' => $this->audio, 'quality_codec' => $this->codec,
                 'quality_medium' => $this->medium, 'quality_resolution' => $this->resolution,
+                'tags' => $this->getTags(),
                 'team' => $this->team,
                 'descr' => $this->descr,
                 'nfo' => $nfo_blob,
@@ -313,7 +316,8 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             ])->execute();
             $this->id = app()->pdo->getLastInsertId();
 
-            if (config('torrent_upload.enable_tags')) $this->insertTags();  // TODO store tags in torrents table
+            $this->updateTagsTable($tags);
+
             $this->getExternalLinkInfo();
             $this->setBuff();
 
@@ -360,47 +364,31 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
         $this->status = self::TORRENT_STATUS_CONFIRMED;
     }
 
-    private function insertTags()
+    private function getTags(): array
     {
-        $tags = str_replace(',', ' ', $this->tags);
-        $tags_list = explode(' ', $tags);
+        $tags_list = [];
+        if (config('torrent_upload.enable_tags')) {
+            $tags = str_replace(',', ' ', $this->tags);
+            $tags_list = explode(' ', $tags);
+            $tags_list = array_slice($tags_list, 0, 10); // Get first 10 tags
 
-        // Get and cache the exist tags
-        if (!app()->redis->exists('site:torrents_all_tags')) {
-            $exist_tags = app()->pdo->createCommand('SELECT id,tag FROM tags')->queryAll();
-            foreach ($exist_tags as $exist_tag) {
-                app()->redis->zAdd('site:torrents_all_tags', $exist_tag['id'], $exist_tag['tag']);
-            }
-            app()->redis->expire('site:torrents_all_tags', 43200);
-        }
-
-        $tag_id_list = [];
-        for ($i = 0; $i < min(count($tags_list), 10); $i++) {
-            $tag = trim($tags_list[$i]);
-            if (strlen($tag) > 0) {
-                $tag_id = app()->redis->zScore('site:torrents_all_tags', $tag);  // check if it is exist tag in cache
-                if ($tag_id == 0) {  // un-exist tag
-                    if (config('torrent_upload.allow_new_custom_tags')) {
-                        try {  // insert tag to database and cache
-                            app()->pdo->createCommand('INSERT INTO `tags`(`tag`) VALUES (:tag)')->bindParams([
-                                'tag' => $tag
-                            ])->execute();
-                            $tag_id = app()->pdo->getLastInsertId();
-                            app()->redis->zAdd('site:torrents_all_tags', $tag_id, $tag);
-                            $tag_id_list[] = ['tag_id' => $tag_id, 'torrent_id' => $this->id];
-                        } catch (\Exception $e) {
-                            continue;
-                        }
-                    }
-                } else {
-                    $tag_id_list[] = ['tag_id' => $tag_id, 'torrent_id' => $this->id];
-                }
+            if (!config('torrent_upload.allow_new_custom_tags')) {
+                $rule_pinned_tags = array_map(function ($tag_row) {
+                    return $tag_row['tag'];
+                }, app()->site::rulePinnedTags());
+                $tags_list = array_intersect($rule_pinned_tags, $tags_list);
             }
         }
 
-        // batchInsert into map
-        if (count($tag_id_list) > 0) {
-            app()->pdo->batchInsert('map_torrents_tags', $tag_id_list)->execute();
+        return $tags_list;
+    }
+
+    private function updateTagsTable(array $tags)
+    {
+        foreach ($tags as $tag) {
+            app()->pdo->createCommand('INSERT INTO tags (tag) VALUES (:tag) ON DUPLICATE KEY UPDATE `count` = `count` + 1;')->bindParams([
+                'tag' => $tag
+            ])->execute();
         }
     }
 
@@ -514,4 +502,6 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
         }
         return $value;
     }
+
+
 }

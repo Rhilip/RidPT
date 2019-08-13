@@ -190,9 +190,11 @@ class Site extends Component
 
     public static function rulePinnedTags(): array
     {
-        return static::getStaticCacheValue('pinned_tags', function () {
+        // FIXME
+        $pinned_tags = static::getStaticCacheValue('pinned_tags', function () {
             return app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1 LIMIT 10;')->queryAll();
         }, 86400);
+        return $pinned_tags;
     }
 
     public static function fetchUserCount(): int

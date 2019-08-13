@@ -141,14 +141,14 @@ class Auth extends Component
             $ua = app()->request->header('user-agent');
 
             $identify_key = md5(implode('|', [
-                $this->cur_user_jit,  // `seesions`->session
+                $this->cur_user_jit,  // `sessions`->session
                 $now_ip /* user ip */, $ua  /* user agent */
             ]));
 
             // Update User access info by HyperLogLog
             $grain_size = date('YmdH') ; // per hour
             // $grain_size = date('YmdH') . floor(date('i') / 15);  // per 15 minutes
-            $check = app()->redis->pfAdd('Site:access_log_' . $grain_size . ':hyperloglog', [$identify_key]);
+            $check = app()->redis->pfAdd('Site:hyperloglog:access_log_' . $grain_size, [$identify_key]);
             if ($check == 1) {
                 // Update Table `users`
                 app()->pdo->createCommand('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([

@@ -13,50 +13,50 @@ class Constant
 {
     const cookie_name = 'rid';
 
-    const mapUsernameToId = 'Map:user_username_to_user_id:hash';
-    const mapUserPasskeyToId = 'Map:user_passkey_to_user_id:zset';  // (double) 0 means invalid
-    const mapUserSessionToId = 'Map:user_session_to_user_id:zset';  // (double) 0 means invalid
+    const mapUsernameToId = 'Map:hash:user_username_to_user_id';
+    const mapUserPasskeyToId = 'Map:zset:user_passkey_to_user_id';  // (double) 0 means invalid
+    const mapUserSessionToId = 'Map:zset:user_session_to_user_id';  // (double) 0 means invalid
 
     // --- invalid Zset  ---
-    const invalidUserIdZset = 'Site:invalid_user_id:zset';
+    const invalidUserIdZset = 'Site:zset:invalid_user_id';
 
     // Tracker Use
-    const trackerInvalidInfoHashZset = 'Tracker:invalid_torrent_info_hash:zset';  // FIXME use set instead
-    const trackerAllowedClientList = 'Tracker:allowed_client_list:string';
-    const trackerAllowedClientExceptionList = 'Tracker:allowed_client_exception_list:string';
-    const trackerValidClientZset = 'Tracker:valid_clients:zset';
-    const trackerAnnounceLockZset = 'Tracker:announce_flood_lock:zset';
-    const trackerAnnounceMinIntervalLockZset = 'Tracker:announce_min_interval_lock:zset';
-    const trackerValidPeerZset = 'Tracker:valid_peers:zset';
-    const trackerToDealQueue = 'Tracker:to_deal_queue:list';
-    const trackerBackupQueue = 'Tracker:backup_queue:list';
+    const trackerInvalidInfoHashZset = 'Tracker:zset:invalid_torrent_info_hash';  // FIXME use set instead
+    const trackerAllowedClientList = 'Tracker:string:allowed_client_list';
+    const trackerAllowedClientExceptionList = 'Tracker:string:allowed_client_exception_list';
+    const trackerValidClientZset = 'Tracker:zset:valid_clients';
+    const trackerAnnounceLockZset = 'Tracker:zset:lock:announce_flood';
+    const trackerAnnounceMinIntervalLockZset = 'Tracker:zset:lock:announce_min_interval';
+    const trackerValidPeerZset = 'Tracker:zset:valid_peers';
+    const trackerToDealQueue = 'Tracker:list:to_deal_queue';
+    const trackerBackupQueue = 'Tracker:list:backup_queue';
 
     // Site Status
-    const siteSubtitleSize = 'Site:subtitle_size:string';
+    const siteSubtitleSize = 'Site:string:subtitle_size';
 
     public static function userContent($uid)
     {
-        return 'User:user_' . $uid . '_content:hash';
+        return 'User:hash:user_' . $uid . '_content';
     }
 
     public static function torrentContent($tid)
     {
-        return 'Torrent:torrent_' . $tid . '_content:hash';
+        return 'Torrent:hash:torrent_' . $tid . '_content';
     }
 
     // Tracker User
     public static function trackerUserContentByPasskey($passkey)
     {
-        return 'Tracker:user_passkey_' . $passkey . '_content:string'; // Used string to store hash
+        return 'Tracker:string:user_passkey_' . $passkey . '_content'; // Used string to store hash, Because we will get all value in it
     }
 
     public static function trackerTorrentContentByInfoHash($bin2hex_hash)
     {
-        return 'Tracker:torrent_infohash_' . $bin2hex_hash . '_content:hash';
+        return 'Tracker:hash:torrent_infohash_' . $bin2hex_hash . '_content';
     }
 
     public static function rateLimitPool($pool, $action)
     {
-        return 'Rate:pool_' . $pool . '_action_' . $action . '_limit:zset';
+        return 'Rate:zset:pool_' . $pool . '_action_' . $action . '_limit';
     }
 }

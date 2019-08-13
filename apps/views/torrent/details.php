@@ -113,7 +113,7 @@ $torrent = $details->getTorrent();
                 <?php $tags = $torrent->getTags(); ?>
                 <?php if (count($tags) > 0) : ?>
                     <?php foreach ($tags as $tag): ?>
-                        <a href="/torrents/tags?tag=<?= $tag['tag'] ?>" class="label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
+                        <a href="/torrents/tags?tag=<?= $tag ?>" class="label label-outline"><?= $tag ?></a>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <span class="text-muted">No tags for this torrent</span>

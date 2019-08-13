@@ -18,14 +18,14 @@ trait isValidUserTrait
     protected $user;
     protected $user_data;  // Full user line in table `users`
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'id' => 'Required | Integer',
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['isExistUser'];
     }

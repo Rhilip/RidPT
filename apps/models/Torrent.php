@@ -41,7 +41,6 @@ class Torrent
 
     private $nfo;
 
-    /** @var array */
     private $tags;
     private $pinned_tags;
 
@@ -232,32 +231,24 @@ class Torrent
         return app()->site::CategoryDetail($this->category);
     }
 
-    /**
-     * @return array
-     */
     public function getTags(): array
     {
-        return $this->getCacheValue('tags', function () {
-            return app()->pdo->createCommand('
-                SELECT tag, class_name, pinned FROM tags 
-                  INNER JOIN map_torrents_tags mtt on tags.id = mtt.tag_id 
-                  INNER JOIN torrents t on mtt.torrent_id = t.id 
-                WHERE t.id = :tid ORDER BY tags.pinned DESC')->bindParams([
-                'tid' => $this->id
-            ])->queryAll();
-        });
+        if (is_string($this->tags)) $this->tags = json_decode($this->tags, true);
+        return $this->tags ?? [];
     }
 
-    /**
+    /** FIXME
      * @return array
      */
     public function getPinnedTags(): array
     {
-        return $this->getCacheValue('pinned_tags', function () {
-            return array_filter($this->getTags(), function ($tag) {
-                return $tag['pinned'] == 1;
-            });
-        });
+        $pinned_tags = [];
+        $tags = $this->getTags();
+        $rule_pinned_tags = app()->site::rulePinnedTags();
+        foreach ($rule_pinned_tags as $pinned_tag) {
+            if (in_array($pinned_tag['tag'], $tags)) $pinned_tags[] = $pinned_tag;
+        }
+        return $pinned_tags;
     }
 
     public function hasNfo()

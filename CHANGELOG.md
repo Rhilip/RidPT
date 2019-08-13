@@ -31,6 +31,7 @@
 - **Config:** Remove params `$throw` in Config()->get() (706cc9a)
 - **RateLimit:** Change last param of isRateLimitHit and rate limit store Namespace (4dd571d)
 - **Site:** Simple Category Detail get function (ffa6855)
+- **Validator:** fix user input extract (81bdc8f)
 - **View:** Make View extends BaseObject (0865cf9)
 - **torrent/structure:** Use zui.tree instead javascript `$(this).next('ul').toggle()` (7b20b2c)
 - **view:** Fix helper/username params (720f37e)

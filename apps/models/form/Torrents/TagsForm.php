@@ -19,9 +19,10 @@ class TagsForm extends Pager
 
     public function getRemoteTotal(): int
     {
+        $search = $this->getInput('search');
         return app()->pdo->createCommand([
-            ['SELECT COUNT(tags.id) as `count` FROM tags'],
-            ['WHERE `tags`.`tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $this->getInput('search') . '%']],
+            ['SELECT COUNT(`id`) FROM tags '],
+            ['WHERE `tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $search . '%']],
         ])->queryScalar();
     }
 
@@ -29,9 +30,9 @@ class TagsForm extends Pager
     {
         $search = $this->search;
         return app()->pdo->createCommand([
-            ['SELECT tags.*,COUNT(mtt.id) as `count` FROM tags LEFT JOIN map_torrents_tags mtt on tags.id = mtt.tag_id '],
-            ['WHERE `tags`.`tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $search . '%']],
-            ['GROUP BY tags.id ORDER BY `tags`.`pinned`,`count` DESC '],
+            ['SELECT * FROM tags '],
+            ['WHERE `tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $search . '%']],
+            ['ORDER BY `pinned`, `count` DESC, `id` '],
             ['LIMIT :offset, :rows', 'params' => ['offset' => $this->offset, 'rows' => $this->limit]],
         ])->queryAll();
     }

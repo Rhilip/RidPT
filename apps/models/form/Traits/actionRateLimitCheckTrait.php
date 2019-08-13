@@ -26,7 +26,7 @@ trait actionRateLimitCheckTrait
 
     private function isRateLimitHit($limit_status)
     {
-        $pool = $limit_status['pool'] ?? 'default_';
+        $pool = $limit_status['pool'] ?? 'default';
         $action = $limit_status['key'] ?? 'default';
         $key = Constant::rateLimitPool($pool, $action);
 
