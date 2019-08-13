@@ -209,7 +209,7 @@ jQuery(document).ready(function () {
         let tid = that.data('tid');
         let star = that.find(' > i');
 
-        $.post(api_point + '/torrent/bookmark', {'tid': tid}, function (res) {
+        $.post(api_point + '/torrent/bookmark', {'id': tid}, function (res) {
             if (res.success) {
                 let old_is_stared = star.hasClass('fas');
                 star.toggleClass('fas', !old_is_stared).toggleClass('far', old_is_stared);
@@ -289,7 +289,7 @@ jQuery(document).ready(function () {
             if (value !== null) {
                 build_file_tree(value);
             } else {
-                $.getJSON(api_point + '/torrent/filelist', {'tid': tid}, function (res) {
+                $.getJSON(api_point + '/torrent/filelist', {'id': tid}, function (res) {
                     cache_torrent_files.setItem(tid, res);
                     build_file_tree(res);
                 });
@@ -319,7 +319,7 @@ jQuery(document).ready(function () {
             if (value !== null) {
                 build_nfo_modal(value);
             } else {
-                $.getJSON(api_point + '/torrent/nfofilecontent', {'tid': tid}, function (res) {
+                $.getJSON(api_point + '/torrent/nfofilecontent', {'id': tid}, function (res) {
                     cache_torrent_nfo.setItem(tid, res);
                     build_nfo_modal(res);
                 });

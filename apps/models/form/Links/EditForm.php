@@ -18,14 +18,14 @@ class EditForm extends ApplyForm
     private $link_old_data;
     private $link_data_diff;
 
-    public static function defaultData()
+    public static function defaultData(): array
     {
         return [
             'link_title' => '',
         ];
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'link_id' => 'Required | Integer',
@@ -39,20 +39,21 @@ class EditForm extends ApplyForm
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['checkLinkData'];
     }
 
+    /** @noinspection PhpUnused */
     protected function checkLinkData()
     {
         $this->link_new_data = [
-            'name' => $this->getData('link_name'), 'url' => $this->getData('link_url'),
-            'title' => $this->getData('link_title'), 'status' => $this->getData('link_status'),
-            'administrator' => $this->getData('link_status'), 'email' => $this->getData('link_email'),
-            'reason' => $this->getData('link_reason')
+            'name' => $this->getInput('link_name'), 'url' => $this->getInput('link_url'),
+            'title' => $this->getInput('link_title'), 'status' => $this->getInput('link_status'),
+            'administrator' => $this->getInput('link_status'), 'email' => $this->getInput('link_email'),
+            'reason' => $this->getInput('link_reason')
         ];
-        $link_id = (int) $this->getData('link_id');
+        $link_id = (int) $this->getInput('link_id');
         if ($link_id !== 0) {  // Check if old links should be update
             $this->link_old_data = app()->pdo->createCommand('SELECT * FROM `links` WHERE id = :id')->bindParams([
                 'id' => $link_id

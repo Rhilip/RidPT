@@ -8,9 +8,9 @@
 
 namespace apps\models\form\Subtitles;
 
-
 use apps\libraries\Constant;
 use apps\models\form\Traits\isValidTorrentTrait;
+
 use Rid\Http\UploadFile;
 use Rid\Validators\Validator;
 
@@ -23,24 +23,24 @@ class UploadForm extends Validator
 
     public $title;
     public $torrent_id;
-    // public $lang_id;  //TODO support
+    // public $lang_id;  // TODO support
     public $anonymous;
 
     private $hashs;
 
-    protected $_autoload_data = true;
-    protected $_autoload_data_from = ['post', 'files'];
+    protected $_autoload = true;
+    protected $_autoload_from = ['post', 'files'];
 
     const SubtitleExtension = ['sub', 'srt', 'zip', 'rar', 'ace', 'txt', 'ssa', 'ass', 'cue'];
 
-    public static function defaultData()
+    public static function defaultData(): array
     {
         return [
             'anonymous' => 0
         ];
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'torrent_id' => 'Required | Integer',
@@ -56,15 +56,16 @@ class UploadForm extends Validator
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['isExistTorrent', 'checkSubtitleUniqueByHash'];
     }
 
+    /** @noinspection PhpUnused */
     protected function checkSubtitleUniqueByHash()
     {
         /** @var UploadFile $file */
-        $file = $this->getData('file');
+        $file = $this->getInput('file');
         $this->hashs = $file_md5 = md5_file($file->tmpName);
 
         $exist_id = app()->pdo->createCommand('SELECT id FROM `subtitles` WHERE `hashs` = :hashs LIMIT 1;')->bindParams([

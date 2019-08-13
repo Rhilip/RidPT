@@ -21,7 +21,7 @@ class TagsForm extends Pager
     {
         return app()->pdo->createCommand([
             ['SELECT COUNT(tags.id) as `count` FROM tags'],
-            ['WHERE `tags`.`tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $this->getData('search') . '%']],
+            ['WHERE `tags`.`tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $this->getInput('search') . '%']],
         ])->queryScalar();
     }
 

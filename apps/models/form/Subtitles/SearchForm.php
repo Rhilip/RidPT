@@ -21,22 +21,23 @@ class SearchForm extends Pager
     public $torrent_id;
     public $tid;
 
-    protected $_autoload_data = true;
-    protected $_autoload_data_from = ['get'];
+    protected $_autoload = true;
+    protected $_autoload_from = ['get'];
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'tid' => 'Integer',
             'letter' => 'Alpha | MaxLength(max=1)'
+            // 'page' => 'Integer', 'limit' => 'Integer'
         ];
     }
 
     protected function getRemoteTotal(): int
     {
-        $search = $this->getData('search');
-        $letter = $this->getData('letter');
-        $tid = $this->getData('torrent_id') ?? $this->getData('tid');
+        $search = $this->getInput('search');
+        $letter = $this->getInput('letter');
+        $tid = $this->getInput('torrent_id') ?? $this->getInput('tid');
         return app()->pdo->createCommand([
             ['SELECT COUNT(`id`) FROM `subtitles` WHERE 1=1 '],
             ['AND torrent_id = :tid ', 'if' => !is_null($tid), 'params' => ['tid' => $tid]],

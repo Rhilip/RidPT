@@ -82,18 +82,6 @@ class User
     private $avatar;
     private $lang;
 
-    private $create_at;
-    private $last_login_at;
-    private $last_access_at;
-    private $last_upload_at;
-    private $last_download_at;
-    private $last_connect_at;
-
-    private $register_ip;
-    private $last_login_ip;
-    private $last_access_ip;
-    private $last_tracker_ip;
-
     private $uploadpos;
     private $downloadpos;
 
@@ -112,42 +100,6 @@ class User
 
     protected $infoCacheKey;
 
-    public function getBonus() {
-        return $this->bonus_seeding + $this->bonus_invite + $this->bonus_other;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBonusSeeding()
-    {
-        return $this->bonus_seeding;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBonusInvite()
-    {
-        return $this->bonus_invite;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getBonusOther()
-    {
-        return $this->bonus_other;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
     protected function getCacheNameSpace(): string
     {
         return Constant::userContent($this->id);
@@ -159,8 +111,8 @@ class User
         $self = app()->redis->hGetAll($this->infoCacheKey);
         if (empty($self) || !isset($self['id'])) {
             if (app()->redis->zScore(Constant::invalidUserIdZset, $id) === false) {
-                $self = app()->pdo->createCommand("SELECT * FROM `users` WHERE id = :id LIMIT 1;")->bindParams([
-                    "id" => $id
+                $self = app()->pdo->createCommand('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_invite, bonus_other, lang, invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
+                    'id' => $id
                 ])->queryOne();
                 if (false === $self) {
                     app()->redis->zAdd(Constant::invalidUserIdZset, time() + 3600, $id);
@@ -178,28 +130,24 @@ class User
         $this->importAttributes($self);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status;
     }
 
     public function getClass(): int
@@ -247,90 +195,6 @@ class User
         }
 
         return $this->avatar;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCreateAt()
-    {
-        return $this->create_at;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastLoginAt()
-    {
-        return $this->last_login_at;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastAccessAt()
-    {
-        return $this->last_access_at;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastUploadAt()
-    {
-        return $this->last_upload_at;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastDownloadAt()
-    {
-        return $this->last_download_at;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getLastConnectAt()
-    {
-        return $this->last_connect_at;
-    }
-
-    /**
-     * @param bool $readable
-     * @return mixed
-     */
-    public function getRegisterIp($readable = true)
-    {
-        return ($this->register_ip && $readable) ? inet_ntop($this->register_ip) : $this->register_ip;
-    }
-
-    /**
-     * @param bool $readable
-     * @return mixed
-     */
-    public function getLastLoginIp($readable = true)
-    {
-        return ($this->last_login_ip && $readable) ? inet_ntop($this->last_login_ip) : $this->last_login_ip;
-    }
-
-    /**
-     * @param bool $readable
-     * @return mixed
-     */
-    public function getLastAccessIp($readable = true)
-    {
-        return ($this->last_access_ip && $readable) ? inet_ntop($this->last_access_ip) : $this->last_access_ip;
-    }
-
-    /**
-     * @param bool $readable
-     * @return mixed
-     */
-    public function getLastTrackerIp($readable = true)
-    {
-        return ($this->last_tracker_ip && $readable) ? inet_ntop($this->last_tracker_ip) : $this->last_tracker_ip;
     }
 
     public function getUploaded(): int
@@ -437,20 +301,14 @@ class User
         return $this->getPeerStatus('partial');
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLang()
+    public function getLang(): string
     {
         return $this->lang;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPasskey()
+    public function getBonus(): float
     {
-        return $this->passkey;
+        return $this->bonus_seeding + $this->bonus_invite + $this->bonus_other;
     }
 
     /**

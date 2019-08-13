@@ -11,25 +11,26 @@ namespace apps\models\form\Traits;
 
 trait isValidSubtitleTrait
 {
-    public $id;
+    public $id;  // Subtitle Id
 
     protected $subtitle;
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'id' => 'required | Integer'
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['isValidSubtitle'];
     }
 
+    /** @noinspection PhpUnused */
     protected function isValidSubtitle()
     {
-        $sub_id = $this->getData('id');
+        $sub_id = $this->getInput('id');
 
         $this->subtitle = app()->pdo->createCommand('SELECT * FROM `subtitles` WHERE id = :sid LIMIT 1;')->bindParams([
             'sid' => $sub_id

@@ -25,21 +25,18 @@ class UserLoginForm extends Validator
     use CaptchaTrait;
 
     public $username;
-    public $password;
-    public $opt;
 
     public $logout;
     public $securelogin;
     public $ssl;
 
     private $self;
-
     private $jwt_payload;
 
-    protected $_autoload_data = true;
-    protected $_autoload_data_from = ['post'];
+    protected $_autoload = true;
+    protected $_autoload_from = ['post'];
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         /**
          * We only control frontend behaviour of input keys - `securelogin`, `logout`, `ssl`,
@@ -60,7 +57,7 @@ class UserLoginForm extends Validator
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['validateCaptcha', 'isMaxLoginIpReached', 'loadUserFromPdo', 'isMaxUserSessionsReached'];
     }
@@ -79,7 +76,7 @@ class UserLoginForm extends Validator
     protected function loadUserFromPdo()
     {
         $this->self = app()->pdo->createCommand('SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1')->bindParams([
-            'uname' => $this->getData('username'), 'email' => $this->getData('username'),
+            'uname' => $this->getInput('username'), 'email' => $this->getInput('username'),
         ])->queryOne();
 
         if (false === $this->self) {  // User is not exist
@@ -89,13 +86,13 @@ class UserLoginForm extends Validator
         }
 
         // User's password is not correct
-        if (!password_verify($this->getData('password'), $this->self['password'])) {
+        if (!password_verify($this->getInput('password'), $this->self['password'])) {
             $this->buildCallbackFailMsg('User', 'Invalid username/password');
             return;
         }
 
         // User input 2FA code but not enabled in fact
-        if ($this->getData('opt') && is_null($this->self['opt'])) {
+        if ($this->getInput('opt') && is_null($this->self['opt'])) {
             $this->buildCallbackFailMsg('User', 'Invalid username/password');
             return;
         }
@@ -104,7 +101,7 @@ class UserLoginForm extends Validator
         if (!is_null($this->self['opt'])) {
             try {
                 $tfa = new TwoFactorAuth(config('base.site_name'));
-                if ($tfa->verifyCode($this->self['opt'], $this->getData('opt')) == false) {
+                if ($tfa->verifyCode($this->self['opt'], $this->getInput('opt')) == false) {
                     $this->buildCallbackFailMsg('2FA', '2FA Validation failed. Check your device time.');
                     return;
                 }

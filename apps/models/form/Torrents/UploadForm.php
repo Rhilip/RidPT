@@ -8,6 +8,7 @@
 
 namespace apps\models\form\Torrents;
 
+use Rid\Http\UploadFile;
 use Rid\Validators\Validator;
 
 use Rid\Bencode\Bencode;
@@ -16,11 +17,9 @@ use Rid\Bencode\ParseErrorException;
 class UploadForm extends Validator
 {
 
-    public $id = 0;
-
-    /**  @var \Rid\Http\UploadFile */
+    /**  @var UploadFile */
     public $file;
-    /**  @var \Rid\Http\UploadFile */
+    /**  @var UploadFile */
     public $nfo;
 
     public $category;
@@ -42,6 +41,7 @@ class UploadForm extends Validator
 
     public $tags;
 
+    private $id = 0;
     private $info_hash; // the value of sha1($this->$torrent_dict['info'])
 
     private $status = 'confirmed';
@@ -63,7 +63,12 @@ class UploadForm extends Validator
     const TORRENT_STATUS_PENDING = 'pending';
     const TORRENT_STATUS_CONFIRMED = 'confirmed';
 
-    public static function defaultData()
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public static function defaultData(): array
     {
         return [
             'subtitle' => '',
@@ -74,7 +79,7 @@ class UploadForm extends Validator
         ];
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         $categories_id_list = array_map(function ($cat) {
             return $cat['id'];
@@ -152,15 +157,16 @@ class UploadForm extends Validator
         return $rules;
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['isValidTorrentFile', 'makePrivateTorrent'];
     }
 
+    /** @noinspection PhpUnused */
     protected function isValidTorrentFile()
     {
         try {
-            $this->torrent_dict = Bencode::load($this->getData('file')->tmpName);
+            $this->torrent_dict = Bencode::load($this->getInput('file')->tmpName);
             $info = $this->checkTorrentDict($this->torrent_dict, 'info');
             if ($info) {
                 $this->checkTorrentDict($info, 'piece length', 'integer');  // Only Check without use
@@ -212,7 +218,7 @@ class UploadForm extends Validator
     {
         if (is_null($this->file_name_check_rules)) {
             $rules = app()->pdo->createCommand('SELECT `rules` FROM `file_defender` WHERE `category_id` = 0 OR `category_id` = :cat')->bindParams([
-                'cat' => $this->getData('category')  // Fix cat_id
+                'cat' => $this->getInput('category')  // Fix cat_id
             ])->queryColumn();
             $this->file_name_check_rules = '/' . implode('|', $rules) . '/iS';
         }
@@ -228,6 +234,7 @@ class UploadForm extends Validator
         }
     }
 
+    /** @noinspection PhpUnused */
     protected function makePrivateTorrent()
     {
         $this->torrent_dict['announce'] = 'https://' . config('base.site_tracker_url') . '/announce';
@@ -306,20 +313,20 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             ])->execute();
             $this->id = app()->pdo->getLastInsertId();
 
-            if (config('torrent_upload.enable_tags')) $this->insertTags();
+            if (config('torrent_upload.enable_tags')) $this->insertTags();  // TODO store tags in torrents table
             $this->getExternalLinkInfo();
             $this->setBuff();
 
             // Save this torrent
             $dump_status = Bencode::dump(app()->site->getTorrentFileLoc($this->id), $this->torrent_dict);
-            if ($dump_status == false) {
+            if ($dump_status === false) {
                 throw new \Exception('std_torrent_cannot_save');
             }
 
             app()->pdo->commit();
         } catch (\Exception $e) {
             // Delete the saved torrent file when torrent save success but still get Exception on other side
-            if (isset($dump_status) && $dump_status == true) {
+            if (isset($dump_status) && $dump_status === true) {
                 unlink(app()->site->getTorrentFileLoc($this->id));
             }
 

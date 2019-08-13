@@ -24,7 +24,7 @@ class EditForm extends Validator
     private $cat_old_data;
     private $cat_data_diff;
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'cat_id' => 'Required | Integer',
@@ -40,18 +40,19 @@ class EditForm extends Validator
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules():array
     {
         return ['checkCategoryData'];
     }
 
+    /** @noinspection PhpUnused */
     protected function checkCategoryData()
     {
-        $cat_parent_id = (int)$this->getData('cat_parent_id');
+        $cat_parent_id = (int)$this->getInput('cat_parent_id');
         $this->cat_new_data = [
             'parent_id' => $cat_parent_id,
-            'name' => $this->getData('cat_name'), 'enabled' => $this->getData('cat_enabled'),
-            'image' => $this->getData('cat_image'), 'class_name' => $this->getData('cat_class_name')
+            'name' => $this->getInput('cat_name'), 'enabled' => $this->getInput('cat_enabled'),
+            'image' => $this->getInput('cat_image'), 'class_name' => $this->getInput('cat_class_name')
         ];
 
         // Generate New Full Path Key
@@ -64,16 +65,16 @@ class EditForm extends Validator
         }
 
         if ($cat_parent_id == 0) {
-            $full_path = $this->getData('cat_name');
+            $full_path = $this->getInput('cat_name');
         } else {
-            $full_path = $parent_cat_fpath . ' - ' . $this->getData('cat_name');
+            $full_path = $parent_cat_fpath . ' - ' . $this->getInput('cat_name');
         }
 
         $this->cat_new_data['full_path'] = $full_path;
         $this->cat_new_data['level'] = substr_count($full_path, ' - ');
         $flag_check_full_path = true;
 
-        $cat_id = (int)$this->getData('cat_id');
+        $cat_id = (int)$this->getInput('cat_id');
         if ($cat_id !== 0) {  // Check if old links should be update
             $this->cat_old_data = app()->pdo->createCommand('SELECT * FROM `categories` WHERE id = :id')->bindParams([
                 'id' => $cat_id

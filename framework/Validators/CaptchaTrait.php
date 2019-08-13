@@ -20,9 +20,10 @@ Trait CaptchaTrait
 {
     public $captcha;
 
+    /** @noinspection PhpUnused */
     protected function validateCaptcha()
     {
-        $captchaInput = $this->getData('captcha');
+        $captchaInput = $this->getInput('captcha');
         $captchaText = app()->session->get('captchaText');
         if (strcasecmp($captchaInput, $captchaText) != 0) {
             $this->buildCallbackFailMsg('CAPTCHA', 'CAPTCHA verification failed.');

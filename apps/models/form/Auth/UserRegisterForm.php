@@ -21,10 +21,7 @@ class UserRegisterForm extends Validator
     public $type = 'open';
     public $username;
     public $password;
-    public $password_again;
     public $email;
-    public $verify_tos = 0;
-    public $verify_age = 0;
 
     public $invite_by = 0;
     public $invite_hash = "";
@@ -45,7 +42,7 @@ class UserRegisterForm extends Validator
 
     protected $_action = 'register';
 
-    public static function defaultData()
+    public static function defaultData(): array
     {
         return [
             'type' => 'open',
@@ -56,7 +53,7 @@ class UserRegisterForm extends Validator
         ];
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'type' => [
@@ -82,7 +79,7 @@ class UserRegisterForm extends Validator
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return [
             'validateCaptcha',
@@ -129,8 +126,8 @@ class UserRegisterForm extends Validator
             return;
         }
 
-        if (config('register.by_' . $this->getData('type')) != true) {
-            $this->buildCallbackFailMsg('RegisterSystemOpen',"The register by {$this->getData('type')} ways isn't open in this site.");
+        if (config('register.by_' . $this->getInput('type')) != true) {
+            $this->buildCallbackFailMsg('RegisterSystemOpen',"The register by {$this->getInput('type')} ways isn't open in this site.");
             return;
         }
     }
@@ -160,7 +157,7 @@ class UserRegisterForm extends Validator
 
     protected function isValidUsername()
     {
-        $username = $this->getData('username');
+        $username = $this->getInput('username');
 
         // The following characters are allowed in user names
         if (strspn(strtolower($username), 'abcdefghijklmnopqrstuvwxyz0123456789_') != strlen($username)) {
@@ -191,7 +188,7 @@ class UserRegisterForm extends Validator
 
     protected function isValidEmail()
     {
-        $email = $this->getData('email');
+        $email = $this->getInput('email');
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
         if (config('register.check_email_blacklist') &&
             config('register.email_black_list')) {
@@ -233,9 +230,9 @@ class UserRegisterForm extends Validator
 
     protected function checkRegisterType()
     {
-        $type = $this->getData('type');
+        $type = $this->getInput('type');
         if ($type == 'invite') {
-            $invite_hash = $this->getData('invite_hash');
+            $invite_hash = $this->getInput('invite_hash');
             if (strlen($invite_hash) != 32) {
                 $this->buildCallbackFailMsg('Invite', "This invite hash : `$invite_hash` is not valid");
                 return;
@@ -249,7 +246,7 @@ class UserRegisterForm extends Validator
                 }
 
                 // TODO config key of enable username check
-                if ($this->getData('username') != $inviteInfo['username']) {
+                if ($this->getInput('username') != $inviteInfo['username']) {
                     $this->buildCallbackFailMsg('Invite', "This invite username is not match.");
                     return;
                 }

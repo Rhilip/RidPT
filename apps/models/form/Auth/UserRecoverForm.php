@@ -13,7 +13,7 @@ use Rid\Helpers\StringHelper;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 
-class UserRecoverForm  extends Validator
+class UserRecoverForm extends Validator
 {
     use CaptchaTrait;
 
@@ -21,14 +21,14 @@ class UserRecoverForm  extends Validator
 
     protected $_action = 'recover';
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'email' => 'required | email',
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['validateCaptcha'];
     }

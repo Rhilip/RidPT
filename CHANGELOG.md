@@ -8,11 +8,12 @@
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
 ### Feat
-- **Auth:** Sep Auth part from Site to new components (f36884e)
 - **Auth:** Use JWT to set cookies content (bf897c6)
+- **Auth:** Sep Auth part from Site to new components (f36884e)
 - **Auth/Login:** Add full Advanced Options support (6009dc8)
 - **Secret:** Check session and user_id match or not in jwt payload (358ba5d)
 - **Secret:** Protect jwt key for env('APP_SECRET_KEY') (dfa67da)
+- **Sessions:** record user access information at Auth->onRequestAfter() (e2a22a7)
 - **Sessions/List:** Use SessionsListForm to show user sessions (9ecfb97)
 - **ban_ips:** Store banned ip in components/Site (01084c9)
 
@@ -32,6 +33,9 @@
 - **View:** Make View extends BaseObject (0865cf9)
 - **torrent/structure:** Use zui.tree instead javascript `$(this).next('ul').toggle()` (7b20b2c)
 - **view:** Fix helper/username params (720f37e)
+
+### Revert
+- **Redis:** Remove view in redis , use other software install (c5d3378)
 
 
 <a name="v0.1.5-alpha"></a>

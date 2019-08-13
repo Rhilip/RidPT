@@ -17,7 +17,7 @@ class SearchForm extends Pager
     public $query;
     public $search;
 
-    public static function defaultData()
+    public static function defaultData(): array
     {
         return [
             'query' => 'title',
@@ -25,7 +25,7 @@ class SearchForm extends Pager
         ];
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'page' => 'Integer', 'limit' => 'Integer',
@@ -39,8 +39,8 @@ class SearchForm extends Pager
 
     public function getRemoteTotal(): int
     {
-        $search = $this->getData('search');
-        $query = $this->getData('query');
+        $search = $this->getInput('search');
+        $query = $this->getInput('query');
         if (empty($search)) {
             $count = app()->pdo->createCommand('SELECT COUNT(*) FROM `news`;')->queryScalar();
         } else {

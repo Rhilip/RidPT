@@ -8,16 +8,49 @@
 
 namespace apps\models\form\Traits;
 
+use apps\models\User;
 
-class isValidUserTrait
+trait isValidUserTrait
 {
-    public $id;
-    public $uid;
-    public $username;
+    public $id;  // User Id
 
-    public function getUser()
+    /** @var User */
+    protected $user;
+    protected $user_data;  // Full user line in table `users`
+
+    public static function inputRules()
     {
-        $uid = $this->uid ?? $this->id;
-        return app()->site->getUser($uid);
+        return [
+            'id' => 'Required | Integer',
+        ];
     }
+
+    public static function callbackRules()
+    {
+        return ['isExistUser'];
+    }
+
+    /** @noinspection PhpUnused */
+    protected function isExistUser()
+    {
+        $uid = $this->getInput('id');
+        $this->user_data = app()->pdo->createCommand('SELECT * FROM users WHERE id = :uid LIMIT 1')->bindParams([
+            'uid' => $uid
+        ])->queryOne();
+        if ($this->user_data === false) {
+            $this->buildCallbackFailMsg('User', 'The user id (' . $uid . ') is not exist in our database');
+        }
+        $this->user = new User($uid);  // FIXME twice db load
+    }
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function getUserData($key = null, $default = null)
+    {
+        return is_null($key) ? $this->user_data : ($this->user_data[$key] ?? $default);
+    }
+
 }

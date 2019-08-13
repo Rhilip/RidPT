@@ -19,7 +19,7 @@ class TorrentController extends Controller
         $details = new Torrent\DetailsForm();
         $success = $details->validate();
         if (!$success) {
-            return $this->render('action/action_fail');
+            return $this->render('action/action_fail', ['msg' => $details->getError()]);
         }
 
         return $this->render('torrent/details', ['details' => $details]);

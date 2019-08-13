@@ -20,10 +20,10 @@ class DeleteForm extends Validator
 
     public $reason;
 
-    protected $_autoload_data = true;
-    protected $_autoload_data_from = ['post'];
+    protected $_autoload = true;
+    protected $_autoload_from = ['post'];
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'id' => 'required | Integer',
@@ -31,11 +31,12 @@ class DeleteForm extends Validator
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['isValidSubtitle', 'canCurUserManagerSubs'];
     }
 
+    /** @noinspection PhpUnused */
     protected function canCurUserManagerSubs()
     {
         $curuser = app()->auth->getCurUser();

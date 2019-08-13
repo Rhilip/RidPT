@@ -16,7 +16,7 @@ class NewsController extends Controller
 {
     public function actionIndex() {
         $pager = new News\SearchForm();
-        $pager->setData(app()->request->get());
+        $pager->setInput(app()->request->get());
 
         $success = $pager->validate();
         if (!$success) {
@@ -29,7 +29,7 @@ class NewsController extends Controller
     public function actionNew() {
         if (app()->request->isPost()) {
             $newform = new News\EditForm();
-            $newform->setData(app()->request->post());
+            $newform->setInput(app()->request->post());
             $success = $newform->validate();
             if (!$success) {
                 return $this->render('action/action_fail', ['title' => 'new blog failed', 'msg' => $newform->getError()]);
@@ -47,7 +47,7 @@ class NewsController extends Controller
     {
         if (app()->request->isPost()) {
             $newform = new News\EditForm();
-            $newform->setData(app()->request->post());
+            $newform->setInput(app()->request->post());
             $success = $newform->validate();
             if (!$success) {
                 return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $newform->getError()]);

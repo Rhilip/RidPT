@@ -28,14 +28,14 @@ class InviteActionForm extends Validator
     const ACTION_CONFIRM = 'confirm';
     const ACTION_RECYCLE = 'recycle';
 
-    public static function defaultData()
+    public static function defaultData(): array
     {
         return [
             'uid' => app()->auth->getCurUser()->getId()
         ];
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'action' => [
@@ -51,7 +51,7 @@ class InviteActionForm extends Validator
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return [
             'checkActionPrivilege',
@@ -60,13 +60,13 @@ class InviteActionForm extends Validator
     }
 
     protected function checkActionPrivilege() {
-        $action = $this->getData('action');
+        $action = $this->getInput('action');
         if ($action == self::ACTION_CONFIRM) {
             if (!app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to confirm pending user.');
             }
         } elseif ($action == self::ACTION_RECYCLE) {
-            $check_recycle_privilege_name = ($this->getData('uid') == app()->auth->getCurUser()->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
+            $check_recycle_privilege_name = ($this->getInput('uid') == app()->auth->getCurUser()->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
             if (!app()->auth->getCurUser()->isPrivilege($check_recycle_privilege_name)) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to recycle user pending invites.');
             }
@@ -74,9 +74,9 @@ class InviteActionForm extends Validator
     }
 
     protected function checkConfirmInfo() {
-        if ($this->getData('action') == self::ACTION_CONFIRM) {
+        if ($this->getInput('action') == self::ACTION_CONFIRM) {
             $this->confirm_info = app()->pdo->createCommand('SELECT `status` FROM users WHERE id= :invitee_id')->bindParams([
-                'invitee_id' => $this->getData('invitee_id')
+                'invitee_id' => $this->getInput('invitee_id')
             ])->queryScalar();
             if ($this->confirm_info === false || $this->confirm_info !== User::STATUS_PENDING) {
                 $this->buildCallbackFailMsg('user:confirm','The user to confirm is not exist or already confirmed');
@@ -85,10 +85,10 @@ class InviteActionForm extends Validator
     }
 
     protected function checkRecycleInfo() {
-        if ($this->getData('action') == self::ACTION_RECYCLE) {
+        if ($this->getInput('action') == self::ACTION_RECYCLE) {
             // Get unused invite info
             $this->invite_info = app()->pdo->createCommand('SELECT * FROM `invite` WHERE `id` = :invite_id AND `inviter_id` = :inviter_id AND `used` = 0')->bindParams([
-                'invite_id' => $this->getData('invite_id'), 'inviter_id' => $this->getData('uid')
+                'invite_id' => $this->getInput('invite_id'), 'inviter_id' => $this->getInput('uid')
             ])->queryOne();
 
             if (!$this->invite_info) {
@@ -97,7 +97,7 @@ class InviteActionForm extends Validator
             }
 
             // TODO Add recycle limit so that user can't make a temporarily invite like 'permanent'
-            if ($this->invite_info['invite_type'] == UserInviteForm::INVITE_TYPE_TEMPORARILY) {
+            if ($this->invite_info['invite_type'] == InviteForm::INVITE_TYPE_TEMPORARILY) {
                 if (app()->redis->get('invite_recycle_limit:user_' . $this->invite_info['inviter_id']) !== false) {
                     $this->buildCallbackFailMsg('invite_recycle_limit','Hit recycle limit');
                     return;
@@ -128,12 +128,12 @@ class InviteActionForm extends Validator
 
             // Recycle or not ?
             if (config('invite.recycle_return_invite')) {
-                if ($this->invite_info['invite_type'] == UserInviteForm::INVITE_TYPE_PERMANENT) {
+                if ($this->invite_info['invite_type'] == InviteForm::INVITE_TYPE_PERMANENT) {
                     app()->pdo->createCommand('UPDATE `users` SET `invites` = `invites` + 1 WHERE id = :uid')->bindParams([
                         'uid' => $this->invite_info['inviter_id']
                     ])->execute();
                     $msg .= ' And return you a permanent invite';
-                } elseif ($this->invite_info['invite_type'] == UserInviteForm::INVITE_TYPE_TEMPORARILY) {
+                } elseif ($this->invite_info['invite_type'] == InviteForm::INVITE_TYPE_TEMPORARILY) {
                     app()->pdo->createCommand('INSERT INTO `user_invitations` (`user_id`,`total`,`create_at`,`expire_at`) VALUES (:uid,:total,CURRENT_TIMESTAMP,DATE_ADD(NOW(),INTERVAL :life_time SECOND ))')->bindParams([
                         'uid' => $this->invite_info['inviter_id'], 'total' => 1,
                         'life_time' => config('invite.recycle_invite_lifetime')

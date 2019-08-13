@@ -27,7 +27,7 @@ class ApplyForm extends Validator
     const STATUS_ENABLED = 'enabled';
     const STATUS_DISABLED = 'disabled';
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'link_name' => 'Required',
@@ -38,7 +38,7 @@ class ApplyForm extends Validator
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['validateCaptcha', 'checkExistLinksByUrl'];
     }
@@ -46,7 +46,7 @@ class ApplyForm extends Validator
     protected function checkExistLinksByUrl()
     {
         $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `links` WHERE url = :url')->bindParams([
-            'url' => $this->getData('link_url')
+            'url' => $this->getInput('link_url')
         ])->queryScalar();
         if ($count > 0) {
             $this->buildCallbackFailMsg('Link:exist', 'This link is exist in our site , Please don\'t report it again and again');

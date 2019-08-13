@@ -16,7 +16,7 @@ class TorrentController extends ApiController
     public function actionBookmark() {
         if ($this->checkMethod('POST')) {
             $bookmark = new TorrentsForm();
-            $bookmark->setData(app()->request->post());
+            $bookmark->setInput(app()->request->post());
             $success = $bookmark->validate();
             if (!$success) {
                 return [
@@ -38,7 +38,7 @@ class TorrentController extends ApiController
     public function actionFileList() {
         if ($this->checkMethod('GET')) {
             $filelist = new TorrentsForm();
-            $filelist->setData(app()->request->get());
+            $filelist->setInput(app()->request->get());
             $success = $filelist->validate();
             if (!$success) {
                 return [
@@ -62,7 +62,7 @@ class TorrentController extends ApiController
     {
         if ($this->checkMethod('GET')) {
             $filelist = new TorrentsForm();
-            $filelist->setData(app()->request->get());
+            $filelist->setInput(app()->request->get());
             $success = $filelist->validate();
             if (!$success) {
                 return [

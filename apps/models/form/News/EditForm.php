@@ -20,7 +20,7 @@ class EditForm extends Validator
     public $notify = 0;
     public $force_read = 0;
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'id' => 'integer',
@@ -32,6 +32,11 @@ class EditForm extends Validator
             'notify' => 'Integer | Equal(value=1)',
             'force_read' => 'Integer | Equal(value=1)',
         ];
+    }
+
+    public static function callbackRules(): array
+    {
+        return [];
     }
 
     public function flush()
@@ -52,4 +57,6 @@ class EditForm extends Validator
         // Clean News Cache
         app()->redis->del('Site:recent_news');
     }
+
+
 }

@@ -5,6 +5,10 @@ namespace Rid\Validators;
 use Rid\Base\BaseObject;
 use Rid\Http\UploadFile;
 
+use ReflectionClass;
+use ReflectionProperty;
+use ReflectionException;
+
 /**
  * Docs: http://www.sirius.ro/php/sirius/validation/
  *
@@ -19,39 +23,39 @@ use Rid\Http\UploadFile;
  */
 class Validator extends BaseObject
 {
+    // Autoload user input from requests
+    protected $_autoload = false;
+    protected $_autoload_from = [];
 
     /** @var array Input data */
-    protected $_data = [];
-    protected $_file_data_name = [];
+    private $_input = [];
+    private $_file_input_name = [];
 
     /** @var \Sirius\Validation\Validator */
-    protected $_validator;
+    private $_validator;
 
     /** @var array */
-    protected $_errors = [];
+    private $_errors = [];
 
     /** @var boolean */
-    protected $_success;
-
-    protected $_autoload_data = false;
-    protected $_autoload_data_from = [];
+    private $_success;
 
     public function onConstruct()
     {
         $this->_validator = new \Sirius\Validation\Validator;
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return [];
     }
 
-    public static function defaultData()
+    public static function defaultData(): array
     {
         return [];
     }
@@ -73,15 +77,15 @@ class Validator extends BaseObject
     /** Storage Data in $_data for valid
      * @param $config
      */
-    final public function setData($config)
+    final public function setInput($config)
     {
-        $this->_data = array_merge($this->_data, $config);
+        $this->_input = array_merge($this->_input, $config);
     }
 
-    final public function setFileData($config)
+    final public function setFileInput($config)
     {
-        $this->setData($config);
-        $this->_file_data_name += array_keys($config);
+        $this->setInput($config);
+        $this->_file_input_name = array_merge($this->_file_input_name, array_keys($config));
     }
 
     /**
@@ -89,26 +93,14 @@ class Validator extends BaseObject
      * @param mixed $default
      * @return mixed|UploadFile
      */
-    final public function getData($key = null,$default = null)
+    final public function getInput($key = null, $default = null)
     {
-        if (is_null($key)) return $this->_data;
+        if (is_null($key)) return $this->_input;
 
-        if (in_array($key, $this->_file_data_name))
-            return new UploadFile($this->_data[$key]);
+        if (in_array($key, $this->_file_input_name))
+            return new UploadFile($this->_input[$key]);
 
-        return $this->_data[$key] ?? $default;
-    }
-
-    /**
-     * rewrite data from user for valid by change $this->_data
-     */
-    protected function buildDefaultDataForValid()
-    {
-        \Rid::setDefault($this->_data, static::defaultData());
-    }
-
-    protected function buildDefaultPropBeforeValid()
-    {
+        return $this->_input[$key] ?? $default;
     }
 
     protected function buildDefaultPropAfterValid()
@@ -117,57 +109,55 @@ class Validator extends BaseObject
 
     final protected function releaseDataToProperties()
     {
-        $this->buildDefaultPropBeforeValid();
-
         try {
-            // Get public properties by reflection
-            $reflect = new \ReflectionClass($this);
-            $public_props = array_keys($reflect->getProperties(\ReflectionProperty::IS_PUBLIC));
-            $no_change_props = array_keys($reflect->getProperties(\ReflectionProperty::IS_PRIVATE |
-                \ReflectionProperty::IS_PROTECTED | \ReflectionProperty::IS_STATIC));
+            // Get none public properties by reflection
+            $reflect = new ReflectionClass($this);
+            $no_change_props = array_map(function (ReflectionProperty $property) {
+                return $property->name;
+            }, $reflect->getProperties(ReflectionProperty::IS_PRIVATE | ReflectionProperty::IS_PROTECTED | ReflectionProperty::IS_STATIC));
 
-            foreach ($this->_data as $name => $value) {
-                if (in_array($name, $public_props)) {
-                    $this->$name = $this->getData($name);
-                } elseif (in_array($name, $no_change_props)) {
+            foreach ($this->_input as $name => $value) {
+                if (!in_array($name, $no_change_props)) {
+                    $this->$name = $this->getInput($name);
+                } else {
                     $this->buildCallbackFailMsg('harking', 'User post may hack.');
                     return;
                 }
             }
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
             $this->buildCallbackFailMsg('internal', 'Release user upload data error when reflection.');
             return;
         }
-
-        $this->buildDefaultPropAfterValid();
     }
 
     private function autoloadDataFromRequests()
     {
-        if ($this->_autoload_data) {
-            if (in_array('get', $this->_autoload_data_from)) $this->setData(app()->request->get());
-            if (in_array('post', $this->_autoload_data_from)) $this->setData(app()->request->post());
-            if (in_array('files', $this->_autoload_data_from)) $this->setFileData(app()->request->files());
+        if ($this->_autoload) {
+            if (in_array('get', $this->_autoload_from)) $this->setInput(app()->request->get());
+            if (in_array('post', $this->_autoload_from)) $this->setInput(app()->request->post());
+            if (in_array('files', $this->_autoload_from)) $this->setFileInput(app()->request->files());
         }
     }
 
     public function validate(): bool
     {
         $this->autoloadDataFromRequests();
-        $this->buildDefaultDataForValid();
+        $this->_input = array_merge(static::defaultData(), $this->_input);
 
         // validate rules in static::inputRules()
         $this->_validator->add(static::inputRules());
-        $this->_success = $this->_validator->validate($this->_data);
+        $this->_success = $this->_validator->validate($this->_input);
         $this->_errors = $this->_validator->getMessages();
 
         if ($this->_success) $this->validateCallbackRules(); // Valid callback rules
         if ($this->_success) $this->releaseDataToProperties(); // release validate data to class properties which is type if public when valid success
 
+        $this->buildDefaultPropAfterValid();
+
         return $this->_success;
     }
 
-    public function getErrors()
+    public function getErrors(): array
     {
         $out_error = [];
         foreach ($this->_errors as $key => $error) {
@@ -183,7 +173,7 @@ class Validator extends BaseObject
         return $out_error;
     }
 
-    public function getError()
+    public function getError(): string
     {
         if (empty($this->_errors)) {
             return '';

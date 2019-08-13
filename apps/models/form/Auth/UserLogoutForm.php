@@ -22,13 +22,13 @@ class UserLogoutForm extends Validator
 
     private $sid;
 
-    protected $_autoload_data = true;
-    protected $_autoload_data_from = ['get'];
+    protected $_autoload = true;
+    protected $_autoload_from = ['get'];
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         $ret = [
-        // TODO    'csrf' => 'Required'  // Use &csrf=
+            // TODO    'csrf' => 'Required'  // Use &csrf=
         ];
 
         // TODO When prevent_anonymous model enabled, we should notice user to recheck
@@ -37,7 +37,7 @@ class UserLogoutForm extends Validator
         return $ret;
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return [/* TODO 'validateCsrf', */ 'getUserSessionId'];
     }

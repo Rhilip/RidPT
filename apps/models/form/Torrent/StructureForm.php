@@ -15,7 +15,7 @@ class StructureForm extends DetailsForm
 
     public function getTorrentFileContentDict()
     {
-        $file_loc = app()->site->getTorrentFileLoc($this->id);
+        $file_loc = app()->site->getTorrentFileLoc($this->getInputId());
         $content = Bencode::load($file_loc);
         return $content;
     }

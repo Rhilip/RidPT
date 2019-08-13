@@ -32,7 +32,7 @@ class InviteForm extends UserRegisterForm
     const INVITE_TYPE_TEMPORARILY = 'temporarily';
     const INVITE_TYPE_PERMANENT = 'permanent';
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'username' => [
@@ -48,7 +48,7 @@ class InviteForm extends UserRegisterForm
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return [
             'validateCaptcha',
@@ -58,6 +58,7 @@ class InviteForm extends UserRegisterForm
         ];
     }
 
+    /** @noinspection PhpUnused */
     protected function isInviteSystemOpen()
     {
         if (config('base.enable_invite_system') != true) {
@@ -65,9 +66,7 @@ class InviteForm extends UserRegisterForm
         }
     }
 
-    /**
-     * Check if user can invite
-     */
+    /** @noinspection PhpUnused */
     protected function canInvite()
     {
         // if user have enough invite number
@@ -78,9 +77,9 @@ class InviteForm extends UserRegisterForm
         }
 
         // If it is temporary invite
-        if ($this->getData('invite_type') == self::INVITE_TYPE_TEMPORARILY) {
+        if ($this->getInput('invite_type') == self::INVITE_TYPE_TEMPORARILY) {
             $record = app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE id = :id AND user_id = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW()')->bindParams([
-                'id' => $this->getData('temp_id'), 'uid' => app()->auth->getCurUser()->getId()
+                'id' => $this->getInput('temp_id'), 'uid' => app()->auth->getCurUser()->getId()
             ])->queryOne();
             if (false === $record) {
                 $this->buildCallbackFailMsg('Temporary Invitation', 'Temporary Invitation is not exist, it may not belong to you or expired.');
@@ -90,6 +89,7 @@ class InviteForm extends UserRegisterForm
         }
     }
 
+    /** @noinspection PhpUnused */
     protected function checkInviteInterval()
     {
         if (!app()->auth->getCurUser()->isPrivilege('pass_invite_interval_check')) {

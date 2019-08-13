@@ -16,7 +16,6 @@ use Rid\Validators\Validator;
 class UserConfirmForm extends Validator
 {
 
-    public $secret;
     public $action;
 
     const ACTION_REGISTER = 'register';
@@ -28,7 +27,7 @@ class UserConfirmForm extends Validator
     private $username;
     private $user_status;
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'secret' => 'Required',
@@ -39,13 +38,15 @@ class UserConfirmForm extends Validator
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['validConfirmSecret'];
     }
 
     /**
      * Verity The confirm secret and action exist in table `user_confirm` or not
+     *
+     * @noinspection PhpUnused
      */
     protected function validConfirmSecret()
     {
@@ -53,7 +54,7 @@ class UserConfirmForm extends Validator
             'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm` 
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
-            'secret' => $this->getData('secret'), 'action' => $this->getData('action')
+            'secret' => $this->getInput('secret'), 'action' => $this->getInput('action')
         ])->queryOne();
 
         if ($record == false) {  // It means this confirm key is not exist

@@ -18,7 +18,7 @@ class ManageController extends Controller
         if (app()->request->isPost()) {
             if (app()->request->post('action') == 'cat_edit') {
                 $edit_form = new Categories\EditForm();
-                $edit_form->setData(app()->request->post());
+                $edit_form->setInput(app()->request->post());
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
@@ -28,7 +28,7 @@ class ManageController extends Controller
                 }
             } elseif (app()->request->post('action') == 'cat_delete') {
                 $delete_form = new Categories\RemoveForm();
-                $delete_form->setData(app()->request->post());
+                $delete_form->setInput(app()->request->post());
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();

@@ -18,32 +18,34 @@ class RemoveForm extends Validator
     private $category_data;
     private $child_count;
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'cat_id' => 'Required | Integer',
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['getExistCategoryData', 'checkChildNode'];
     }
 
+    /** @noinspection PhpUnused */
     protected function getExistCategoryData()
     {
         $this->category_data = app()->pdo->createCommand('SELECT * FROM `categories` WHERE id = :id')->bindParams([
-            'id' => $this->getData('cat_id')
+            'id' => $this->getInput('cat_id')
         ])->queryScalar();
         if ($this->category_data === false) {
             $this->buildCallbackFailMsg('Categories:exist', 'This category isn\'t exist in our site.');
         }
     }
 
+    /** @noinspection PhpUnused */
     protected function checkChildNode()
     {
         $this->child_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
-            'pid' => $this->getData('cat_id')
+            'pid' => $this->getInput('cat_id')
         ])->queryScalar();
         if ($this->child_count !== 0) {
             $this->buildCallbackFailMsg('Categories;child', 'This category has sub category exist, Please clean subcategory first.');

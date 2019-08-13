@@ -21,7 +21,7 @@ class AuthController extends Controller
     {
         if (app()->request->isPost()) {
             $register_form = new Auth\UserRegisterForm();
-            $register_form->setData(app()->request->post());
+            $register_form->setInput(app()->request->post());
             $success = $register_form->validate();
             if (!$success) {
                 return $this->render('action/action_fail', [
@@ -48,7 +48,7 @@ class AuthController extends Controller
     public function actionConfirm()
     {
         $confirm = new Auth\UserConfirmForm();
-        $confirm->setData(app()->request->get());
+        $confirm->setInput(app()->request->get());
         $success = $confirm->validate();
         if (!$success) {
             return $this->render('action/action_fail', [
@@ -68,7 +68,7 @@ class AuthController extends Controller
     {
         if (app()->request->isPost()) {
             $form = new Auth\UserRecoverForm();
-            $form->setData(app()->request->post());
+            $form->setInput(app()->request->post());
             $success = $form->validate();
             if (!$success) {
                 return $this->render('action/action_fail', [

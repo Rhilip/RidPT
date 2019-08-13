@@ -17,7 +17,7 @@ class UserController extends Controller
 
     public function actionIndex()
     {
-        return $this->actionPanel();
+        return $this->actionDetails();
     }
 
     public function actionSetting()
@@ -30,7 +30,7 @@ class UserController extends Controller
         $msg = '';
         if (app()->request->isPost()) {
             $form = new User\InviteForm();
-            $form->setData(app()->request->post());
+            $form->setInput(app()->request->post());
             $success = $form->validate();
             if ($success) {
                 $form->flush();
@@ -53,7 +53,7 @@ class UserController extends Controller
         // FIXME By using Form Class
         if (!is_null(app()->request->get('action'))) {
             $action_form = new User\InviteActionForm();
-            $action_form->setData(app()->request->get());
+            $action_form->setInput(app()->request->get());
             $success = $action_form->validate();
             if ($success) {
                 $msg = $action_form->flush();
@@ -66,15 +66,14 @@ class UserController extends Controller
     }
 
 
-    public function actionPanel()
+    public function actionDetails()
     {
-        $uid = app()->request->get('id');
-        if ($uid && $uid != app()->auth->getCurUser()->getId()) {
-            $user = app()->site->getUser($uid);
-        } else {
-            $user = app()->auth->getCurUser();
+        $panel = new User\UserDetailsForm();
+        if (!$panel->validate()) {
+            return $this->render('action/action_fail', ['msg' => $panel->getError()]);
         }
-        return $this->render('user/panel', ['user' => $user]);
+
+        return $this->render('user/details', ['details' => $panel]);
     }
 
     public function actionSessions()

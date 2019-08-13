@@ -13,36 +13,42 @@ use apps\models\Torrent;
 
 trait isValidTorrentTrait
 {
-    public $torrent_id;
-    public $tid;
-    public $id;
+    public $id;  // Torrent Id
 
     /** @var Torrent */
     protected $torrent;
 
-    public static function callbackRules()
+    public static function inputRules(): array
+    {
+        return [
+            'id' => 'Required | Integer',
+        ];
+    }
+
+    public static function callbackRules(): array
     {
         return ['isExistTorrent'];
     }
 
-    /**
-     * @return Torrent
-     */
     public function getTorrent(): Torrent
     {
         return $this->torrent;
     }
 
-    protected function isExistTorrent() {
-        $tid = $this->getData('torrent_id') ?? $this->getData('tid') ?? $this->getData('id');
+    /** @noinspection PhpUnused */
+    protected function isExistTorrent()
+    {
+        $tid = $this->getInput('id');
         $torrent_exist = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `torrents` WHERE `id` = :tid')->bindParams([
             'tid' => $tid
         ])->queryScalar();
         if ($torrent_exist == 0) {
-            $this->buildCallbackFailMsg('Torrent', 'The torrent id ('. $tid. ') is not exist in our database');
+            $this->buildCallbackFailMsg('Torrent', 'The torrent id (' . $tid . ') is not exist in our database');
             return;
         }
 
         $this->torrent = app()->site->getTorrent($tid);
     }
+
+    // TODO check user privilege to see deleted or banned torrent
 }

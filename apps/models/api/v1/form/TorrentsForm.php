@@ -16,21 +16,10 @@ class TorrentsForm extends Validator
 {
     use isValidTorrentTrait;
 
-    public static function inputRules()
-    {
-        return [
-            'tid' => 'required | Integer'
-        ];
-    }
-
-    public static function callbackRules() {
-        return ['isExistTorrent'];
-    }
-
     public function updateRecord() {
         $bookmark_exist = app()->pdo->createCommand('SELECT `id` FROM `bookmarks` WHERE `uid` = :uid AND `tid` = :tid ')->bindParams([
             'uid' => app()->auth->getCurUser()->getId(),
-            'tid' => $this->tid
+            'tid' => $this->getInput('id')
         ])->queryScalar() ?: 0;
         if ($bookmark_exist > 0) {  // Delete the exist record
             app()->pdo->createCommand('DELETE FROM `bookmarks` WHERE `id` = :bid')->bindParams([
@@ -42,7 +31,7 @@ class TorrentsForm extends Validator
         } else {  // Add new record
             app()->pdo->createCommand('INSERT INTO `bookmarks` (`uid`, `tid`) VALUES (:uid, :tid)')->bindParams([
                 'uid' => app()->auth->getCurUser()->getId(),
-                'tid' => $this->tid
+                'tid' => $this->getInput('id')
             ])->execute();
             app()->redis->del('User:' . app()->auth->getCurUser()->getId() . ':bookmark_array');
 

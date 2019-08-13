@@ -19,8 +19,8 @@ class SessionsListForm extends Pager
     public static $DEFAULT_LIMIT = 10;
     public static $MAX_LIMIT = 50;
 
-    protected $_autoload_data = true;
-    protected $_autoload_data_from = ['get'];
+    protected $_autoload = true;
+    protected $_autoload_from = ['get'];
 
     public static function defaultData()
     {
@@ -47,10 +47,10 @@ class SessionsListForm extends Pager
 
     protected function getRemoteTotal(): int
     {
-        var_dump($this->getData('expired'));
+        var_dump($this->getInput('expired'));
         return app()->pdo->createCommand([
-            ['SELECT COUNT(`id`) FROM sessions WHERE uid = :uid ', 'params' => ['uid' => $this->getData('uid')]],
-            ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->getData('expired')]],
+            ['SELECT COUNT(`id`) FROM sessions WHERE uid = :uid ', 'params' => ['uid' => $this->getInput('uid')]],
+            ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->getInput('expired')]],
         ])->queryScalar();
     }
 

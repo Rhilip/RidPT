@@ -31,6 +31,11 @@ Trait PagerTrait
         return static::$DEFAULT_LIMIT ?? 50;
     }
 
+    public static function getMinLimit(): int
+    {
+        return static::$MIN_LIMIT ?? 10;
+    }
+
     public static function getMaxLimit(): int
     {
         return static::$MAX_LIMIT ?? 50;
@@ -41,21 +46,22 @@ Trait PagerTrait
         return static::$DATA_SOURCE ?? 'remote';
     }
 
-    public static function defaultData(){
+    public static function defaultData(): array
+    {
         return [
             'page' => static::getDefaultPage(),
             'limit' => static::getDefaultLimit()
         ];
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'page' => 'Integer', 'limit' => 'Integer'
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['checkPager'];
     }
@@ -92,13 +98,15 @@ Trait PagerTrait
         return $this->total;
     }
 
+    /** @noinspection PhpUnused */
     protected function checkPager()
     {
-        $limit = intval($this->getData('limit', static::getDefaultLimit()));
+        $limit = intval($this->getInput('limit', static::getDefaultLimit()));
+        if ($limit < static::getMinLimit()) $limit = static::getMinLimit();
         if ($limit > static::getMaxLimit()) $limit = static::getMaxLimit();
-        $page = intval($this->getData('page', static::getDefaultPage()));
+        $page = intval($this->getInput('page', static::getDefaultPage()));
 
-        $this->setData(['limit' => $limit, 'page' => $page]);
+        $this->setInput(['limit' => $limit, 'page' => $page]);
 
         $this->total = $this->getDataTotal();
         $this->offset = ($page - 1) * $limit;
@@ -111,7 +119,7 @@ Trait PagerTrait
     {
         if (is_null($this->pager_data_total)) {
             if (static::getDataSource() == 'remote') $this->pager_data_total = $this->getRemoteTotal();
-            else $this->pager_data_total = count($this->getData('data', []));
+            else $this->pager_data_total = count($this->getInput('data', []));
         }
         return $this->pager_data_total;
     }
@@ -125,7 +133,7 @@ Trait PagerTrait
     {
         if (is_null($this->pager_data)) {
             if (static::getDataSource() == 'remote') $this->pager_data = $this->getRemoteData();
-            else $this->pager_data = array_slice($this->getData('data', []), $this->offset, $this->limit);
+            else $this->pager_data = array_slice($this->getInput('data', []), $this->offset, $this->limit);
         }
         return $this->pager_data;
     }

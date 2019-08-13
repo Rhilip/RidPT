@@ -24,7 +24,7 @@ class TorrentsController extends Controller
     {
         // TODO add URI level Cache
         $pager = new Torrents\SearchForm();
-        $pager->setData(app()->request->get());
+        $pager->setInput(app()->request->get());
         $success = $pager->validate();
         if (!$success) {
             return $this->render('action/action_fail');
@@ -38,8 +38,8 @@ class TorrentsController extends Controller
         // TODO Check user upload pos
         if (app()->request->isPost()) {
             $uploadForm = new Torrents\UploadForm();
-            $uploadForm->setData(app()->request->post());
-            $uploadForm->setFileData(app()->request->files());
+            $uploadForm->setInput(app()->request->post());
+            $uploadForm->setFileInput(app()->request->files());
             $success = $uploadForm->validate();
             if (!$success) {
                 return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
@@ -50,7 +50,7 @@ class TorrentsController extends Controller
                     return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
                 }
 
-                return app()->response->redirect('/torrent/details?id=' . $uploadForm->id);
+                return app()->response->redirect('/torrent/details?id=' . $uploadForm->getId());
             }
         } else {
             return $this->render('torrents/upload');
@@ -61,7 +61,7 @@ class TorrentsController extends Controller
     public function actionTags()
     {
         $pager = new Torrents\TagsForm();
-        $pager->setData(app()->request->get());
+        $pager->setInput(app()->request->get());
         $success = $pager->validate();
 
         if (!$success) {

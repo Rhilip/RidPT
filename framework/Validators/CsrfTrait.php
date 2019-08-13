@@ -13,9 +13,10 @@ trait CsrfTrait
 {
     public $csrf;
 
+    /** @noinspection PhpUnused */
     protected function validateCsrf()
     {
-        $csrfInput = $this->getData('csrf');
+        $csrfInput = $this->getInput('csrf');
         $csrfText = app()->session->pop('csrfText');
         if (strcasecmp($csrfInput, $csrfText) != 0) {
             $this->buildCallbackFailMsg('csrf', 'csrf verification failed.');

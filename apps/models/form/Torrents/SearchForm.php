@@ -21,7 +21,7 @@ class SearchForm extends Pager
     private function getTagsArray()
     {
         if (is_null($this->_tags)) {
-            $tags = $this->getData('tags');
+            $tags = $this->getInput('tags');
             $this->_tags = $tags ? array_map('trim', explode(',', $tags)) : [];
         }
 

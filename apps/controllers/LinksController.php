@@ -22,7 +22,7 @@ class LinksController extends Controller
     {
         if (app()->request->isPost()) {
             $form = new Links\ApplyForm();
-            $form->setData(app()->request->post());
+            $form->setInput(app()->request->post());
             $success = $form->validate();
             if ($success) {
                 $form->flush();
@@ -40,7 +40,7 @@ class LinksController extends Controller
         if (app()->request->isPost()) {
             if (app()->request->post('action') == 'link_edit') {
                 $edit_form = new Links\EditForm();
-                $edit_form->setData(app()->request->post());
+                $edit_form->setInput(app()->request->post());
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
@@ -50,7 +50,7 @@ class LinksController extends Controller
                 }
             } elseif (app()->request->post('action') == 'link_delete') {
                 $delete_form = new Links\RemoveForm();
-                $delete_form->setData(app()->request->post());
+                $delete_form->setInput(app()->request->post());
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();
