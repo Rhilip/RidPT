@@ -15,6 +15,7 @@
 - **Secret:** Protect jwt key for env('APP_SECRET_KEY') (dfa67da)
 - **Sessions:** record user access information at Auth->onRequestAfter() (e2a22a7)
 - **Sessions/List:** Use SessionsListForm to show user sessions (9ecfb97)
+- **Torrent/Download:** Add user download pos check (db6d5ff)
 - **ban_ips:** Store banned ip in components/Site (01084c9)
 
 ### Fix

@@ -13,8 +13,9 @@ use apps\libraries\Constant;
 
 class AuthMiddleware
 {
-    const authByPasskeyControllers = [
-        controllers\RssController::class
+    const authByPasskeyAction = [
+        [controllers\RssController::class, 'actionIndex'],
+        [controllers\TorrentController::class, 'actionDownload']
     ];
 
     /** @noinspection PhpUnused */
@@ -23,12 +24,23 @@ class AuthMiddleware
         list($controller, $action) = $callable;
         $controllerName = get_class($controller);
 
-        $authby = in_array($controllerName, self::authByPasskeyControllers) ? 'passkey' : 'cookies';
-        $curuser = app()->auth->getCurUser($authby, true);
+        // Try auth by cookies first
+        $curuser = app()->auth->getCurUser('cookies', true);
+
+        // if fails and in special route `/rss?passkey=` or `/torrent/download?passkey=` , then try auth by passkey
+        if ($curuser === false) {
+            foreach (self::authByPasskeyAction as $value) {
+                list($_controller, $_action) = $value;
+                if ($controllerName == $_controller && $action == $_action) {
+                    $curuser = app()->auth->getCurUser('passkey', true);
+                    break;
+                }
+            }
+        }
 
         if (config('base.prevent_anonymous') && $curuser === false) return app()->response->setStatusCode(403);
         if (config('base.maintenance') && !$curuser->isPrivilege('bypass_maintenance')) return app()->response->redirect('/maintenance');
-        return $this->{'authBy' . ucfirst($authby)}($callable, $next);
+        return $this->{'authBy' . ucfirst(app()->auth->getGrant())}($callable, $next);
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
