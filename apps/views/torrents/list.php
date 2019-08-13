@@ -59,8 +59,8 @@ $time_now = time();
                                     <?php $tags = $torrent->getPinnedTags(); ?>
                                     <?php if (count($tags) > 0) : ?>
                                         <span data-item="t-tags">
-                                            <?php foreach ($tags as $tag): ?>
-                                                <a href="/torrents/search?tags=<?= $tag['tag'] ?>" class="tag label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
+                                            <?php foreach ($tags as $tag_name => $class_name): ?>
+                                                <a href="/torrents/search?tags=<?= $tag_name ?>" class="tag label label-outline <?= $class_name ?>"><?= $tag_name ?></a>
                                             <?php endforeach; ?>
                                         </span>&nbsp;
                                     <?php endif; ?>

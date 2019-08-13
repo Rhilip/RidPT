@@ -39,7 +39,7 @@ class CommentsForm extends DetailsForm
     protected function getRemoteData(): array
     {
         return app()->pdo->createCommand([
-            ['SELECT * FROM `torrent_comments` WHERE torrent_id = :tid', 'params' => ['tid' => $this->getInputId()]],
+            ['SELECT * FROM `torrent_comments` WHERE torrent_id = :tid', 'params' => ['tid' => $this->id]],
             ['LIMIT :offset, :limit', 'params' => ['offset' => $this->offset, 'limit' => $this->limit]]
         ])->queryAll();
     }

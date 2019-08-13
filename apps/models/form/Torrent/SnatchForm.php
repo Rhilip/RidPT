@@ -40,7 +40,7 @@ class SnatchForm extends DetailsForm
     protected function getRemoteData(): array
     {
         return app()->pdo->createCommand([
-            ['SELECT * FROM `snatched` WHERE `torrent_id` = :tid ORDER BY finish_at,create_at DESC ', 'params' => ['tid' => $this->getInputId()]],
+            ['SELECT * FROM `snatched` WHERE `torrent_id` = :tid ORDER BY finish_at,create_at DESC ', 'params' => ['tid' => $this->id]],
             ['LIMIT :offset, :limit', 'params' => ['offset' => $this->offset, 'limit' => $this->limit]]
         ])->queryAll();
     }

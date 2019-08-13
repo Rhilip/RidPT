@@ -59,4 +59,9 @@ class Constant
     {
         return 'Rate:zset:pool_' . $pool . '_action_' . $action . '_limit';
     }
+
+    public static function getTorrentFileLoc($tid)
+    {
+        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $tid . '.torrent';
+    }
 }

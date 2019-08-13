@@ -35,22 +35,22 @@ class Site extends Component
     {
         parent::onRequestBefore();
 
-
         $this->users = [];
         $this->torrents = [];
         $this->map_username_to_id = [];
     }
 
-    protected static function getStaticCacheNameSpace(): string
+    protected function getCacheNameSpace(): string
     {
-        return 'Cache:site';
+        return 'Site:hash:runtime_value';
     }
 
     public function getBanIpsList(): array
     {
-        return static::getStaticCacheValue('ip_ban_list', function () {
+        // FIXME `ip_ban_list` will still left in redis cache, it means if you change the ip_ban_list, it may not available in time.
+        return $this->getCacheValue('ip_ban_list', function () {
             return app()->pdo->createCommand('SELECT `ip` FROM `ban_ips`')->queryColumn();
-        }, 86400);
+        });
     }
 
     public function getTorrent($tid)
@@ -58,12 +58,11 @@ class Site extends Component
         if (array_key_exists($tid, $this->torrents)) {
             $torrent = $this->torrents[$tid];
         } else {
-            $torrent = new models\Torrent($tid);  // TODO Handing if this user id does not exist
+            $torrent = new models\Torrent($tid);  // TODO Handing if this torrent id does not exist
             $this->torrents[$tid] = $torrent;
         }
         return $torrent;
     }
-
 
     /**
      * @param $uid
@@ -102,11 +101,6 @@ class Site extends Component
         return $this->getUser($uid);
     }
 
-    public function getTorrentFileLoc($tid)
-    {
-        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $tid . '.torrent';
-    }
-
     public function writeLog($msg, $level = self::LOG_LEVEL_NORMAL)
     {
         app()->pdo->createCommand('INSERT INTO `site_log`(`create_at`,`msg`, `level`) VALUES (CURRENT_TIMESTAMP, :msg, :level)')->bindParams([
@@ -133,7 +127,7 @@ class Site extends Component
         $mail_sender->send($receivers, $subject, $mail_body);
     }
 
-    public static function getQualityTableList()
+    public function getQualityTableList()
     {
         return [
             'audio' => 'Audio Codec',  // TODO i18n title
@@ -145,13 +139,15 @@ class Site extends Component
 
     public static function ruleCategory(): array
     {
-        return static::getStaticCacheValue('enabled_torrent_category', function () {
+        if (false === $cats = config('runtime.enabled_torrent_category')) {
+            $cats = [];
             $cats_raw = app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
 
-            $cats = [];
             foreach ($cats_raw as $cat_raw) $cats[$cat_raw['id']] = $cat_raw;
-            return $cats;
-        }, 86400);
+            app()->config->set('runtime.enabled_torrent_category', $cats, 'json');
+        }
+
+        return $cats ?: [];
     }
 
     public static function CategoryDetail($cat_id): array
@@ -166,35 +162,48 @@ class Site extends Component
         });
     }
 
-    public static function ruleQuality($quality): array
+    public function ruleQuality($quality): array
     {
-        if (!in_array($quality, array_keys(self::getQualityTableList()))) throw new RuntimeException('Unregister quality : ' . $quality);
-        return static::getStaticCacheValue('enabled_quality_' . $quality, function () use ($quality) {
-            return app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
-        }, 86400);
+        if (!in_array($quality, array_keys($this->getQualityTableList()))) throw new RuntimeException('Unregister quality : ' . $quality);
+        if (false === $data = config('runtime.enabled_quality_' . $quality)) {
+            /** @noinspection SqlResolve */
+            $data = app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
+            app()->config->set('runtime.enabled_quality_' . $quality, $data, 'json');
+        }
+        return $data ?: [];
     }
 
-    public static function ruleTeam(): array
+    public function ruleTeam(): array
     {
-        return static::getStaticCacheValue('enabled_teams', function () {
-            return app()->pdo->createCommand('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
-        }, 86400);
+        if (false === $data = config('runtime.enabled_teams')) {
+            /** @noinspection SqlResolve */
+            $data = app()->pdo->createCommand('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
+            app()->config->set('runtime.enabled_teams', $data, 'json');
+        }
+
+        return $data ?: [];
     }
 
-    public static function ruleCanUsedTeam(): array
+    public function ruleCanUsedTeam(): array
     {
-        return array_filter(static::ruleTeam(), function ($team) {
+        return array_filter($this->ruleTeam(), function ($team) {
             return app()->auth->getCurUser()->getClass() >= $team['class_require'];
         });
     }
 
-    public static function rulePinnedTags(): array
+    /**
+     * @return array like [<tag1> => <tag1_class_name>, <tag2> => <tag2_class_name>]
+     */
+    public function rulePinnedTags(): array
     {
-        // FIXME
-        $pinned_tags = static::getStaticCacheValue('pinned_tags', function () {
-            return app()->pdo->createCommand('SELECT * FROM `tags` WHERE `pinned` = 1 LIMIT 10;')->queryAll();
-        }, 86400);
-        return $pinned_tags;
+        if (false === $data = config('runtime.pinned_tags')) {
+            /** @noinspection SqlResolve */
+            $raw = app()->pdo->createCommand('SELECT `tag`, `class_name` FROM `tags` WHERE `pinned` = 1;')->queryAll();
+            $data = array_column($raw, 'class_name', 'tag');
+            app()->config->set('runtime.pinned_tags', $data, 'json');
+        }
+
+        return $data;
     }
 
     public static function fetchUserCount(): int

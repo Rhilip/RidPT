@@ -231,22 +231,25 @@ class Torrent
         return app()->site::CategoryDetail($this->category);
     }
 
+    /**
+     * @return array like [<tag1>, <tag2>, <tag3>]
+     */
     public function getTags(): array
     {
         if (is_string($this->tags)) $this->tags = json_decode($this->tags, true);
         return $this->tags ?? [];
     }
 
-    /** FIXME
-     * @return array
+    /**
+     * @return array like [<tag1> => <tag1_class_name>, <tag2> => <tag2_class_name>]
      */
     public function getPinnedTags(): array
     {
         $pinned_tags = [];
         $tags = $this->getTags();
-        $rule_pinned_tags = app()->site::rulePinnedTags();
-        foreach ($rule_pinned_tags as $pinned_tag) {
-            if (in_array($pinned_tag['tag'], $tags)) $pinned_tags[] = $pinned_tag;
+        $rule_pinned_tags = app()->site->rulePinnedTags();
+        foreach ($rule_pinned_tags as $tag_name => $tag_class) {
+            if (in_array($tag_name, $tags)) $pinned_tags[$tag_name] = $tag_class;
         }
         return $pinned_tags;
     }

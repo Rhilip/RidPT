@@ -8,6 +8,7 @@
 
 namespace apps\models\form\Torrents;
 
+use apps\libraries\Constant;
 use Rid\Http\UploadFile;
 use Rid\Validators\Validator;
 
@@ -111,14 +112,14 @@ class UploadForm extends Validator
         }
 
         // Add Quality Valid
-        foreach (app()->site::getQualityTableList() as $quality => $title) {
+        foreach (app()->site->getQualityTableList() as $quality => $title) {
             $quality_id_list = [];
             // IF enabled this quality field , then load it value list from setting
             // Else we just allow the default value 0 to prevent cheating
             if (config('torrent_upload.enable_quality_' . $quality)) {
                 $quality_id_list = [0] + array_map(function ($cat) {
                     return $cat['id'];
-                }, app()->site::ruleQuality($quality));
+                }, app()->site->ruleQuality($quality));
             }
 
             $rules[$quality] = [
@@ -132,7 +133,7 @@ class UploadForm extends Validator
         if (config('torrent_upload.enable_teams')) {
             $team_id_list = [0] + array_map(function ($team) {
                 return $team['id'];
-            }, app()->site::ruleCanUsedTeam());
+            }, app()->site->ruleCanUsedTeam());
         }
 
         $rules['team'] = [
@@ -295,20 +296,21 @@ class UploadForm extends Validator
         app()->pdo->beginTransaction();
         try {
             $tags = $this->getTags();
+            $quality = json_encode([
+                'audio' => (int)$this->audio, 'codec' => (int)$this->codec,
+                'medium' => (int)$this->medium, 'resolution' => (int)$this->resolution,
+            ]);
 
-            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`tags`,`team`,`descr`,`nfo`,`uplver`,`hr`) 
-VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:category,:filename,:torrent_name,:torrent_type,:torrent_size,:torrent_structure,:quality_audio, :quality_codec, :quality_medium, :quality_resolution, JSON_ARRAY(:tags) ,:team, :descr,:nfo ,:uplver, :hr)')->bindParams([
+            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality`,`tags`,`team`,`descr`,`nfo`,`uplver`,`hr`) 
+VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :category, :filename, :torrent_name, :type, :size, :structure, :quality, JSON_ARRAY(:tags), :team, :descr, :nfo, :uplver, :hr)')->bindParams([
                 'owner_id' => app()->auth->getCurUser()->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
                 'title' => $this->title, 'subtitle' => $this->subtitle,
                 'category' => $this->category,
                 'filename' => $this->file->getBaseName(),
-                'torrent_name' => $this->torrent_name, 'torrent_type' => $this->torrent_type,
-                'torrent_size' => $this->torrent_size, 'torrent_structure' => $this->torrent_structure,
-                'quality_audio' => $this->audio, 'quality_codec' => $this->codec,
-                'quality_medium' => $this->medium, 'quality_resolution' => $this->resolution,
-                'tags' => $this->getTags(),
+                'torrent_name' => $this->torrent_name, 'type' => $this->torrent_type, 'size' => $this->torrent_size,
+                'structure' => $this->torrent_structure, 'quality' => $quality, 'tags' => $this->getTags(),  // JSON
                 'team' => $this->team,
                 'descr' => $this->descr,
                 'nfo' => $nfo_blob,
@@ -322,7 +324,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             $this->setBuff();
 
             // Save this torrent
-            $dump_status = Bencode::dump(app()->site->getTorrentFileLoc($this->id), $this->torrent_dict);
+            $dump_status = Bencode::dump(Constant::getTorrentFileLoc($this->id), $this->torrent_dict);
             if ($dump_status === false) {
                 throw new \Exception('std_torrent_cannot_save');
             }
@@ -331,7 +333,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
         } catch (\Exception $e) {
             // Delete the saved torrent file when torrent save success but still get Exception on other side
             if (isset($dump_status) && $dump_status === true) {
-                unlink(app()->site->getTorrentFileLoc($this->id));
+                unlink(Constant::getTorrentFileLoc($this->id));
             }
 
             app()->pdo->rollback();
@@ -375,7 +377,7 @@ VALUES (:owner_id,:info_hash,:status,CURRENT_TIMESTAMP,:title,:subtitle,:categor
             if (!config('torrent_upload.allow_new_custom_tags')) {
                 $rule_pinned_tags = array_map(function ($tag_row) {
                     return $tag_row['tag'];
-                }, app()->site::rulePinnedTags());
+                }, app()->site->rulePinnedTags());
                 $tags_list = array_intersect($rule_pinned_tags, $tags_list);
             }
         }

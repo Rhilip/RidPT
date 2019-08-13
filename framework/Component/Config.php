@@ -79,7 +79,7 @@ class Config extends Component
         $value = ($type == 'json') ? json_encode($value) : (string) $value;  // array(json), bool, int -> string
 
         $this->cacheTable->set($name, ['value' => $value, 'type' => $type]);
-        println(sprintf('Set new Dynamic Setting "%s", Type: "%s", Value: "%s".', $name, $type, $value));
+        // println(sprintf('Set new Dynamic Setting "%s", Type: "%s", Value: "%s".', $name, $type, $value));
 
         // Update site_config if not a runtime setting
         if (strpos($name, 'runtime.') === false) {

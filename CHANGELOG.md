@@ -18,6 +18,7 @@
 - **Sessions/List:** Use SessionsListForm to show user sessions (9ecfb97)
 - **Torrent/Download:** Add user download pos check (db6d5ff)
 - **ban_ips:** Store banned ip in components/Site (01084c9)
+- **torrents/tags:** Store torrent tags in TABLE `torrents` (4d573e2)
 
 ### Fix
 - **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)

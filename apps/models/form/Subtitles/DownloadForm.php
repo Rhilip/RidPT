@@ -20,9 +20,8 @@ class DownloadForm extends Validator
 
     private function addDownloadHit()
     {
-        $sid = $this->getInputId();
         app()->pdo->createCommand('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
-            'sid' => $sid
+            'sid' => $this->id
         ])->execute();
     }
 
@@ -43,8 +42,7 @@ class DownloadForm extends Validator
 
     protected function getSendFileContent()
     {
-        $sid = $this->getInputId();
-        $filename = $sid . '.' . $this->subtitle['ext'];
+        $filename = $this->id . '.' . $this->subtitle['ext'];
         $file_loc = app()->getPrivatePath('subs') . DIRECTORY_SEPARATOR . $filename;
         return file_get_contents($file_loc);
     }
