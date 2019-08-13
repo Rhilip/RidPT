@@ -8,6 +8,7 @@
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
 ### Feat
+- **Auth:** Add Auth By passkey support for special route (aff1f87)
 - **Auth:** Use JWT to set cookies content (bf897c6)
 - **Auth:** Sep Auth part from Site to new components (f36884e)
 - **Auth/Login:** Add full Advanced Options support (6009dc8)

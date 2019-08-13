@@ -78,9 +78,10 @@ class HttpServer extends BaseObject
         // 欢迎信息
         $this->welcome();
 
-        // rid-httpd 模式下，在此处创建全局的 \Swoole\Table
-        $configTable = new \Swoole\Table(2048);
-        $configTable->column('data', \Swoole\Table::TYPE_STRING, 256);
+        // 在此处创建全局的 \Swoole\Table
+        $configTable = new \Swoole\Table(4096);
+        $configTable->column('value' , \Swoole\Table::TYPE_STRING, 4096);
+        $configTable->column('type', \Swoole\Table::TYPE_STRING, 64);
         $configTable->create();
         $this->_server->configTable = $configTable;
 

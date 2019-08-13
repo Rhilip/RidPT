@@ -35,7 +35,6 @@ return [
 
         'log'    => [
             'class'       => Rid\Component\Log::class,
-            'level'       => ['error', 'info', 'debug'],
             'logDir'      => 'logs',
             'logRotate'   => Rid\Component\Log::ROTATE_DAY,
             'maxFileSize' => 1024,   // bytes

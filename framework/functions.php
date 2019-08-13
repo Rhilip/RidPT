@@ -46,6 +46,7 @@ if (!function_exists('println')) {
     function println($expression)
     {
         echo date('Y-m-d H:i:s') . ' ' . $expression . PHP_EOL;
+        app()->log->notice($expression);
     }
 }
 

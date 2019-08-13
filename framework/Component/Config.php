@@ -10,13 +10,12 @@ namespace Rid\Component;
 
 use Rid\Base\Component;
 use Rid\Exceptions\ConfigException;
+use Swoole\Table;
 
 class Config extends Component
 {
-    /** @var \Swoole\Table */
+    /** @var Table */
     private $cacheTable;
-
-    private $valueField = 'data';
 
     public function onInitialize(array $config = [])
     {
@@ -24,55 +23,70 @@ class Config extends Component
         $this->cacheTable = app()->getServ()->configTable;
 
         if ($this->cacheTable->count() == 0 && app()->getWorkerId() == 0) {
-            $configs = app()->pdo->createCommand('SELECT `name`,`value` FROM  `site_config`')->queryAll();
+            $configs = app()->pdo->createCommand('SELECT `name`, `value`, `type` FROM `site_config`')->queryAll();
             foreach ($configs as $config) {
-                $this->cacheTable->set($config['name'], [$this->valueField => $config['value']]);
+                $this->load($config);
             }
             println('Load Dynamic Site Config Success, Get ' . count($configs) . ' configs.');
         }
     }
 
+    private function load($config)
+    {
+        $this->cacheTable->set($config['name'], ['value' => $config['value'], 'type' => $config['type']]);
+    }
+
     public function get(string $name)
     {
         // First Check config stored in Swoole Table. If it exist , then just return the cached key
-        if (false === $setting = $this->cacheTable->get($name, $this->valueField)) {
-            // Deal with config with prefix `route.`
-            if (strpos($name,'route.') !== 0) {
-                // Get config From Database
-                $setting = app()->pdo->createCommand('SELECT `value` from `site_config` WHERE `name` = :name')
-                    ->bindParams(['name' => $name])->queryScalar();
-                // In this case (Load config From Database Failed) , A Exception should throw
-                if ($setting === false)
-                    throw new ConfigException(sprintf('Dynamic Setting "%s" couldn\'t be found.', $name));
-            }
+        if (false === $setting_row = $this->cacheTable->get($name)) {
+            if (strpos($name, 'runtime.') === 0) return false; // Deal with config with prefix `runtime.`
+            if (strpos($name, 'route.') === 0) return 1;       // Deal with config with prefix `route.`
 
-            $this->cacheTable->set($name, [$this->valueField => $setting]);
+            // Get config From Database
+            $setting_row = app()->pdo->createCommand('SELECT `name`, `value`, `type` from `site_config` WHERE `name` = :name')
+                ->bindParams(['name' => $name])->queryOne();
+
+            // In this case (Load config From Database Failed) , A Exception should throw
+            if ($setting_row === false)
+                throw new ConfigException(sprintf('Dynamic Setting "%s" couldn\'t be found.', $name));
+
+            $this->load($setting_row);
         }
+
+        $setting = $setting_row['value'];  // Type String
+        if ($setting_row['type'] == 'json') $setting = json_decode($setting,true);
+        elseif ($setting_row['type'] == 'int') $setting = (int) $setting;
+        elseif ($setting_row['type'] == 'bool') $setting = (bool) $setting;
+
         return $setting;
-    }
-
-    public function getAll()
-    {
-        $settings = [];
-        foreach ($this->cacheTable as $k => $v) {
-            $settings[$k] = $v[$this->valueField];
-        }
-        return $settings;
     }
 
     public function getSection($prefix = null)
     {
-        return array_filter($this->getAll(), function ($k) use ($prefix) {
-            return strpos($k, $prefix) === 0;
-        }, ARRAY_FILTER_USE_KEY);
+        $settings = [];
+        foreach ($this->cacheTable as $k => $v) {
+            if (!is_null($prefix) && strpos($k, $prefix) !== 0) continue;
+            $settings[$k] = $this->get($k);
+        }
+        return $settings;
     }
 
-    public function set(string $name, $value)
+    public function set(string $name, $value, $type = null)
     {
-        app()->pdo->createCommand("UPDATE `site_config` SET `value` = :val WHERE `name` = :name")->bindParams([
-            "val" => $value, "name" => $name
-        ])->execute();
-        return $this->flush($name);
+        // Judge order: input -> pre-defined -> is_array so `json` -> default `string`
+        $type = $type ?? ($this->cacheTable->get($name, 'type') ?: (is_array($value) ? 'json' : 'string'));
+        $value = ($type == 'json') ? json_encode($value) : (string) $value;  // array(json), bool, int -> string
+
+        $this->cacheTable->set($name, ['value' => $value, 'type' => $type]);
+        println(sprintf('Set new Dynamic Setting "%s", Type: "%s", Value: "%s".', $name, $type, $value));
+
+        // Update site_config if not a runtime setting
+        if (strpos($name, 'runtime.') === false) {
+            app()->pdo->createCommand('UPDATE `site_config` SET `value` = :val WHERE `name` = :name')->bindParams([
+                'val' => $value, 'name' => $name
+            ])->execute();
+        }
     }
 
     public function flush($name)
