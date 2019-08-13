@@ -23,14 +23,14 @@ class DownloadForm extends StructureForm
     public static function inputRules()
     {
         return [
-            'id' => 'required | Integer',
+            'id' => 'required | Integer',  // torrent_id
             //'passkey' // TODO add support
         ];
     }
 
     public static function callbackRules()
     {
-        return ['isExistTorrent', 'rateLimitCheck'];
+        return ['checkDownloadPos', 'isExistTorrent', 'rateLimitCheck'];
     }
 
     protected function getSendFileName(): string
@@ -43,6 +43,12 @@ class DownloadForm extends StructureForm
         return [
             /* ['key' => 'dl_60', 'period' => 60, 'max' => 1] */
         ];
+    }
+
+    protected function checkDownloadPos()
+    {
+        if (!app()->auth->getCurUser()->getDownloadpos())
+            $this->buildCallbackFailMsg('pos','your download pos is disabled');
     }
 
     public function getSendFileContent()

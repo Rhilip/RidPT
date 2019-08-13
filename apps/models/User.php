@@ -94,6 +94,9 @@ class User
     private $last_access_ip;
     private $last_tracker_ip;
 
+    private $uploadpos;
+    private $downloadpos;
+
     private $uploaded;
     private $true_uploaded;
     private $downloaded;
@@ -204,11 +207,22 @@ class User
         return $this->class;
     }
 
-    /** TODO use gravatar
-     * @param array $opts
-     * @return mixed
-     */
-    public function getAvatar($opts = [])
+    public function getPasskey(): string
+    {
+        return $this->passkey;
+    }
+
+    public function getUploadpos(): bool
+    {
+        return (bool)$this->uploadpos;
+    }
+
+    public function getDownloadpos(): bool
+    {
+        return (bool)$this->downloadpos;
+    }
+
+    public function getAvatar(array $opts = []): string
     {
         if (config('user.avatar_provider') === 'gravatar') {
             /** Get a Gravatar URL for a specified email address.
