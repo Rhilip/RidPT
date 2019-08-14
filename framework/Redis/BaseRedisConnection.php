@@ -221,9 +221,10 @@ class BaseRedisConnection extends Component
         $this->_driverOptions = $this->driverOptions + $this->_defaultDriverOptions;  // 设置驱动连接选项
     }
 
-    public function onRequestAfter()
+    public function onRequestBefore()
     {
-        $this->cleanCalledData();
+        parent::onRequestBefore();
+        $this->_calledData = [];
     }
 
     // 创建连接
@@ -315,11 +316,6 @@ class BaseRedisConnection extends Component
     public function getCalledData()
     {
         return $this->_calledData;
-    }
-
-    public function cleanCalledData()
-    {
-        $this->_recordData && $this->_calledData = [];
     }
 
     /**

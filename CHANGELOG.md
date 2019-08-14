@@ -34,6 +34,7 @@
 - **Config:** Remove params `$throw` in Config()->get() (706cc9a)
 - **RateLimit:** Change last param of isRateLimitHit and rate limit store Namespace (4dd571d)
 - **Site:** Simple Category Detail get function (ffa6855)
+- **Site:** Move Cat, Quality, PinnedTag cache to Config.runtime (da1d9a7)
 - **Validator:** fix user input extract (81bdc8f)
 - **View:** Make View extends BaseObject (0865cf9)
 - **torrent/structure:** Use zui.tree instead javascript `$(this).next('ul').toggle()` (7b20b2c)
@@ -41,6 +42,9 @@
 
 ### Revert
 - **Redis:** Remove view in redis , use other software install (c5d3378)
+
+### Style
+- **Redis:** rewrite namespace of cache keys (0c4e1a2)
 
 
 <a name="v0.1.5-alpha"></a>

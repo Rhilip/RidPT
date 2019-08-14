@@ -53,6 +53,7 @@ class I18n extends Component
 
     public function onRequestBefore()
     {
+        parent::onRequestBefore();
         $lastLang = null;
     }
 

@@ -30,8 +30,8 @@ class Auth extends Component
 
     public function onRequestAfter()
     {
-        $this->logSessionInfo();
         parent::onRequestAfter();
+        $this->logSessionInfo();
     }
 
     /**

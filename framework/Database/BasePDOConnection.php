@@ -65,9 +65,10 @@ class BasePDOConnection extends Component
         $this->_driverOptions = $this->driverOptions + $this->_defaultDriverOptions;  // 设置驱动连接选项
     }
 
-    public function onRequestAfter()
+    public function onRequestBefore()
     {
-        $this->_recordData && $this->cleanSqlExecuteData();
+        parent::onRequestBefore();
+        $this->_sqlExecuteData = [];
     }
 
     // 创建连接
@@ -424,11 +425,6 @@ class BasePDOConnection extends Component
             return $sql;
         }
         return array_shift($sqlPrepareData);
-    }
-
-    public function cleanSqlExecuteData()
-    {
-        $this->_sqlExecuteData = [];
     }
 
     public function getExecuteData() {
