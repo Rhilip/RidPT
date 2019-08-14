@@ -45,14 +45,6 @@ class Site extends Component
         return 'Site:hash:runtime_value';
     }
 
-    public function getBanIpsList(): array
-    {
-        // FIXME `ip_ban_list` will still left in redis cache, it means if you change the ip_ban_list, it may not available in time.
-        return $this->getCacheValue('ip_ban_list', function () {
-            return app()->pdo->createCommand('SELECT `ip` FROM `ban_ips`')->queryColumn();
-        });
-    }
-
     public function getTorrent($tid)
     {
         if (array_key_exists($tid, $this->torrents)) {

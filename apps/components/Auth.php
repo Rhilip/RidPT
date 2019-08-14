@@ -36,7 +36,7 @@ class Auth extends Component
 
     /**
      * @param string $grant
-     * @param bool $flush
+     * @param string|bool $flush
      * @return models\User|bool return False means this user is anonymous
      */
     public function getCurUser($grant = 'cookies', $flush = false)

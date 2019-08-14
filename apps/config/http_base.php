@@ -39,11 +39,6 @@ return [
                 'GET captcha' => ['captcha', 'index'],
                 'GET maintenance' => ['maintenance', 'index'],
 
-                // Auth By Passkey Route
-                'GET rss' => ['rss', 'index', 'middleware' => [
-                    apps\middleware\AuthMiddleware::class
-                ]],
-
                 // API version 1
                 'api/v1/{controller}/{action}' => ['api/v1/{controller}', '{action}', 'middleware' => [
                     apps\middleware\ApiMiddleware::class,

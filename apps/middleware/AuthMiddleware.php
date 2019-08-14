@@ -14,8 +14,8 @@ use apps\libraries\Constant;
 class AuthMiddleware
 {
     const authByPasskeyAction = [
-        [controllers\RssController::class, 'actionIndex'],
-        [controllers\TorrentController::class, 'actionDownload']
+        [controllers\RssController::class, 'actionIndex'],  // `/rss?passkey=`
+        [controllers\TorrentController::class, 'actionDownload']  // `/torrent/download?passkey=`
     ];
 
     /** @noinspection PhpUnused */
@@ -27,7 +27,7 @@ class AuthMiddleware
         // Try auth by cookies first
         $curuser = app()->auth->getCurUser('cookies', true);
 
-        // if fails and in special route `/rss?passkey=` or `/torrent/download?passkey=` , then try auth by passkey
+        // Try auth by passkey in special route and action if first cookies-check fails
         if ($curuser === false) {
             foreach (self::authByPasskeyAction as $value) {
                 list($_controller, $_action) = $value;
@@ -38,72 +38,56 @@ class AuthMiddleware
             }
         }
 
-        if (config('base.prevent_anonymous') && $curuser === false) return app()->response->setStatusCode(403);
-        if (config('base.maintenance') && !$curuser->isPrivilege('bypass_maintenance')) return app()->response->redirect('/maintenance');
-        return $this->{'authBy' . ucfirst(app()->auth->getGrant())}($callable, $next);
-    }
+        // Check if Site in Maintenance status, and only let `bypass_maintenance` user access
+        if (config('base.maintenance') && ($curuser === false || !$curuser->isPrivilege('bypass_maintenance')))
+            return app()->response->redirect('/maintenance');
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function authByPasskey($callable, \Closure $next) {
-        if (false === $curuser = app()->auth->getCurUser('passkey')) {
-            return 'invalid Passkey';
-        }
-        return $next();
-    }
+        // Deal with Anonymous Visitor
+        if ($curuser === false) {
+            // Check if Site in Abnormal status
+            if (config('base.prevent_anonymous')) return app()->response->setStatusCode(403);
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function authByCookies($callable, \Closure $next) {
-        list($controller, $action) = $callable;
-        $controllerName = get_class($controller);
+            if (app()->auth->getGrant() == 'passkey') {
+                return 'invalid Passkey';
+            } else {  // app()->auth->getGrant() == 'cookies'
+                // If visitor want to auth himself
+                if ($controllerName === controllers\AuthController::class && $action !== 'actionLogout') return $next();
 
-        $curuser = app()->auth->getCurUser();
-
-        $now_ip = app()->request->getClientIp();
-        if ($controllerName === controllers\AuthController::class) {
-            if ($curuser !== false && in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
-                /** Don't allow Logged in user visit the auth/{login, register, confirm} */
-                return app()->response->redirect('/index');
-            } elseif ($action !== 'actionLogout') {
-                if ($action == 'actionLogin') {  // TODO add register confirm fail ip count check
-                    $test_count = app()->redis->hGet('Site:fail_login_ip_count', $now_ip) ?: 0;
-                    if ($test_count > config('security.max_login_attempts')) {
-                        return app()->response->setStatusCode(403);
-                    }
-                }
-                return $next();
+                // Prevent Other Route
+                app()->cookie->delete(Constant::cookie_name);  // Delete exist cookies
+                app()->session->set('login_return_to', app()->request->fullUrl());  // Store the url which visitor want to hit
+                return app()->response->redirect('/auth/login');
             }
         }
 
-        if (false === $curuser) {
-            app()->cookie->delete(Constant::cookie_name);  // Delete exist cookies
-            app()->session->set('login_return_to', app()->request->fullUrl());  // Store the url which visitor want to hit
-            return app()->response->redirect('/auth/login');
-        } else {
-            /**
-             * TODO move to Auth Component
-             * Check User Permission to this route
-             *
-             * When user visit - /admin -> Controller : \apps\controllers\AdminController  Action: actionIndex
-             * it will check the dynamic config key `authority.route_admin_index` and compare with curuser class ,
-             * if user don't have this permission to visit this route the http code 403 will throw out.
-             * if this config key is not exist , the default class 1 will be used to compare.
-             *
-             * Example of `Route - Controller - Config Key` Map:
-             * /admin          -> AdminController::actionIndex     ->  route.admin_index
-             * /admin/service  -> AdminController::actionService   ->  route.admin_service
-             */
-            $route = strtolower(str_replace(
-                    ['apps\\controllers\\', 'Controller', 'action'], '',
-                    $controllerName . '_' . $action
-                )
-            );
-            $required_class = config('route.' . $route) ?: 1;
-            if ($curuser->getClass() < $required_class) {
-                return app()->response->setStatusCode(403);  // FIXME redirect to /error may better
-            }
+        // Don't allow Logged in user visit the auth/{login, register, confirm}
+        if ($controllerName === controllers\AuthController::class &&
+            in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
+            return app()->response->redirect('/index');
         }
 
-        // 执行下一个中间件
-        return $next();
+        /**
+         * Check User Permission to this route
+         *
+         * When user visit - /admin -> Controller : \apps\controllers\AdminController  Action: actionIndex
+         * it will check the dynamic config key `authority.route_admin_index` and compare with curuser class ,
+         * if user don't have this permission to visit this route the http code 403 will throw out.
+         * if this config key is not exist , the default class 1 will be used to compare.
+         *
+         * Example of `Route - Controller - Config Key` Map:
+         * /admin          -> AdminController::actionIndex     ->  route.admin_index
+         * /admin/service  -> AdminController::actionService   ->  route.admin_service
+         */
+        $route = strtolower(str_replace(
+                ['apps\\controllers\\', 'Controller', 'action'], '',
+                $controllerName . '_' . $action
+            )
+        );
+        $required_class = config('route.' . $route) ?: 1;
+        if ($curuser->getClass() < $required_class) {
+            return app()->response->setStatusCode(403);  // FIXME redirect to /error may better
+        }
+
+        return $next(); // 执行下一个中间件
     }
 }
