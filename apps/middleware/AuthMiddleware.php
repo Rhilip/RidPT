@@ -65,7 +65,7 @@ class AuthMiddleware
                 return app()->response->redirect('/index');
             } elseif ($action !== 'actionLogout') {
                 if ($action == 'actionLogin') {  // TODO add register confirm fail ip count check
-                    $test_count = app()->redis->hGet('SITE:fail_login_ip_count', $now_ip) ?: 0;
+                    $test_count = app()->redis->hGet('Site:fail_login_ip_count', $now_ip) ?: 0;
                     if ($test_count > config('security.max_login_attempts')) {
                         return app()->response->setStatusCode(403);
                     }

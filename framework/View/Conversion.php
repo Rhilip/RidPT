@@ -10,6 +10,7 @@ namespace Rid\View;
 
 use Decoda\Decoda;
 use Decoda\Storage\RedisStorage;
+
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;
 
@@ -72,9 +73,9 @@ class Conversion implements ExtensionInterface
         \Rid::setDefault($var, ['escapeHtml' => true]);
         $string = array_shift($var);
 
-        $code = new Decoda($string, $var,'Cache:post:' . md5($string));
+        $code = new Decoda($string, $var,'Decoda:' . md5($string));
 
-        $code->defaults(); // TODO add support of tag [mediainfo] , [nfo]
+        $code->defaults(); // TODO add support of tag [mediainfo]
 
         $code->setStorage(new RedisStorage(app()->redis->getRedis()));
         return $code->parse();

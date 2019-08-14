@@ -65,7 +65,7 @@ class UserLoginForm extends Validator
     /** @noinspection PhpUnused */
     protected function isMaxLoginIpReached()  // FIXME may use Trait
     {
-        $test_count = app()->redis->hGet('SITE:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
+        $test_count = app()->redis->hGet('Site:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
         if ($test_count > config('security.max_login_attempts')) {
             $this->buildCallbackFailMsg('Login Attempts', 'User Max Login Attempts Archived.');
             return;
@@ -132,8 +132,8 @@ class UserLoginForm extends Validator
 
     public function LoginFail()  // FIXME
     {
-        app()->redis->zAdd('SITE:fail_login_ip_zset', time(), app()->request->getClientIp());
-        app()->redis->hIncrBy('SITE:fail_login_ip_count', app()->request->getClientIp(), 1);
+        app()->redis->zAdd('Site:fail_login_ip_zset', time(), app()->request->getClientIp());
+        app()->redis->hIncrBy('Site:fail_login_ip_count', app()->request->getClientIp(), 1);
     }
 
     public function flush()

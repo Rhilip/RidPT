@@ -208,6 +208,6 @@ class Site extends Component
 
     public static function fetchUserCount(): int
     {
-        return app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users`")->queryScalar();
+        return app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users`')->queryScalar();
     }
 }

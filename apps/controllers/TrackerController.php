@@ -15,16 +15,18 @@ use Rid\Bencode\Bencode;
 
 use apps\exceptions\TrackerException;
 
+/** @noinspection PhpUnused */
 class TrackerController
 {
     protected $timenow;
 
-    /** The Black List of Announce Port
-     * See more : https://www.speedguide.net/port.php or other website
+    /**
+     * The Black List of Announce Port
      *
      * @var array
+     * @see https://www.speedguide.net/port.php or other website
      */
-    protected $portBlacklist = [
+    const portBlacklist =  [
         22,  // SSH Port
         53,  // DNS queries
         80, 81, 8080, 8081,  // Hyper Text Transfer Protocol (HTTP) - port used for web traffic
@@ -150,17 +152,16 @@ class TrackerController
 
     protected function logException(\Exception $exception, $userInfo = null, $torrentInfo = null)
     {
-        $raw_header = "";
+        $req_info = app()->request->server('query_string') . "\n\n";
         foreach (app()->request->header() as $key => $value) {
-            $raw_header .= "$key : $value \n";
+            $req_info .= "$key : $value \n";
         }
-        $req_info = app()->request->server('query_string') . "\n\n" . $raw_header;
 
-        app()->pdo->createCommand("INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`) 
+        app()->pdo->createCommand('INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`) 
                 VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg) 
                 ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
                                         `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`), 
-                                        `last_action_at` = NOW();")->bindParams([
+                                        `last_action_at` = NOW();')->bindParams([
             'tid' => $torrentInfo ? $torrentInfo['id'] : 0,
             'uid' => $userInfo ? $userInfo['id'] : 0,
             'ua' => app()->request->header('user-agent', ''),
@@ -186,6 +187,8 @@ class TrackerController
             /**
              * This header check may block Non-bittorrent client `Aria2` to access tracker,
              * Because they always add this header which other clients don't have.
+             *
+             * @see https://blog.rhilip.info/archives/1010/ ( in Chinese )
              */
             || app()->request->header('want-digest')
 
@@ -200,7 +203,7 @@ class TrackerController
              * The Cloudflare will add `__cfduid` Cookies to identify individual clients behind a shared IP address
              * and apply security settings on a per-client basis.
              *
-             * See more on : https://support.cloudflare.com/hc/en-us/articles/200170156
+             * @see https://support.cloudflare.com/hc/en-us/articles/200170156
              *
              */
             //|| app()->request->header('cookie')
@@ -214,7 +217,7 @@ class TrackerController
             throw new TrackerException(123);
 
         // Block Browser by check it's User-Agent
-        if (preg_match('/(^Mozilla|Browser|AppleWebKit|^Opera|^Links|^Lynx|[Bb]ot)/', $ua)) {
+        if (preg_match('/(Mozilla|Browser|Chrome|Safari|AppleWebKit|Opera|Links|Lynx|[Bb]ot)/', $ua)) {
             throw new TrackerException(121);
         }
     }
@@ -228,24 +231,10 @@ class TrackerController
         // Start Check Client by `User-Agent` and `peer_id`
         $userAgent = app()->request->header('user-agent');
         $peer_id = app()->request->get('peer_id', '');
-
-        /**
-         * if this user-agent and peer_id already checked valid or not?
-         *
-         * By default, We use a Redis ZSet to cache the valid value of $client_identity with it score
-         * is expired timestamp (which ttl is 3600 - 7200 s, So it can be cleanup), to prevent too large key.
-         *
-         * However , If you enable the extra Redis Extension `Bloom Filter` : the ReBloom module
-         * You can manually change it to the code which is commented out to get better performance
-         *
-         */
         $client_identity = $userAgent . ($onlyCheckUA ? '' : ':' . $peer_id);
 
-        /* Check in Redis ZSet */
-        if (app()->redis->zScore(Constant::trackerValidClientZset, $client_identity) !== false) return;
-
-        /* Check with Redis ReBloom module */
-        // if (app()->redis->rawCommand('bf.exists', [Constant::trackerValidClientZset, $client_identity])) return;
+        // if this user-agent and peer_id already checked valid or not ?
+        if (app()->redis->zScore(Constant::trackerValidClientZset, $client_identity) > 0) return;
 
         // Get Client White List From Database and cache it
         if (false === $allowedFamily = app()->redis->get(Constant::trackerAllowedClientList)) {
@@ -355,7 +344,6 @@ class TrackerController
         if ($onlyCheckUA) {
             if (!$agentAccepted) throw new TrackerException(126, [':ua' => $userAgent]);
             app()->redis->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
-            // app()->redis->rawCommand('bf.add', [Constant::trackerValidClientZset, $client_identity]);
             return;
         }
 
@@ -395,7 +383,7 @@ class TrackerController
         if (is_null($passkey))
             throw new TrackerException(130, [':attribute' => 'passkey']);
         if (strlen($passkey) != 32)
-            throw new TrackerException(132, [':attribute' => 'passkey', ':rule' => '32']);
+            throw new TrackerException(132, [':attribute' => 'passkey', ':rule' => 32]);
         if (strspn(strtolower($passkey), 'abcdef0123456789') != 32)
             throw new TrackerException(131, [':attribute' => 'passkey', ':reason' => 'The format of passkey isn\'t correct']);
 
@@ -413,7 +401,7 @@ class TrackerController
                 throw new TrackerException(140);
             }
 
-            app()->redis->setex(Constant::trackerUserContentByPasskey($passkey), 3600 + rand(0, 30), $userInfo);
+            app()->redis->set(Constant::trackerUserContentByPasskey($passkey), $userInfo, 3600 + rand(0, 30));
         }
 
         /**
@@ -433,13 +421,11 @@ class TrackerController
      * @return array|bool return the required field of torrent info by it's info_hash , or false when this info_hash is
      *                    invalid (Not exist in our database or this status is 'deleted'
      */
-    private function getTorrentInfoByHash($hash, $scrape = false)
+    private function getTorrentInfoByHash($hash, bool $scrape = false)
     {
         $bin2hex_hash = bin2hex($hash);
 
-        /**
-         * If this torrent info_hash is exist in invalid set. (Worked as `Bloom Filter`
-         */
+        // If this torrent info_hash is exist in invalid set. (Worked as `Bloom Filter`
         if (app()->redis->zScore(Constant::trackerInvalidInfoHashZset, $bin2hex_hash) !== false) return false;
 
         $cache_key = Constant::trackerTorrentContentByInfoHash($bin2hex_hash);
@@ -448,8 +434,8 @@ class TrackerController
 
         $exist = app()->redis->exists($cache_key);
         if ($exist === 0) {  // This cache key is not exist , get it's information from db and then cache it
-            $torrentInfo = app()->pdo->createCommand("SELECT `id`, `info_hash`, `owner_id`, `status`, `incomplete`, `complete`, `downloaded`, `added_at` FROM `torrents` WHERE `info_hash` = :info LIMIT 1")
-                ->bindParams(["info" => $hash])->queryOne();
+            $torrentInfo = app()->pdo->createCommand('SELECT `id`, `info_hash`, `owner_id`, `status`, `incomplete`, `complete`, `downloaded`, `added_at` FROM `torrents` WHERE `info_hash` = :info LIMIT 1')
+                ->bindParams(['info' => $hash])->queryOne();
             if ($torrentInfo === false || $torrentInfo['status'] == 'deleted') {  // No-exist or deleted torrent
                 app()->redis->zAdd(Constant::trackerInvalidInfoHashZset, time() + 600, $bin2hex_hash);
                 return false;
@@ -477,7 +463,7 @@ class TrackerController
         } else {
             foreach ($info_hash_array as $item) {
                 if (strlen($item) != 20)
-                    throw new TrackerException(133, [':attribute' => 'info_hash', ':rule' => strlen($item)]);
+                    throw new TrackerException(133, [':attribute' => 'info_hash', ':rule' => 20]);
             }
         }
     }
@@ -629,7 +615,7 @@ class TrackerController
      */
     private function checkPortFields($port)
     {
-        if (!is_numeric($port) || $port < 0 || $port > 0xffff || in_array($port, $this->portBlacklist))
+        if (!is_numeric($port) || $port < 0 || $port > 0xffff || in_array($port, self::portBlacklist))
             throw new TrackerException(135, [':port' => $port]);
     }
 

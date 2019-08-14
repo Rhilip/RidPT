@@ -89,7 +89,7 @@ return [
             // 类路径
             'class'          => Rid\Http\Session::class,
             // 保存的Key前缀
-            'saveKeyPrefix'  => 'SESSION:',
+            'saveKeyPrefix'  => 'Session:',
             // 生存时间
             'maxLifetime'    => 7200,
             // session键名
