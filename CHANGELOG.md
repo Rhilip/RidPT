@@ -21,11 +21,15 @@
 - **torrents/tags:** Store torrent tags in TABLE `torrents` (4d573e2)
 
 ### Fix
+- **Auth:** Fix user session can't storage in database (30b1049)
 - **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)
 - **Component:** Fix parent::onRequest{Before,After} miss (200926f)
 - **User:** Fix User Class miss in string format (3680444)
 
 ### Perf
+- **Auth/Login:** Simple The Auth Login Fail (6f11931)
+- **IpBan:** Move ip ban list to runtime config (e0fb4f6)
+- **JWT:** Short JWT payload key (7895158)
 - **Process:** Disable Pdo And Redis called data in custom process (b744e81)
 
 ### Refactor

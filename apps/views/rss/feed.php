@@ -7,8 +7,7 @@
  * Date: 2019/3/10
  * Time: 17:24
  *
- * @var array $torrents
- * @var \apps\models\Torrent $torrent
+ * @var \apps\models\form\Rss\FeedForm $feed
  */
 
 $url = (app()->request->isSecure() ? 'https://' : 'http://') . config('base.site_url');
@@ -40,7 +39,7 @@ $copyright = "Copyright (c) " . $site_name . " " . (date("Y") != $yearfounded ? 
             <height>100</height>
             <description><?= addslashes($site_name . ' Torrents') ?></description>
         </image>
-        <?php foreach ($torrents as $torrent): ?>
+        <?php foreach ($feed->getPagerData() as $torrent): ?>
         <item>
             <title><![CDATA[<?= $torrent->getTitle() ?>]]></title>
             <link><?= $url.'/torrent/details?id=' . $torrent->getId() ?></link>

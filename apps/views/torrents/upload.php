@@ -28,7 +28,7 @@
                     <div class="col-md-3">
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
-                            <?php foreach (app()->site::ruleCategory() as $category) : ?>
+                            <?php foreach (app()->site->ruleCategory() as $category) : ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -138,8 +138,8 @@
             <td><input id="tags" name="tags" class="form-control" type="text">
                 <div class="tag-help-block" style="margin-top: 4px">
                     Pinned Tags:
-                    <?php foreach (app()->site->rulePinnedTags() as $tag): ?>
-                        <a href="javascript:" class="add-tag label label-outline <?= $tag['class_name'] ?>"><?= $tag['tag'] ?></a>
+                    <?php foreach (app()->site->rulePinnedTags() as $tag => $class_name): ?>
+                        <a href="javascript:" class="add-tag label label-outline <?= $class_name ?>"><?= $tag ?></a>
                     <?php endforeach; ?>
                 </div>
             </td>

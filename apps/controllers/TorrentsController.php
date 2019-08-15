@@ -23,14 +23,15 @@ class TorrentsController extends Controller
     public function actionSearch()
     {
         // TODO add URI level Cache
-        $pager = new Torrents\SearchForm();
-        $pager->setInput(app()->request->get());
-        $success = $pager->validate();
+        $search = new Torrents\SearchForm();
+        var_dump(app()->request->get());
+        $search->setInput(app()->request->get());
+        $success = $search->validate();
         if (!$success) {
-            return $this->render('action/action_fail');
+            return $this->render('action/action_fail', ['msg' => $search->getError()]);
         }
 
-        return $this->render('torrents/list', ['pager' => $pager]);
+        return $this->render('torrents/search', ['search' => $search]);
     }
 
     public function actionUpload()

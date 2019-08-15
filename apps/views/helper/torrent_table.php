@@ -6,18 +6,12 @@
  * Time: 20:40
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Torrents\SearchForm $pager
+ * @var \apps\models\form\Torrents\SearchForm $search
  */
 
 $time_now = time();
 ?>
 
-<?= $this->layout('layout/base') ?>
-
-<?php $this->start('title')?>Torrents List<?php $this->end();?>
-
-<?php $this->start('container') ?>
-<!-- TODO insert container head : For example, Search toolbox..... -->
 <div class="row">
     <div class="col-md-12">
         <table class="table" id="torrents_table">
@@ -35,16 +29,16 @@ $time_now = time();
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($pager->getPagerData() as $torrent): /** @var \apps\models\Torrent $torrent */ ?>
+            <?php foreach ($search->getPagerData() as $torrent): /** @var \apps\models\Torrent $torrent */ ?>
                 <tr data-tid="<?= $torrent->getId() ?>">
                     <td class="text-center" data-item="category" style="margin: 0;padding: 0">
                         <?php $cat = $torrent->getCategory(); ?>
                         <?php if ($cat['image']): // Show Category's Image as <img> tag with classname ?>
-                        <img src="<?= $cat['image'] ?>" class="category <?= $cat['class_name'] ?>"  alt="<?= $cat['name'] ?>">
+                            <img src="<?= $cat['image'] ?>" class="category <?= $cat['class_name'] ?>"  alt="<?= $cat['name'] ?>">
                         <?php elseif ($cat['class_name']):  // Show Category's Image as <div> tag with classname ?>
-                        <div class="category <?= $cat['class_name'] ?>"></div>
+                            <div class="category <?= $cat['class_name'] ?>"></div>
                         <?php else: // Show Category's Name if image not set ?>
-                        <?= $cat['name'] ?>
+                            <?= $cat['name'] ?>
                         <?php endif; ?>
                     </td>
                     <td>
@@ -65,7 +59,7 @@ $time_now = time();
                                         </span>&nbsp;
                                     <?php endif; ?>
                                     <?php if ($torrent->getSubtitle()): ?>
-                                    <span data-item="subtitle" data-subtitle="<?= $this->e($torrent->getSubtitle()) ?>"><?= $torrent->getSubtitle() ?></span>
+                                        <span data-item="subtitle" data-subtitle="<?= $this->e($torrent->getSubtitle()) ?>"><?= $torrent->getSubtitle() ?></span>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -85,7 +79,7 @@ $time_now = time();
                     <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>">
                         <?php if ($torrent->getDownloaded() > 0): ?><a href="/torrent/snatch?id=<?= $torrent->getId() ?>"><?php endif; ?>
                             <?= number_format($torrent->getDownloaded()) ?>
-                        <?php if ($torrent->getDownloaded() > 0): ?></a><?php endif; ?>
+                            <?php if ($torrent->getDownloaded() > 0): ?></a><?php endif; ?>
                     </td>
                     <td class="text-center" data-item="t-uploader" data-uploader="<?= $this->e($torrent->getUplver() ? 0 : $torrent->getOwnerId()) ?>"><?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'hide' => $torrent->getUplver()]) ?></td>
                 </tr>
@@ -93,8 +87,7 @@ $time_now = time();
             </tbody>
         </table>
         <div class="text-center">
-            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $pager->getTotal() ?>"  data-rec-per-page="<?= $pager->getLimit() ?>"></ul>
+            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $search->getTotal() ?>" data-rec-per-page="<?= $search->getLimit() ?>"></ul>
         </div>
     </div>
 </div>
-<?php $this->end();?>

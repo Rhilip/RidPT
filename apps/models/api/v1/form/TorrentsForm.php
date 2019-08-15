@@ -42,7 +42,7 @@ class TorrentsForm extends Validator
     public function getFileList()
     {
         $filelist = $this->torrent->getTorrentStructure();
-        return ['msg' => 'Get Filelist success', 'result' => json_decode($filelist, false)];
+        return ['msg' => 'Get Filelist success', 'result' => $filelist];
     }
 
     public function getNfoFileContent()

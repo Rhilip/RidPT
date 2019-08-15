@@ -8,7 +8,7 @@
 
 namespace apps\controllers;
 
-use apps\models\Torrent;
+use apps\models\form\Rss\FeedForm;
 
 use Rid\Http\Controller;
 
@@ -17,12 +17,17 @@ class RssController extends Controller
     public function actionIndex()
     {
         // FIXME add torrent search
-        $fetch = app()->pdo->createCommand('SELECT `id` FROM torrents ORDER BY added_at DESC LIMIT 50;')->queryColumn();
+        $feed = new FeedForm();
+        if (false === $feed->validate()) {
+            return $this->render('action/action_fail', ['msg' => $feed->getError()]);
+        }
 
-        $torrents = array_map(function ($id) {
-            return app()->site->getTorrent($id);
-        }, $fetch);
+        app()->response->setHeader('Content-Type', 'text/xml');
+        return $this->render('rss/feed', ['feed' => $feed]);
+    }
 
-        return $this->render('rss_feed', ['torrents' => $torrents]);
+    public function actionGenerate()
+    {
+        // TODO
     }
 }

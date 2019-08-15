@@ -50,6 +50,12 @@ if (!function_exists('println')) {
     }
 }
 
+if (!function_exists('input2array')) {
+    function input2array($input) {
+        return is_array($input) ? $input : [$input];
+    }
+}
+
 if (!function_exists('is_indexed_array')) {
     /** 索引数组：所有键名都为数值型，注意字符串类型的数字键名会被转换为数值型。
      * 判断数组是否为索引数组

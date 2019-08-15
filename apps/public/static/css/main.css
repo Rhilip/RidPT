@@ -112,6 +112,7 @@ body{background-color:#f6f6f6}
 #torrents_table td[data-item] {vertical-align: middle;}
 
 #tags_list{margin-top:20px}
+#small_search_box{margin:10px 0}
 
 /* '/torrents/upload' */
 #torrent_upload_table > tbody > tr > td:first-child{vertical-align:middle;text-align:right}

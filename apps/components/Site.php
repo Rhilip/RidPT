@@ -127,7 +127,7 @@ class Site extends Component
         ];
     }
 
-    public static function ruleCategory(): array
+    public function ruleCategory(): array
     {
         if (false === $cats = config('runtime.enabled_torrent_category')) {
             $cats = [];
@@ -140,14 +140,14 @@ class Site extends Component
         return $cats ?: [];
     }
 
-    public static function CategoryDetail($cat_id): array
+    public function CategoryDetail($cat_id): array
     {
-        return static::ruleCategory()[$cat_id];
+        return $this->ruleCategory()[$cat_id];
     }
 
-    public static function ruleCanUsedCategory(): array
+    public function ruleCanUsedCategory(): array
     {
-        return array_filter(static::ruleCategory(), function ($cat) {
+        return array_filter($this->ruleCategory(), function ($cat) {
             return $cat['enabled'] = 1;
         });
     }
@@ -228,7 +228,7 @@ class Site extends Component
         }
     }
 
-    public function unbanIp($ip, $persistence = false)
+    public function unbanIp($ip, $persistence = false) // TODO Move to manager form
     {
         // Get old ban_ips_list
         $banips = $this->getBanIpsList();

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 13, 2019 at 10:15 PM
+-- Generation Time: Aug 15, 2019 at 08:23 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.7
 
@@ -160,14 +160,11 @@ CREATE TABLE IF NOT EXISTS `ban_ips` (
   `add_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `commit` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `ip` (`ip`),
-  KEY `FK_ip_ban_operator` (`add_by`)
+  KEY `ip` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `ban_ips`:
---   `add_by`
---       `users` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -536,7 +533,7 @@ CREATE TABLE IF NOT EXISTS `peers` (
 
 DROP TABLE IF EXISTS `quality_audio`;
 CREATE TABLE IF NOT EXISTS `quality_audio` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` mediumint(3) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL DEFAULT '',
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `sort_index` smallint(6) NOT NULL DEFAULT '0',
@@ -581,7 +578,7 @@ INSERT INTO `quality_audio` (`id`, `name`, `enabled`, `sort_index`) VALUES
 
 DROP TABLE IF EXISTS `quality_codec`;
 CREATE TABLE IF NOT EXISTS `quality_codec` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` mediumint(3) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL DEFAULT '',
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `sort_index` smallint(6) NOT NULL DEFAULT '0',
@@ -619,7 +616,7 @@ INSERT INTO `quality_codec` (`id`, `name`, `enabled`, `sort_index`) VALUES
 
 DROP TABLE IF EXISTS `quality_medium`;
 CREATE TABLE IF NOT EXISTS `quality_medium` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` mediumint(3) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL DEFAULT '',
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `sort_index` smallint(6) NOT NULL DEFAULT '0',
@@ -660,7 +657,7 @@ INSERT INTO `quality_medium` (`id`, `name`, `enabled`, `sort_index`) VALUES
 
 DROP TABLE IF EXISTS `quality_resolution`;
 CREATE TABLE IF NOT EXISTS `quality_resolution` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` mediumint(3) NOT NULL AUTO_INCREMENT,
   `name` varchar(64) NOT NULL DEFAULT '',
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `sort_index` smallint(6) NOT NULL DEFAULT '0',
@@ -1107,13 +1104,13 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `torrent_type` enum('single','multi') NOT NULL DEFAULT 'multi',
   `torrent_size` bigint(20) NOT NULL DEFAULT '0',
   `torrent_structure` json NOT NULL,
-  `quality_audio` int(11) NOT NULL DEFAULT '0',
-  `quality_codec` int(11) NOT NULL DEFAULT '0',
-  `quality_medium` int(11) NOT NULL DEFAULT '0',
-  `quality_resolution` int(11) NOT NULL DEFAULT '0',
-  `tags` json NOT NULL,
   `team` int(11) NOT NULL DEFAULT '0',
+  `quality_audio` mediumint(3) NOT NULL DEFAULT '0',
+  `quality_codec` mediumint(3) NOT NULL DEFAULT '0',
+  `quality_medium` mediumint(3) NOT NULL DEFAULT '0',
+  `quality_resolution` mediumint(3) NOT NULL DEFAULT '0',
   `descr` text,
+  `tags` json NOT NULL,
   `nfo` blob NOT NULL,
   `uplver` tinyint(1) NOT NULL DEFAULT '0',
   `hr` tinyint(1) NOT NULL DEFAULT '0',
@@ -1121,11 +1118,11 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   UNIQUE KEY `info_hash` (`info_hash`),
   KEY `FK_torrent_categories` (`category`),
   KEY `FK_torrent_owner` (`owner_id`),
+  KEY `FK_torrent_team` (`team`),
   KEY `FK_torrent_quality_audio` (`quality_audio`),
   KEY `FK_torrent_quality_codec` (`quality_codec`),
   KEY `FK_torrent_quality_medium` (`quality_medium`),
-  KEY `FK_torrent_quality_resolution` (`quality_resolution`),
-  KEY `FK_torrent_team` (`team`)
+  KEY `FK_torrent_quality_resolution` (`quality_resolution`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -1320,12 +1317,6 @@ ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `ban_ips`
---
-ALTER TABLE `ban_ips`
-  ADD CONSTRAINT `FK_ip_ban_operator` FOREIGN KEY (`add_by`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `bookmarks`

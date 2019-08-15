@@ -75,160 +75,99 @@ class Torrent
         $this->importAttributes($self);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTorrentStructure()
-    {
-        return $this->torrent_structure;
-    }
-
     protected function getCacheNameSpace(): string
     {
         return Constant::torrentContent($this->id);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getOwnerId()
+    public function getOwnerId(): int
     {
         return $this->owner_id;
     }
 
-    public function getOwner()
+    public function getOwner(): User
     {
         return app()->site->getUser($this->owner_id);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getComplete()
+    public function getInfoHash(): string
     {
-        return $this->complete;
+        return bin2hex($this->info_hash);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getIncomplete()
-    {
-        return $this->incomplete;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDownloaded()
-    {
-        return $this->downloaded;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAddedAt()
-    {
-        return $this->added_at;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTorrentName()
-    {
-        return $this->torrent_name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSubtitle()
-    {
-        return $this->subtitle;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescr()
-    {
-        return $this->descr;
-    }
-
-    /**
-     * @param bool $raw
-     * @return mixed
-     */
-    public function getInfoHash($raw = false)
-    {
-        if ($raw) {
-            return $this->info_hash;
-        } else {
-            return bin2hex($this->info_hash);
-        }
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getStatus()
+    public function getStatus(): string
     {
         return $this->status;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTorrentType()
+    public function getAddedAt(): string
     {
-        return $this->torrent_type;
+        return $this->added_at;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getTorrentSize()
+    public function getComplete(): int
     {
-        return $this->torrent_size;
+        return $this->complete;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getUplver()
+    public function getIncomplete(): int
     {
-        return $this->uplver;
+        return $this->incomplete;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCategoryId()
+    public function getDownloaded(): int
+    {
+        return $this->downloaded;
+    }
+
+    public function getComments(): int
+    {
+        return $this->comments;
+    }
+
+    public function getTitle(): string
+    {
+        return $this->title;
+    }
+
+    public function getSubtitle(): string
+    {
+        return $this->subtitle;
+    }
+
+    public function getCategoryId(): int
     {
         return $this->category;
     }
 
-    /**
-     * @return mixed
-     */
     public function getCategory()
     {
-        return app()->site::CategoryDetail($this->category);
+        return app()->site->CategoryDetail($this->category);
+    }
+
+    public function getTorrentName(): string
+    {
+        return $this->torrent_name;
+    }
+
+    public function getTorrentType(): string
+    {
+        return $this->torrent_type;
+    }
+
+    public function getTorrentSize(): int
+    {
+        return $this->torrent_size;
+    }
+
+    public function getTorrentStructure(): array
+    {
+        return json_decode($this->torrent_structure, true);
     }
 
     /**
@@ -254,7 +193,25 @@ class Torrent
         return $pinned_tags;
     }
 
-    public function hasNfo()
+    /**
+     * @return mixed
+     */
+    public function getDescr()
+    {
+        return $this->descr;
+    }
+
+    public function getUplver(): bool
+    {
+        return (boolean)$this->uplver;
+    }
+
+    public function getHr(): bool
+    {
+        return (boolean)$this->hr;
+    }
+
+    public function hasNfo(): bool
     {
         return (boolean)$this->nfo;
     }
@@ -305,10 +262,6 @@ class Torrent
         return $s;
     }
 
-    public function getComments()
-    {
-        return $this->comments;
-    }
 
     public function getLastCommentsDetails()
     {

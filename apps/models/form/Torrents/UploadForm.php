@@ -84,7 +84,7 @@ class UploadForm extends Validator
     {
         $categories_id_list = array_map(function ($cat) {
             return $cat['id'];
-        }, app()->site::ruleCanUsedCategory());
+        }, app()->site->ruleCanUsedCategory());
 
         $rules = [
             'title' => 'required',
@@ -117,7 +117,7 @@ class UploadForm extends Validator
             // IF enabled this quality field , then load it value list from setting
             // Else we just allow the default value 0 to prevent cheating
             if (config('torrent_upload.enable_quality_' . $quality)) {
-                $quality_id_list = [0] + array_map(function ($cat) {
+                $quality_id_list = array_map(function ($cat) {
                     return $cat['id'];
                 }, app()->site->ruleQuality($quality));
             }
@@ -129,9 +129,9 @@ class UploadForm extends Validator
         }
 
         // Add Team id Valid
-        $team_id_list = [0];
+        $team_id_list = [];
         if (config('torrent_upload.enable_teams')) {
-            $team_id_list = [0] + array_map(function ($team) {
+            $team_id_list = array_map(function ($team) {
                 return $team['id'];
             }, app()->site->ruleCanUsedTeam());
         }
@@ -296,13 +296,9 @@ class UploadForm extends Validator
         app()->pdo->beginTransaction();
         try {
             $tags = $this->getTags();
-            $quality = json_encode([
-                'audio' => (int)$this->audio, 'codec' => (int)$this->codec,
-                'medium' => (int)$this->medium, 'resolution' => (int)$this->resolution,
-            ]);
 
-            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`quality`,`tags`,`team`,`descr`,`nfo`,`uplver`,`hr`) 
-VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :category, :filename, :torrent_name, :type, :size, :structure, :quality, JSON_ARRAY(:tags), :team, :descr, :nfo, :uplver, :hr)')->bindParams([
+            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`tags`,`nfo`,`uplver`,`hr`) 
+VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :category, :filename, :torrent_name, :type, :size, :structure,:team,:audio,:codec,:medium,:resolution,:descr, JSON_ARRAY(:tags), :nfo, :uplver, :hr)')->bindParams([
                 'owner_id' => app()->auth->getCurUser()->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
@@ -310,7 +306,9 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
                 'category' => $this->category,
                 'filename' => $this->file->getBaseName(),
                 'torrent_name' => $this->torrent_name, 'type' => $this->torrent_type, 'size' => $this->torrent_size,
-                'structure' => $this->torrent_structure, 'quality' => $quality, 'tags' => $this->getTags(),  // JSON
+                'structure' => $this->torrent_structure, 'tags' => $this->getTags(),  // JSON
+                'audio' => (int)$this->audio, 'codec' => (int)$this->codec,
+                'medium' => (int)$this->medium, 'resolution' => (int)$this->resolution,
                 'team' => $this->team,
                 'descr' => $this->descr,
                 'nfo' => $nfo_blob,
