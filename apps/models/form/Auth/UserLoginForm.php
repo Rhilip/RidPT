@@ -142,7 +142,6 @@ class UserLoginForm extends Validator
     private function createUserSession()
     {
         $timenow = time();
-        $login_ip = app()->request->getClientIp();
 
         do { // Generate unique JWT ID
             $jti = StringHelper::getRandomString(64);
@@ -155,6 +154,7 @@ class UserLoginForm extends Validator
         $payload = [
             'iss' => config('base.site_url'),
             'sub' => config('base.site_generator'),
+            'aud' =>  $this->self['id'],  // Store User Id so we can quick check session status and load their information
             'iat' => $timenow,
             'jti' => $jti,
         ];
@@ -166,9 +166,11 @@ class UserLoginForm extends Validator
         $payload['exp'] = $cookieExpire;
 
         // Custom Payload key
-        $payload['user_id'] = $this->self['id'];  // Store User Id so we can quick load their information
-        if ($this->securelogin === 'yes' || config('security.secure_login') > 1)
-            $payload['secure_login_ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
+        if ($this->securelogin === 'yes' || config('security.secure_login') > 1) {
+            $login_ip = app()->request->getClientIp();
+            $payload['ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
+        }
+
         if ($this->ssl || config('security.ssl_login') > 1)
             $payload['ssl'] = true;  // Store User want full ssl protect
 

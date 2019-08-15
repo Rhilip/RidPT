@@ -85,12 +85,12 @@ class Auth extends Component
 
         $payload = JWTHelper::decode($user_session);
         if ($payload === false) return false;
-        if (!isset($payload['jti']) || !isset($payload['user_id'])) return false;
+        if (!isset($payload['jti']) || !isset($payload['aud'])) return false;
 
         // Check if user lock access ip ?
-        if (isset($payload['secure_login_ip'])) {
+        if (isset($payload['ip'])) {
             $now_ip_crc = sprintf('%08x', crc32(app()->request->getClientIp()));
-            if (strcasecmp($payload['secure_login_ip'], $now_ip_crc) !== 0) return false;
+            if (strcasecmp($payload['ip'], $now_ip_crc) !== 0) return false;
         }
 
         // Verity $jti is force expired or not by checking mapUserSessionToId
@@ -101,7 +101,7 @@ class Auth extends Component
             ])->queryScalar();
             app()->redis->zAdd(Constant::mapUserSessionToId, $uid ?: 0, $payload['jti']);  // Store 0 if session -> uid is invalid
             if ($uid === false) return false;  // this session is not exist or marked as expired
-        } elseif ($expired_check != $payload['user_id']) return false;    // may return (double) 0 , which means already make invalid ; or it check if user obtain this session (may Overdesign)
+        } elseif ($expired_check != $payload['aud']) return false;    // may return (double) 0 , which means already make invalid ; or it check if user obtain this session (may Overdesign)
 
         $this->cur_user_jit = $payload['jti'];
 
@@ -114,7 +114,7 @@ class Auth extends Component
             app()->response->setHeader('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
         }
 
-        return $payload['user_id'];
+        return $payload['aud'];
     }
 
     protected function loadCurUserIdFromPasskey()

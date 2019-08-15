@@ -11,7 +11,7 @@ use Rid\Helpers\StringHelper;
 class Session extends Component
 {
     // 保存的Key前缀
-    public $saveKeyPrefix = 'SESSION:';
+    public $saveKeyPrefix = 'Session:';
 
     // 生存时间
     public $maxLifetime = 7200;

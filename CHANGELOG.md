@@ -22,6 +22,7 @@
 
 ### Fix
 - **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)
+- **Component:** Fix parent::onRequest{Before,After} miss (200926f)
 - **User:** Fix User Class miss in string format (3680444)
 
 ### Perf
