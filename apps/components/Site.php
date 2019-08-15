@@ -16,8 +16,6 @@ use Rid\Http\View;
 use Rid\Base\Component;
 use Rid\Utils\ClassValueCacheUtils;
 
-use RuntimeException;
-
 class Site extends Component
 {
     use ClassValueCacheUtils;
@@ -156,7 +154,7 @@ class Site extends Component
 
     public function ruleQuality($quality): array
     {
-        if (!in_array($quality, array_keys($this->getQualityTableList()))) throw new RuntimeException('Unregister quality : ' . $quality);
+        if (!in_array($quality, array_keys($this->getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
         if (false === $data = config('runtime.enabled_quality_' . $quality)) {
             /** @noinspection SqlResolve */
             $data = app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
@@ -196,6 +194,54 @@ class Site extends Component
         }
 
         return $data;
+    }
+
+    public function getBanIpsList(): array
+    {
+        $ban_ips = config('runtime.ban_ips_list');
+        if ($ban_ips === false) {
+            $ban_ips = app()->pdo->createCommand('SELECT `ip` FROM `ban_ips`')->queryColumn() ?: [];
+            app()->config->set('runtime.ban_ips_list', $ban_ips, 'json');
+        }
+
+        return $ban_ips;
+    }
+
+    public function banIp($ip, $persistence = false, $commit = null)
+    {
+        // Get old ban_ips_list
+        $banips = $this->getBanIpsList();
+
+        // Add ip if not exist
+        if (in_array($ip, $banips)) return;
+
+        // Rewrite config
+        $banips[] = $ip;
+        app()->config->set('runtime.ban_ips_list', $banips, 'json');
+
+        if ($persistence === true) {  // Save it in table `ban_ips`
+            $add_by = app()->auth->getCurUser() ? app()->auth->getCurUser()->getId() : 0;  // 0 - system
+            $commit = $commit ?? ($add_by == 0 ? 'Banned By System automatically' : '');
+            app()->pdo->createCommand('INSERT INTO `ban_ips`(`ip`, `add_by`, `add_at`, `commit`) VALUES (:ip, :add_by, NOW(), :commit)')->bindParams([
+                'ip' => $ip, 'add_by' => $add_by, 'commit' => $commit
+            ])->execute();
+        }
+    }
+
+    public function unbanIp($ip, $persistence = false)
+    {
+        // Get old ban_ips_list
+        $banips = $this->getBanIpsList();
+
+        // unban ip if exist
+        if (in_array($ip, $banips)) {
+            unset($banips[$ip]);
+            app()->config->set('runtime.ban_ips_list', $banips, 'json');
+
+            if ($persistence === true) {  // delete it from table `ban_ips`
+                app()->pdo->createCommand('DELETE FROM `ban_ips` WHERE `ip` = :ip')->bindParams(['ip' => $ip])->execute();
+            }
+        }
     }
 
     public static function fetchUserCount(): int
