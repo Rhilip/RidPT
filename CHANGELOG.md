@@ -28,6 +28,7 @@
 - **Process:** Disable Pdo And Redis called data in custom process (b744e81)
 
 ### Refactor
+- **Auth:** Fix Certification process (687a2d0)
 - **Auth/JWT:** Better for auth by JWT (36f49a0)
 - **Auth/Middleware:** merge Old Auth{ByCookies, ByPasskey}Middleware (71cd7d7)
 - **Config:** Add define of config key type and can add runtime config (d57aede)

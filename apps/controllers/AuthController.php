@@ -91,29 +91,26 @@ class AuthController extends Controller
         }
     }
 
+    /** @noinspection PhpUnused */
     public function actionLogin()
     {
-        $test_attempts = app()->redis->hGet('Site:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
-        $left_attempts = config('security.max_login_attempts') - $test_attempts;
+        $render_data = [];
 
         if (app()->request->isPost()) {
             $login = new Auth\UserLoginForm();
             if (false === $success = $login->validate()) {
-                $login->LoginFail();
-                return $this->render('auth/login', [
-                    'username' => $login->username,
-                    'error_msg' => $login->getError(),
-                    'left_attempts' => $left_attempts
-                ]);
+                $login->loginFail();
+                $render_data['error_msg'] =  $login->getError();
             } else {
                 $login->flush();
 
                 $return_to = app()->session->pop('login_return_to') ?? '/index';
                 return app()->response->redirect($return_to);
             }
-        } else {
-            return $this->render('auth/login', ['left_attempts' => $left_attempts]);
         }
+
+        $render_data['test_attempts'] = app()->redis->hGet('Site:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
+        return $this->render('auth/login', $render_data);
     }
 
     /** @noinspection PhpUnused */

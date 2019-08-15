@@ -6,8 +6,10 @@
  * Time: 19:32
  *
  * @var League\Plates\Template\Template $this
- * @var int $left_attempts
+ * @var int $test_attempts
  */
+
+$left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -34,7 +36,7 @@
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fas fa-user-alt fa-fw"></span></span>
                             <input type="text" class="form-control" id="username" name="username" required
-                                   placeholder="" value="<?= $username ?? '' ?>">
+                                   placeholder="" value="<?= $this->e(app()->request->post('username','')) ?>">
                         </div>
                     </div>
 

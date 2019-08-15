@@ -2,7 +2,6 @@
 
 namespace Rid\Redis;
 
-use apps\controllers\AdminController;
 use Rid\Base\Component;
 
 /**
@@ -27,7 +26,7 @@ use Rid\Base\Component;
  * @method bool setnx($key, $value)
  * @method int del($key1, $key2 = null, $key3 = null)
  * @method int delete($key1, $key2 = null, $key3 = null)
- * @method \Redis multi($mode = \Redis::MULTI)
+ * @method self multi($mode = \Redis::MULTI)
  * @method array exec()
  * @method discard()
  * @method watch($key)
@@ -287,26 +286,6 @@ class BaseRedisConnection extends Component
         }
 
         return call_user_func_array([$this->_redis, $name], $arguments);  // 执行命令
-    }
-
-    // 扩展方法
-    public function typeof($key): ?string
-    {
-        switch ($this->type($key)) {
-            case \Redis::REDIS_STRING :
-                return "String";
-            case \Redis::REDIS_SET :
-                return "Set";
-            case \Redis::REDIS_LIST :
-                return "List";
-            case \Redis::REDIS_ZSET :
-                return "Sorted Set";
-            case \Redis::REDIS_HASH :
-                return "Hash";
-            case \Redis::REDIS_NOT_FOUND :
-            default:
-                return "Not Found";
-        }
     }
 
     public function multiDelete($pattern) {

@@ -59,17 +59,7 @@ class UserLoginForm extends Validator
 
     public static function callbackRules(): array
     {
-        return ['validateCaptcha', 'isMaxLoginIpReached', 'loadUserFromPdo', 'isMaxUserSessionsReached'];
-    }
-
-    /** @noinspection PhpUnused */
-    protected function isMaxLoginIpReached()  // FIXME may use Trait
-    {
-        $test_count = app()->redis->hGet('Site:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
-        if ($test_count > config('security.max_login_attempts')) {
-            $this->buildCallbackFailMsg('Login Attempts', 'User Max Login Attempts Archived.');
-            return;
-        }
+        return ['validateCaptcha', 'loadUserFromPdo', 'isMaxUserSessionsReached'];
     }
 
     /** @noinspection PhpUnused */
@@ -130,10 +120,13 @@ class UserLoginForm extends Validator
         }
     }
 
-    public function LoginFail()  // FIXME
+    public function loginFail()
     {
-        app()->redis->zAdd('Site:fail_login_ip_zset', time(), app()->request->getClientIp());
-        app()->redis->hIncrBy('Site:fail_login_ip_count', app()->request->getClientIp(), 1);
+        $user_ip = app()->request->getClientIp();
+        $test_attempts = app()->redis->hIncrBy('Site:fail_login_ip_count', $user_ip, 1);
+        if ($test_attempts >= config('security.max_login_attempts')) {
+            app()->redis->sAdd('Site:ban_ips_list', $user_ip);
+        }
     }
 
     public function flush()
