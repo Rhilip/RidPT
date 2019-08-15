@@ -166,8 +166,8 @@ class UserLoginForm extends Validator
         $payload['exp'] = $cookieExpire;
 
         // Custom Payload key
+        $login_ip = app()->request->getClientIp();
         if ($this->securelogin === 'yes' || config('security.secure_login') > 1) {
-            $login_ip = app()->request->getClientIp();
             $payload['ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
         }
 
@@ -178,6 +178,13 @@ class UserLoginForm extends Validator
         $this->jwt_payload = $payload;
         $jwt = JWTHelper::encode($payload);
 
+        // Store User Login Session Information in database
+        app()->pdo->createCommand('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
+            'VALUES (:uid, :sid, INET6_ATON(:login_ip), NOW(), :expired)')->bindParams([
+            'uid' => $this->jwt_payload['aud'], 'sid' => $this->jwt_payload['jti'], 'login_ip' => $login_ip,
+            'expired' => ($this->logout === 'yes') ? 0 : -1,  // -1 -> never expired , 0 -> auto_expire after 15 minutes, 1 -> expired
+        ])->execute();
+
         // Sent JWT content AS Cookie
         app()->response->setCookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true);
     }
@@ -185,13 +192,6 @@ class UserLoginForm extends Validator
     private function updateUserLoginInfo()
     {
         $ip = app()->request->getClientIp();
-
-        // Store User Login Session Information in database
-        app()->pdo->createCommand('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
-            'VALUES (:uid, :sid, INET6_ATON(:login_ip), NOW(), :expired)')->bindParams([
-            'uid' => $this->jwt_payload['user_id'], 'sid' => $this->jwt_payload['jti'], 'login_ip' => $ip,
-            'expired' => ($this->logout === 'yes') ? 0 : -1,  // -1 -> never expired , 0 -> auto_expire after 15 minutes, 1 -> expired
-        ])->execute();
 
         // Update User Tables
         app()->pdo->createCommand('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([
