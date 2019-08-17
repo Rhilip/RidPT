@@ -31,7 +31,7 @@ $user = app()->auth->getCurUser();
                         <li><a href="/site/topten"><?= __('nav_topten') ?></a></li> <!-- TODO  -->
                         <li class="divider"></li>
                         <li><a href="/site/stats"><?= __('nav_stats') ?></a></li> <!-- TODO  -->
-                        <li><a href="/site/log"><?= __('nav_log') ?></a></li> <!-- TODO  -->
+                        <li><a href="/site/logs"><?= __('nav_log') ?></a></li>
                     </ul>
                 </li>
             </ul> <!-- END .navbar-nav -->

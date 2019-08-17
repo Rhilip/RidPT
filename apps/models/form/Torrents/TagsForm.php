@@ -9,9 +9,9 @@
 namespace apps\models\form\Torrents;
 
 
-use Rid\Validators\Pager;
+use Rid\Validators\Pagination;
 
-class TagsForm extends Pager
+class TagsForm extends Pagination
 {
     public $search;
 

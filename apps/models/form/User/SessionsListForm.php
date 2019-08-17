@@ -9,9 +9,9 @@
 namespace apps\models\form\User;
 
 
-use Rid\Validators\Pager;
+use Rid\Validators\Pagination;
 
-class SessionsListForm extends Pager
+class SessionsListForm extends Pagination
 {
     public $uid;
     public $expired = [-1, 0]; // Default not show expired session

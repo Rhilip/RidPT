@@ -9,9 +9,9 @@
 namespace apps\models\form\News;
 
 
-use Rid\Validators\Pager;
+use Rid\Validators\Pagination;
 
-class SearchForm extends Pager
+class SearchForm extends Pagination
 {
 
     public $query;

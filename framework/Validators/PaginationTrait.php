@@ -9,7 +9,7 @@
 namespace Rid\Validators;
 
 
-Trait PagerTrait
+Trait PaginationTrait
 {
     public $page;
     public $limit;  // pecPage

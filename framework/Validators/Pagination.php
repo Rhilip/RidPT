@@ -9,12 +9,13 @@
 namespace Rid\Validators;
 
 
-class Pager extends Validator
+class Pagination extends Validator
 {
-    use PagerTrait;
+    use PaginationTrait;
 
     public static $DEFAULT_PAGE = 1;
     public static $DEFAULT_LIMIT = 50;
+    public static $MIN_LIMIT = 10;
     public static $MAX_LIMIT = 50;
     public static $DATA_SOURCE = 'remote';
 }

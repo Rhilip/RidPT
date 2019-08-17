@@ -8,9 +8,9 @@
 
 namespace apps\models\form\Torrents;
 
-use Rid\Validators\Pager;
+use Rid\Validators\Pagination;
 
-class SearchForm extends Pager
+class SearchForm extends Pagination
 {
 
     public static $MAX_LIMIT = 100;

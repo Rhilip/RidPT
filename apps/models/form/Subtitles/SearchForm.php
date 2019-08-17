@@ -10,9 +10,9 @@ namespace apps\models\form\Subtitles;
 
 use apps\libraries\Constant;
 
-use Rid\Validators\Pager;
+use Rid\Validators\Pagination;
 
-class SearchForm extends Pager
+class SearchForm extends Pagination
 {
 
     public $search;

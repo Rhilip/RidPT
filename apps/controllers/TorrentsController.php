@@ -24,7 +24,6 @@ class TorrentsController extends Controller
     {
         // TODO add URI level Cache
         $search = new Torrents\SearchForm();
-        var_dump(app()->request->get());
         $search->setInput(app()->request->get());
         $success = $search->validate();
         if (!$success) {

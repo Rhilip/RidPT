@@ -9,11 +9,11 @@
 namespace apps\models\form\Torrent;
 
 
-use Rid\Validators\PagerTrait;
+use Rid\Validators\PaginationTrait;
 
 class CommentsForm extends DetailsForm
 {
-    use PagerTrait;
+    use PaginationTrait;
 
     public static $DEFAULT_LIMIT = 20;
     public static $MAX_LIMIT = 50;

@@ -8,11 +8,11 @@
 
 namespace apps\models\form\Torrent;
 
-use Rid\Validators\PagerTrait;
+use Rid\Validators\PaginationTrait;
 
 class SnatchForm extends DetailsForm
 {
-    use PagerTrait;
+    use PaginationTrait;
 
     public static $MAX_LIMIT = 100;
 
