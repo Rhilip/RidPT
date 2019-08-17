@@ -16,12 +16,13 @@ class SearchForm extends Pager
     public static $MAX_LIMIT = 100;
 
     private $_tags;
+    private $_field;
 
     public static function defaultData(): array
     {
         return [
-            'search_mode' => 0,  // AND
-            'search_area' => 0,  // title and subtitle
+            'search_mode' => 0,  // 0 - AND "Each words should appear"; 1 - OR "One of words appear"; 2 - exact
+            'search_area' => 0,  // 0 - Search in `title` and `subtitle` ; 1 - Search in `descr`
         ];
     }
 
@@ -38,7 +39,7 @@ class SearchForm extends Pager
                     }, app()->site->ruleQuality($quality));
             }
 
-            $rules[$quality. '[*]'] = [
+            $rules[$quality . '[*]'] = [
                 ['Integer'],
                 ['InList', ['list' => $quality_id_list]]
             ];
@@ -47,8 +48,8 @@ class SearchForm extends Pager
         // Teams
         if (config('torrent_upload.enable_teams')) {
             $team_id_list = array_map(function ($team) {
-                    return $team['id'];
-                }, app()->site->ruleTeam());
+                return $team['id'];
+            }, app()->site->ruleTeam());
             $rules['team[*]'] = [
                 ['Integer'],
                 ['InList', ['list' => $team_id_list]]
@@ -59,6 +60,11 @@ class SearchForm extends Pager
         $rules['search_mode'] = [
             ['RequiredWith', ['item' => 'search']],
             ['inList', ['list' => [0 /* AND */, 1 /* OR */, 2 /* exact */]]]
+        ];
+
+        $rules['search_area'] = [
+            ['RequiredWith', ['item' => 'search']],
+            ['inList', ['list' => [0 /* `title` and `subtitle` */, 1 /* `descr` */]]]
         ];
 
         return $rules;
@@ -84,6 +90,8 @@ class SearchForm extends Pager
 
     private function getSearchField(): array
     {
+        if (!is_null($this->_field)) return $this->_field;  // return cached search field
+
         $fields = [];
 
         // Quality
@@ -100,42 +108,39 @@ class SearchForm extends Pager
             if (is_array($value)) $fields[] = ['AND `team` IN (:team) ', 'params' => ['team' => array_map('intval', $value)]];
         }
 
-        // TODO ADD search area support
+        // TODO we may not use `&search_area=` to search in non-title/subtitle/descr field, Use sep `&ownerid=` , `&doubanid=` instead.
+
         $searchstr = $this->getInput('search');
         if (!is_null($searchstr)) {
-            $search_area = $this->getInput('search_area');
-            if ($search_area == 3) {  // TODO Search in owner_id
+            $search_mode = $this->getInput('search_mode');
+            $ANDOR = ($search_mode == 0 ? 'AND' : 'OR');    // only affects mode 0 and mode 1
+            $searchstr_exploded = [];
 
-            } elseif (false) {}  // TODO imdb or douban
-            else {  // Search in title and subtitle
-                $search_col = ($search_area == 1) ? '(`descr`)' : '(`title`, `subtitle`)';
-
-                $searchstr = str_replace(str_split('.+-_*"()<>~'), ' ', $searchstr);
+            if ($search_mode == 2) {  // exact
+                $ANDOR = 'AND';
+                $searchstr_exploded[] = trim($searchstr);
+            } else {
+                $searchstr = str_replace(str_split('.'), ' ', $searchstr);
                 $searchstr_exploded_raw = array_map('trim', explode(' ', $searchstr));
 
-                $searchstr_exploded_count= 0;
-                $searchstr_exploded = [];
+                $searchstr_exploded_count = 0;
                 foreach ($searchstr_exploded_raw as $value) {
-                    if (strlen($value) > 0) {
+                    if (strlen($value) > 2) {
                         $searchstr_exploded_count++;
                         $searchstr_exploded[] = $value;
                     }
                     if ($searchstr_exploded_count > 10) break;
                 }
+            }
 
-                $search_mode = $this->getInput('search_mode');
-                if ($search_mode == 2) {  // exact
-                    $search = '"' . implode(' ', $searchstr_exploded) . '"';
+            $search_area = $this->getInput('search_area');
+
+            foreach ($searchstr_exploded as $i => $item) {
+                if ($search_area == 0) {
+                    $fields[] = ["$ANDOR (`title` LIKE :title_$i OR `subtitle` LIKE :subtitle_$i) ", 'params' => ["title_$i" => "%$item%", "subtitle_$i" => "%$item%"]];
                 } else {
-                    if ($search_mode == 1) {  // AND
-                        $searchstr_exploded = array_map(function ($x) {
-                            return '+' . $x;
-                        }, $searchstr_exploded);
-                    }
-                    $search = implode(' ', $searchstr_exploded);
+                    $fields[] = ["$ANDOR `descr` LIKE :descr_$i ", 'params' => ["descr_$i" => "%$item%"]];
                 }
-
-                $fields[] = ["AND MATCH $search_col AGAINST (:search IN BOOLEAN MODE)", 'params' => ['search' => $search]];
             }
         }
 
@@ -143,9 +148,9 @@ class SearchForm extends Pager
         $tags = $this->getTagsArray();
         $fields[] = ['AND JSON_CONTAINS(`tags`, JSON_ARRAY(:tags)) ', 'if' => count($tags), 'params' => ['tags' => $tags]];
 
-
-
-        return $fields;
+        // Cache fields and return
+        $this->_field = $fields;
+        return $this->_field;
     }
 
     protected function getRemoteTotal(): int
@@ -157,10 +162,9 @@ class SearchForm extends Pager
 
     protected function getRemoteData(): array
     {
-
         $fetch = app()->pdo->createCommand(array_merge(array_merge([
             ['SELECT `id`, `added_at` FROM `torrents` WHERE 1=1 ']
-        ], $this->getSearchField()),[
+        ], $this->getSearchField()), [
             ['ORDER BY `added_at` DESC '],
             ['LIMIT :offset, :rows', 'params' => ['offset' => $this->offset, 'rows' => $this->limit]]
         ]))->queryColumn();
