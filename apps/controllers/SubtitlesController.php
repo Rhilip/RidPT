@@ -23,7 +23,7 @@ class SubtitlesController extends Controller
     {
         $search = new Subtitles\SearchForm();
         if (false === $success = $search->validate()) {
-            return $this->render('action/action_fail', ['msg' => $search->getError()]);
+            return $this->render('action/fail', ['msg' => $search->getError()]);
         }
         return $this->render('subtitles/search', ['search' => $search, 'upload_mode' => $upload]);
     }
@@ -33,10 +33,10 @@ class SubtitlesController extends Controller
         if (app()->request->isPost()) {
             $upload = new Subtitles\UploadForm();
             if (false === $success = $upload->validate()) {
-                return $this->render('action/action_fail', ['msg' => $upload->getError()]);   // TODO add redirect
+                return $this->render('action/fail', ['msg' => $upload->getError()]);   // TODO add redirect
             } else {
                 $upload->flush();
-                return $this->render('action/action_success');  // TODO add redirect
+                return $this->render('action/success');  // TODO add redirect
             }
         }
 
@@ -47,7 +47,7 @@ class SubtitlesController extends Controller
     {
         $download = new Subtitles\DownloadForm();
         if (false === $success = $download->validate()) {
-            return $this->render('action/action_fail', ['msg' => $download->getError()]);
+            return $this->render('action/fail', ['msg' => $download->getError()]);
         }
 
         return $download->sendFileContentToClient();
@@ -57,10 +57,10 @@ class SubtitlesController extends Controller
     {
         $delete = new Subtitles\DeleteForm();
         if (false === $success = $delete->validate()) {
-            return $this->render('action/action_fail', ['msg' => $delete->getError()]);  // TODO add redirect
+            return $this->render('action/fail', ['msg' => $delete->getError()]);  // TODO add redirect
         } else {
             $delete->flush();
-            return $this->render('action/action_success',['redirect' => '/subtitles']); // TODO add redirect
+            return $this->render('action/success',['redirect' => '/subtitles']); // TODO add redirect
         }
     }
 }

@@ -19,7 +19,7 @@ class RssController extends Controller
         // FIXME add torrent search
         $feed = new FeedForm();
         if (false === $feed->validate()) {
-            return $this->render('action/action_fail', ['msg' => $feed->getError()]);
+            return $this->render('action/fail', ['msg' => $feed->getError()]);
         }
 
         app()->response->setHeader('Content-Type', 'text/xml');

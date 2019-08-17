@@ -12,7 +12,9 @@
 $hide = $hide ?? false;
 $show_badge = $show_badge ?? false;
 ?>
-<?php if ($hide): ?>
+<?php if ($user === false): // User is not exist ?>
+    <s>(orphaned)</s>
+<?php elseif ($hide): // User in hide status ?>
     <i>Anonymous</i>
     <?php if (app()->auth->getCurUser()->isPrivilege('see_anonymous_info')): ?>
         (<?= $this->insert('helper/username', ['user' => $user, 'hide' => false, 'user_badge' => $show_badge]) ?>)

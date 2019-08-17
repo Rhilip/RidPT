@@ -26,9 +26,9 @@ class LinksController extends Controller
             $success = $form->validate();
             if ($success) {
                 $form->flush();
-                return $this->render('action/action_success', ['msg' => 'Thanks you to apply links, Our team will check it ASAP.']); // FIXME
+                return $this->render('action/success', ['msg' => 'Thanks you to apply links, Our team will check it ASAP.']); // FIXME
             } else {
-                return $this->render('action/action_fail', ['msg' => $form->getError()]);
+                return $this->render('action/fail', ['msg' => $form->getError()]);
             }
         }
 
@@ -44,9 +44,9 @@ class LinksController extends Controller
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
-                    return $this->render('action/action_success');
+                    return $this->render('action/success');
                 } else {
-                    return $this->render('action/action_fail', ['msg' => $edit_form->getError()]);
+                    return $this->render('action/fail', ['msg' => $edit_form->getError()]);
                 }
             } elseif (app()->request->post('action') == 'link_delete') {
                 $delete_form = new Links\RemoveForm();
@@ -54,9 +54,9 @@ class LinksController extends Controller
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();
-                    return $this->render('action/action_success');
+                    return $this->render('action/success');
                 } else {
-                    return $this->render('action/action_fail', ['msg' => $delete_form->getError()]);
+                    return $this->render('action/fail', ['msg' => $delete_form->getError()]);
                 }
             }
         }

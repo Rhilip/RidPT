@@ -24,7 +24,7 @@ class AuthController extends Controller
             $register_form->setInput(app()->request->post());
             $success = $register_form->validate();
             if (!$success) {
-                return $this->render('action/action_fail', [
+                return $this->render('action/fail', [
                     'title' => 'Register Failed',
                     'msg' => $register_form->getError()
                 ]);
@@ -51,13 +51,13 @@ class AuthController extends Controller
         $confirm->setInput(app()->request->get());
         $success = $confirm->validate();
         if (!$success) {
-            return $this->render('action/action_fail', [
+            return $this->render('action/fail', [
                 'title' => 'Confirm Failed',
                 'msg' => $confirm->getError()
             ]);
         } else {
             $confirm->flush();
-            return $this->render('action/action_success', [
+            return $this->render('action/success', [
                 'notice' => $confirm->getConfirmMsg(),
                 'redirect' => '/auth/login'
             ]);
@@ -71,7 +71,7 @@ class AuthController extends Controller
             $form->setInput(app()->request->post());
             $success = $form->validate();
             if (!$success) {
-                return $this->render('action/action_fail', [
+                return $this->render('action/fail', [
                     'title' => 'Action Failed',
                     'msg' => $form->getError()
                 ]);
@@ -80,7 +80,7 @@ class AuthController extends Controller
                 if ($flush === true) {
                     return $this->render('auth/recover_next_step');
                 } else {
-                    return $this->render('action/action_fail', [
+                    return $this->render('action/fail', [
                         'title' => 'Confirm Failed',
                         'msg' => $flush
                     ]);
@@ -118,7 +118,7 @@ class AuthController extends Controller
     {
         $logout = new Auth\UserLogoutForm();
         if (false === $logout->validate()) {
-            return $this->render('action/action_fail', ['msg' => $logout->getError()]);
+            return $this->render('action/fail', ['msg' => $logout->getError()]);
         } else {
             $logout->flush();
         }

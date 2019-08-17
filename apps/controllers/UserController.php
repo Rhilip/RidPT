@@ -36,7 +36,7 @@ class UserController extends Controller
                 $form->flush();
                 $msg = 'Send Invite Success!';
             } else {
-                return $this->render('action/action_fail', ['title' => 'Invite Failed', 'msg' => $form->getError()]);
+                return $this->render('action/fail', ['title' => 'Invite Failed', 'msg' => $form->getError()]);
             }
         }
 
@@ -46,7 +46,7 @@ class UserController extends Controller
             if (app()->auth->getCurUser()->isPrivilege('view_invite')) {
                 $user = app()->site->getUser($uid);
             } else {
-                return $this->render('action/action_fail', ['title' => 'Fail', 'msg' => 'Privilege is not enough to see other people\'s invite status.']);
+                return $this->render('action/fail', ['title' => 'Fail', 'msg' => 'Privilege is not enough to see other people\'s invite status.']);
             }
         }
 
@@ -58,7 +58,7 @@ class UserController extends Controller
             if ($success) {
                 $msg = $action_form->flush();
             } else {
-                return $this->render('action/action_fail', ['title' => 'Invite Failed', 'msg' => $action_form->getError()]);
+                return $this->render('action/fail', ['title' => 'Invite Failed', 'msg' => $action_form->getError()]);
             }
         }
 
@@ -70,7 +70,7 @@ class UserController extends Controller
     {
         $panel = new User\UserDetailsForm();
         if (!$panel->validate()) {
-            return $this->render('action/action_fail', ['msg' => $panel->getError()]);
+            return $this->render('action/fail', ['msg' => $panel->getError()]);
         }
 
         return $this->render('user/details', ['details' => $panel]);
@@ -92,14 +92,14 @@ class UserController extends Controller
                 if ($success > 0) {
                     app()->redis->zRem(app()->auth->getCurUser()->sessionSaveKey, $to_del_session);
                 } else {
-                    return $this->render('action/action_fail', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
+                    return $this->render('action/fail', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
                 }
             }
         }
 
         $session_list = new User\SessionsListForm();
         if (false === $session_list->validate()) {
-            return $this->render('action/action_fail', ['msg' => $session_list->getError()]);
+            return $this->render('action/fail', ['msg' => $session_list->getError()]);
         }
 
         return $this->render('user/sessions', ['session_list' => $session_list]);

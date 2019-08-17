@@ -22,12 +22,11 @@ class TorrentsController extends Controller
 
     public function actionSearch()
     {
-        // TODO add URI level Cache
         $search = new Torrents\SearchForm();
         $search->setInput(app()->request->get());
         $success = $search->validate();
         if (!$success) {
-            return $this->render('action/action_fail', ['msg' => $search->getError()]);
+            return $this->render('action/fail', ['msg' => $search->getError()]);
         }
 
         return $this->render('torrents/search', ['search' => $search]);
@@ -42,12 +41,12 @@ class TorrentsController extends Controller
             $uploadForm->setFileInput(app()->request->files());
             $success = $uploadForm->validate();
             if (!$success) {
-                return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
+                return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
             } else {
                 try {
                     $uploadForm->flush();
                 } catch (\Exception $e) {
-                    return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
+                    return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
                 }
 
                 return app()->response->redirect('/torrent/details?id=' . $uploadForm->getId());
@@ -65,7 +64,7 @@ class TorrentsController extends Controller
         $success = $pager->validate();
 
         if (!$success) {
-            return $this->render('action/action_fail');
+            return $this->render('action/fail');
         } else {
             $tags = $pager->getPagerData();
             if (count($tags) == 1 && $tags[0]['tag'] == $pager->search) {  // If this search tag is unique and equal to the wanted, just redirect to search page

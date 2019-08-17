@@ -22,9 +22,9 @@ class ManageController extends Controller
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
-                    return $this->render('action/action_success');
+                    return $this->render('action/success');
                 } else {
-                    return $this->render('action/action_fail', ['msg' => $edit_form->getError()]);
+                    return $this->render('action/fail', ['msg' => $edit_form->getError()]);
                 }
             } elseif (app()->request->post('action') == 'cat_delete') {
                 $delete_form = new Categories\RemoveForm();
@@ -32,9 +32,9 @@ class ManageController extends Controller
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();
-                    return $this->render('action/action_success');
+                    return $this->render('action/success');
                 } else {
-                    return $this->render('action/action_fail', ['msg' => $delete_form->getError()]);
+                    return $this->render('action/fail', ['msg' => $delete_form->getError()]);
                 }
             }
         }

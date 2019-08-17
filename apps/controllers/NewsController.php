@@ -20,7 +20,7 @@ class NewsController extends Controller
 
         $success = $pager->validate();
         if (!$success) {
-            return $this->render('action/action_fail', ['title' => 'Attack', 'msg' => $pager->getError()]);
+            return $this->render('action/fail', ['title' => 'Attack', 'msg' => $pager->getError()]);
         } else {
             return $this->render('news/index', ['pager'=>$pager]);
         }
@@ -32,7 +32,7 @@ class NewsController extends Controller
             $newform->setInput(app()->request->post());
             $success = $newform->validate();
             if (!$success) {
-                return $this->render('action/action_fail', ['title' => 'new blog failed', 'msg' => $newform->getError()]);
+                return $this->render('action/fail', ['title' => 'new blog failed', 'msg' => $newform->getError()]);
             } else {
                 $newform->flush();  // Save the news
                 return app()->response->redirect('/news');
@@ -40,7 +40,7 @@ class NewsController extends Controller
         } elseif (app()->auth->getCurUser()->isPrivilege('manage_news')) {
             return $this->render('news/edit');
         }
-        return $this->render('action/action_fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
+        return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
     }
 
     public function actionEdit()
@@ -50,7 +50,7 @@ class NewsController extends Controller
             $newform->setInput(app()->request->post());
             $success = $newform->validate();
             if (!$success) {
-                return $this->render('action/action_fail', ['title' => 'Upload Failed', 'msg' => $newform->getError()]);
+                return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $newform->getError()]);
             } else {
                 $newform->flush();  // Save the news
                 return app()->response->redirect('/news');
@@ -63,7 +63,7 @@ class NewsController extends Controller
                 return $this->render('news/edit', ['news' => $news]);
             }
         }
-        return $this->render('action/action_fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
+        return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
     }
 
     public function actionDelete() {
@@ -75,7 +75,7 @@ class NewsController extends Controller
             }
             return app()->response->redirect('/news');
         }
-        return $this->render('action/action_fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
+        return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
 
     }
 }

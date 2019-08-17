@@ -19,7 +19,7 @@ class TorrentController extends Controller
         $details = new Torrent\DetailsForm();
         $success = $details->validate();
         if (!$success) {
-            return $this->render('action/action_fail', ['msg' => $details->getError()]);
+            return $this->render('action/fail', ['msg' => $details->getError()]);
         }
 
         return $this->render('torrent/details', ['details' => $details]);
@@ -35,7 +35,7 @@ class TorrentController extends Controller
         $snatch = new Torrent\SnatchForm();
         $success = $snatch->validate();
         if (!$success) {
-            return $this->render('action/action_fail');
+            return $this->render('action/fail');
         }
 
         return $this->render('torrent/snatch', ['snatch' => $snatch]);
@@ -46,7 +46,7 @@ class TorrentController extends Controller
         $downloader = new Torrent\DownloadForm();
         $success = $downloader->validate();
         if (!$success) {
-            return $this->render('action/action_fail');
+            return $this->render('action/fail');
         }
 
         return $downloader->sendFileContentToClient();
@@ -57,7 +57,7 @@ class TorrentController extends Controller
         $comments = new Torrent\CommentsForm();
         $success = $comments->validate();
         if (!$success) {
-            return $this->render('action/action_fail');
+            return $this->render('action/fail');
         }
 
         return $this->render('torrent/comments', ['comments' => $comments]);
@@ -68,7 +68,7 @@ class TorrentController extends Controller
         $structure = new Torrent\StructureForm();
         $success = $structure->validate();
         if (!$success) {
-            return $this->render('action/action_fail');
+            return $this->render('action/fail');
         }
 
         return $this->render('torrent/structure', ['structure' => $structure]);

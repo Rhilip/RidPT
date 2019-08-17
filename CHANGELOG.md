@@ -25,6 +25,7 @@
 - **Auth:** Fix user session can't storage in database (30b1049)
 - **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)
 - **Component:** Fix parent::onRequest{Before,After} miss (200926f)
+- **Search:** Search keywords in NPHP ways (ccde9c0)
 - **User:** Fix User Class miss in string format (3680444)
 
 ### Perf
@@ -162,7 +163,7 @@
 - **View:** Rename folder `error` to `action` (f5344af)
 - **action_success:** Simple The Action Template (9facda1)
 - **array/function:** move setDefault to \Rid class (b49d529)
-- **auth/error:** merge `auth/error` page to `action/action_success` (9f02aae)
+- **auth/error:** merge `auth/error` page to `action/success` (9f02aae)
 - **class/cache:** Use trait to simple class value cache (9913873)
 - **site/torrent_upload_rule:** Move rule loader to \library\Site::class (ed01663)
 - **torrent/download:** Separate Torrent::getDownloadDict to torrent\DownloadForm (4b617ca)
