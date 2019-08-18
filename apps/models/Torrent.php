@@ -49,7 +49,9 @@ class Torrent
     private $torrent_size;
     private $torrent_structure;
 
-    protected $comment_perpage = 10;
+    private $team;
+
+    protected $comment_perpage = 10;  // FIXME
 
     const TORRENT_TYPE_SINGLE = 'single';
     const TORRENT_TYPE_MULTI = 'multi';
@@ -170,6 +172,22 @@ class Torrent
         return json_decode($this->torrent_structure, true);
     }
 
+    public function getTeam(){
+        if ($this->team == 0) return false;
+        return app()->site->ruleTeam()[$this->team];
+    }
+
+    public function getQuality($quality)
+    {
+        if ($this->{'quality_' . $quality} == 0) return false;
+        return app()->site->ruleQuality($quality)[$this->{'quality_' . $quality}];
+    }
+
+    public function getDescr(): string
+    {
+        return $this->descr;
+    }
+
     /**
      * @return array like [<tag1>, <tag2>, <tag3>]
      */
@@ -191,14 +209,6 @@ class Torrent
             if (in_array($tag_name, $tags)) $pinned_tags[$tag_name] = $tag_class;
         }
         return $pinned_tags;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDescr()
-    {
-        return $this->descr;
     }
 
     public function getUplver(): bool

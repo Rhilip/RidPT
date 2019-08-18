@@ -25,11 +25,34 @@ $torrent = $details->getTorrent();
 <div class="row torrent-details-block">
     <div class="col-md-8">
         <div class="panel" id="torrent_descr_panel">
-            <div class="panel-body">
-                <div class="ubbcode-block" id="torrent_descr">
+            <article class="panel-body article">
+                <header>
+                    <dl class="dl-inline">
+                        <!-- Team -->
+                        <?php if ($torrent->getTeam()): ?>
+                        <dt>Team:</dt>
+                        <dd><?= $torrent->getTeam()['name']; ?></dd>
+                        <?php endif; ?>
+
+                        <!-- Quality -->
+                        <?php foreach (app()->site->getQualityTableList() as $quality => $title): ?>
+                            <?php if (config('torrent_upload.enable_quality_' . $quality) && $torrent->getQuality($quality)) : ?>
+                            <dt><?= $title ?>:</dt>
+                            <dd><?= $torrent->getQuality($quality)['name'] ?></dd>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+
+                        <dt></dt>
+                        <dd class="pull-right">
+                            <span class="label label-success">豆瓣</span>
+                            <span class="label label-warning">Imdb</span>
+                        </dd>
+                    </dl>
+                </header>
+                <section class="content ubbcode-block" id="torrent_descr">
                     <?= $this->batch($torrent->getDescr() ?? '[h4]No description.[/h4]','format_ubbcode') ?>
-                </div>
-            </div>
+                </section>
+            </article>
         </div> <!-- END //*[@id="torrent_descr"] -->
         <div class="panel" id="torrent_commit_panel">
             <div class="panel-heading">
@@ -44,6 +67,29 @@ $torrent = $details->getTorrent();
         </div>
     </div>
     <div class="col-md-4" id="torrent_extend_info_panel_group">
+        <div class="panel" id="torrent_info_panel">
+            <div class="panel-heading"><b>Torrent Information</b></div>
+            <div class="panel-body" id="torrent_information">
+                <div data-field="category"><b>Type:</b> <?= $torrent->getCategory()['name']  ?></div>
+                <div data-field="added_date"><b>Uploaded Date:</b> <?= $torrent->getAddedAt() ?></div>
+                <div data-field="size"><b>File size:</b> <?= $this->e($torrent->getTorrentSize(), 'format_bytes') ?></div>
+                <div data-field="uploader"><b>Uploader:</b> <?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'hide' => $torrent->getUplver()]) ?></div>
+                <div data-field="peers">
+                    <b>Peers:</b>
+                    <span class="green"><i class="fas fa-arrow-up fa-fw"></i> <?= $torrent->getComplete() ?></span> /
+                    <span class="red"><i class="fas fa-arrow-down fa-fw"></i> <?= $torrent->getIncomplete() ?></span> /
+                    <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
+                </div>
+                <div data-field="info_hash"><b>Info Hash:</b><kbd><?= $torrent->getInfoHash() ?></kbd></div>
+                <hr>
+                <div data-field="quality">
+
+
+
+                </div>
+
+            </div>
+        </div>
         <div class="panel" id="torrent_action_panel">
             <div class="panel-heading"><b>Torrent Action</b></div>
             <div class="panel-body" id="torrent_action">
@@ -70,7 +116,7 @@ $torrent = $details->getTorrent();
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                     <a class="torrent-files" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-file fa-fw"></i>&nbsp;View Torrent's Files</a>
                 </div><!-- View Torrent's Files -->
-                <?php if($torrent->hasNfo()): // TODO add global config key of NFO ?>
+                <?php if ($torrent->hasNfo()): // TODO add global config key of NFO ?>
                     <div class="torrent-action-item">
                         <a class="torrent-nfo" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-info fa-fw"></i>&nbsp;View Torrent's Nfo file</a>
                     </div><!-- View Torrent's Nfo -->
@@ -87,33 +133,14 @@ $torrent = $details->getTorrent();
                 </div><!-- View Torrent's Structure -->
             </div>
         </div>
-        <div class="panel" id="torrent_info_panel">
-            <div class="panel-heading"><b>Torrent Information</b></div>
-            <div class="panel-body" id="torrent_information">
-                <div data-field="added_date" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>">
-                    <b>Uploaded Date:</b> <?= $torrent->getAddedAt() ?></div>
-                <div data-field="size" data-filesize="<?= $torrent->getTorrentSize() ?>">
-                    <b>File size:</b> <?= $this->e($torrent->getTorrentSize(), 'format_bytes') ?></div>
-                <div data-field="uploader" data-owner-id="<?= $torrent->getUplver() ? 0 : $torrent->getOwnerId(); ?>">
-                    <b>Uploader:</b> <?= $this->insert('helper/username', ['user' => $torrent->getOwner(), 'hide' => $torrent->getUplver()]) ?>
-                </div>
-                <div data-field="peers" data-seeders="<?= $torrent->getComplete() ?>" data-leechers="<?= $torrent->getComplete() ?>" data-completed="<?= $torrent->getDownloaded() ?>">
-                    <b>Peers:</b>
-                    <span class="green"><i class="fas fa-arrow-up fa-fw"></i> <?= $torrent->getComplete() ?></span> /
-                    <span class="red"><i class="fas fa-arrow-down fa-fw"></i> <?= $torrent->getIncomplete() ?></span> /
-                    <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
-                </div>
-                <div data-field="info_hash" data-infohash="<?= $torrent->getInfoHash() ?>"><b>Info Hash:</b>
-                    <kbd><?= $torrent->getInfoHash() ?></kbd></div>
-            </div>
-        </div>
         <div class="panel" id="torrent_tags_panel">
             <div class="panel-heading"><b>Torrent Tags</b></div>
             <div class="panel-body" id="torrent_tags">
                 <?php $tags = $torrent->getTags(); ?>
                 <?php if (count($tags) > 0) : ?>
+                    <?php $pinned_tags = $torrent->getPinnedTags(); ?>
                     <?php foreach ($tags as $tag): ?>
-                        <a href="/torrents/tags?tag=<?= $tag ?>" class="label label-outline"><?= $tag ?></a>
+                        <a href="/torrents/search?tags=<?= $tag ?>" class="label label-outline <?= array_key_exists($tag,$pinned_tags) ? $pinned_tags[$tag] : '' ?>"><?= $tag ?></a>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <span class="text-muted">No tags for this torrent</span>

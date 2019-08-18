@@ -156,8 +156,11 @@ class Site extends Component
     {
         if (!in_array($quality, array_keys($this->getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
         if (false === $data = config('runtime.enabled_quality_' . $quality)) {
+            $data = [];
+
             /** @noinspection SqlResolve */
-            $data = app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
+            $data_raws = app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
+            foreach ($data_raws as $data_raw) $data[$data_raw['id']] = $data_raw;
             app()->config->set('runtime.enabled_quality_' . $quality, $data, 'json');
         }
         return $data ?: [];
@@ -166,8 +169,9 @@ class Site extends Component
     public function ruleTeam(): array
     {
         if (false === $data = config('runtime.enabled_teams')) {
-            /** @noinspection SqlResolve */
-            $data = app()->pdo->createCommand('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
+            $data = [];
+            $data_raws = app()->pdo->createCommand('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
+            foreach ($data_raws as $data_raw) $data[$data_raw['id']] = $data_raw;
             app()->config->set('runtime.enabled_teams', $data, 'json');
         }
 
