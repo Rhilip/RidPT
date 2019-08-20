@@ -22,7 +22,7 @@ class SessionsListForm extends Pagination
     protected $_autoload = true;
     protected $_autoload_from = ['get'];
 
-    public static function defaultData()
+    public static function defaultData(): array
     {
         return [
             'page' => static::getDefaultPage(), 'limit' => static::getDefaultLimit(),
@@ -30,7 +30,7 @@ class SessionsListForm extends Pagination
         ];
     }
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         $rules = [
             'expired[*]' => [

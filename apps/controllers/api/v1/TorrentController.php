@@ -9,7 +9,6 @@
 namespace apps\controllers\api\v1;
 
 use apps\models\api\v1\form\TorrentsForm;
-use Rid\Http\ApiController;
 
 class TorrentController extends ApiController
 {

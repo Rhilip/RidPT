@@ -30,24 +30,28 @@ $torrent = $details->getTorrent();
                     <dl class="dl-inline">
                         <!-- Team -->
                         <?php if ($torrent->getTeam()): ?>
-                        <dt>Team:</dt>
-                        <dd><?= $torrent->getTeam()['name']; ?></dd>
+                        <dt>Team</dt> <dd><?= $torrent->getTeam()['name']; ?></dd>
                         <?php endif; ?>
 
                         <!-- Quality -->
                         <?php foreach (app()->site->getQualityTableList() as $quality => $title): ?>
                             <?php if (config('torrent_upload.enable_quality_' . $quality) && $torrent->getQuality($quality)) : ?>
-                            <dt><?= $title ?>:</dt>
-                            <dd><?= $torrent->getQuality($quality)['name'] ?></dd>
+                            <dt><?= $title ?></dt> <dd><?= $torrent->getQuality($quality)['name'] ?></dd>
                             <?php endif; ?>
                         <?php endforeach; ?>
 
                         <dt></dt>
-                        <dd class="pull-right">
-                            <span class="label label-success">豆瓣</span>
-                            <span class="label label-warning">Imdb</span>
-                        </dd>
+                        <dd class="pull-right" id="external_info_label">
+                            <a href="#info_douban" data-toggle="collapse" data-parent="#external_info" data-type="douban" data-id="1292052"><span class="label label-success">豆瓣</span></a>
+                            <a href="#info_imdb" data-toggle="collapse" data-parent="#external_info" data-type="imdb" data-id="tt0111161"><span class="label label-warning">Imdb</span></a>
+                        </dd><!-- FIXME external info label which this torrent have -->
                     </dl>
+                    <div class="abstract hide" id="external_info">
+                        <div class="row">
+                            <div class="collapse col-md-12 info-loading" id="info_douban"></div>
+                            <div class="collapse col-md-12 info-loading" id="info_imdb"></div>
+                        </div>
+                    </div><!-- FIXME external info div block which this site support -->
                 </header>
                 <section class="content ubbcode-block" id="torrent_descr">
                     <?= $this->batch($torrent->getDescr() ?? '[h4]No description.[/h4]','format_ubbcode') ?>
@@ -81,13 +85,6 @@ $torrent = $details->getTorrent();
                     <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
                 </div>
                 <div data-field="info_hash"><b>Info Hash:</b><kbd><?= $torrent->getInfoHash() ?></kbd></div>
-                <hr>
-                <div data-field="quality">
-
-
-
-                </div>
-
             </div>
         </div>
         <div class="panel" id="torrent_action_panel">

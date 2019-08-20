@@ -46,6 +46,7 @@
 - **Site:** Move Cat, Quality, PinnedTag cache to Config.runtime (da1d9a7)
 - **Validator:** fix user input extract (81bdc8f)
 - **View:** Make View extends BaseObject (0865cf9)
+- **action:** Sort template action/action_{fail,success} (66998d3)
 - **torrent/structure:** Use zui.tree instead javascript `$(this).next('ul').toggle()` (7b20b2c)
 - **view:** Fix helper/username params (720f37e)
 

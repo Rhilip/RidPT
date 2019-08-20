@@ -18,7 +18,7 @@ class CommentsForm extends DetailsForm
     public static $DEFAULT_LIMIT = 20;
     public static $MAX_LIMIT = 50;
 
-    public static function inputRules()
+    public static function inputRules(): array
     {
         return [
             'id' => 'required | Integer',
@@ -26,7 +26,7 @@ class CommentsForm extends DetailsForm
         ];
     }
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['isExistTorrent', 'checkPager'];
     }

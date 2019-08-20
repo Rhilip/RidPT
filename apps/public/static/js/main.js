@@ -1,4 +1,15 @@
 ;
+if (!String.prototype.format) {
+    String.prototype.format = function () {
+        let args = arguments;
+        if (args.length === 1 && args[0] !== null && typeof args[0] === 'object') {
+            args = args[0];
+        }
+        return this.replace(/{([^}]*)}/g, function(match, key) {
+            return (typeof args[key] !== "undefined" ? args[key] : match);
+        });
+    };
+}
 
 // Declare Const
 const api_point = '/api/v1';
@@ -19,6 +30,12 @@ const wysibbSetting = {
         /* {img: '<img src="/static/pic/smilies/1.gif" class="sm">', bbcode:"[em]1[/em]"}, */
     ],
 };
+
+const external_info_format = {
+    douban: `<div>{format}</div>`,
+    imdb: `<div>{format}</div>`,
+};
+
 
 function humanFileSize(bytes, fix, si) {
     let thresh = si ? 1000 : 1024;
@@ -66,6 +83,7 @@ jQuery(document).ready(function () {
     // Cache Field
     const cache_torrent_files = localforage.createInstance({name: 'torrent_files'});
     const cache_torrent_nfo = localforage.createInstance({name: 'torrent_nfo'});
+    const cache_external_info = localforage.createInstance({name: 'external_info'});
 
     // Other Global const
     const $body = $('html, body');
@@ -122,7 +140,7 @@ jQuery(document).ready(function () {
         $(this).parent('.captcha_img_load').removeClass('load-indicator loading');
     });
 
-    // Form submit loading anime
+    // Form submit loading animation
     $('form').on('submit', function () {
         $(this).addClass('load-indicator loading')
     });
@@ -389,6 +407,35 @@ jQuery(document).ready(function () {
             tags_input.val(Array.from(exist_tag_set).join(' '));
         })
     }
+
+    $('#external_info_label > a[data-toggle="collapse"][data-type][data-id]').click(function () {
+        let that = $(this);
+        let type = that.data('type');
+        let id = that.data('id');
+        let div = $(`#external_info div#info_${type}`);
+
+        if (!div.hasClass('info-loading')) return;  // not cache or remote hit if html data exist
+
+        let cache_key = `${type}:${id}`;
+        cache_external_info.getItem(cache_key, function (err, value) {
+            function build_external_info(value) {
+                $('#external_info').show();
+
+                // FIXME insert external info div
+                let ret = (external_info_format[type] || '<div>{format}</div>').format(value).replace(/\n/ig, '<br>');
+                div.html(ret).removeClass('info-loading');
+            }
+
+            if (value !== null) {
+                build_external_info(value);
+            } else {
+                $.getJSON('https://ptgen.rhilip.workers.dev/', {'site': type, 'sid' : id}, function (res) {
+                    cache_external_info.setItem(cache_key, res);
+                    build_external_info(res);
+                });
+            }
+        });
+    });
 
     $('.link-edit').click(function () {
         let that = $(this);

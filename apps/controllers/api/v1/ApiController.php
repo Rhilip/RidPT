@@ -6,8 +6,10 @@
  * Time: 10:41
  */
 
-namespace Rid\Http;
+namespace apps\controllers\api\v1;
 
+
+use Rid\Http\Controller;
 
 class ApiController extends Controller
 {
