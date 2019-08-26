@@ -117,6 +117,17 @@ class Site extends Component
         $mail_sender->send($receivers, $subject, $mail_body);
     }
 
+    public function addBonus(int $user_id, float $point = 0, string $operators = '+', string $type = 'other')
+    {
+        if ($point > 0 && in_array($operators, ['+', '-']) /* Limit operator */) {
+            $col = ($type == 'seeding') ? 'bonus_seeding' : 'bonus_other';
+
+            app()->pdo->createCommand("UPDATE users SET $col = $col $operators :bonus WHERE id = :uid")->bindParams([
+                'bonus' => $point, 'uid' => $user_id
+            ])->execute();
+        }
+    }
+
     public function getQualityTableList()
     {
         return [

@@ -8,6 +8,7 @@
 
 namespace apps\process;
 
+use apps\libraries\Bonus;
 use apps\libraries\Constant;
 use Rid\Base\Process;
 
@@ -131,9 +132,15 @@ final class CronTabProcess extends Process
         }
     }
 
-    protected function calculate_seeding_bonus()
+    protected function calculate_seeding_bonus() // TODO
     {
-        // TODO
+        $calculate = new Bonus();
+        $seeders = app()->pdo->createCommand("SELECT DISTINCT user_id FROM peers WHERE seeder = 'yes'")->queryColumn();
+
+        foreach ($seeders as $seeder) {
+            $bonus = $calculate->calculate($seeder);
+            app()->site->addBonus($seeder, $bonus, '+', 'seeding');
+        }
     }
 
     // sync torrents status about complete, incomplete, comments

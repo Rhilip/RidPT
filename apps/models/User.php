@@ -93,7 +93,6 @@ class User
     private $leechtime;
 
     private $bonus_seeding;
-    private $bonus_invite;
     private $bonus_other;
 
     private $invites;
@@ -111,7 +110,7 @@ class User
         $self = app()->redis->hGetAll($this->infoCacheKey);
         if (empty($self) || !isset($self['id'])) {
             if (app()->redis->zScore(Constant::invalidUserIdZset, $id) === false) {
-                $self = app()->pdo->createCommand('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_invite, bonus_other, lang, invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
+                $self = app()->pdo->createCommand('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_other, lang, invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
                     'id' => $id
                 ])->queryOne();
                 if (false === $self) {
@@ -308,7 +307,7 @@ class User
 
     public function getBonus(): float
     {
-        return $this->bonus_seeding + $this->bonus_invite + $this->bonus_other;
+        return $this->bonus_seeding + $this->bonus_other;
     }
 
     /**

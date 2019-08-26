@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 15, 2019 at 08:23 PM
+-- Generation Time: Aug 26, 2019 at 10:10 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.7
 
@@ -778,6 +778,8 @@ INSERT INTO `site_config` (`name`, `type`, `value`) VALUES
 ('authority.see_banned_torrent', 'int', '40'),
 ('authority.see_extend_debug_log', 'int', '90'),
 ('authority.see_pending_torrent', 'int', '40'),
+('authority.see_site_log_leader', 'int', '90'),
+('authority.see_site_log_mod', 'int', '60'),
 ('authority.upload_flag_anonymous', 'int', '5'),
 ('authority.upload_flag_hr', 'int', '40'),
 ('authority.upload_nfo_file', 'int', '5'),
@@ -932,7 +934,7 @@ CREATE TABLE IF NOT EXISTS `site_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `msg` text NOT NULL,
-  `level` enum('normal','mod','sysop','leader') NOT NULL DEFAULT 'normal',
+  `level` enum('normal','mod','leader') NOT NULL DEFAULT 'normal',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -1235,8 +1237,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `last_tracker_ip` varbinary(16) DEFAULT NULL,
   `avatar` varchar(255) NOT NULL DEFAULT '',
   `bonus_seeding` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
-  `bonus_invite` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
-  `bonus_other` decimal(20,2) UNSIGNED NOT NULL DEFAULT '0.00',
+  `bonus_other` decimal(20,2) NOT NULL DEFAULT '0.00',
   `lang` varchar(10) NOT NULL DEFAULT 'en',
   `invites` smallint(5) NOT NULL DEFAULT '0' COMMENT 'The invites which never expire',
   PRIMARY KEY (`id`),
@@ -1312,7 +1313,7 @@ ALTER TABLE `site_log` ADD FULLTEXT KEY `msg` (`msg`);
 -- Indexes for table `torrents`
 --
 ALTER TABLE `torrents` ADD FULLTEXT KEY `descr` (`descr`);
-ALTER TABLE `torrents` ADD FULLTEXT KEY `name` (`title`);
+ALTER TABLE `torrents` ADD FULLTEXT KEY `title` (`title`,`subtitle`);
 
 --
 -- Constraints for dumped tables
