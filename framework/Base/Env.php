@@ -15,11 +15,11 @@ class Env
     public static function load($envFile)
     {
         if (!is_file($envFile)) {
-            throw new \Rid\Exceptions\EnvException('Environment file does not exist.');
+            throw new \Rid\Exceptions\EnvException('Environment file `.env` does not exist.');
         }
         $env        = parse_ini_file($envFile);
         if (!$env) {
-            throw new \Rid\Exceptions\EnvException('Fail to parse Environment file.');
+            throw new \Rid\Exceptions\EnvException('Fail to parse Environment file `.env`.');
         }
         self::$_env = array_merge($env, $_SERVER, $_ENV);
     }

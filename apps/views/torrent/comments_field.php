@@ -20,11 +20,8 @@ $enabled_editor = $enabled_editor ?? false;
                 $commit_user = app()->site->getUser($commit['owner_id']);
 
                 // The details of commentator should be hide or not ?
-                $commentator_hide_flag = false;
-                if ($torrent->getUplver() &&  // The torrent is uplver
-                    $commit['owner_id'] == $torrent->getOwnerId() &&  // Commentator is the uploader for this torrent
-                    !app()->auth->getCurUser()->isPrivilege('see_anonymous_uploader')  // CurUser can't see uploader detail
-                ) $commentator_hide_flag = true;
+                $commentator_hide_flag = $torrent->getUplver() &&  // The torrent is uplver
+                    $commit['owner_id'] == $torrent->getOwnerId(); // Commentator is the uploader for this torrent
                 ?>
                 <div id="commit_<?= $commit['id'] ?>" class="comment">
                     <div class="avatar">
