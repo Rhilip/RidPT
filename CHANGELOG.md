@@ -28,6 +28,7 @@
 - **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)
 - **Component:** Fix parent::onRequest{Before,After} miss (200926f)
 - **Search:** Search keywords in NPHP ways (ccde9c0)
+- **Torrent/Comment:** Fix user can't see anonymous uploader's comment (bd2d821)
 - **User:** Fix User Class miss in string format (3680444)
 
 ### Perf

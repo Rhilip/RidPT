@@ -60,7 +60,7 @@ edit in Admin Panel.
 5. Run Test by `php bin/rid-httpd service start -u` , And Congratulation If you see those output **without error throwout**.
 
     ```bash
-    root@ridpt:/data/wwwroot/ridpt.rhilip.info# php bin/rid-httpd service start
+    root@ridpt:/data/wwwroot/ridpt.rhilip.info# php rid-httpd service start
      ____            __  ____    ______   
     /\  _`\   __    /\ \/\  _`\ /\__  _\  
     \ \ \L\ \/\_\   \_\ \ \ \L\ \/_/\ \/  
@@ -169,6 +169,7 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 | Library | Used As | Docs | 
 |:--|:--:|:--|
 | [MixPHP](https://github.com/mix-php/mix-framework/tree/v1) | Framework | <https://www.kancloud.cn/onanying/mixphp1/379324> ( Chinese Version ) |
+| [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) | phpdotenv | <https://github.com/vlucas/phpdotenv> |
 | [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | <http://www.sirius.ro/php/sirius/validation/> |
 | [league/plates](https://github.com/thephpleague/plates) | Template system | <http://platesphp.com/> |
 | [firebase/php-jwt](https://github.com/firebase/php-jwt) | JWT | <https://github.com/firebase/php-jwt>, <https://jwt.io/> |

@@ -1,0 +1,48 @@
+#!/usr/bin/env php
+<?php
+/**
+ * RidPT - Yet Another Private Bittorrent Service
+ *
+ * @package RidPT
+ * @author Rhilip <rhilipruan@gmail.com>
+ */
+
+define('RIDPT_START', microtime(true));
+
+/*
+ * --------------------------------------------------------------------------
+ * Register The Auto Loader
+ * --------------------------------------------------------------------------
+ *
+ * Composer provides a convenient, automatically generated class loader for
+ * our application. We just need to utilize it! We'll simply require it
+ * into the script here so that we don't have to worry about manual
+ * loading any of our classes later on. It feels great to relax.
+ *
+*/
+require __DIR__ . '/vendor/autoload.php';
+
+/*
+ * --------------------------------------------------------------------------
+ * Check Environment of PHP
+ * --------------------------------------------------------------------------
+ */
+if (!PHP_SAPI === 'cli')
+    exit('Run in cli like: `php rid-httpd service start`.');
+
+/*
+ * --------------------------------------------------------------------------
+ * Load Environment variables
+ * --------------------------------------------------------------------------
+ */
+$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv->load();
+
+/*
+ * --------------------------------------------------------------------------
+ * Start Swoole Server
+ * --------------------------------------------------------------------------
+ */
+$config = require __DIR__ . '/apps/config/httpd.php';
+$exitCode = (new Rid\Console\Application($config))->run();
+exit($exitCode);
