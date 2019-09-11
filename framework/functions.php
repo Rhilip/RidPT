@@ -51,6 +51,18 @@ if (!function_exists('println')) {
     }
 }
 
+if (!function_exists('array_set_default')) {
+    function array_set_default(&$array, $defaults)
+    {
+        if (!is_array($array)) $array = [$array];
+        foreach ($defaults as $key => $default) {
+            if (!array_key_exists($key, $array)) {
+                $array[$key] = $default;
+            }
+        }
+    }
+}
+
 if (!function_exists('input2array')) {
     function input2array($input) {
         return is_array($input) ? $input : [$input];

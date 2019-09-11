@@ -57,10 +57,10 @@ edit in Admin Panel.
     vi .env
     ```
 
-5. Run Test by `php bin/rid-httpd service start -u` , And Congratulation If you see those output **without error throwout**.
+5. Run Test by `php bin/console service start -u` , And Congratulation If you see those output **without error throwout**.
 
     ```bash
-    root@ridpt:/data/wwwroot/ridpt.rhilip.info# php bin/rid-httpd service start
+    root@ridpt:/data/wwwroot/ridpt.rhilip.info# php bin/console service start
      ____            __  ____    ______   
     /\  _`\   __    /\ \/\  _`\ /\__  _\  
     \ \ \L\ \/\_\   \_\ \ \ \L\ \/_/\ \/  
@@ -88,7 +88,7 @@ edit in Admin Panel.
 If your service is behind the CDN like Cloudflare, You must follow [How do I restore original visitor IP with Nginx?](https://support.cloudflare.com/hc/en-us/articles/200170706-How-do-I-restore-original-visitor-IP-with-Nginx)
 So that tracker can record the peer's ip address.
 
-7. Use the default `php bin/rid-httpd service start -d` to let *RidPT* RUN in the background. Or you can use other daemon work like:
+7. Use the default `php bin/console service start -d` to let *RidPT* RUN in the background. Or you can use other daemon work like:
     - Systemctl: [ridpt.service](migration/ridpt.service)
 
 ## Basie Environment Setting in `.env`

@@ -112,6 +112,6 @@ class Application extends BaseObject
     // 获取运行目录路径
     public function getRuntimePath()
     {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'runtime';
+        return $this->basePath . DIRECTORY_SEPARATOR . 'var';
     }
 }

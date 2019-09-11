@@ -62,8 +62,10 @@
 ### Style
 - **EnvironmentLoader:** Use Dotenv to load Loads environment variables (e6394a6)
 - **Redis:** rewrite namespace of cache keys (0c4e1a2)
+- **dir:** rename folder `apps\` to `src\` (a01035c)
 - **dir:** move apps\public to top dir (cb3beae)
 - **env:** use $_ENV instead of getenv (2f5f0ac)
+- **namespace:** `apps` to `App` with ucfirst... (8075d58)
 
 
 <a name="v0.1.5-alpha"></a>

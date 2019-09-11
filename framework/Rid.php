@@ -79,6 +79,9 @@ class Rid
      * 导入属性
      * 注意此处只能向object导入public属性，如果object本身有private或者protected 属性需要导入，
      * 请使用 trait Rid\Utils\AttributesImportUtils
+     *
+     * @param $object
+     * @param $config
      */
     public static function importAttributes($object, $config)
     {
@@ -93,15 +96,5 @@ class Rid
         $class = $config['class'];
         unset($config['class']);
         return new $class($config);
-    }
-
-    public static function setDefault(&$array, $defaults)
-    {
-        if (!is_array($array)) $array = [$array];
-        foreach ($defaults as  $key => $default) {
-            if (!array_key_exists($key, $array)) {
-                $array[$key] = $default;
-            }
-        }
     }
 }

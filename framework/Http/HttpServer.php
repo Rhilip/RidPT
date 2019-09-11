@@ -252,8 +252,7 @@ class HttpServer extends BaseObject
                        \ \_\ \_\ \_\ \___,_\ \_\     \ \_\
                         \/_/\/ /\/_/\/__,_ /\/_/      \/_/
 
-EOL
-        );
+EOL);
         println('───────────────────────────────────────');
         println('Server      Name:      ' . $this->name);
         println('System      Name:      ' . PHP_OS);
