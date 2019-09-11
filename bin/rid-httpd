@@ -27,23 +27,36 @@ require RIDPT_ROOT . '/vendor/autoload.php';
  * --------------------------------------------------------------------------
  * Check Environment of PHP
  * --------------------------------------------------------------------------
+ *
+ * RidPT framework based on Swoole extension, which can only be used from
+ * the CLI SAPI.
+ *
+ * @see https://wiki.swoole.com/wiki/page/760.html
+ *
  */
-if (!PHP_SAPI === 'cli')
-    exit('Run in cli like: `php rid-httpd service start`.');
+if (!PHP_SAPI === 'cli') {
+    throw new RuntimeException(
+        'Fatal error: The swoole project should be invoked via the CLI version of PHP, not the ' . PHP_SAPI . ' SAPI'
+    );
+}
 
 /*
  * --------------------------------------------------------------------------
  * Load Environment variables
  * --------------------------------------------------------------------------
+ *
+ * phpdotenv provides a automagically loader for
+ * Loads environment variables from .env to getenv(), $_ENV and $_SERVER
+ * So we can then use env($name = null, $default = '') to get environment
+ * variables quickly and simply.
+ *
  */
 $dotenv = Dotenv\Dotenv::create(RIDPT_ROOT);
-$dotenv->load();
-
-env();
+$dotenv->load();  // $dotenv->overload();
 
 /*
  * --------------------------------------------------------------------------
- * Start Swoole Server
+ * FIXME Start Console Application
  * --------------------------------------------------------------------------
  */
 $config = require RIDPT_ROOT . '/apps/config/httpd.php';

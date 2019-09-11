@@ -55,11 +55,13 @@
 - **view:** Fix helper/username params (720f37e)
 
 ### Revert
+- **Framework:** rename back to `framework` instead of ucfirst() (c325fb0)
 - **Redis:** Remove view in redis , use other software install (c5d3378)
 
 ### Style
-- **EnvironmentLoader:** Use Dotenv to load Loads environment variables (1fea316)
+- **EnvironmentLoader:** Use Dotenv to load Loads environment variables (e6394a6)
 - **Redis:** rewrite namespace of cache keys (0c4e1a2)
+- **env:** use $_ENV instead of getenv (2f5f0ac)
 
 
 <a name="v0.1.5-alpha"></a>
