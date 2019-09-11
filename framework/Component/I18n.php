@@ -19,7 +19,7 @@ class I18n extends Component
      *
      * @var string
      */
-    public $fileNamespace = '\apps\lang';
+    public $fileNamespace = '\App\Lang';
 
     /**
      * Allowed language

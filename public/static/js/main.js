@@ -12,7 +12,7 @@ if (!String.prototype.format) {
 }
 
 // Declare Const
-const api_point = '/api/v1';
+const api_point = '/Api/v1';
 const _location_search = new URLSearchParams(window.location.search);  // Short and parse location.search
 
 const paswordStrengthText = {
@@ -141,11 +141,11 @@ jQuery(document).ready(function () {
     });
 
     // Form submit loading animation
-    $('form').on('submit', function () {
+    $('Form').on('submit', function () {
         $(this).addClass('load-indicator loading')
     });
 
-    // Clean form data in a modal when it hidden
+    // Clean Form data in a modal when it hidden
     $('.modal').on('hidden.zui.modal', function () {
         let that = $(this);
         if (that.find('form').length > 0) {
@@ -442,7 +442,7 @@ jQuery(document).ready(function () {
 
         $('#links_modal').modal();
 
-        // Get link data from <tr> and Fill link data to form
+        // Get link data from <tr> and Fill link data to Form
         let tr = $('#links_manager_table tr[data-id=' + that.data('id') + ']');
         let link_edit_form = $('#link_edit_form');
         for (let datum in tr.data()) {
@@ -464,7 +464,7 @@ jQuery(document).ready(function () {
 
         $('#cat_modal').modal();
 
-        // Get category data from <tr> and Fill data to form
+        // Get category data from <tr> and Fill data to Form
         let tr = $('#cat_manager_table tr[data-id=' + that.data('id') + ']');
         let cat_edit_form = $('#cat_edit_form');
         for (let datum in tr.data()) {
@@ -496,7 +496,7 @@ jQuery(document).ready(function () {
             subs_delete_form.find("input[name='reason']").val(reason);
             subs_delete_form.submit();
         } else {
-            alert('Empty delete reason or no subtitle delete form exist.')
+            alert('Empty delete reason or no subtitle delete Form exist.')
         }
     })
 });

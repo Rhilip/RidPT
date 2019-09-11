@@ -6,7 +6,7 @@
  * Time: 7:39 PM
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Torrents\TagsForm $pager
+ * @var \App\Models\Form\Torrents\TagsForm $pager
  */
 ?>
 

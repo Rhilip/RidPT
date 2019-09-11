@@ -6,7 +6,7 @@
  * Time: 18:00
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Torrent\DetailsForm $details
+ * @var \App\Models\Form\Torrent\DetailsForm $details
  */
 
 $torrent = $details->getTorrent();

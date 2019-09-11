@@ -5,6 +5,7 @@
 - **Validator:** Upgrade siriusphp/validation to 2.3 (eb039eb)
 
 ### Docs
+- **bin:** Add doc for bin/rid-httpd (59e0828)
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
 ### Feat

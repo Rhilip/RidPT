@@ -9,7 +9,7 @@
 namespace Rid\Validators;
 
 /**
- * When use this Trait, Add input which name is `captcha` in your form,
+ * When use this Trait, Add input which name is `captcha` in your Form,
  * which you can simply call it by `<?= $this->insert('layout/captcha') ?>` in template
  * Add add callback function `validateCaptcha` in callbackRules()
  *

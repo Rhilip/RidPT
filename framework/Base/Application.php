@@ -11,7 +11,7 @@ namespace Rid\Base;
  * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Component\Config $config
  * @property \Rid\Component\I18n $i18n
- * @property \apps\components\Site $site
+ * @property \App\Components\Site $site
  */
 class Application extends BaseObject
 {

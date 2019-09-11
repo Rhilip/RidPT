@@ -5,7 +5,7 @@
  * Date: 2019/2/22
  * Time: 17:46
  *
- * @var \apps\models\form\User\SessionsListForm $session_list
+ * @var \App\Models\Form\User\SessionsListForm $session_list
  */
 ?>
 

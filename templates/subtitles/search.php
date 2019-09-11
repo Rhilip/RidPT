@@ -6,7 +6,7 @@
  * Time: 9:36 PM
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Subtitles\SearchForm $search
+ * @var \App\Models\Form\Subtitles\SearchForm $search
  * @var bool $upload_mode
  */
 
@@ -53,7 +53,7 @@ $upload_mode = $upload_mode ?? false;
                                 <div class="form-group">
                                     <label for="file" class="col-sm-2 required">Subs File</label>
                                     <div class="col-md-5 col-sm-10">
-                                        <?php  $allow_extension = array_map(function ($ext) {return '.' . $ext;},\apps\models\form\Subtitles\UploadForm::SubtitleExtension) ?>
+                                        <?php  $allow_extension = array_map(function ($ext) {return '.' . $ext;},\App\Models\Form\Subtitles\UploadForm::SubtitleExtension) ?>
                                         <input type="file" class="form-control" id="file" name="file" required
                                                accept="<?= implode(', ', $allow_extension) ?>"> <!-- TODO accept -->
                                     </div>

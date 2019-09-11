@@ -6,7 +6,7 @@
  * Time: 22:37
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\Torrent $torrent
+ * @var \App\Models\Torrent $torrent
  */
 ?>
 

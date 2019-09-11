@@ -44,7 +44,7 @@ $user = app()->auth->getCurUser();
     <div id="info_block_line_1">
         Welcome Back, <?= $this->insert('helper/username', ['user' => $user, 'show_badge' => true]) ?>
         <span data-item="logout"><!--suppress HtmlUnknownTarget -->[<a href="/auth/logout">Logout</a>]</span>
-        <?php if ($user->getClass() > \apps\models\User::ROLE_FORUM_MODERATOR): ?>
+        <?php if ($user->getClass() > \App\Models\User::ROLE_FORUM_MODERATOR): ?>
             <span><!--suppress HtmlUnknownTarget -->[<a href="/admin">Admin Panel</a>]</span>
         <?php endif; ?>
         <span data-item="favour"><!--suppress HtmlUnknownTarget -->[<a href="/torrents/favour">Favour</a>]</span>

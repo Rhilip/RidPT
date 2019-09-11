@@ -6,7 +6,7 @@
  * Time: 20:40
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Torrents\SearchForm $search
+ * @var \App\Models\Form\Torrents\SearchForm $search
  */
 
 $time_now = time();

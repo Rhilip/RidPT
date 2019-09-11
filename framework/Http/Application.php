@@ -12,7 +12,7 @@ use Rid\Base\Component;
  * @property \Rid\Http\Route $route
  * @property \Rid\Http\Request $request
  * @property \Rid\Http\Response $response
- * @property \apps\components\Auth $auth
+ * @property \App\Components\Auth $auth
  */
 class Application extends \Rid\Base\Application
 {

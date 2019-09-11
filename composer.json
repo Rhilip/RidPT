@@ -42,7 +42,7 @@
   "autoload": {
     "psr-4": {
       "Rid\\": "framework/",
-      "apps\\": "src/"
+      "App\\": "src/"
     },
     "files": [
       "framework/Rid.php",

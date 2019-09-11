@@ -6,7 +6,7 @@
  * Time: 10:11
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\News\SearchForm $pager
+ * @var \App\Models\Form\News\SearchForm $pager
  */
 ?>
 

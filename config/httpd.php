@@ -7,7 +7,7 @@ return [
     'basePath'         => dirname(__DIR__),
 
     // 命令命名空间
-    'commandNamespace' => 'apps\commands',
+    'commandNamespace' => 'App\Commands',
 
     // 命令
     'commands'         => [
@@ -45,13 +45,13 @@ return [
     // 用户自定义进程 （用于常驻的任务清理，将会使用Server->addProcess添加到Server
     'process' => [
         'tracker' => [
-            'class' => \apps\process\TrackerAnnounceProcess::class,
+            'class' => App\Process\TrackerAnnounceProcess::class,
             'title' => 'Tracker Announce Worker',
             'components' => ['log', 'pdo', 'redis', 'config'],
             'sleep' => 5,
         ],
         'crontab' => [
-            'class' => \apps\process\CronTabProcess::class,
+            'class' => App\Process\CronTabProcess::class,
             'title' => 'Crontab Worker',
             'components' => ['log', 'pdo', 'redis', 'config'],
             'sleep' => 60,

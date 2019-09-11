@@ -14,11 +14,11 @@ return [
     'basePath'         => dirname(__DIR__),
 
     // 控制器命名空间
-    'controllerNamespace' => 'apps\controllers',
+    'controllerNamespace' => 'App\Controllers',
 
     // 全局中间件
     'middleware'          => [
-        apps\middleware\IpBanMiddleware::class
+        App\Middleware\IpBanMiddleware::class
     ],
 
     // 组件配置
@@ -40,14 +40,14 @@ return [
                 'GET maintenance' => ['maintenance', 'index'],
 
                 // API version 1
-                'api/v1/{controller}/{action}' => ['api/v1/{controller}', '{action}', 'middleware' => [
-                    apps\middleware\ApiMiddleware::class,
-                    apps\middleware\AuthMiddleware::class
+                'Api/v1/{controller}/{action}' => ['Api/v1/{controller}', '{action}', 'middleware' => [
+                    App\Middleware\ApiMiddleware::class,
+                    App\Middleware\AuthMiddleware::class
                 ]],
 
                 // Web view
                 '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => [
-                    apps\middleware\AuthMiddleware::class
+                    App\Middleware\AuthMiddleware::class
                 ]],
             ],
         ],
@@ -130,7 +130,7 @@ return [
             // 驱动连接选项: http://php.net/manual/zh/pdo.setattribute.php
             'driverOptions' => [
                 // 设置默认的提取模式: \PDO::FETCH_OBJ | \PDO::FETCH_ASSOC
-                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             ],
         ],
 
@@ -147,7 +147,7 @@ return [
             // 密码
             'password' => env('REDIS_PASSWORD'),
             'driverOptions' => [
-                \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
+                Redis::OPT_SERIALIZER => Redis::SERIALIZER_PHP,
             ]
         ],
 
@@ -157,26 +157,26 @@ return [
 
         'i18n' => [
             'class' => Rid\Component\I18n::class,
-            'fileNamespace' => 'apps\lang',
+            'fileNamespace' => 'App\Lang',
             'fallbackLang' => 'en',
             'forcedLang' => null,
             'allowedLangSet' => ['en', 'zh-CN']
         ],
 
         'site' => [
-            'class' => apps\components\Site::class
+            'class' => App\Components\Site::class
         ],
 
         'auth' => [
-            'class' => apps\components\Auth::class
+            'class' => App\Components\Auth::class
         ],
     ],
 
     // 定时器配置
     'timer'            => [
         //'crontab' => [
-        //    'class' => \apps\timer\CronTabProcess::class,
-        //    'type' => \Rid\Base\Timer::TICK,
+        //    'class' => App\Timer\CronTabProcess::class,
+        //    'type' => Rid\Base\Timer::TICK,
         //    'msec' => 1 * 60 * 1000,
         //    'callback' => 'init'
         //]
@@ -185,7 +185,7 @@ return [
     // 类库配置
     'libraries'           => [
         'mailer' => [
-            'class'   => apps\libraries\Mailer::class,
+            'class'   => App\Libraries\Mailer::class,
             'debug'   => env('MAILER_DEBUG'),
             'host'    => env('MAILER_HOST'),
             'port'    => env('MAILER_PORT'),

@@ -60,6 +60,5 @@ $dotenv->load();  // $dotenv->overload();
  * --------------------------------------------------------------------------
  */
 $config = require RIDPT_ROOT . '/config/httpd.php';
-var_dump($config);
 $exitCode = (new Rid\Console\Application($config))->run();
 exit($exitCode);

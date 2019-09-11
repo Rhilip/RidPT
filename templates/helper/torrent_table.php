@@ -6,7 +6,7 @@
  * Time: 20:40
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Torrents\SearchForm $search
+ * @var \App\Models\Form\Torrents\SearchForm $search
  */
 
 $time_now = time();
@@ -29,7 +29,7 @@ $time_now = time();
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($search->getPagerData() as $torrent): /** @var \apps\models\Torrent $torrent */ ?>
+            <?php foreach ($search->getPagerData() as $torrent): /** @var \App\Models\Torrent $torrent */ ?>
                 <tr data-tid="<?= $torrent->getId() ?>">
                     <td class="text-center" data-item="category" style="margin: 0;padding: 0">
                         <?php $cat = $torrent->getCategory(); ?>

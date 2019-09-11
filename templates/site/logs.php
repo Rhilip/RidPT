@@ -6,7 +6,7 @@
  * Time: 2019
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Site\Logs $logs
+ * @var \App\Models\Form\Site\Logs $logs
  */
 ?>
 

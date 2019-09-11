@@ -6,7 +6,7 @@
  * Time: 17:10
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Torrent\SnatchForm $snatch
+ * @var \App\Models\Form\Torrent\SnatchForm $snatch
  */
 
 $timenow = time();

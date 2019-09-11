@@ -6,7 +6,7 @@
  * Time: 4:01 PM
  *
  * @var League\Plates\Template\Template $this
- * @var \apps\models\form\Torrent\CommentsForm $comments
+ * @var \App\Models\Form\Torrent\CommentsForm $comments
  */
 $torrent = $comments->getTorrent();
 ?>
