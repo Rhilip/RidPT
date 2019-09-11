@@ -41,12 +41,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Rid\\": "Framework/",
+      "Rid\\": "framework/",
       "apps\\": "apps/"
     },
     "files": [
-      "Framework/Rid.php",
-      "Framework/functions.php"
+      "framework/Rid.php",
+      "framework/functions.php"
     ]
   },
   "repositories": {

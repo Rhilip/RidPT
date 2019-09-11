@@ -8,12 +8,13 @@
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
 ### Feat
+- **Auth:** Sep Auth part from Site to new components (f36884e)
 - **Auth:** Use JWT to set cookies content (bf897c6)
 - **Auth:** Add Auth By passkey support for special route (aff1f87)
-- **Auth:** Sep Auth part from Site to new components (f36884e)
 - **Auth/Login:** Add full Advanced Options support (6009dc8)
-- **Secret:** Check session and user_id match or not in jwt payload (358ba5d)
+- **Bonus:** Pre-Add Bonus system (59ddd39)
 - **Secret:** Protect jwt key for env('APP_SECRET_KEY') (dfa67da)
+- **Secret:** Check session and user_id match or not in jwt payload (358ba5d)
 - **Sessions:** record user access information at Auth->onRequestAfter() (e2a22a7)
 - **Sessions/List:** Use SessionsListForm to show user sessions (9ecfb97)
 - **Site:** Add page Site/{Logs,Rules} (65cea9e)
@@ -57,6 +58,7 @@
 - **Redis:** Remove view in redis , use other software install (c5d3378)
 
 ### Style
+- **EnvironmentLoader:** Use Dotenv to load Loads environment variables (1fea316)
 - **Redis:** rewrite namespace of cache keys (0c4e1a2)
 
 

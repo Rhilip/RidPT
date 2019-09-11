@@ -7,6 +7,7 @@
  * @author Rhilip <rhilipruan@gmail.com>
  */
 
+define('RIDPT_ROOT', dirname(__DIR__));
 define('RIDPT_START', microtime(true));
 
 /*
@@ -20,7 +21,7 @@ define('RIDPT_START', microtime(true));
  * loading any of our classes later on. It feels great to relax.
  *
 */
-require __DIR__ . '/vendor/autoload.php';
+require RIDPT_ROOT . '/vendor/autoload.php';
 
 /*
  * --------------------------------------------------------------------------
@@ -35,14 +36,16 @@ if (!PHP_SAPI === 'cli')
  * Load Environment variables
  * --------------------------------------------------------------------------
  */
-$dotenv = Dotenv\Dotenv::create(__DIR__);
+$dotenv = Dotenv\Dotenv::create(RIDPT_ROOT);
 $dotenv->load();
+
+env();
 
 /*
  * --------------------------------------------------------------------------
  * Start Swoole Server
  * --------------------------------------------------------------------------
  */
-$config = require __DIR__ . '/apps/config/httpd.php';
+$config = require RIDPT_ROOT . '/apps/config/httpd.php';
 $exitCode = (new Rid\Console\Application($config))->run();
 exit($exitCode);

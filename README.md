@@ -60,7 +60,7 @@ edit in Admin Panel.
 5. Run Test by `php bin/rid-httpd service start -u` , And Congratulation If you see those output **without error throwout**.
 
     ```bash
-    root@ridpt:/data/wwwroot/ridpt.rhilip.info# php rid-httpd service start
+    root@ridpt:/data/wwwroot/ridpt.rhilip.info# php bin/rid-httpd service start
      ____            __  ____    ______   
     /\  _`\   __    /\ \/\  _`\ /\__  _\  
     \ \ \L\ \/\_\   \_\ \ \ \L\ \/_/\ \/  
