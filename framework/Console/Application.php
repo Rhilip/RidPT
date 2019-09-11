@@ -98,7 +98,7 @@ class Application extends \Rid\Base\Application
                 }
             }
         }
-        throw new \Rid\Exceptions\NotFoundException("ERRER unknown command '{$command}'");
+        throw new \Rid\Exceptions\NotFoundException("ERROR unknown command '{$command}'");
     }
 
     // 获取组件

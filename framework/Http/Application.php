@@ -164,7 +164,7 @@ class Application extends \Rid\Base\Application
     // 获取视图目录路径
     public function getViewPath()
     {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'views';
+        return $this->basePath . DIRECTORY_SEPARATOR . 'templates';
     }
 
     public function getPrivatePath($sub_folder = null)

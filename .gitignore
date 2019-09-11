@@ -4,7 +4,7 @@
 !**/.gitkeep
 
 # Test File
-apps/controllers/TestController.php
+src/controllers/TestController.php
 
 # Backup Folder
 /backup/

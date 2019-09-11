@@ -69,7 +69,7 @@ class AuthMiddleware
         /**
          * Check User Permission to this route
          *
-         * When user visit - /admin -> Controller : \apps\controllers\AdminController  Action: actionIndex
+         * When user visit - /admin -> Controller : \src\controllers\AdminController  Action: actionIndex
          * it will check the dynamic config key `authority.route_admin_index` and compare with curuser class ,
          * if user don't have this permission to visit this route the http code 403 will throw out.
          * if this config key is not exist , the default class 1 will be used to compare.
@@ -79,7 +79,7 @@ class AuthMiddleware
          * /admin/service  -> AdminController::actionService   ->  route.admin_service
          */
         $route = strtolower(str_replace(
-                ['apps\\controllers\\', 'Controller', 'action'], '',
+                ['src\\controllers\\', 'Controller', 'action'], '',
                 $controllerName . '_' . $action
             )
         );

@@ -59,6 +59,7 @@ $dotenv->load();  // $dotenv->overload();
  * FIXME Start Console Application
  * --------------------------------------------------------------------------
  */
-$config = require RIDPT_ROOT . '/apps/config/httpd.php';
+$config = require RIDPT_ROOT . '/config/httpd.php';
+var_dump($config);
 $exitCode = (new Rid\Console\Application($config))->run();
 exit($exitCode);
