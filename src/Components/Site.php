@@ -189,13 +189,6 @@ class Site extends Component
         return $data ?: [];
     }
 
-    public function ruleCanUsedTeam(): array
-    {
-        return array_filter($this->ruleTeam(), function ($team) {
-            return app()->auth->getCurUser()->getClass() >= $team['class_require'];
-        });
-    }
-
     /**
      * @return array like [<tag1> => <tag1_class_name>, <tag2> => <tag2_class_name>]
      */

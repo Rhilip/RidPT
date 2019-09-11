@@ -8,7 +8,7 @@
 
 namespace App\Controllers\Api\v1;
 
-use App\Models\api\v1\Form\TorrentsForm;
+use App\Models\Api\v1\Form\TorrentsForm;
 
 class TorrentController extends ApiController
 {

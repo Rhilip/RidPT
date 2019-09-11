@@ -3,6 +3,7 @@
 namespace Rid\Http;
 
 use Rid\Base\Component;
+use Swoole\Http\Server;
 
 /**
  * App类
@@ -191,7 +192,7 @@ class Application extends \Rid\Base\Application
     }
 
     /**
-     * @return \Swoole\Http\Server
+     * @return Server
      */
     public function getServ()
     {
@@ -199,14 +200,14 @@ class Application extends \Rid\Base\Application
     }
 
     /**
-     * @param \Swoole\Http\Server $serv
+     * @param Server $serv
      */
-    public function setServ(\Swoole\Http\Server $serv): void
+    public function setServ(Server $serv): void
     {
         $this->_serv = $serv;
     }
 
-    public function getWorkerId():int
+    public function getWorkerId(): int
     {
         return $this->_worker ?? -1;
     }

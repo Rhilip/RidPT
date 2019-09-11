@@ -84,7 +84,7 @@ $torrent = $details->getTorrent();
                     <span class="red"><i class="fas fa-arrow-down fa-fw"></i> <?= $torrent->getIncomplete() ?></span> /
                     <span><i class="fas fa-check fa-fw"></i> <?= $torrent->getDownloaded() ?></span>
                 </div>
-                <div data-field="info_hash"><b>Info Hash:</b><kbd><?= $torrent->getInfoHash() ?></kbd></div>
+                <div data-field="info_hash" class="nowrap"><b>Info Hash:</b><kbd><?= $torrent->getInfoHash() ?></kbd></div>
             </div>
         </div>
         <div class="panel" id="torrent_action_panel">

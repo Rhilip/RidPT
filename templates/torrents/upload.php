@@ -96,8 +96,10 @@
                             <span class="input-group-addon"><label for="team">Group</label></span>
                             <select id="team" name="team" class="form-control">
                                 <option value="0" selected>[Choose One]</option>
-                                <?php foreach (app()->site->ruleCanUsedTeam() as $team) : ?>
-                                    <option value="<?= $team['id'] ?>"><?= $team['name'] ?></option>
+                                <?php foreach (app()->site->ruleTeam() as $team) : ?>
+                                    <?php if (app()->auth->getCurUser()->getClass() >= $team['class_require']): ?>
+                                        <option value="<?= $team['id'] ?>"><?= $team['name'] ?></option>
+                                    <?php endif ?>
                                 <?php endforeach; ?>
                             </select>
                         </div>

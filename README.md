@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/Rhilip/RidPT/raw/master/apps/public/static/pic/logo.png" width='256px'><br/>
+<img src="https://github.com/Rhilip/RidPT/raw/master/public/static/pic/logo.png" width='256px'><br/>
 A Private Torrent framework Project.<br/>
 <a href="https://github.com/Rhilip/RidPT/releases"><img src="https://img.shields.io/github/release/Rhilip/RidPT.svg" alt="GitHub Releases" /></a>
 <a href="https://www.swoole.com/"><img src="https://img.shields.io/badge/used-Swoole-blue.svg" alt="used-Swoole-blue" /></a>
