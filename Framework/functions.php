@@ -23,7 +23,8 @@ if (!function_exists('env')) {
      */
     function env($name = null, $default = '')
     {
-        return getenv($name) ?? $default;
+        if ($name === null) return $_ENV;
+        return $_ENV[$name] ?? $default;
     }
 }
 
