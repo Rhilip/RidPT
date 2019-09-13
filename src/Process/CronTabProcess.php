@@ -10,6 +10,7 @@ namespace App\Process;
 
 use App\Libraries\Bonus;
 use App\Libraries\Constant;
+
 use Rid\Base\Process;
 
 
@@ -65,8 +66,8 @@ final class CronTabProcess extends Process
                     app()->log->critical('The run job throw Exception : ' . $e->getMessage());
                 }
             } else {
-                if (!in_array($job, $this->_none_exist_job)) {
-                    $this->_none_exist_job[] = $job;
+                if (!in_array($job['job'], $this->_none_exist_job)) {
+                    $this->_none_exist_job[] = $job['job'];
                     app()->log->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
                 }
             }
@@ -143,7 +144,10 @@ final class CronTabProcess extends Process
         }
     }
 
-    // sync torrents status about complete, incomplete, comments
+    /**
+     * sync torrents status about complete, incomplete, comments
+     * @noinspection PhpUnused
+     */
     protected function sync_torrents_status()
     {
         $torrents_update = [];
@@ -153,18 +157,18 @@ final class CronTabProcess extends Process
               LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND `peers`.`seeder` = 'yes' 
             GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
         if ($wrong_complete_records) {
-            array_walk($wrong_complete_records, function ($arr) use (&$torrents_update) {
+            foreach ($wrong_complete_records as $arr) {
                 $torrents_update[$arr['id']]['complete'] = $arr['real'];
-            });
+            }
         }
         $wrong_incomplete_records = app()->pdo->createCommand("
             SELECT torrents.`id`, `incomplete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents`
               LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND (`peers`.`seeder` = 'partial' OR `peers`.`seeder` = 'no') 
             GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
         if ($wrong_incomplete_records) {
-            array_walk($wrong_incomplete_records, function ($arr) use (&$torrents_update) {
+            foreach ($wrong_incomplete_records as $arr) {
                 $torrents_update[$arr['id']]['incomplete'] = $arr['real'];
-            });
+            }
         }
 
         $wrong_comment_records = app()->pdo->createCommand('
@@ -172,9 +176,9 @@ final class CronTabProcess extends Process
               LEFT JOIN torrent_comments tc on t.id = tc.torrent_id 
             GROUP BY t.id HAVING `record` != `real`')->queryAll();
         if ($wrong_comment_records) {
-            array_walk($wrong_comment_records, function ($arr) use (&$torrents_update) {
+            foreach ($wrong_incomplete_records as $arr) {
                 $torrents_update[$arr['id']]['comments'] = $arr['real'];
-            });
+            }
         }
 
         if ($torrents_update) {
@@ -184,6 +188,17 @@ final class CronTabProcess extends Process
             }
             $this->print_log('Fix ' . count($torrents_update) . ' wrong torrents records about complete, incomplete, comments.');
         }
+    }
+
+    /** @noinspection PhpUnused */
+    protected function sync_ban_list() {
+        // Sync Banned Emails list
+        $ban_email_list = app()->pdo->createCommand('SELECT `email` from `ban_emails`')->queryColumn() ?: [];
+        app()->redis->sAddArray(Constant::siteBannedEmailSet, $ban_email_list);
+
+        // Sync Banned Username list
+        $ban_username_list = app()->pdo->createCommand('SELECT `username` from `ban_usernames`')->queryColumn() ?: [];
+        app()->redis->sAddArray(Constant::siteBannedUsernameSet, $ban_username_list);
     }
 
     protected function update_expired_external_link_info()

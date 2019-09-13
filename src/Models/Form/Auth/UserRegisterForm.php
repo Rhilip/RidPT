@@ -8,6 +8,7 @@
 
 namespace App\Models\Form\Auth;
 
+use App\Libraries\Constant;
 use App\Models\User;
 
 use Rid\Helpers\StringHelper;
@@ -145,7 +146,7 @@ class UserRegisterForm extends Validator
             $client_ip = app()->request->getClientIp();
 
             $max_user_per_ip = config('register.per_ip_user') ?: 5;
-            $user_ip_count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)")->bindParams([
+            $user_ip_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
                 "ip" => $client_ip
             ])->queryScalar();
 
@@ -165,19 +166,14 @@ class UserRegisterForm extends Validator
             return;
         }
 
-        // Check if this username is not in blacklist
-        if (!app()->redis->exists('site:username_ban_list')) {
-            $ban_username_list = app()->pdo->createCommand('SELECT `username` from `ban_usernames`')->queryColumn() ?: [];
-            app()->redis->hMset('site:username_ban_list', $ban_username_list);
-            app()->redis->expire('site:username_ban_list', 86400);
-        }
-        if (app()->redis->hExists('site:username_ban_list', $username)) {
+        // Check if this username is in blacklist or not
+        if (app()->redis->sIsMember(Constant::siteBannedUsernameSet, $username)) {
             $this->buildCallbackFailMsg('ValidUsername', 'This username is in our blacklist.');
             return;
         }
 
         // Check this username is exist in Table `users` or not
-        $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
+        $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
             'username' => $username
         ])->queryScalar();
         if ($count > 0) {
@@ -192,7 +188,7 @@ class UserRegisterForm extends Validator
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
         if (config('register.check_email_blacklist') &&
             config('register.email_black_list')) {
-            $email_black_list = explode(",", config('register.email_black_list'));
+            $email_black_list = explode(',', config('register.email_black_list'));
             if (in_array($email_suffix, $email_black_list)) {
                 $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
                 return;
@@ -201,25 +197,20 @@ class UserRegisterForm extends Validator
 
         if (config('register.check_email_whitelist') &&
             config('register.email_white_list')) {
-            $email_white_list = explode(",", config('register.email_white_list'));
+            $email_white_list = explode(',', config('register.email_white_list'));
             if (!in_array($email_suffix, $email_white_list)) {
                 $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
                 return;
             }
         }
 
-        // Check $email is not in blacklist
-        if (!app()->redis->exists('site:emails_ban_list')) {
-            $ban_email_list = app()->pdo->createCommand('SELECT `email` from `ban_emails`')->queryColumn();
-            app()->redis->hMset('site:emails_ban_list', $ban_email_list);
-            app()->redis->expire('site:emails_ban_list', 86400);
-        }
-        if (app()->redis->hExists('site:emails_ban_list', $email)) {
+        // Check $email is in blacklist or not
+        if (app()->redis->sIsMember(Constant::siteBannedEmailSet, $email)) {
             $this->buildCallbackFailMsg('ValidEmail', 'This email is in our blacklist.');
             return;
         }
 
-        $email_check = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `email` = :email")->bindParams([
+        $email_check = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
             "email" => $email
         ])->queryScalar();
         if ($email_check > 0) {

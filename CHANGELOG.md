@@ -41,15 +41,16 @@
 - **Process:** Disable Pdo And Redis called data in custom process (b744e81)
 
 ### Refactor
+- **Array:** Move setDefault for Array as global function array_set_default (b825eca)
 - **Auth:** Fix Certification process (687a2d0)
 - **Auth/JWT:** Better for auth by JWT (36f49a0)
 - **Auth/Middleware:** merge Old Auth{ByCookies, ByPasskey}Middleware (71cd7d7)
-- **Config:** Remove params `$throw` in Config()->get() (706cc9a)
 - **Config:** Add define of config key type and can add runtime config (d57aede)
+- **Config:** Remove params `$throw` in Config()->get() (706cc9a)
 - **Controller:** Move APIController out Framework (0dc7106)
 - **RateLimit:** Change last param of isRateLimitHit and rate limit store Namespace (4dd571d)
-- **Site:** Move Cat, Quality, PinnedTag cache to Config.runtime (da1d9a7)
 - **Site:** Simple Category Detail get function (ffa6855)
+- **Site:** Move Cat, Quality, PinnedTag cache to Config.runtime (da1d9a7)
 - **Validator:** fix user input extract (81bdc8f)
 - **View:** Make View extends BaseObject (0865cf9)
 - **action:** Sort template action/action_{fail,success} (66998d3)

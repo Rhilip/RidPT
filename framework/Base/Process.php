@@ -17,6 +17,11 @@ class Process implements StaticInstanceInterface
     private $sleep_time;
     protected $_config;
 
+    public function init()
+    {
+
+    }
+
     public function run()
     {
 
@@ -51,6 +56,7 @@ class Process implements StaticInstanceInterface
 
         println('New Custom process `' . static::class . '` added.');
 
+        $this->init();
         while (true) {
             $this->run();
             sleep($this->getSleepTime());
