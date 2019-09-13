@@ -6,7 +6,7 @@
  * Time: 20:27
  */
 
-namespace Rid\Bencode;
+namespace App\Libraries\Bencode;
 
 
 class ParseErrorException extends \RuntimeException

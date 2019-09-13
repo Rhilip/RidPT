@@ -167,7 +167,7 @@ class UserRegisterForm extends Validator
 
         // Check if this username is not in blacklist
         if (!app()->redis->exists('site:username_ban_list')) {
-            $ban_username_list = app()->pdo->createCommand('SELECT `username` from `ban_usernames`')->queryColumn();
+            $ban_username_list = app()->pdo->createCommand('SELECT `username` from `ban_usernames`')->queryColumn() ?: [];
             app()->redis->hMset('site:username_ban_list', $ban_username_list);
             app()->redis->expire('site:username_ban_list', 86400);
         }
@@ -178,7 +178,7 @@ class UserRegisterForm extends Validator
 
         // Check this username is exist in Table `users` or not
         $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `users` WHERE `username` = :username")->bindParams([
-            "username" => $username
+            'username' => $username
         ])->queryScalar();
         if ($count > 0) {
             $this->buildCallbackFailMsg('ValidUsername', "The user name `$username` is already used.");
@@ -282,13 +282,15 @@ class UserRegisterForm extends Validator
         if (app()->site::fetchUserCount() == 0) {
             $this->status = User::STATUS_CONFIRMED;
             $this->class = User::ROLE_STAFFLEADER;
-            $this->confirm_way = "auto";
+            $this->confirm_way = 'auto';
         }
 
+        // User status should be confirmed if site confirm_way is auto
         if ($this->confirm_way == 'auto' and $this->status != User::STATUS_CONFIRMED) {
             $this->status = User::STATUS_CONFIRMED;
         }
 
+        // Insert into `users` table and get insert id
         app()->pdo->createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`) 
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus, :invites)")->bindParams(array(
             'name' => $this->username, 'passhash' => password_hash($this->password, PASSWORD_DEFAULT), 'email' => $this->email,
@@ -301,8 +303,11 @@ class UserRegisterForm extends Validator
         ))->execute();
         $this->id = app()->pdo->getLastInsertId();
 
+        // TODO Newcomer exams
+
         $log_text = "User $this->username($this->id) is created now.";
 
+        // Send Invite Success PM to invitee
         if ($this->type == 'invite') {
             app()->pdo->createCommand("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
                 "invite_hash" => $this->invite_hash,
@@ -314,6 +319,7 @@ class UserRegisterForm extends Validator
             app()->site->sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");
         }
 
+        // Send Confirm Email
         if ($this->confirm_way == 'email') {
             $confirm_key = StringHelper::getRandomString(32);
             app()->pdo->createCommand('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
@@ -331,6 +337,7 @@ class UserRegisterForm extends Validator
                 ]);
         }
 
+        // Add Site log for user signup
        app()->site->writeLog($log_text, app()->site::LOG_LEVEL_MOD);
     }
 }

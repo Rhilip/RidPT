@@ -9,7 +9,7 @@
  * Time: 20:00
  */
 
-namespace Rid\Bencode;
+namespace App\Libraries\Bencode;
 
 
 class Bencode

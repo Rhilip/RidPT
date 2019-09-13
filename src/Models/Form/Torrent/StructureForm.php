@@ -9,7 +9,7 @@
 namespace App\Models\Form\Torrent;
 
 use App\Libraries\Constant;
-use Rid\Bencode\Bencode;
+use App\Libraries\Bencode\Bencode;
 
 class StructureForm extends DetailsForm
 {

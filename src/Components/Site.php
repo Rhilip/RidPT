@@ -206,8 +206,7 @@ class Site extends Component
 
     public function getBanIpsList(): array
     {
-        $ban_ips = config('runtime.ban_ips_list');
-        if ($ban_ips === false) {
+        if (false === $ban_ips = config('runtime.ban_ips_list')) {
             $ban_ips = app()->pdo->createCommand('SELECT `ip` FROM `ban_ips`')->queryColumn() ?: [];
             app()->config->set('runtime.ban_ips_list', $ban_ips, 'json');
         }

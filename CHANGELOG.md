@@ -32,6 +32,7 @@
 - **Search:** Search keywords in NPHP ways (ccde9c0)
 - **Torrent/Comment:** Fix user can't see anonymous uploader's comment (bd2d821)
 - **User:** Fix User Class miss in string format (3680444)
+- **fix:** Fix torrent can't upload after last commits (69fdce9)
 
 ### Perf
 - **Auth/Login:** Simple The Auth Login Fail (6f11931)

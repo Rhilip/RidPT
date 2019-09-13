@@ -12,8 +12,8 @@ use App\Libraries\Constant;
 use Rid\Http\UploadFile;
 use Rid\Validators\Validator;
 
-use Rid\Bencode\Bencode;
-use Rid\Bencode\ParseErrorException;
+use App\Libraries\Bencode\Bencode;
+use App\Libraries\Bencode\ParseErrorException;
 
 class UploadForm extends Validator
 {
@@ -162,7 +162,14 @@ class UploadForm extends Validator
 
     public static function callbackRules(): array
     {
-        return ['isValidTorrentFile', 'makePrivateTorrent'];
+        return ['checkUploadPos', 'isValidTorrentFile', 'makePrivateTorrent'];
+    }
+
+    /** @noinspection PhpUnused */
+    protected function checkUploadPos()
+    {
+        if (!app()->auth->getCurUser()->getUploadpos())
+            $this->buildCallbackFailMsg('pos','your upload pos is disabled');
     }
 
     /** @noinspection PhpUnused */
@@ -449,12 +456,12 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
         return json_encode($structure);
     }
 
-    private static function makeFileTree($array, $delimiter = '/')
+    private static function makeFileTree(array $array, $delimiter = '/')
     {
-        if (!is_array($array)) return array();
+        if (!is_array($array)) return [];
 
         $splitRE = '/' . preg_quote($delimiter, '/') . '/';
-        $returnArr = array();
+        $returnArr = [];
         foreach ($array as $key => $val) {
             // Get parent parts and the current leaf
             $parts = preg_split($splitRE, $key, -1, PREG_SPLIT_NO_EMPTY);

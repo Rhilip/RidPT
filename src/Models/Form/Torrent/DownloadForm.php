@@ -9,7 +9,7 @@
 namespace App\Models\Form\Torrent;
 
 use App\Models\Form\Traits\FileSentTrait;
-use Rid\Bencode\Bencode;
+use App\Libraries\Bencode\Bencode;
 
 class DownloadForm extends StructureForm
 {

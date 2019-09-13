@@ -11,7 +11,7 @@ namespace App\Controllers;
 use App\Libraries\Constant;
 use App\Models\User;
 use Rid\Utils\IpUtils;
-use Rid\Bencode\Bencode;
+use App\Libraries\Bencode\Bencode;
 
 use App\Exceptions\TrackerException;
 
