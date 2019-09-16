@@ -40,7 +40,7 @@ class EditForm extends Validator
         ];
     }
 
-    public static function callbackRules():array
+    public static function callbackRules(): array
     {
         return ['checkCategoryData'];
     }

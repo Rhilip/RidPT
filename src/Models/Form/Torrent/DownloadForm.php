@@ -20,7 +20,7 @@ class DownloadForm extends StructureForm
     protected static $SEND_FILE_CONTENT_TYPE = 'application/x-bittorrent';
     protected static $SEND_FILE_CACHE_CONTROL = true;
 
-    public static function callbackRules()
+    public static function callbackRules(): array
     {
         return ['checkDownloadPos', 'isExistTorrent', 'rateLimitCheck'];
     }
