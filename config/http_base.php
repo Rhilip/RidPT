@@ -172,16 +172,6 @@ return [
         ],
     ],
 
-    // 定时器配置
-    'timer'            => [
-        //'crontab' => [
-        //    'class' => App\Timer\CronTabProcess::class,
-        //    'type' => Rid\Base\Timer::TICK,
-        //    'msec' => 1 * 60 * 1000,
-        //    'callback' => 'init'
-        //]
-    ],
-
     // 类库配置
     'libraries'           => [
         'mailer' => [

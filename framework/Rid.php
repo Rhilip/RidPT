@@ -16,7 +16,7 @@ class Rid
      * 返回App，并设置组件命名空间
      *
      * @param null $prefix
-     * @return \Rid\Http\Application|\Rid\Console\Application
+     * @return \Rid\Http\Application
      */
     public static function app($prefix = null)
     {
@@ -31,7 +31,7 @@ class Rid
     /**
      * 获取App
      *
-     * @return \Rid\Http\Application|\Rid\Console\Application
+     * @return \Rid\Http\Application
      */
     protected static function getApp()
     {

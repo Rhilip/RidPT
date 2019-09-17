@@ -2,28 +2,25 @@
 
 namespace Rid\Http;
 
-use Rid\Base\BaseObject;
-
 use Rid\Base\Process;
 use Rid\Base\Timer;
 use Rid\Helpers\ProcessHelper;
 
+use Swoole\Server;
+
 /**
  * Http服务器类
  */
-class HttpServer extends BaseObject
+class HttpServer
 {
 
     public $name = 'rid-httpd';
-
-    // 虚拟主机
-    public $virtualHost = [];
 
     // 运行参数
     public $settings = [];
 
     // 默认运行参数
-    protected $_settings = [
+    protected $_default_settings = [
         'enable_coroutine' => false,  // 开启协程
         'reactor_num' => 8,   // 主进程事件处理线程数
         'worker_num' => 8,  // 工作进程数
@@ -45,21 +42,30 @@ class HttpServer extends BaseObject
     // 端口
     protected $_port;
 
+    protected $_config;
+
+    public function __construct(array $config)
+    {
+        $this->_config = $config;
+    }
+
     // 启动服务
     public function start()
     {
         // 初始化参数
-        $this->_host = $this->virtualHost['host'];
-        $this->_port = $this->virtualHost['port'];
+        $this->_host = $this->_config['virtualHost']['host'];
+        $this->_port = $this->_config['virtualHost']['port'];
 
         // 实例化服务器
         $this->_server = new \Swoole\Http\Server($this->_host, $this->_port);
-        $this->settings += $this->_settings;
+
+        // 设置参数
+        $this->settings = array_merge(
+            $this->_default_settings,
+            $this->_config['settings'],
+            ['enable_coroutine' => false] // 关闭默认协程，回调中有手动开启支持上下文的协程
+        );
         $this->_server->set($this->settings);
-        // 覆盖参数
-        $this->_server->set([
-            'enable_coroutine' => false, // 关闭默认协程，回调中有手动开启支持上下文的协程
-        ]);
 
         // 绑定事件
         $this->_server->on('start', [$this, 'onStart']);
@@ -91,19 +97,19 @@ class HttpServer extends BaseObject
     /**
      * 主进程启动事件
      * 仅允许echo、打印Log、修改进程名称，不得执行其他操作
-     * @param \Swoole\Server $server
+     * @param Server $server
      */
-    public function onStart(\Swoole\Server $server)
+    public function onStart(Server $server)
     {
-        ProcessHelper::setTitle("{$this->name}: master {$this->_host}:{$this->_port}");
+        ProcessHelper::setTitle(PROJECT_NAME . ": master {$this->_host}:{$this->_port}");
     }
 
     /**
      * 主进程停止事件
      * 请勿在onShutdown中调用任何异步或协程相关API，触发onShutdown时底层已销毁了所有事件循环设施
-     * @param \Swoole\Server $server
+     * @param Server $server
      */
-    public function onShutdown(\Swoole\Server $server)
+    public function onShutdown(Server $server)
     {
 
     }
@@ -111,18 +117,18 @@ class HttpServer extends BaseObject
     /**
      * 管理进程启动事件
      * 可以使用基于信号实现的同步模式定时器swoole_timer_tick，不能使用task、async、coroutine等功能
-     * @param \Swoole\Server $server
+     * @param Server $server
      */
-    public function onManagerStart(\Swoole\Server $server)
+    public function onManagerStart(Server $server)
     {
-        ProcessHelper::setTitle("{$this->name}: manager");  // 进程命名
+        ProcessHelper::setTitle(PROJECT_NAME . ": manager");  // 进程命名
     }
 
     /**
      * 管理进程停止事件
-     * @param \Swoole\Server $server
+     * @param Server $server
      */
-    public function onManagerStop(\Swoole\Server $server)
+    public function onManagerStop(Server $server)
     {
 
     }
@@ -147,14 +153,14 @@ class HttpServer extends BaseObject
         }
 
         // 实例化App
-        $config = require $this->virtualHost['configFile'];
+        $config = require $this->_config['virtualHost']['configFile'];
         $app = new Application($config);
         $app->setServ($this->_server);
         $app->setWorkerId($workerId);
         $app->loadAllComponents();
 
         if ($workerId == 0) {  // 将系统设置中的 Timer 添加到 worker #0 中
-            foreach (app()->env('timer') as $timer_name => $timer_config) {
+            foreach ($this->_config['timer'] as $timer_name => $timer_config) {
                 $timer_class = $timer_config['class'];
                 $timer = new $timer_class();
                 if ($timer instanceof Timer) {
@@ -166,10 +172,10 @@ class HttpServer extends BaseObject
 
     /**
      * 工作进程停止事件
-     * @param \Swoole\Server $server
+     * @param Server $server
      * @param int $workerId
      */
-    public function onWorkerStop(\Swoole\Server $server, int $workerId)
+    public function onWorkerStop(Server $server, int $workerId)
     {
 
     }
@@ -177,13 +183,13 @@ class HttpServer extends BaseObject
     /**
      * 工作进程错误事件
      * 当Worker/Task进程发生异常后会在Manager进程内回调此函数。
-     * @param \Swoole\Server $server
+     * @param Server $server
      * @param int $workerId
      * @param int $workerPid
      * @param int $exitCode
      * @param int $signal
      */
-    public function onWorkerError(\Swoole\Server $server, int $workerId, int $workerPid, int $exitCode, int $signal)
+    public function onWorkerError(Server $server, int $workerId, int $workerPid, int $exitCode, int $signal)
     {
 
     }
@@ -191,10 +197,10 @@ class HttpServer extends BaseObject
     /**
      * 工作进程退出事件
      * 仅在开启reload_async特性后有效。异步重启特性，会先创建新的Worker进程处理新请求，旧的Worker进程自行退出
-     * @param \Swoole\Server $server
+     * @param Server $server
      * @param int $workerId
      */
-    public function onWorkerExit(\Swoole\Server $server, int $workerId)
+    public function onWorkerExit(Server $server, int $workerId)
     {
 
     }
@@ -217,7 +223,7 @@ class HttpServer extends BaseObject
 
     private function addCustomProcess()
     {
-        foreach (app()->env('process') as $process_name => $process_config) {
+        foreach ($this->_config['process'] as $process_name => $process_config) {
             $process_class = $process_config['class'];
             $custom_process = new $process_class();
             if ($custom_process instanceof Process) {
@@ -226,7 +232,7 @@ class HttpServer extends BaseObject
                     if ($process_config['title']) ProcessHelper::setTitle('rid-httpd: ' . $process_config['title']);
 
                     // FIXME 实例化App
-                    $config = require $this->virtualHost['configFile'];
+                    $config = require $this->_config['virtualHost']['configFile'];
                     $app = new Application($config);
                     $app->setServ($this->_server);
                     $app->loadAllComponents(array_flip($process_config['components']));
@@ -242,21 +248,10 @@ class HttpServer extends BaseObject
     // 欢迎信息
     protected function welcome()
     {
-        println(<<<EOL
-───────────────────────────────────────
-                     ____            __  ____    ______   
-                    /\  _`\   __    /\ \/\  _`\ /\__  _\  
-                    \ \ \L\ \/\_\   \_\ \ \ \L\ \/_/\ \/  
-                     \ \ ,  /\/\ \  /'_` \ \ ,__/  \ \ \  
-                      \ \ \\ \\ \ \/\ \L\ \ \ \/    \ \ \ 
-                       \ \_\ \_\ \_\ \___,_\ \_\     \ \_\
-                        \/_/\/ /\/_/\/__,_ /\/_/      \/_/
-
-EOL);
         println('───────────────────────────────────────');
-        println('Server      Name:      ' . $this->name);
+        println('Server      Name:      ' . PROJECT_NAME);
         println('System      Name:      ' . PHP_OS);
-        println('Framework   Version:   ' . \Rid::VERSION);
+        println('Framework   Version:   ' . PROJECT_VERSION);
         println('PHP         Version:   ' . PHP_VERSION);
         println('Swoole      Version:   ' . SWOOLE_VERSION);
         println('Listen      Addr:      ' . $this->_host);
@@ -265,7 +260,7 @@ EOL);
         println('Worker      Num:       ' . $this->settings['worker_num']);
         println('Hot         Update:    ' . ($this->settings['max_request'] == 1 ? 'enabled' : 'disabled'));
         println('Coroutine   Mode:      ' . ($this->settings['enable_coroutine'] ? 'enabled' : 'disabled'));
-        println('Config      File:      ' . $this->virtualHost['configFile']);
+        println('Config      File:      ' . $this->_config['virtualHost']['configFile']);
         println('───────────────────────────────────────');
     }
 

@@ -4,9 +4,8 @@ namespace Rid\Base;
 
 /**
  *
- * @property \Rid\Http\Error|\Rid\Console\Error $error
+ * @property \Rid\Http\Error $error
  * @property \Rid\Component\Log $log
- * @property \Rid\Console\Input $input
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Component\Config $config
@@ -34,8 +33,6 @@ class Application extends BaseObject
         parent::onInitialize();
         // 快捷引用
         \Rid::setApp($this);
-        // 错误注册
-        Error::register();
         // 执行初始化回调
         foreach ($this->initialize as $callback) {
             call_user_func($callback);

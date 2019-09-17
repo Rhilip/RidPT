@@ -90,6 +90,6 @@
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
     <h1>Navbar <?= __('greeting', null); ?></h1>
-    <p><strong>I'm sorry for broken page since I'm rebuilding. <?= __('greet') ?></strong></p>
+    <p><strong>I'm sorry for broken page since I'm building now and this work is not finishing. </strong></p>
 </div>
 <?php $this->stop() ?>

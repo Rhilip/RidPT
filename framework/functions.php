@@ -7,7 +7,7 @@
 if (!function_exists('app')) {
     /** 返回当前 App 实例
      * @param null $prefix
-     * @return \Rid\Console\Application|\Rid\Http\Application
+     * @return \Rid\Http\Application
      */
     function app($prefix = null)
     {
@@ -47,7 +47,6 @@ if (!function_exists('println')) {
     function println($expression)
     {
         echo date('Y-m-d H:i:s') . ' ' . $expression . PHP_EOL;
-        app()->log->notice($expression);
     }
 }
 
@@ -123,7 +122,7 @@ if (!function_exists('is_assoc_array')) {
     }
 }
 
-if (!function_exists('is_assoc_array')) {
+if (!function_exists('is_mixed_array')) {
     /** 混合数组：键名既有数值型也有字符串型。
      * 判断数组是否为混合数组
      * @param array $arr
