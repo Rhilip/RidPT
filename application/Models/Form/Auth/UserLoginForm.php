@@ -88,6 +88,7 @@ class UserLoginForm extends Validator
         }
 
         // User enable 2FA but it's code is wrong
+        /*
         if (!is_null($this->self['opt'])) {
             try {
                 $tfa = new TwoFactorAuth(config('base.site_name'));
@@ -100,6 +101,7 @@ class UserLoginForm extends Validator
                 return;
             }
         }
+        */
 
         // User 's status is banned or pending~
         if (in_array($this->self['status'], [User::STATUS_DISABLED, User::STATUS_PENDING])) {

@@ -1,5 +1,5 @@
 {
-  "name": "rhilip/rid-pt",
+  "name": "rhilip/ridpt",
   "description": "基于 swoole 的Private Torrent源码",
   "type": "project",
   "keywords": [
@@ -31,31 +31,25 @@
     "ext-mbstring": "*",
     "psr/log": "^1.1",
     "vlucas/phpdotenv": "^3.5",
+    "adhocore/cli": "^0.4.0",
     "league/plates": "^3.3",
-    "mjohnson/decoda": "^6.12",
+    "firebase/php-jwt": "^5.0",
     "phpmailer/phpmailer": "^6.0",
-    "siriusphp/validation": "^2.3",
     "soundasleep/html2text": "^1.1",
-    "robthree/twofactorauth": "^1.6",
-    "firebase/php-jwt": "^5.0"
+    "siriusphp/validation": "^2.3",
+    "mjohnson/decoda": "^6.12"
+  },
+  "require-dev": {
+    "eaglewu/swoole-ide-helper": "dev-master"
   },
   "autoload": {
     "psr-4": {
       "Rid\\": "framework/",
-      "App\\": "src/"
+      "App\\": "application/"
     },
     "files": [
       "framework/Rid.php",
       "framework/functions.php"
     ]
-  },
-  "repositories": {
-    "packagist": {
-      "type": "composer",
-      "url": "https://mirrors.aliyun.com/composer/"
-    }
-  },
-  "require-dev": {
-    "eaglewu/swoole-ide-helper": "dev-master"
   }
 }

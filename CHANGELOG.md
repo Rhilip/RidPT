@@ -9,19 +9,20 @@
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 
 ### Feat
-- **Auth:** Sep Auth part from Site to new components (f36884e)
 - **Auth:** Use JWT to set cookies content (bf897c6)
+- **Auth:** Sep Auth part from Site to new components (f36884e)
 - **Auth:** Add Auth By passkey support for special route (aff1f87)
 - **Auth/Login:** Add full Advanced Options support (6009dc8)
 - **Bonus:** Pre-Add Bonus system (59ddd39)
-- **Secret:** Protect jwt key for env('APP_SECRET_KEY') (dfa67da)
 - **Secret:** Check session and user_id match or not in jwt payload (358ba5d)
+- **Secret:** Protect jwt key for env('APP_SECRET_KEY') (dfa67da)
 - **Sessions:** record user access information at Auth->onRequestAfter() (e2a22a7)
 - **Sessions/List:** Use SessionsListForm to show user sessions (9ecfb97)
 - **Site:** Add page Site/{Logs,Rules} (65cea9e)
 - **Torrent:** Show team, quality information in torrent/details page (44314e3)
 - **Torrent/Download:** Add user download pos check (db6d5ff)
 - **Torrent/Search:** Use MySQL fulltext search. (354c07b)
+- **ban:** Sync site ban list of username and email in Crontab Jobs (33cc1e6)
 - **ban_ips:** Store banned ip in components/Site (01084c9)
 - **torrents/tags:** Store torrent tags in TABLE `torrents` (4d573e2)
 
