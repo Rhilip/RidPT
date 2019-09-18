@@ -40,7 +40,7 @@ return [
                 'GET maintenance' => ['maintenance', 'index'],
 
                 // API version 1
-                'Api/v1/{controller}/{action}' => ['Api/v1/{controller}', '{action}', 'middleware' => [
+                'api/v1/{controller}/{action}' => ['Api/v1/{controller}', '{action}', 'middleware' => [
                     App\Middleware\ApiMiddleware::class,
                     App\Middleware\AuthMiddleware::class
                 ]],

@@ -62,6 +62,7 @@
 ### Revert
 - **Framework:** rename back to `framework` instead of ucfirst() (c325fb0)
 - **Redis:** Remove view in redis , use other software install (c5d3378)
+- **app:** Backup folder name to `application` (19121a6)
 
 ### Style
 - **Bencode:** Move Bencode library to App\Library but not part of framework (01abc98)

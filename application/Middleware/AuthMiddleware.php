@@ -79,10 +79,11 @@ class AuthMiddleware
          * /admin/service  -> AdminController::actionService   ->  route.admin_service
          */
         $route = strtolower(str_replace(
-                ['src\\controllers\\', 'Controller', 'action'], '',
+                ['App\\Controllers\\', 'Controller', 'action'], '',
                 $controllerName . '_' . $action
             )
         );
+
         $required_class = config('route.' . $route) ?: 1;
         if ($curuser->getClass() < $required_class) {
             return app()->response->setStatusCode(403);  // FIXME redirect to /error may better
