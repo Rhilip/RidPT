@@ -95,7 +95,7 @@ VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)
                 'anonymous' => $this->anonymous, 'ext' => $ext
             ])->execute();
             $id = app()->pdo->getLastInsertId();
-            $file_loc = app()->getPrivatePath('subs') . DIRECTORY_SEPARATOR . $id . '.' . $ext;
+            $file_loc = app()->getStoragePath('subs') . DIRECTORY_SEPARATOR . $id . '.' . $ext;
             $this->file->saveAs($file_loc);
             app()->pdo->commit();
         } catch (\Exception $e) {

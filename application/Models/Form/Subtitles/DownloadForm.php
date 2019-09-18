@@ -43,7 +43,7 @@ class DownloadForm extends Validator
     protected function getSendFileContent()
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
-        $file_loc = app()->getPrivatePath('subs') . DIRECTORY_SEPARATOR . $filename;
+        $file_loc = app()->getStoragePath('subs') . DIRECTORY_SEPARATOR . $filename;
         return file_get_contents($file_loc);
     }
 }

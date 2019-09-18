@@ -64,6 +64,6 @@ class Constant
 
     public static function getTorrentFileLoc($tid)
     {
-        return app()->getPrivatePath('torrents') . DIRECTORY_SEPARATOR . $tid . '.torrent';
+        return app()->getStoragePath('torrents') . DIRECTORY_SEPARATOR . $tid . '.torrent';
     }
 }

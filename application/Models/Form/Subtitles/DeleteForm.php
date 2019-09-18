@@ -50,7 +50,7 @@ class DeleteForm extends Validator
     public function flush()
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
-        $file_loc = app()->getPrivatePath('subs') . DIRECTORY_SEPARATOR . $filename;
+        $file_loc = app()->getStoragePath('subs') . DIRECTORY_SEPARATOR . $filename;
 
         app()->pdo->createCommand('DELETE FROM subtitles WHERE id = :sid')->bindParams([
             'sid' => $this->subtitle['id']

@@ -168,9 +168,9 @@ class Application extends \Rid\Base\Application
         return $this->basePath . DIRECTORY_SEPARATOR . 'templates';
     }
 
-    public function getPrivatePath($sub_folder = null)
+    public function getStoragePath($sub_folder = null)
     {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'private' . (is_null($sub_folder) ? "" : DIRECTORY_SEPARATOR . $sub_folder);
+        return $this->basePath . DIRECTORY_SEPARATOR . 'storage' . (is_null($sub_folder) ? '' : DIRECTORY_SEPARATOR . $sub_folder);
     }
 
     // 打印变量的相关信息

@@ -28,6 +28,7 @@
 - **torrents/tags:** Store torrent tags in TABLE `torrents` (4d573e2)
 
 ### Fix
+- **Auth:** Fix class check for route in AuthMiddleware failed (007d262)
 - **Auth:** Fix user session can't storage in database (30b1049)
 - **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)
 - **Component:** Fix parent::onRequest{Before,After} miss (200926f)
