@@ -24,6 +24,7 @@
 - **Torrent/Search:** Use MySQL fulltext search. (354c07b)
 - **ban:** Sync site ban list of username and email in Crontab Jobs (33cc1e6)
 - **ban_ips:** Store banned ip in components/Site (01084c9)
+- **console:** use adhocore/cli to simple console application (a1bce3a)
 - **torrents/tags:** Store torrent tags in TABLE `torrents` (4d573e2)
 
 ### Fix
