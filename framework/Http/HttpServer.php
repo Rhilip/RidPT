@@ -7,6 +7,8 @@ use Rid\Base\Timer;
 use Rid\Helpers\ProcessHelper;
 
 use Swoole\Server;
+use Swoole\Table;
+use Throwable;
 
 /**
  * Http服务器类
@@ -53,8 +55,8 @@ class HttpServer
     public function start()
     {
         // 初始化参数
-        $this->_host = $this->_config['virtualHost']['host'];
-        $this->_port = $this->_config['virtualHost']['port'];
+        $this->_host = $this->_config['host'];
+        $this->_port = $this->_config['port'];
 
         // 实例化服务器
         $this->_server = new \Swoole\Http\Server($this->_host, $this->_port);
@@ -85,9 +87,9 @@ class HttpServer
         $this->welcome();
 
         // 在此处创建全局的 \Swoole\Table
-        $configTable = new \Swoole\Table(4096);
-        $configTable->column('value' , \Swoole\Table::TYPE_STRING, 4096);
-        $configTable->column('type', \Swoole\Table::TYPE_STRING, 64);
+        $configTable = new Table(4096);
+        $configTable->column('value', Table::TYPE_STRING, 4096);
+        $configTable->column('type', Table::TYPE_STRING, 64);
         $configTable->create();
         $this->_server->configTable = $configTable;
 
@@ -102,6 +104,8 @@ class HttpServer
     public function onStart(Server $server)
     {
         ProcessHelper::setTitle(PROJECT_NAME . ": master {$this->_host}:{$this->_port}");
+        // 执行回调
+        $this->_config['hook']['hook_start'] and call_user_func($this->_config['hook']['hook_start'], $server);
     }
 
     /**
@@ -111,7 +115,8 @@ class HttpServer
      */
     public function onShutdown(Server $server)
     {
-
+        // 执行回调
+        $this->_config['hook']['hook_shutdown'] and call_user_func($this->_config['hook']['hook_shutdown'], $server);
     }
 
     /**
@@ -122,6 +127,8 @@ class HttpServer
     public function onManagerStart(Server $server)
     {
         ProcessHelper::setTitle(PROJECT_NAME . ": manager");  // 进程命名
+        // 执行回调
+        $this->_config['hook']['hook_manager_start'] and call_user_func($this->_config['hook']['hook_manager_start'], $server);
     }
 
     /**
@@ -130,7 +137,8 @@ class HttpServer
      */
     public function onManagerStop(Server $server)
     {
-
+        // 执行回调
+        $this->_config['hook']['hook_manager_stop'] and call_user_func($this->_config['hook']['hook_manager_stop'], $server);
     }
 
     /**
@@ -153,7 +161,7 @@ class HttpServer
         }
 
         // 实例化App
-        $config = require $this->_config['virtualHost']['configFile'];
+        $config = require $this->_config['configFile'];
         $app = new Application($config);
         $app->setServ($this->_server);
         $app->loadAllComponents();
@@ -167,6 +175,9 @@ class HttpServer
                 }
             }
         }
+
+        // 执行回调
+        $this->_config['hook']['hook_worker_start'] and call_user_func($this->_config['hook']['hook_worker_start'], $server, $workerId);
     }
 
     /**
@@ -176,7 +187,8 @@ class HttpServer
      */
     public function onWorkerStop(Server $server, int $workerId)
     {
-
+        // 执行回调
+        $this->_config['hook']['hook_worker_stop'] and call_user_func($this->_config['hook']['hook_worker_stop'], $server, $workerId);
     }
 
     /**
@@ -190,7 +202,8 @@ class HttpServer
      */
     public function onWorkerError(Server $server, int $workerId, int $workerPid, int $exitCode, int $signal)
     {
-
+        // 执行回调
+        $this->_config['hook']['hook_worker_error'] and call_user_func($this->_config['hook']['hook_worker_error'], $server, $workerId, $workerPid, $exitCode, $signal);
     }
 
     /**
@@ -201,7 +214,8 @@ class HttpServer
      */
     public function onWorkerExit(Server $server, int $workerId)
     {
-
+        // 执行回调
+        $this->_config['hook']['hook_worker_exit'] and call_user_func($this->_config['hook']['hook_worker_exit'], $server, $workerId);
     }
 
     /**
@@ -212,11 +226,18 @@ class HttpServer
     public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
         try {
+            // 执行请求
             app()->request->setRequester($request);
             app()->response->setResponder($response);
-            app()->run();  // 执行请求
-        } catch (\Throwable $e) {
+            app()->run();
+
+            // 执行回调
+            $this->_config['hook']['hook_request_success'] and call_user_func($this->_config['hook']['hook_request_success'], $this->_server, $request);
+        } catch (Throwable $e) {
+            // 错误处理
             app()->error->handleException($e);
+            // 执行回调
+            $this->_config['hook']['hook_request_error'] and call_user_func($this->_config['hook']['hook_request_error'], $this->_server, $request);
         }
     }
 
@@ -231,7 +252,7 @@ class HttpServer
                     if ($process_config['title']) ProcessHelper::setTitle('rid-httpd: ' . $process_config['title']);
 
                     // FIXME 实例化App
-                    $config = require $this->_config['virtualHost']['configFile'];
+                    $config = require $this->_config['configFile'];
                     $app = new Application($config);
                     $app->setServ($this->_server);
                     $app->loadAllComponents(array_flip($process_config['components']));
@@ -259,7 +280,7 @@ class HttpServer
         println('Worker      Num:       ' . $this->settings['worker_num']);
         println('Hot         Update:    ' . ($this->settings['max_request'] == 1 ? 'enabled' : 'disabled'));
         println('Coroutine   Mode:      ' . ($this->settings['enable_coroutine'] ? 'enabled' : 'disabled'));
-        println('Config      File:      ' . $this->_config['virtualHost']['configFile']);
+        println('Config      File:      ' . $this->_config['configFile']);
         println('───────────────────────────────────────');
     }
 

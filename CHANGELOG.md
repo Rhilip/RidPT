@@ -28,11 +28,12 @@
 - **torrents/tags:** Store torrent tags in TABLE `torrents` (4d573e2)
 
 ### Fix
-- **Auth:** Fix class check for route in AuthMiddleware failed (007d262)
 - **Auth:** Fix user session can't storage in database (30b1049)
+- **Auth:** Fix class check for route in AuthMiddleware failed (007d262)
 - **Auth/Login:** Fix user can't login after commit `6009dc8` (d509127)
 - **Component:** Fix parent::onRequest{Before,After} miss (200926f)
 - **Search:** Search keywords in NPHP ways (ccde9c0)
+- **Server:** Fix daemon and hot-reload not work (a206217)
 - **Torrent:** Fix can't download torrent due to Declaration compatible (36588cc)
 - **Torrent/Comment:** Fix user can't see anonymous uploader's comment (bd2d821)
 - **User:** Fix User Class miss in string format (3680444)
@@ -69,6 +70,8 @@
 ### Style
 - **Bencode:** Move Bencode library to App\Library but not part of framework (01abc98)
 - **EnvironmentLoader:** Use Dotenv to load Loads environment variables (e6394a6)
+- **Folder:** Rename folder name `<root>/private` to `<root>/storage` (f540d8f)
+- **Nginx:** Rename Nginx Migration filename (108324e)
 - **Redis:** rewrite namespace of cache keys (0c4e1a2)
 - **dir:** rename folder `apps\` to `src\` (a01035c)
 - **dir:** move apps\public to top dir (cb3beae)

@@ -49,8 +49,8 @@ if (!PHP_SAPI === 'cli') {
  *
  * phpdotenv provides a automagically loader for
  * Loads environment variables from .env to getenv(), $_ENV and $_SERVER
- * So we can then use env($name = null, $default = '') to get environment
- * variables quickly and simply.
+ * So we can then use function env($name = null, $default = '') to get
+ * environment variables quickly and simply.
  *
  */
 $dotenv = Dotenv\Dotenv::create(RIDPT_ROOT);
@@ -60,6 +60,10 @@ $dotenv->load();  // $dotenv->overload();
  * --------------------------------------------------------------------------
  * Start Console Application
  * --------------------------------------------------------------------------
+ *
+ * A Console Application started to parse our input and run the registered
+ * commands (defined in `/config/commands.php`).
+ *
  */
 $console = new \Ahc\Cli\Application(PROJECT_NAME, PROJECT_VERSION);
 $commands = require RIDPT_ROOT . '/config/commands.php';
