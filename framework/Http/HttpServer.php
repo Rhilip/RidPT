@@ -156,7 +156,6 @@ class HttpServer
         $config = require $this->_config['virtualHost']['configFile'];
         $app = new Application($config);
         $app->setServ($this->_server);
-        $app->setWorkerId($workerId);
         $app->loadAllComponents();
 
         if ($workerId == 0) {  // 将系统设置中的 Timer 添加到 worker #0 中

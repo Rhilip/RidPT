@@ -207,14 +207,4 @@ class Application extends \Rid\Base\Application
         $this->_serv = $serv;
     }
 
-    public function getWorkerId(): int
-    {
-        return $this->_worker ?? -1;
-    }
-
-    public function setWorkerId(int $worker): void
-    {
-        $this->_worker = $worker;
-    }
-
 }

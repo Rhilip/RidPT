@@ -22,7 +22,7 @@ class Config extends Component
         // Get \Swoole\Table object From \Server, So that we can share same dynamic config
         $this->cacheTable = app()->getServ()->configTable;
 
-        if ($this->cacheTable->count() == 0 && app()->getWorkerId() == 0) {
+        if ($this->cacheTable->count() == 0 && app()->getServ()->worker_id == 0) {
             $configs = app()->pdo->createCommand('SELECT `name`, `value`, `type` FROM `site_config`')->queryAll();
             foreach ($configs as $config) {
                 $this->load($config);
