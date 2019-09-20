@@ -32,11 +32,11 @@ class ServerCommand extends Command
 
         switch ($action) {
             case 'start':
-                return $this->actionStart($daemon, $update);
+                return $this->actionStart();
             case 'stop':
                 return $this->actionStop();
             case 'restart':
-                return $this->actionRestart($daemon, $update);
+                return $this->actionRestart();
             case 'reload':
                 return $this->actionReload();
             case 'taskreload':
@@ -48,16 +48,14 @@ class ServerCommand extends Command
     }
 
     // 启动服务
-    public function actionStart($daemon, $update)
+    public function actionStart()
     {
         if ($pid = $this->getPid()) {
             println("rid-httpd is running, PID : {$pid}.");
             return 1;
         }
 
-        $config = require RIDPT_ROOT . '/config/httpServer.php';
-
-        $server = new HttpServer($config);
+        $server = new HttpServer($this->httpServerConfig);
         $server->start();
         return 0;  // 返回退出码
     }
@@ -78,10 +76,10 @@ class ServerCommand extends Command
     }
 
     // 重启服务
-    public function actionRestart($daemon, $update)
+    public function actionRestart()
     {
         $this->actionStop();
-        $this->actionStart($daemon, $update);
+        $this->actionStart();
         return 0;  // 返回退出码
     }
 
@@ -122,7 +120,8 @@ class ServerCommand extends Command
     }
 
     // 载入并重写配置
-    private function readConfig($update,$daemon) {
+    private function readConfig($update, $daemon)
+    {
         $this->httpServerConfig = require RIDPT_ROOT . '/config/httpServer.php';
         if ($update) {
             $this->httpServerConfig['settings']['max_request'] = 1;
@@ -130,11 +129,13 @@ class ServerCommand extends Command
         $this->httpServerConfig['settings']['daemonize'] = $daemon;
     }
 
-    private function getPidFile() {
+    private function getPidFile()
+    {
         return $this->httpServerConfig['settings']['pid_file'];
     }
 
-    private function getPid() {
+    private function getPid()
+    {
         return ProcessHelper::readPidFile($this->getPidFile());
     }
 }
