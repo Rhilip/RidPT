@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v0.1.6-alpha"></a>
+## [v0.1.6-alpha] - 2019-09-20
 ### Build
 - **Validator:** Upgrade siriusphp/validation to 2.3 (eb039eb)
 
@@ -44,6 +47,7 @@
 - **IpBan:** Move ip ban list to runtime config (e0fb4f6)
 - **JWT:** Short JWT payload key (7895158)
 - **Process:** Disable Pdo And Redis called data in custom process (b744e81)
+- **WorkerId:** Use getServ()->worker_id to Get workerId instead of set then getWorkerId() (bfdddde)
 
 ### Refactor
 - **Array:** Move setDefault for Array as global function array_set_default (b825eca)
@@ -52,6 +56,7 @@
 - **Auth/Middleware:** merge Old Auth{ByCookies, ByPasskey}Middleware (71cd7d7)
 - **Config:** Add define of config key type and can add runtime config (d57aede)
 - **Config:** Remove params `$throw` in Config()->get() (706cc9a)
+- **Config:** Sort Config of `httpServer` and add Server hook (f47c458)
 - **Controller:** Move APIController out Framework (0dc7106)
 - **RateLimit:** Change last param of isRateLimitHit and rate limit store Namespace (4dd571d)
 - **Site:** Simple Category Detail get function (ffa6855)
@@ -77,6 +82,14 @@
 - **dir:** move apps\public to top dir (cb3beae)
 - **env:** use $_ENV instead of getenv (2f5f0ac)
 - **namespace:** `apps` to `App` with ucfirst... (8075d58)
+
+### BREAKING CHANGE
+
+Table `users` change
+
+rename table `user_session_log` to `sessions` , add table `session_log`
+
+User status 'banned' replace by 'disabled'
 
 
 <a name="v0.1.5-alpha"></a>
@@ -447,7 +460,8 @@ Structure of Table `users_session_log` Change
 <a name="v0.1.0-alpha"></a>
 ## v0.1.0-alpha - 2019-01-30
 
-[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.5-alpha...HEAD
+[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.6-alpha...HEAD
+[v0.1.6-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.5-alpha...v0.1.6-alpha
 [v0.1.5-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.4-alpha...v0.1.5-alpha
 [v0.1.4-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.3-alpha...v0.1.4-alpha
 [v0.1.3-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.2-alpha...v0.1.3-alpha

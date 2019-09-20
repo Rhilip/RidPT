@@ -7,7 +7,7 @@ class Rid
 {
 
     // 版本号
-    const VERSION = 'v0.1.5-alpha';
+    const VERSION = 'v0.1.6-alpha';
 
     // App实例
     protected static $_app;

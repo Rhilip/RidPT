@@ -8,7 +8,7 @@
  */
 
 define('PROJECT_NAME', 'RidPT');
-define('PROJECT_VERSION', 'v0.1.5-alpha');
+define('PROJECT_VERSION', 'v0.1.6-alpha');
 define('RIDPT_ROOT', dirname(__DIR__));
 define('RIDPT_START', microtime(true));
 
