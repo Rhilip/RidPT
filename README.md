@@ -1,12 +1,13 @@
 <p align="center">
 <img src="https://github.com/Rhilip/RidPT/raw/master/public/static/pic/logo.png" width='256px'><br/>
-A Private Torrent framework Project.<br/>
-<a href="https://github.com/Rhilip/RidPT/releases"><img src="https://img.shields.io/github/release/Rhilip/RidPT.svg" alt="GitHub Releases" /></a>
-<a href="https://www.swoole.com/"><img src="https://img.shields.io/badge/used-Swoole-blue.svg" alt="used-Swoole-blue" /></a>
-<a href="https://github.com/Rhilip/RidPT/blob/master/LICENSE"><img src="https://img.shields.io/github/license/Rhilip/RidPT.svg" alt="GitHub license" /></a>
-<a href="https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_shield"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=shield" alt="FOSSA Status" /></a>
-<a href="https://t.me/ridpt"><img src="https://img.shields.io/badge/telegram-Group-blue.svg?logo=telegram"></a>
+Another Private Torrent framework Project. <b>On Development</b><br/>
 </p>
+
+[![GitHub Releases](https://img.shields.io/github/release/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/releases)
+[![used-Swoole-blue](https://img.shields.io/badge/used-Swoole-blue.svg)](https://www.swoole.com/)
+[![GitHub license](https://img.shields.io/github/license/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/blob/master/LICENSE)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_shield)
+[![Telegram Group](https://img.shields.io/badge/telegram-Group-blue.svg?logo=telegram)](https://t.me/ridpt)
 
 --------------------------------------
 
@@ -163,9 +164,14 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 |:--|:--:|:--|
 | [MixPHP](https://github.com/mix-php/mix-framework/tree/v1) | Framework | <https://www.kancloud.cn/onanying/mixphp1/379324> ( Chinese Version ) |
 | [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) | phpdotenv | <https://github.com/vlucas/phpdotenv> |
+| [adhocore/cli](https://github.com/adhocore/php-cli) | Console Application | <https://github.com/adhocore/php-cli> |
 | [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | <http://www.sirius.ro/php/sirius/validation/> |
 | [league/plates](https://github.com/thephpleague/plates) | Template system | <http://platesphp.com/> |
 | [firebase/php-jwt](https://github.com/firebase/php-jwt) | JWT | <https://github.com/firebase/php-jwt>, <https://jwt.io/> |
+
+## Sponsor
+
+![](https://meihezi.cache.ejcdn.com/images/common/logo.png) [MeiHeZi](https://www.meihezi.com) For Demo Site Host Server
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_large)
