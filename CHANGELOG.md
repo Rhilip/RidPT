@@ -8,6 +8,7 @@
 - **Validator:** Upgrade siriusphp/validation to 2.3 (eb039eb)
 
 ### Docs
+- **Release:** Version 'v0.1.6-alpha' (e5a6e3e)
 - **bin:** Add doc for bin/rid-httpd (59e0828)
 - **template:** Add git commit hash in `CHANGELOG.md` (76bc527)
 

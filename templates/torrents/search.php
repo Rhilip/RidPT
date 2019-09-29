@@ -67,11 +67,11 @@ $time_now = time();
                 <div class="col-md-offset-3 col-md-6">
                     <div class="input-group">
                         <div class="input-control search-box search-box-circle has-icon-left has-icon-right">
-                            <input type="search" class="form-control search-input" name="search" id="search" placeholder="搜索" value="<?= $this->e(app()->request->get('search')) ?>">
+                            <input type="search" class="form-control search-input" name="search" id="search" placeholder="<?= __('search') ?>" value="<?= $this->e(app()->request->get('search')) ?>">
                             <label for="search" class="input-control-icon-left search-icon"><i class="icon icon-search"></i></label>
                         </div>
                         <span class="input-group-btn">
-                            <button class="btn btn-primary" type="submit">搜索</button>
+                            <button class="btn btn-primary" type="submit"><?= __('search') ?></button>
                         </span>
                     </div>
                 </div>

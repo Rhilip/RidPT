@@ -9,6 +9,7 @@
 namespace Rid\Component;
 
 use Rid\Base\Component;
+use Symfony\Component\Translation\Translator;
 
 class I18n extends Component
 {
@@ -20,6 +21,10 @@ class I18n extends Component
      * @var string
      */
     public $fileNamespace = '\App\Lang';
+
+    public $cacheDir = '';
+    public $loader = [];
+    public $resources = [];
 
     /**
      * Allowed language
@@ -49,52 +54,65 @@ class I18n extends Component
     /*
      * The following properties are only available after calling init().
      */
-    protected $lastLangs = null;
+    protected $reqLangs = null;
+
+    protected $_user_lang = null;
+
+    /** @var Translator */
+    protected $_translator;
 
     public function onRequestBefore()
     {
+        $this->reqLangs = null;
+        $this->_user_lang = null;
         parent::onRequestBefore();
-        $lastLang = null;
+    }
+
+    public function onInitialize()
+    {
+        $this->_translator = new Translator($this->fallbackLang, null, $this->cacheDir, env('APP_DEBUG'));
+
+        // Add Loader
+        foreach ($this->loader as $format => $loader_type) {
+            $this->_translator->addLoader($format, new $loader_type());
+        }
+
+        // Add Resources
+        foreach ($this->resources as $format => $resources) {
+            foreach ($resources as $resource) {
+                $this->_translator->addResource($format, ...$resource);
+            }
+        }
     }
 
     /**
      * getUserLangs()
      * Returns the user languages
      * Normally it returns an array like this:
-     * 1. Forced language
-     * 2. Language in $_GET['lang']
-     * 3. Language in $_SESSION['lang']
-     * 4. HTTP_ACCEPT_LANGUAGE
-     * 5. Fallback language
+     *     1. Language in $_GET['lang']
+     *     2. Language in user setting
+     *     3. HTTP_ACCEPT_LANGUAGE
      * Note: duplicate values are deleted.
      *
-     * @param null $reqLang
-     * @return array with the user languages sorted by priority.
+     * @return string the user languages sorted by priority.
      */
-    private function getUserLangs($reqLang = null) {
-        $userLangs = array();
+    private function getUserLang()
+    {
+        // Return Cache value
+        if (!is_null($this->_user_lang)) return $this->_user_lang;
 
-        // Highest priority: forced language
-        if ($this->forcedLang != NULL) $userLangs[] = $this->forcedLang;
+        // Determine
+        $judged_langs = array();
 
-        // 1st highest priority: required language
-        if ($reqLang != null) {
-            $userLangs[] = $reqLang;
+        // 1nd highest priority: GET parameter 'lang'
+        if (!is_null(app()->request->get('lang')))
+            $judged_langs[] = app()->request->get('lang');
 
-            // Lowest priority: fallback
-            $userLangs[] = $this->fallbackLang;
+        // 2rd highest priority: user setting for login user
+        if (app()->auth->getCurUser() && !is_null(app()->auth->getCurUser()->getLang()))
+            $judged_langs[] = app()->auth->getCurUser()->getLang();
 
-            $userLangs = array_unique($userLangs);  // remove duplicate elements
-            return $userLangs;
-        }
-
-        // 2nd highest priority: GET parameter 'lang'
-        if (!is_null(app()->request->get('lang'))) $userLangs[] = app()->request->get('lang');
-
-        // 3rd highest priority: SESSION parameter 'lang'
-        if (!is_null(app()->auth->getCurUser()->getLang())) $userLangs[] = app()->auth->getCurUser()->getLang();
-
-        // 4th highest priority: HTTP_ACCEPT_LANGUAGE
+        // 3th highest priority: HTTP_ACCEPT_LANGUAGE
         if (!is_null(app()->request->header('accept_language'))) {
             /**
              * We get headers like this string 'en-US,en;q=0.8,uk;q=0.6'
@@ -116,53 +134,20 @@ class I18n extends Component
             arsort($prefLocales);
 
             foreach ($prefLocales as $part => $q) {
-                $userLangs[] = $part;
+                $judged_langs[] = $part;
             }
         }
 
-        // Lowest priority: fallback
-        $userLangs[] = $this->fallbackLang;
+        $userLangs = array_intersect(
+            array_unique($judged_langs),   // remove duplicate elements
+            $this->allowedLangSet
+        );
 
-        $userLangs = array_unique($userLangs);  // remove duplicate elements
-        $this->lastLangs = $userLangs;  // Store it for last use if not in req mode
-        return $userLangs;
-    }
-
-    private function getConfigClassName($langcode) {
-        $langcode = str_replace('-','_',$langcode);
-        return $this->fileNamespace . '\\' . $langcode;
-    }
-
-    private function getLangList($reqLang = null) {
-        // Quick Return the last used language list
-        if ($this->lastLangs != null && $reqLang == null) {
-            return $this->lastLangs;
+        foreach ($userLangs as $lang) {
+            $this->_user_lang = $lang;  // Store it for last use if not in req mode
+            return $lang;
         }
-
-        $userLangs = $this->getUserLangs($reqLang);
-
-        // remove illegal userLangs
-        $userLangs2 = array();
-        foreach ($userLangs as $key => $value) {
-            // only allow a-z, A-Z and 0-9 and _ and -
-            if (preg_match('/^[a-zA-Z0-9_-]*$/', $value) === 1 && in_array($value, $this->allowedLangSet)) {
-                if (class_exists($this->getConfigClassName($value))) {
-                    $userLangs2[] = $this->getConfigClassName($value);  // change it to class name
-                } elseif (
-                    // Fail back if main language exist
-                    $value !== substr($value, 0, 2)
-                    && class_exists($this->getConfigClassName(substr($value, 0, 2)))) {
-                    $userLangs2[] = $this->getConfigClassName(substr($value, 0, 2));
-                }
-            }
-        }
-
-        // remove duplicate elements
-        $userLangs2 = array_unique($userLangs2);
-
-        // Cache the main languages list is not in request model
-        if ($reqLang == null) $this->lastLangs = $userLangs2;
-        return $userLangs2;
+        return null;
     }
 
     /**
@@ -171,23 +156,18 @@ class I18n extends Component
      *
      * @param string $string the trans string
      * @param array $args the args used for format string by using `vsprintf`
-     * @param string $lang the required lang
+     * @param string|null $domain The domain for the message or null to use the default
+     * @param string|null $required_lang the required lang
      * @return string
      */
-    public function trans($string, $args = null, $lang = null)
+    public function trans($string, $args = [], $domain = null, $required_lang = null)
     {
-        $langs = $this->getLangList($lang);
 
-        $return = '';
-        foreach ($langs as $item) {
-            try {
-                $return = constant($item . "::" . $string);
-                break;
-            } catch (\Exception $e) {
-                app()->log->warning('A no-exist translation hit.', ['lang_class' => $item, 'string' => $string]);
-            }
-        }
+        $local =
+            $this->forcedLang ?? // Highest priority: forced language
+            $required_lang ??    // 1st highest priority: required language
+            $this->getUserLang();
 
-        return $args ? vsprintf($return, $args) : $return;
+        return $this->_translator->trans($string, $args, $domain, $local);
     }
 }

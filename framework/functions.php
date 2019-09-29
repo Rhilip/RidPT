@@ -29,9 +29,9 @@ if (!function_exists('env')) {
 }
 
 if (!function_exists('__')) {
-    function __($string, $avg = null, $lang = null)
+    function __($string, $avg = [], $domain = null, $lang = null)
     {
-        return app()->i18n->trans($string, $avg, $lang);
+        return app()->i18n->trans($string, $avg, $domain, $lang);
     }
 }
 

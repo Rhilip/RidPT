@@ -1,0 +1,20 @@
+{
+    "greeting": "你好，世界！",
+    "search": "搜索",
+    "nav": {
+        "index": "首&nbsp;&nbsp;页",
+        "forums": "论&nbsp;&nbsp;坛",
+        "torrents": "种&nbsp;&nbsp;子",
+        "collections": "合&nbsp;&nbsp;集",
+        "requests": "求&nbsp;&nbsp;种",
+        "upload": "做&nbsp;&nbsp;种",
+        "subtitles": "字&nbsp;&nbsp;幕",
+        "rules": "规&nbsp;&nbsp;则",
+        "faq": "常见问题",
+        "staff": "管&nbsp;理&nbsp;组",
+        "more": "更多",
+        "topten": "排行榜",
+        "stats": "统计数据",
+        "log": "日志"
+    }
+}

@@ -16,22 +16,22 @@ $user = app()->auth->getCurUser();
     <div class="container">
         <div class="collapse navbar-collapse navbar-collapse-custom">
             <ul class="nav navbar-nav nav-justified">
-                <li><a href="/"><?= __('nav_index') ?></a></li>
-                <li><a href="/forums"><?= __('nav_forums') ?></a></li> <!-- TODO  -->
-                <li><a href="/collections"><?= __('nav_collections') ?></a></li> <!-- TODO  -->
-                <li><a href="/torrents"><?= __('nav_torrents') ?></a></li>
-                <li><a href="/torrents/upload"><?= __('nav_upload') ?></a></li>
-                <li><a href="/torrents/request"><?= __('nav_requests') ?></a></li> <!-- TODO  -->
-                <li><a href="/subtitles"><?= __('nav_subtitles') ?></a></li> <!-- TODO  -->
-                <li><a href="/site/rules"><?= __('nav_rules') ?></a></li> <!-- TODO  -->
-                <li><a href="/site/staff"><?= __('nav_staff') ?></a></li> <!-- TODO  -->
+                <li><a href="/"><?= __('nav.index') ?></a></li>
+                <li><a href="/forums"><?= __('nav.forums') ?></a></li> <!-- TODO  -->
+                <li><a href="/collections"><?= __('nav.collections') ?></a></li> <!-- TODO  -->
+                <li><a href="/torrents"><?= __('nav.torrents') ?></a></li>
+                <li><a href="/torrents/upload"><?= __('nav.upload') ?></a></li>
+                <li><a href="/torrents/request"><?= __('nav.requests') ?></a></li> <!-- TODO  -->
+                <li><a href="/subtitles"><?= __('nav.subtitles') ?></a></li> <!-- TODO  -->
+                <li><a href="/site/rules"><?= __('nav.rules') ?></a></li> <!-- TODO  -->
+                <li><a href="/site/staff"><?= __('nav.staff') ?></a></li> <!-- TODO  -->
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?= __('nav_more') ?> <b class="caret"></b></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?= __('nav.more') ?> <b class="caret"></b></a>
                     <ul class="dropdown-menu" role="menu"><!-- FIXME class="active" in dropdown-munu -->
-                        <li><a href="/site/topten"><?= __('nav_topten') ?></a></li> <!-- TODO  -->
+                        <li><a href="/site/topten"><?= __('nav.topten') ?></a></li> <!-- TODO  -->
                         <li class="divider"></li>
-                        <li><a href="/site/stats"><?= __('nav_stats') ?></a></li> <!-- TODO  -->
-                        <li><a href="/site/logs"><?= __('nav_log') ?></a></li>
+                        <li><a href="/site/stats"><?= __('nav.stats') ?></a></li> <!-- TODO  -->
+                        <li><a href="/site/logs"><?= __('nav.log') ?></a></li>
                     </ul>
                 </li>
             </ul> <!-- END .navbar-nav -->

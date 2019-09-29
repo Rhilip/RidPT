@@ -1,0 +1,20 @@
+{
+    "greeting": "Hello World",
+    "search": "Search",
+    "nav": {
+        "index": "Index",
+        "forums": "Forums",
+        "torrents": "Torrents",
+        "collections": "Collections",
+        "requests": "Requests",
+        "upload": "Upload",
+        "subtitles": "Subtitles",
+        "rules": "Rules",
+        "faq": "FAQ",
+        "staff": "Staff",
+        "more": "More",
+        "topten": "Top 10",
+        "stats": "Stats",
+        "log": "Log"
+    }
+}

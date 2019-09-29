@@ -11,30 +11,30 @@
 return [
 
     // 基础路径
-    'basePath'         => dirname(__DIR__),
+    'basePath' => dirname(__DIR__),
 
     // 控制器命名空间
     'controllerNamespace' => 'App\Controllers',
 
     // 全局中间件
-    'middleware'          => [
+    'middleware' => [
         App\Middleware\IpBanMiddleware::class
     ],
 
     // 组件配置
-    'components'          => [
+    'components' => [
         // 路由
-        'route'    => [
+        'route' => [
             // 类路径
-            'class'          => Rid\Http\Route::class,
+            'class' => Rid\Http\Route::class,
             // 默认变量规则
             'defaultPattern' => '[\w-]+',
             // 路由变量规则
-            'patterns'       => [
+            'patterns' => [
                 'id' => '\d+'
             ],
             // 路由规则
-            'rules'          => [
+            'rules' => [
                 'GET tracker/{tracker_action}' => ['tracker', 'index'],
                 'GET captcha' => ['captcha', 'index'],
                 'GET maintenance' => ['maintenance', 'index'],
@@ -53,80 +53,42 @@ return [
         ],
 
         // 请求
-        'request'  => [
+        'request' => [
             'class' => Rid\Http\Request::class,
         ],
 
         // 响应
         'response' => [
             // 类路径
-            'class'         => Rid\Http\Response::class,
+            'class' => Rid\Http\Response::class,
             // 默认输出格式
             'defaultFormat' => Rid\Http\Response::FORMAT_HTML,
         ],
 
         // 错误
-        'error'    => [
-            'class'  => Rid\Http\Error::class,
+        'error' => [
+            'class' => Rid\Http\Error::class,
             'format' => Rid\Http\Error::FORMAT_HTML,
         ],
 
         // 日志
         'log' => [
-            'class'       => Rid\Component\Log::class,  // 类路径
-            'dir'         => 'logs',  // 日志目录
-            'rotate'      => Rid\Component\Log::ROTATE_DAY,  // 日志轮转类型
+            'class' => Rid\Component\Log::class,  // 类路径
+            'dir' => 'logs',  // 日志目录
+            'rotate' => Rid\Component\Log::ROTATE_DAY,  // 日志轮转类型
             'maxFileSize' => 0,  // 最大文件尺寸
         ],
 
-        // Session
-        'session'  => [
-            // 类路径
-            'class'          => Rid\Http\Session::class,
-            // 保存的Key前缀
-            'saveKeyPrefix'  => 'Session:',
-            // 生存时间
-            'maxLifetime'    => 7200,
-            // session键名
-            'name'           => 'session_id',
-            // 过期时间
-            'cookieExpires'  => 0,
-            // 有效的服务器路径
-            'cookiePath'     => '/',
-            // 有效域名/子域名
-            'cookieDomain'   => '',
-            // 仅通过安全的 HTTPS 连接传给客户端
-            'cookieSecure'   => false,
-            // 仅可通过 HTTP 协议访问
-            'cookieHttpOnly' => false,
-        ],
-
-        // Cookie
-        'cookie'   => [
-            // 类路径
-            'class'    => Rid\Http\Cookie::class,
-            // 过期时间
-            'expires'  => 31536000,
-            // 有效的服务器路径
-            'path'     => '/',
-            // 有效域名/子域名
-            'domain'   => '',
-            // 仅通过安全的 HTTPS 连接传给客户端
-            'secure'   => false,
-            // 仅可通过 HTTP 协议访问
-            'httpOnly' => false,
-        ],
-
         // 数据库
-        'pdo'      => [
+        'pdo' => [
             // 类路径
-            'class'         => Rid\Database\Persistent\PDOConnection::class,
+            'class' => Rid\Database\Persistent\PDOConnection::class,
             // 数据源格式
-            'dsn'           => env('DATABASE_DSN'),
+            'dsn' => env('DATABASE_DSN'),
             // 数据库用户名
-            'username'      => env('DATABASE_USERNAME'),
+            'username' => env('DATABASE_USERNAME'),
             // 数据库密码
-            'password'      => env('DATABASE_PASSWORD'),
+            'password' => env('DATABASE_PASSWORD'),
             // 驱动连接选项: http://php.net/manual/zh/pdo.setattribute.php
             'driverOptions' => [
                 // 设置默认的提取模式: \PDO::FETCH_OBJ | \PDO::FETCH_ASSOC
@@ -135,13 +97,13 @@ return [
         ],
 
         // redis
-        'redis'    => [
+        'redis' => [
             // 类路径
-            'class'    => Rid\Redis\Persistent\RedisConnection::class,
+            'class' => Rid\Redis\Persistent\RedisConnection::class,
             // 主机
-            'host'     => env('REDIS_HOST'),
+            'host' => env('REDIS_HOST'),
             // 端口
-            'port'     => env('REDIS_PORT'),
+            'port' => env('REDIS_PORT'),
             // 数据库
             'database' => env('REDIS_DATABASE'),
             // 密码
@@ -151,16 +113,66 @@ return [
             ]
         ],
 
-        'config' => [
-            'class'   => Rid\Component\Config::class,
+        // Session
+        'session' => [
+            // 类路径
+            'class' => Rid\Http\Session::class,
+            // 保存的Key前缀
+            'saveKeyPrefix' => 'Session:',
+            // 生存时间
+            'maxLifetime' => 7200,
+            // session键名
+            'name' => 'session_id',
+            // 过期时间
+            'cookieExpires' => 0,
+            // 有效的服务器路径
+            'cookiePath' => '/',
+            // 有效域名/子域名
+            'cookieDomain' => '',
+            // 仅通过安全的 HTTPS 连接传给客户端
+            'cookieSecure' => false,
+            // 仅可通过 HTTP 协议访问
+            'cookieHttpOnly' => false,
+        ],
+
+        // Cookie
+        'cookie' => [
+            // 类路径
+            'class' => Rid\Http\Cookie::class,
+            // 过期时间
+            'expires' => 31536000,
+            // 有效的服务器路径
+            'path' => '/',
+            // 有效域名/子域名
+            'domain' => '',
+            // 仅通过安全的 HTTPS 连接传给客户端
+            'secure' => false,
+            // 仅可通过 HTTP 协议访问
+            'httpOnly' => false,
         ],
 
         'i18n' => [
             'class' => Rid\Component\I18n::class,
-            'fileNamespace' => 'App\Lang',
             'fallbackLang' => 'en',
-            'forcedLang' => null,
-            'allowedLangSet' => ['en', 'zh-CN']
+            'cacheDir' => dirname(__DIR__) . '/var/translation',
+            'loader' => [
+                // 'format' => loaderClass
+                'json' => Symfony\Component\Translation\Loader\JsonFileLoader::class
+            ],
+            'resources' => [
+                // 'format' => [[$resource, $locale, $domain = null]]
+                'json' => [
+                    [dirname(__DIR__) . '/translations/locale-en.json', 'en'],
+                    [dirname(__DIR__) . '/translations/locale-zh_CN.json', 'zh-CN'],
+                ],
+            ],
+
+            'allowedLangSet' => ['en', 'zh-CN'],
+            'forcedLang' => null
+        ],
+
+        'config' => [
+            'class' => Rid\Component\Config::class,
         ],
 
         'site' => [
@@ -173,17 +185,17 @@ return [
     ],
 
     // 类库配置
-    'libraries'           => [
+    'libraries' => [
         'mailer' => [
-            'class'   => App\Libraries\Mailer::class,
-            'debug'   => env('MAILER_DEBUG'),
-            'host'    => env('MAILER_HOST'),
-            'port'    => env('MAILER_PORT'),
+            'class' => App\Libraries\Mailer::class,
+            'debug' => env('MAILER_DEBUG'),
+            'host' => env('MAILER_HOST'),
+            'port' => env('MAILER_PORT'),
             'encryption' => env('MAILER_ENCRYPTION'),
-            'username'=> env('MAILER_USERNAME'),
-            'password'=> env('MAILER_PASSWORD'),
-            'from'    => env('MAILER_FROM'),
-            'fromname'=> env('MAILER_FROMNAME'),
+            'username' => env('MAILER_USERNAME'),
+            'password' => env('MAILER_PASSWORD'),
+            'from' => env('MAILER_FROM'),
+            'fromname' => env('MAILER_FROMNAME'),
         ],
     ],
 ];
