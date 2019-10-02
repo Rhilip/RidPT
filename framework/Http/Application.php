@@ -8,6 +8,7 @@ use Swoole\Http\Server;
 /**
  * App类
  *
+ * @property \Rid\Http\Error $error
  * @property \Rid\Http\Session $session
  * @property \Rid\Http\Cookie $cookie
  * @property \Rid\Http\Route $route
@@ -160,12 +161,6 @@ class Application extends \Rid\Base\Application
     public function getPublicPath()
     {
         return $this->basePath . DIRECTORY_SEPARATOR . 'public';
-    }
-
-    // 获取视图目录路径
-    public function getViewPath()
-    {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'templates';
     }
 
     public function getStoragePath($sub_folder = null)

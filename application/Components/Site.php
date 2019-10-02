@@ -112,7 +112,7 @@ class Site extends Component
 
     public function sendEmail($receivers, $subject, $template, $data = [])
     {
-        $mail_body = (new View(false))->render($template, $data);
+        $mail_body = app()->view->render($template, $data);
         $mail_sender = Mailer::newInstanceByConfig('Libraries.[mailer]');
         $mail_sender->send($receivers, $subject, $mail_body);
     }

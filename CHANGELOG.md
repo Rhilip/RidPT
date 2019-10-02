@@ -5,6 +5,7 @@
 - **Sponsor:** Add Sponsor `MeiHeZi` (ae612e0)
 
 ### Feat
+- **Torrent:** Per-add torrent edit (f06b342)
 - **i18n:** Use symfony/translation and JSON format for locale (02cc251)
 
 

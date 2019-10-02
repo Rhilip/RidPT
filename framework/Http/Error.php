@@ -56,7 +56,7 @@ class Error extends Component
             ob_get_contents() and ob_clean();
 
             app()->response->statusCode = $statusCode;
-            app()->response->content    = (new View())->render('error', $errors);
+            app()->response->content    = app()->view->render('error', $errors);
             app()->response->format     = Response::FORMAT_HTML;
 
             app()->response->send();

@@ -4,12 +4,12 @@ namespace Rid\Base;
 
 /**
  *
- * @property \Rid\Http\Error $error
  * @property \Rid\Component\Log $log
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Component\Config $config
  * @property \Rid\Component\I18n $i18n
+ * @property \Rid\Component\View $view
  * @property \App\Components\Site $site
  */
 class Application extends BaseObject

@@ -11,6 +11,6 @@ class Controller extends BaseObject
 {
     public function render($name, $data = [])
     {
-        return (new View())->render($name, $data);
+        return app()->view->render($name, $data);
     }
 }
