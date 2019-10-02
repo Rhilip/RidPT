@@ -8,7 +8,7 @@
 
 namespace App\Components;
 
-use App\Models;
+use App\Entity;
 use App\Libraries\Mailer;
 use App\Libraries\Constant;
 
@@ -48,7 +48,7 @@ class Site extends Component
         if (array_key_exists($tid, $this->torrents)) {
             $torrent = $this->torrents[$tid];
         } else {
-            $torrent = new Models\Torrent($tid);  // TODO Handing if this torrent id does not exist
+            $torrent = new Entity\Torrent($tid);  // TODO Handing if this torrent id does not exist
             $this->torrents[$tid] = $torrent;
         }
         return $torrent;
@@ -56,14 +56,14 @@ class Site extends Component
 
     /**
      * @param $uid
-     * @return Models\User|bool return False means this user is not exist
+     * @return Entity\User|bool return False means this user is not exist
      */
     public function getUser($uid)
     {
         if (array_key_exists($uid, $this->users)) {
             $user = $this->users[$uid];
         } else {
-            $user = new Models\User($uid);  // TODO Handing if this user id does not exist
+            $user = new Entity\User($uid);  // TODO Handing if this user id does not exist
             $this->users[$uid] = $user;
         }
         return $user;
@@ -71,7 +71,7 @@ class Site extends Component
 
     /**
      * @param $username
-     * @return Models\User|bool
+     * @return Entity\User|bool
      */
     public function getUserByUserName($username)
     {

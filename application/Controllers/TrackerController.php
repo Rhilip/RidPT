@@ -9,7 +9,7 @@
 namespace App\Controllers;
 
 use App\Libraries\Constant;
-use App\Models\User;
+use App\Entity\User;
 use Rid\Utils\IpUtils;
 use App\Libraries\Bencode\Bencode;
 

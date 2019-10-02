@@ -11,7 +11,7 @@
 
 $torrent = $edit->getTorrent();
 
-use App\Models\Torrent; ?>
+use App\Entity\Torrent; ?>
 
 <?= $this->layout('layout/base') ?>
 

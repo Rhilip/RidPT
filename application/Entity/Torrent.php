@@ -6,7 +6,7 @@
  * Time: 10:10
  */
 
-namespace App\Models;
+namespace App\Entity;
 
 use App\Libraries\Constant;
 

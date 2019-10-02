@@ -8,7 +8,7 @@
 
 namespace App\Components;
 
-use App\Models;
+use App\Entity;
 use App\Libraries\Constant;
 
 use Rid\Base\Component;
@@ -30,14 +30,14 @@ class Auth extends Component
 
     public function onRequestAfter()
     {
-        parent::onRequestAfter();
         $this->logSessionInfo();
+        parent::onRequestAfter();
     }
 
     /**
      * @param string $grant
      * @param string|bool $flush
-     * @return Models\User|bool return False means this user is anonymous
+     * @return Entity\User|bool return False means this user is anonymous
      */
     public function getCurUser($grant = 'cookies', $flush = false)
     {
@@ -60,7 +60,7 @@ class Auth extends Component
 
     /**
      * @param string $grant
-     * @return Models\User|boolean
+     * @return Entity\User|boolean
      */
     protected function loadCurUser($grant = 'cookies')
     {
@@ -71,7 +71,7 @@ class Auth extends Component
         if ($user_id !== false && is_int($user_id) && $user_id > 0) {
             $user_id = intval($user_id);
             $curuser = app()->site->getUser($user_id);
-            if ($curuser->getStatus() !== Models\User::STATUS_DISABLED)  // user status shouldn't be disabled
+            if ($curuser->getStatus() !== Entity\User::STATUS_DISABLED)  // user status shouldn't be disabled
                 return $curuser;
         }
 
@@ -106,10 +106,11 @@ class Auth extends Component
         $this->cur_user_jit = $payload['jti'];
 
         // Check if user want secure access but his environment is not secure
-        if (!app()->request->isSecure() &&                     // if User requests is not secure , then
-            ((isset($payload['ssl']) && $payload['ssl'] &&     //   if User want secure access
-                    config('security.ssl_login') > 0          //      and if Our site support ssl feature
-                ) || config('security.ssl_login') > 1)) {  //   or if  Our site FORCE enabled ssl feature
+        if (!app()->request->isSecure() &&                        // if User requests is not secure , and
+            (config('security.ssl_login') > 1 ||        // if Our site FORCE enabled ssl feature
+             (config('security.ssl_login') > 0 && isset($payload['ssl']) && $payload['ssl']) // if Our site support ssl feature and User want secure access
+            )
+        ) {
             app()->response->redirect(str_replace('http://', 'https://', app()->request->fullUrl()));
             app()->response->setHeader('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
         }

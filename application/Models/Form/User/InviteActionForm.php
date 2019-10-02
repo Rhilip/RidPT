@@ -8,7 +8,7 @@
 
 namespace App\Models\Form\User;
 
-use App\Models\User;
+use App\Entity\User;
 use Rid\Validators\Validator;
 
 class InviteActionForm extends Validator

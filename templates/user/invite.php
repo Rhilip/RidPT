@@ -6,7 +6,7 @@
  * Time: 16:33
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Models\User $user
+ * @var \App\Entity\User $user
  */
 ?>
 
@@ -51,7 +51,7 @@
                         <td class="text-center"><?= $invitee['status'] ?></td>
                         <?php if (app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
                         <td class="text-center">
-                            <?php if ($invitee['status'] == \App\Models\User::STATUS_PENDING): ?>
+                            <?php if ($invitee['status'] == \App\Entity\User::STATUS_PENDING): ?>
                             <a class="btn btn-info btn-sm" href="?action=confirm&uid=<?= $this->e($invitee['id']) ?>" onclick="return confirm('Really?')">Confirm</a>
                             <?php endif ?>
                         </td>

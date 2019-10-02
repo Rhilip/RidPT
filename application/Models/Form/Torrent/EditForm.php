@@ -11,7 +11,7 @@ namespace App\Models\Form\Torrent;
 
 use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidTorrentTrait;
-use App\Models\Torrent;
+use App\Entity\Torrent;
 
 use Rid\Http\UploadFile;
 use Rid\Validators\Validator;

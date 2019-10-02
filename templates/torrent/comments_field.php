@@ -6,7 +6,7 @@
  * Time: 8:58 PM
  *
  * @var array $comments
- * @var \App\Models\Torrent $torrent
+ * @var \App\Entity\Torrent $torrent
  */
 
 $enabled_editor = $enabled_editor ?? false;

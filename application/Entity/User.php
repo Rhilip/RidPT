@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Entity;
 
 use Rid\Utils\AttributesImportUtils;
 use Rid\Utils\ClassValueCacheUtils;

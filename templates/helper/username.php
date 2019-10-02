@@ -6,7 +6,7 @@
  * Time: 10:57 AM
  *
  * @var League\Plates\Template\Template $this
- * @var App\Models\User $user
+ * @var App\Entity\User $user
  */
 
 $hide = $hide ?? false;

@@ -8,7 +8,7 @@
 
 namespace App\Controllers;
 
-use App\Models\User;
+use App\Entity\User;
 use App\Models\Form\Auth;
 
 use Rid\Http\Controller;

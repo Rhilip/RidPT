@@ -8,7 +8,7 @@
 
 namespace App\Models\Form\Traits;
 
-use App\Models\User;
+use App\Entity\User;
 
 trait isValidUserTrait
 {
