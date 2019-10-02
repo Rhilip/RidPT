@@ -13,8 +13,8 @@
     </div>
     <div class="collapse navbar-collapse navbar-collapse-custom">
         <ul class="nav navbar-nav">
-            <li><!--suppress HtmlUnknownTarget --><a href="/auth/login">Authenticate</a></li>
-            <li><!--suppress HtmlUnknownTarget --><a href="/auth/register">Recruit</a></li>
+            <li><!--suppress HtmlUnknownTarget --><a href="/auth/login"><?= __('nav.authenticate') ?></a></li>
+            <li><!--suppress HtmlUnknownTarget --><a href="/auth/register"><?= __('nav.recruit') ?></a></li>
         </ul> <!-- END .navbar-nav -->
     </div><!-- END .navbar-collapse -->
 </nav> <!-- END /nav -->

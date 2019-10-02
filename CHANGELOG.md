@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Docs
+- **Sponsor:** Add Sponsor `MeiHeZi` (ae612e0)
+
 
 <a name="v0.1.6-alpha"></a>
 ## [v0.1.6-alpha] - 2019-09-20

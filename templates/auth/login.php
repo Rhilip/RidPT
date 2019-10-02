@@ -20,7 +20,7 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
 <div class="row">
     <div class="col-md-7 col-md-offset-3">
         <div class="panel">
-            <div class="panel-heading">Authenticate</div>
+            <div class="panel-heading"><?= __('nav.authenticate') ?></div>
             <div class="panel-body">
                 <div class="text-primary text-center">
                     <strong>You have <?= $left_attempts > 3 ? $left_attempts : "<span class='text-red'>$left_attempts</span>" ?>/<?= config('security.max_login_attempts') ?> attempts left, or your IP will be banned.</strong>
@@ -32,7 +32,7 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                 <?php endif; ?>
                 <form class="auth-form" method="post" data-toggle="validator" role="form">
                     <div class="form-group">
-                        <label for="username">Username / Email address</label>
+                        <label for="username"><?= __('form.login.username') ?></label>
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fas fa-user-alt fa-fw"></span></span>
                             <input type="text" class="form-control" id="username" name="username" required
@@ -41,7 +41,7 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                     </div>
 
                     <div class="form-group">
-                        <label for="password">Password</label>
+                        <label for="password"><?= __('form.password') ?></label>
                         <div class="pull-right"><a href="/auth/recover" class="text-muted">Forget you password?</a></div>
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fas fa-key fa-fw"></span></span>

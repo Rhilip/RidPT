@@ -14,17 +14,10 @@ use Symfony\Component\Translation\Translator;
 class I18n extends Component
 {
 
-    /**
-     * Language file path
-     * This is the path for the language files.
-     *
-     * @var string
-     */
-    public $fileNamespace = '\App\Lang';
-
-    public $cacheDir = '';
     public $loader = [];
     public $resources = [];
+
+    public $cacheDir = '';
 
     /**
      * Allowed language
@@ -54,8 +47,6 @@ class I18n extends Component
     /*
      * The following properties are only available after calling init().
      */
-    protected $reqLangs = null;
-
     protected $_user_lang = null;
 
     /** @var Translator */
@@ -63,7 +54,6 @@ class I18n extends Component
 
     public function onRequestBefore()
     {
-        $this->reqLangs = null;
         $this->_user_lang = null;
         parent::onRequestBefore();
     }
@@ -155,7 +145,7 @@ class I18n extends Component
      * will be return.
      *
      * @param string $string the trans string
-     * @param array $args the args used for format string by using `vsprintf`
+     * @param array $args the args used for format string
      * @param string|null $domain The domain for the message or null to use the default
      * @param string|null $required_lang the required lang
      * @return string

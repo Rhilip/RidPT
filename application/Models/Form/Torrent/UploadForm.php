@@ -6,43 +6,20 @@
  * Time: 21:45
  */
 
-namespace App\Models\Form\Torrents;
+namespace App\Models\Form\Torrent;
 
 use App\Libraries\Constant;
 use Rid\Http\UploadFile;
-use Rid\Validators\Validator;
 
 use App\Libraries\Bencode\Bencode;
 use App\Libraries\Bencode\ParseErrorException;
 
-class UploadForm extends Validator
+class UploadForm extends EditForm
 {
 
     /**  @var UploadFile */
     public $file;
-    /**  @var UploadFile */
-    public $nfo;
 
-    public $category;
-    public $title;
-    public $subtitle = '';
-    public $links;
-    public $descr;
-
-    public $anonymous = 0;  // If user upload this torrent Anonymous
-    public $hr = 0;  // If This torrent require hr check
-
-    // Quality
-    public $audio = 0; /* 0 is default value. */
-    public $codec = 0;
-    public $medium = 0;
-    public $resolution = 0;
-
-    public $team = 0;
-
-    public $tags;
-
-    private $id = 0;
     private $info_hash; // the value of sha1($this->$torrent_dict['info'])
 
     private $status = 'confirmed';
@@ -82,23 +59,12 @@ class UploadForm extends Validator
 
     public static function inputRules(): array
     {
-        $categories_id_list = array_map(function ($cat) {
-            return $cat['id'];
-        }, app()->site->ruleCanUsedCategory());
-
-        $rules = [
-            'title' => 'required',
-            'file' => [
-                ['required'],
-                ['Upload\Required'],
-                ['Upload\Extension', ['allowed' => 'torrent']],
-                ['Upload\Size', ['size' => config('upload.max_torrent_file_size') . 'B']]
-            ],
-            'category' => [
-                ['required'], ['Integer'],
-                ['InList', ['list' => $categories_id_list]]
-            ],
-            'descr' => 'required',
+        $rules = static::baseTorrentRules();
+        $rules['file'] = [
+            ['required'],
+            ['Upload\Required'],
+            ['Upload\Extension', ['allowed' => 'torrent']],
+            ['Upload\Size', ['size' => config('upload.max_torrent_file_size') . 'B']]
         ];
 
         if (config('torrent_upload.enable_upload_nfo') &&  // Enable nfo upload
@@ -108,52 +74,6 @@ class UploadForm extends Validator
             $rules['nfo'] = [
                 ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],
                 ['Upload\Size', ['size' => config('upload.max_nfo_file_size') . 'B']]
-            ];
-        }
-
-        // Add Quality Valid
-        foreach (app()->site->getQualityTableList() as $quality => $title) {
-            $quality_id_list = [0];
-            // IF enabled this quality field , then load it value list from setting
-            // Else we just allow the default value 0 to prevent cheating
-            if (config('torrent_upload.enable_quality_' . $quality)) {
-                foreach (app()->site->ruleQuality($quality) as $cat) {
-                    $quality_id_list[] = $cat['id'];
-                }
-            }
-
-            $rules[$quality] = [
-                ['Integer'],
-                ['InList', ['list' => $quality_id_list]]
-            ];
-        }
-
-        // Add Team id Valid
-        $team_id_list = [0];
-        if (config('torrent_upload.enable_teams')) {
-            foreach (app()->site->ruleTeam() as $team) {
-                if (app()->auth->getCurUser()->getClass() >= $team['class_require']) {
-                    $team_id_list[] = $team['id'];
-                }
-            }
-        }
-
-        $rules['team'] = [
-            ['Integer'],
-            ['InList', ['list' => $team_id_list]]
-        ];
-
-        // Add Flag Valid
-        // Notice: we don't valid if user have privilege to use this value,
-        // Un privilege flag will be rewrite in rewriteFlags() when call flush()
-        if (config('torrent_upload.enable_anonymous')) {
-            $rules['uplver'] = [
-                ['InList', ['list' => [0, 1]]]
-            ];
-        }
-        if (config('torrent_upload.enable_hr')) {
-            $rules['hr'] = [
-                ['InList', ['list' => [0, 1]]]
             ];
         }
 
@@ -315,7 +235,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
                 'category' => $this->category,
                 'filename' => $this->file->getBaseName(),
                 'torrent_name' => $this->torrent_name, 'type' => $this->torrent_type, 'size' => $this->torrent_size,
-                'structure' => $this->torrent_structure, 'tags' => $this->getTags(),  // JSON
+                'structure' => $this->torrent_structure, 'tags' => $tags,  // JSON
                 'audio' => (int)$this->audio, 'codec' => (int)$this->codec,
                 'medium' => (int)$this->medium, 'resolution' => (int)$this->resolution,
                 'team' => $this->team,
@@ -351,52 +271,9 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
        app()->site->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : app()->auth->getCurUser()->getUsername()));
     }
 
-    // Check and rewrite torrent flags based on site config and user's privilege of upload flags
-    private function rewriteFlags()
-    {
-        foreach (['anonymous', 'hr'] as $flag) {
-            $config = config('torrent_upload.enable_' . $flag);
-            if ($config == 2) {  // if global config force enabled this flag
-                $this->$flag = 1;
-            } elseif ($config == 0) {                 // if global config disabled this flag
-                $this->$flag = 0;
-            } else {  // check if user can use this flag
-                if (!app()->auth->getCurUser()->isPrivilege('upload_flag_' . $flag)) {
-                    $this->$flag = 0;
-                }
-            }
-        }
-    }
-
     // TODO update torrent status based on user class or their owned torrents count
     private function determineTorrentStatus() {
         $this->status = self::TORRENT_STATUS_CONFIRMED;
-    }
-
-    private function getTags(): array
-    {
-        $tags_list = [];
-        if (config('torrent_upload.enable_tags')) {
-            $tags = str_replace(',', ' ', $this->tags);
-            $tags_list = explode(' ', $tags);
-            $tags_list = array_slice($tags_list, 0, 10); // Get first 10 tags
-
-            if (!config('torrent_upload.allow_new_custom_tags')) {
-                $rule_pinned_tags = array_keys(app()->site->rulePinnedTags());
-                $tags_list = array_intersect($rule_pinned_tags, $tags_list);
-            }
-        }
-
-        return $tags_list;
-    }
-
-    private function updateTagsTable(array $tags)
-    {
-        foreach ($tags as $tag) {
-            app()->pdo->createCommand('INSERT INTO tags (tag) VALUES (:tag) ON DUPLICATE KEY UPDATE `count` = `count` + 1;')->bindParams([
-                'tag' => $tag
-            ])->execute();
-        }
     }
 
     // TODO sep to Traits

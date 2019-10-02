@@ -56,6 +56,17 @@ class Torrent
     const TORRENT_TYPE_SINGLE = 'single';
     const TORRENT_TYPE_MULTI = 'multi';
 
+    const TORRENT_STATUSES = [
+        self::TORRENT_STATUS_CONFIRMED,
+        self::TORRENT_STATUS_PENDING,
+        self::TORRENT_STATUS_BANNED,
+    ];
+
+    const TORRENT_STATUS_DELETED = 'deleted';
+    const TORRENT_STATUS_BANNED = 'banned';
+    const TORRENT_STATUS_PENDING = 'pending';
+    const TORRENT_STATUS_CONFIRMED = 'confirmed';
+
     public function __construct($id = null)
     {
         $this->loadTorrentContentById($id);
@@ -172,15 +183,26 @@ class Torrent
         return json_decode($this->torrent_structure, true);
     }
 
-    public function getTeam(){
+    public function getTeamId()
+    {
+        return $this->team;
+    }
+
+    public function getTeam()
+    {
         if ($this->team == 0) return false;
         return app()->site->ruleTeam()[$this->team];
     }
 
-    public function getQuality($quality)
+    public function getQualityId(string $quality): int
     {
-        if ($this->{'quality_' . $quality} == 0) return false;
-        return app()->site->ruleQuality($quality)[$this->{'quality_' . $quality}];
+        return $this->{'quality_' . $quality} ?? 0;
+    }
+
+    public function getQuality(string $quality)
+    {
+        if ($this->getQualityId($quality) == 0) return false;
+        return app()->site->ruleQuality($quality)[$this->getQualityId($quality)];
     }
 
     public function getDescr(): string

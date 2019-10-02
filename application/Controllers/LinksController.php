@@ -26,7 +26,7 @@ class LinksController extends Controller
             $success = $form->validate();
             if ($success) {
                 $form->flush();
-                return $this->render('action/success', ['msg' => 'Thanks you to apply links, Our team will check it ASAP.']); // FIXME
+                return $this->render('action/success', ['msg' => __('form.link_apply.msg_success')]);
             } else {
                 return $this->render('action/fail', ['msg' => $form->getError()]);
             }

@@ -15,6 +15,17 @@
         "more": "More",
         "topten": "Top 10",
         "stats": "Stats",
-        "log": "Log"
+        "log": "Log",
+        "authenticate": "Authenticate",
+        "recruit": "Recruit"
+    },
+    "form": {
+        "password": "Password",
+        "login": {
+            "username": "Username / Email address"
+        },
+        "link_apply": {
+            "msg_success": "Thanks you to apply links, Our team will check it ASAP."
+        }
     }
 }

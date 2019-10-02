@@ -45,6 +45,10 @@ class Validator extends BaseObject
         $this->_validator = new \Sirius\Validation\Validator;
     }
 
+
+    /**
+     * @return array
+     */
     public static function inputRules(): array
     {
         return [];

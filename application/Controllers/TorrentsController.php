@@ -32,31 +32,6 @@ class TorrentsController extends Controller
         return $this->render('torrents/search', ['search' => $search]);
     }
 
-    public function actionUpload()
-    {
-        // TODO Check user upload pos
-        if (app()->request->isPost()) {
-            $uploadForm = new Torrents\UploadForm();
-            $uploadForm->setInput(app()->request->post());
-            $uploadForm->setFileInput(app()->request->files());
-            $success = $uploadForm->validate();
-            if (!$success) {
-                return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
-            } else {
-                try {
-                    $uploadForm->flush();
-                } catch (\Exception $e) {
-                    return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
-                }
-
-                return app()->response->redirect('/torrent/details?id=' . $uploadForm->getId());
-            }
-        } else {
-            return $this->render('torrents/upload');
-        }
-
-    }
-
     public function actionTags()
     {
         $pager = new Torrents\TagsForm();
