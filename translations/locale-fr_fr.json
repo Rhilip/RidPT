@@ -1,0 +1,31 @@
+{
+    "greeting": "Bonjour le monde",
+    "search": "Rechercher",
+    "nav": {
+        "index": "Accueil",
+        "forums": "Forums",
+        "torrents": "Torrents",
+        "collections": "Collections",
+        "requests": "Requêtes",
+        "upload": "Upload",
+        "subtitles": "Sous-titres",
+        "rules": "Règles",
+        "faq": "FAQ",
+        "staff": "Staff",
+        "more": "Plus",
+        "topten": "Top 10",
+        "stats": "Stats",
+        "log": "Log",
+        "authenticate": "Connexion",
+        "recruit": "Recrutement"
+    },
+    "form": {
+        "password": "Mot de passe",
+        "login": {
+            "username": "Nom d'utilisateur oui Adresse e-mail"
+        },
+        "link_apply": {
+            "msg_success": "Merci, notre équipe le vérifiera dès que possible."
+        }
+    }
+}
