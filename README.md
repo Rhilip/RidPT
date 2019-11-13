@@ -1,6 +1,6 @@
 <p align="center">
 <img src="https://github.com/Rhilip/RidPT/raw/master/public/static/pic/logo.png" width='256px'><br/>
-Another Private Torrent framework Project. <b>On Development</b><br/>
+Another Private Torrent framework Project. <b>On Heavily Development now !!!</b><br/>
 </p>
 
 [![GitHub Releases](https://img.shields.io/github/release/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/releases)

@@ -78,7 +78,7 @@ return [
         'crontab' => [
             'class' => App\Process\CronTabProcess::class,
             'title' => 'Crontab Worker',
-            'components' => ['log', 'pdo', 'redis', 'config'],
+            'components' => ['log', 'pdo', 'redis', 'config', 'site', 'i18n'],
             'sleep' => 60,
         ]
     ],
