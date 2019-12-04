@@ -123,6 +123,7 @@ class Auth extends Component
         $passkey = app()->request->get('passkey');
         if (is_null($passkey)) return false;
 
+        // FIXME merge same function as tracker so
         $user_id = app()->redis->zScore(Constant::mapUserPasskeyToId, $passkey);
         if (false === $user_id) {
             $user_id = app()->pdo->createCommand('SELECT `id` FROM `users` WHERE `passkey` = :passkey LIMIT 1;')->bindParams([

@@ -75,7 +75,7 @@ class TrackerAnnounceProcess extends Process
                 $trueDownloaded = max(0, $queries['downloaded']);
 
                 app()->pdo->createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, `started_at`= FROM_UNIXTIME(:started_at) , `last_action_at` = FROM_UNIXTIME(:last_action_at) ,
-                        `agent`= :agent, `seeder` = :seeder, {$ipField} , 
+                        `agent`= :agent, `seeder` = :seeder, {$ipField} ,
                         `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
                         `corrupt` = :corrupt , `key` = :key ;
                         ")->bindParams([
@@ -93,7 +93,7 @@ class TrackerAnnounceProcess extends Process
                 ])->queryScalar();
 
                 if ($selfRecordCount == 0) {
-                    app()->pdo->createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`ip`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`) 
+                    app()->pdo->createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`ip`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`)
                         VALUES (:uid,:tid,:agent,INET6_ATON(:ip),:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,FROM_UNIXTIME(:create_at),FROM_UNIXTIME(:last_action_at))")->bindParams([
                         'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
                         'agent' => $queries['user-agent'], 'ip'=>$queries['remote_ip'], 'port' => $queries['port'],
@@ -134,7 +134,7 @@ class TrackerAnnounceProcess extends Process
                 // if session is exist but event!=stopped , we should continue the old session
                 app()->pdo->createCommand("UPDATE `peers` SET `agent`=:agent, {$ipField}," .
                     "`seeder`=:seeder, `uploaded`=`uploaded` + :uploaded, `downloaded`= `downloaded` + :download, `to_go` = :left,
-                    `last_action_at`= FROM_UNIXTIME(:last_action_at), `corrupt`=:corrupt, `key`=:key 
+                    `last_action_at`= FROM_UNIXTIME(:last_action_at), `corrupt`=:corrupt, `key`=:key
                     WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
                         'agent' => $queries['user-agent'], 'seeder' => $seeder,
                         'uploaded' => $trueUploaded, 'download' => $trueDownloaded, 'left' => $queries['left'],
@@ -191,8 +191,8 @@ class TrackerAnnounceProcess extends Process
     {
 
         $logCheater = function ($commit) use ($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration) {
-            app()->pdo->createCommand("INSERT INTO `cheaters`(`added_at`,`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`) 
-            VALUES (CURRENT_TIMESTAMP, :uid, :tid, :uploaded, :downloaded, :anctime, :seeders, :leechers, :hit, :msg, :reviewed, :reviewed_by)  
+            app()->pdo->createCommand("INSERT INTO `cheaters`(`added_at`,`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`)
+            VALUES (CURRENT_TIMESTAMP, :uid, :tid, :uploaded, :downloaded, :anctime, :seeders, :leechers, :hit, :msg, :reviewed, :reviewed_by)
             ON DUPLICATE KEY UPDATE `hit` = `hit` + 1, `reviewed` = 0,`reviewed_by` = '',`commit` = VALUES(`commit`)")->bindParams([
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
                 'uploaded' => $trueUploaded, 'downloaded' => $trueDownloaded, 'anctime' => $duration,
@@ -210,7 +210,7 @@ class TrackerAnnounceProcess extends Process
                 'uid' => $userInfo['id'],
             ])->execute();
 
-            app()->redis->del(Constant::trackerUserContentByPasskey($userInfo['passkey']));
+            app()->redis->del(Constant::userBaseContentByPasskey($userInfo['passkey']));
         }
 
         // Uploaded more than 1 GB with uploading rate higher than 25 MByte/S (For Consertive level). This is likely cheating.
@@ -230,7 +230,7 @@ class TrackerAnnounceProcess extends Process
     {
         $buff = app()->redis->get("TRACKER:user_" . $userid . "_torrent_" . $torrentid . "_buff");
         if ($buff === false) {
-            $buff = app()->pdo->createCommand("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrent_buffs` 
+            $buff = app()->pdo->createCommand("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrent_buffs`
             WHERE start_at < NOW() AND NOW() < expired_at AND (torrent_id = :tid OR torrent_id = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 'tid' => $torrentid, 'bid' => $userid
             ])->queryOne();

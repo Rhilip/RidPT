@@ -7,9 +7,10 @@
 ### Feat
 - **Torrent:** Per-add torrent edit (f06b342)
 - **i18n:** Use symfony/translation and JSON format for locale (02cc251)
+- **layout:** Add anti-robots html meta tag (9c21e73)
 
 ### Fix
-- **Cron:** Fix components lost in CronTabProcess (104257f)
+- **Cron:** Fix components lost in CronTabProcess (1ced4bf)
 
 ### Perf
 - **Component:** View Become a component to perf load time (660c1f1)
