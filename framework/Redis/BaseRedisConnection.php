@@ -160,7 +160,7 @@ use Rid\Base\Component;
  * @method bool hExists($key, $hashKey)
  * @method int hIncrBy($key, $hashKey, $value)
  * @method float hIncrByFloat($key, $field, $increment)
- * @method bool hMset($key, $hashKeys)
+ * @method bool hMSet($key, $hashKeys)
  * @method array hMGet($key, $hashKeys)
  * @method array config($operation, $key, $value)
  * @method mixed evaluate($script, $args = [], $numKeys = 0)

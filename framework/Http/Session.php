@@ -86,7 +86,7 @@ class Session extends Component
     // 赋值
     public function set($name, $value)
     {
-        $success = app()->redis->hmset($this->_sessionKey, [$name => $value]);
+        $success = app()->redis->hMSet($this->_sessionKey, [$name => $value]);
         app()->redis->expire($this->_sessionKey, $this->maxLifetime);
         $success and $this->_isNewSession and \Rid::app()->response->setCookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
         return $success ? true : false;

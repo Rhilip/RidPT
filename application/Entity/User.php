@@ -116,7 +116,7 @@ class User
                 if (false === $self) {
                     app()->redis->zAdd(Constant::invalidUserIdZset, time() + 3600, $id);
                 } else {
-                    app()->redis->hMset($this->infoCacheKey, $self);
+                    app()->redis->hMSet($this->infoCacheKey, $self);
                     app()->redis->expire($this->infoCacheKey, 15 * 60);  // Cache This User Detail for 15 minutes
                 }
             } else {

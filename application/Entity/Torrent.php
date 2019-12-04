@@ -82,7 +82,7 @@ class Torrent
             $self = app()->pdo->createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
                     "id" => $id
                 ])->queryOne() ?? [];
-            app()->redis->hMset(Constant::torrentContent($id), $self);
+            app()->redis->hMSet(Constant::torrentContent($id), $self);
             app()->redis->expire(Constant::torrentContent($id), 1800);
         }
         $this->importAttributes($self);
