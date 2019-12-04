@@ -8,6 +8,12 @@
 - **Torrent:** Per-add torrent edit (f06b342)
 - **i18n:** Use symfony/translation and JSON format for locale (02cc251)
 
+### Fix
+- **Cron:** Fix components lost in CronTabProcess (104257f)
+
+### Perf
+- **Component:** View Become a component to perf load time (660c1f1)
+
 ### Refactor
 - **Entity:** Move Class Torrent,User to namespace App\Entity (7814d88)
 
