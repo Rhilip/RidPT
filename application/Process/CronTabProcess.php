@@ -152,8 +152,8 @@ final class CronTabProcess extends Process
         $torrents_update = [];
 
         $wrong_complete_records = app()->pdo->createCommand("
-            SELECT torrents.`id`, `complete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents` 
-              LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND `peers`.`seeder` = 'yes' 
+            SELECT torrents.`id`, `complete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents`
+              LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND `peers`.`seeder` = 'yes'
             GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
         if ($wrong_complete_records) {
             foreach ($wrong_complete_records as $arr) {
@@ -162,7 +162,7 @@ final class CronTabProcess extends Process
         }
         $wrong_incomplete_records = app()->pdo->createCommand("
             SELECT torrents.`id`, `incomplete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents`
-              LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND (`peers`.`seeder` = 'partial' OR `peers`.`seeder` = 'no') 
+              LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND (`peers`.`seeder` = 'partial' OR `peers`.`seeder` = 'no')
             GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
         if ($wrong_incomplete_records) {
             foreach ($wrong_incomplete_records as $arr) {
@@ -171,8 +171,8 @@ final class CronTabProcess extends Process
         }
 
         $wrong_comment_records = app()->pdo->createCommand('
-            SELECT t.id, t.comments as `record`, COUNT(tc.id) as `real` FROM torrents t 
-              LEFT JOIN torrent_comments tc on t.id = tc.torrent_id 
+            SELECT t.id, t.comments as `record`, COUNT(tc.id) as `real` FROM torrents t
+              LEFT JOIN torrent_comments tc on t.id = tc.torrent_id
             GROUP BY t.id HAVING `record` != `real`')->queryAll();
         if ($wrong_comment_records) {
             foreach ($wrong_incomplete_records as $arr) {

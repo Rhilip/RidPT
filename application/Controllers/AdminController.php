@@ -54,7 +54,7 @@ class AdminController extends Controller
         ])->queryScalar();
         $queryStats = [];
         $tmp_array = $serverStatus;
-        foreach ($tmp_array AS $name => $value) {
+        foreach ($tmp_array as $name => $value) {
             if (substr($name, 0, 4) == 'Com_') {
                 $queryStats[substr($name, 4)] = $value;
                 unset($serverStatus[$name]);

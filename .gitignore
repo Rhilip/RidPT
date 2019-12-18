@@ -6,6 +6,10 @@
 # Test File
 application/Controllers/TestController.php
 
+# PHPCS
+/phpcs.xml
+.php_cs.cache
+
 # Backup Folder
 /backup/
 

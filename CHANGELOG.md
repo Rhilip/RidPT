@@ -11,6 +11,7 @@
 
 ### Fix
 - **Cron:** Fix components lost in CronTabProcess (1ced4bf)
+- **Redis:** Fix wrong type of Redis call function hMset() to hMSet() (a163150)
 
 ### Perf
 - **Component:** View Become a component to perf load time (660c1f1)
