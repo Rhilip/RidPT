@@ -31,7 +31,7 @@
     "ext-mbstring": "*",
     "psr/log": "^1.1",
     "vlucas/phpdotenv": "^3.5",
-    "adhocore/cli": "^0.4.0",
+    "adhocore/cli": "^0.7.0",
     "league/plates": "^3.3",
     "firebase/php-jwt": "^5.0",
     "phpmailer/phpmailer": "^6.0",
