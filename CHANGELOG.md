@@ -15,6 +15,7 @@
 
 ### Perf
 - **Component:** View Become a component to perf load time (660c1f1)
+- **Tracker:** Reduce Redis Calls for get User and Torrent Info in Tracker (e813435)
 
 ### Refactor
 - **Entity:** Move Class Torrent,User to namespace App\Entity (7814d88)
