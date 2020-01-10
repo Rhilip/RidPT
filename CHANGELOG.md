@@ -5,6 +5,8 @@
 - **composer:** bump adhocore/cli (6647c9d)
 
 ### Docs
+- **README:** fix typo of start command (657c71a)
+- **Redis:** Fix phpdoc for Redis Component (70ac399)
 - **Sponsor:** Add Sponsor `MeiHeZi` (ae612e0)
 
 ### Feat

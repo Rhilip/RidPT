@@ -63,10 +63,10 @@ class DownloadForm extends StructureForm
          * @see https://web.archive.org/web/20190724110959/https://blog.rhilip.info/archives/1108/
          *      which discuss about multitracker behaviour on common bittorrent client ( Chinese Version )
          */
-        if ($multi_trackers = config('base.site_multi_tracker_url')) {
+        $multi_trackers_list = config('base.site_multi_tracker_url');
+        if (!empty($multi_trackers)) {
             // Add our main tracker into multi_tracker_list to avoid lost....
-            $multi_trackers = config('base.site_tracker_url') . ',' . $multi_trackers;
-            $multi_trackers_list = explode(',', $multi_trackers);
+            array_unshift($multi_trackers_list, config('base.site_tracker_url'));
             $multi_trackers_list = array_unique($multi_trackers_list);  // use array_unique to remove dupe tracker
 
             $dict["announce-list"] = [];

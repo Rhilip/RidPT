@@ -186,22 +186,17 @@ class UserRegisterForm extends Validator
     {
         $email = $this->getInput('email');
         $email_suffix = substr($email, strpos($email, '@'));  // Will get `@test.com` as example
+
         if (config('register.check_email_blacklist') &&
-            config('register.email_black_list')) {
-            $email_black_list = explode(',', config('register.email_black_list'));
-            if (in_array($email_suffix, $email_black_list)) {
-                $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
-                return;
-            }
+            in_array($email_suffix, config('register.email_black_list'))) {
+            $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
+            return;
         }
 
         if (config('register.check_email_whitelist') &&
-            config('register.email_white_list')) {
-            $email_white_list = explode(',', config('register.email_white_list'));
-            if (!in_array($email_suffix, $email_white_list)) {
-                $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
-                return;
-            }
+            !in_array($email_suffix, config('register.email_white_list'))) {
+            $this->buildCallbackFailMsg('ValidEmail', "The email suffix `$email_suffix` is not allowed.");
+            return;
         }
 
         // Check $email is in blacklist or not
@@ -282,7 +277,7 @@ class UserRegisterForm extends Validator
         }
 
         // Insert into `users` table and get insert id
-        app()->pdo->createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`) 
+        app()->pdo->createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`)
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus, :invites)")->bindParams(array(
             'name' => $this->username, 'passhash' => password_hash($this->password, PASSWORD_DEFAULT), 'email' => $this->email,
             'status' => $this->status, 'class' => $this->class, 'passkey' => $this->passkey,

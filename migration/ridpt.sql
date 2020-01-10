@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 13, 2019 at 04:39 PM
+-- Generation Time: Jan 10, 2020 at 10:28 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.3.7
 
@@ -772,6 +772,7 @@ INSERT INTO `site_config` (`name`, `type`, `value`) VALUES
 ('authority.manage_links', 'int', '80'),
 ('authority.manage_news', 'int', '80'),
 ('authority.manage_subtitles', 'int', '80'),
+('authority.manage_torrents', 'int', '80'),
 ('authority.pass_invite_interval_check', 'int', '60'),
 ('authority.pass_tracker_upspeed_check', 'int', '60'),
 ('authority.see_anonymous_info', 'int', '60'),
@@ -800,7 +801,7 @@ INSERT INTO `site_config` (`name`, `type`, `value`) VALUES
 ('base.site_generator', 'string', 'RidPT'),
 ('base.site_keywords', 'string', 'RidPT,Private Tracker'),
 ('base.site_multi_tracker_behaviour', 'string', 'union'),
-('base.site_multi_tracker_url', 'json', ''),
+('base.site_multi_tracker_url', 'json', '[]'),
 ('base.site_name', 'string', 'RidPT'),
 ('base.site_tracker_url', 'string', 'ridpt.top/tracker'),
 ('base.site_url', 'string', 'ridpt.top'),
@@ -824,15 +825,15 @@ INSERT INTO `site_config` (`name`, `type`, `value`) VALUES
 ('invite.recycle_invite_lifetime', 'int', '86400'),
 ('invite.recycle_return_invite', 'int', '1'),
 ('invite.timeout', 'int', '259200'),
-('register.by_green', 'int', '0'),
-('register.by_invite', 'int', '1'),
-('register.by_open', 'int', '1'),
-('register.check_email_blacklist', 'int', '1'),
-('register.check_email_whitelist', 'int', '1'),
-('register.check_max_ip', 'int', '1'),
-('register.check_max_user', 'int', '1'),
-('register.email_black_list', 'json', '@test.com'),
-('register.email_white_list', 'json', '@gmail.com'),
+('register.by_green', 'bool', '0'),
+('register.by_invite', 'bool', '1'),
+('register.by_open', 'bool', '1'),
+('register.check_email_blacklist', 'bool', '1'),
+('register.check_email_whitelist', 'bool', '1'),
+('register.check_max_ip', 'bool', '1'),
+('register.check_max_user', 'bool', '1'),
+('register.email_black_list', 'json', '[\"@test.com\"]'),
+('register.email_white_list', 'json', '[\"@gmail.com\"]'),
 ('register.per_ip_user', 'int', '5'),
 ('register.user_confirm_way', 'string', 'auto'),
 ('register.user_default_bonus', 'int', '0'),

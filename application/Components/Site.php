@@ -12,7 +12,6 @@ use App\Entity;
 use App\Libraries\Mailer;
 use App\Libraries\Constant;
 
-use Rid\Http\View;
 use Rid\Base\Component;
 use Rid\Utils\ClassValueCacheUtils;
 
