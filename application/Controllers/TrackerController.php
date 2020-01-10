@@ -217,7 +217,7 @@ class TrackerController
             throw new TrackerException(123);
 
         // Block Browser by check it's User-Agent
-        if (preg_match('/(Mozilla|Browser|Chrome|Safari|AppleWebKit|Opera|Links|Lynx|[Bb]ot)/', $ua)) {
+        if (preg_match('/(Mozilla|Browser|Chrome|Safari|AppleWebKit|Opera|Links|Lynx|Bot|Unknown)/i', $ua)) {
             throw new TrackerException(121);
         }
     }
@@ -643,7 +643,7 @@ class TrackerController
      * When our tracker receive the first announce request,
      * This function will hit a 60s lock in Redis zset based on request uri,
      * And if another same request hit the lock,
-     * We should pass the main announce check and just return the empty peer_list
+     * We should pass the main announce check and just return the empty peer_list in other announce request
      *
      * @return float|bool
      */
@@ -663,7 +663,13 @@ class TrackerController
      */
     private function checkMinInterval($queries)
     {
-        $identity = bin2hex($queries['info_hash']) . ':' . $queries['passkey'] . ':' . $queries['peer_id'];
+        $identity = implode(':', [
+            // Use `passkey, info_hash, peer_id` as a unique key to check if this announce is in min interval
+            $queries['passkey'], $queries['info_hash'], $queries['peer_id'],
+            // We should also add `event` params to prevent peer completed announce been blocked after common announce
+            $queries['event']
+        ]);
+
         if (false == $check = app()->redis->zScore(Constant::trackerAnnounceMinIntervalLockZset, $identity)) {
             $min_interval = intval(config('tracker.min_interval') * (3 / 4));
             app()->redis->zAdd(Constant::trackerAnnounceMinIntervalLockZset, time() + $min_interval, $identity);
@@ -683,7 +689,7 @@ class TrackerController
     private function checkSession($queries, $seeder, $userInfo, $torrentInfo)
     {
         // Check if exist peer or not
-        $identity = $torrentInfo['id'] . ':' . $userInfo["id"] . ':' . $queries['peer_id'];
+        $identity = implode(':', [$torrentInfo['id'], $userInfo['id'], $queries['peer_id']]);
         if (app()->redis->zScore(Constant::trackerValidPeerZset, $identity)) {
             // this peer is already announce before , just expire cache key lifetime and return.
             app()->redis->zIncrBy(Constant::trackerValidPeerZset, config('tracker.interval') * 2, $identity);
@@ -762,7 +768,7 @@ class TrackerController
     private function sendToTaskWorker($queries, $role, $userInfo, $torrentInfo)
     {
         /**
-         * Push to Redis Queue and quick response
+         * Push to Redis Queue so we can quick response
          *
          * Don't use json_{encode,decode} for the value of info_hash and peer_id will make
          * those function return FALSE
@@ -781,16 +787,18 @@ class TrackerController
         $rep_dict = [
             'interval' => (int) config('tracker.interval') + rand(5, 20),   // random interval to avoid BOOM
             'min interval' => (int) config('tracker.min_interval') + rand(1, 10),
-            'complete' => $torrentInfo['complete'],
-            'incomplete' => $torrentInfo['incomplete'],
+            'complete' => (int) $torrentInfo['complete'],
+            'incomplete' => (int) $torrentInfo['incomplete'],
             'peers' => []  // By default it is a array object, only when `&compact=1` then it should be a string
         ];
 
-        // For `stopped` event , we didn't send peers list any more~
+        // For `stopped` event Or if peer's role not set (In AnnounceDuration lock)
+        // We didn't send peers list any more, Just quick return without peer query in database~
         if ($queries['event'] == 'stopped' || $role == '') {
             return;
         }
 
+        // Fix rep_dict format based on params `&compact=`, `&np_peer_id=`, `&numwant=` and our tracker config
         $compact = (bool) ($queries['compact'] == 1 || config('tracker.force_compact_model'));
         if ($compact) {
             $queries['no_peer_id'] = 1;  // force `no_peer_id` when `compact` mode is enable
@@ -800,18 +808,19 @@ class TrackerController
         }
 
         $no_peer_id = (bool) ($queries['no_peer_id'] == 1 || config('tracker.force_no_peer_id_model'));
-        $limit = ($queries['numwant'] <= config('tracker.max_numwant')) ? $queries['numwant'] : config('tracker.max_numwant');
+        $limit = (int) ($queries['numwant'] <= config('tracker.max_numwant')) ? $queries['numwant'] : config('tracker.max_numwant');
 
+        // Query Peers in database
         $peers = app()->pdo->createCommand([
             ['SELECT `port`, `ipv6_port` '],
             // Get ip and ipv6 field in binary or string depend on value of $compact
             [', `ip`, `ipv6` ', 'if' => $compact],
-            [', INET6_NTOA(`ip`) as `ip`, INET6_NTOA(`ipv6`) as `ipv6` ', 'ip' => !$compact],
+            [', INET6_NTOA(`ip`) as `ip`, INET6_NTOA(`ipv6`) as `ipv6` ', 'if' => !$compact],
             [', `peer_id` ', 'if' => !$no_peer_id],
             ['FROM `peers` WHERE torrent_id = :tid ', 'params' => ['tid' => $torrentInfo['id']]],
             ['AND peer_id != :pid  ', 'params' => ['pid' => $queries['peer_id']]],  // Don't select user himself
-            ['AND `seeder` = \'no\' ', 'if' => $role != 'no'],  // Don't report seeders to other seeders
-            ['ORDER BY RAND() LIMIT :limit', 'params' => ['limit' => $limit]]
+            ['AND `seeder` = \'no\' ', 'if' => $role != 'no'],  // Don't report seeders to other seeders (include partial seeders)
+            ['ORDER BY RAND() LIMIT :limit', 'params' => ['limit' => $limit]]  // Random select so that everyone will return
         ])->queryAll();
 
         foreach ($peers as $peer) {
@@ -822,19 +831,19 @@ class TrackerController
             if ($queries['ip'] && $peer['ip']) {
                 if ($compact) {
                     // $peerList .= pack("Nn", sprintf("%d",ip2long($peer["ip"])), $peer['port']);
-                    $rep_dict['peers'] .= inet_pton($peer['ip']) . pack('n', $peer['port']);
+                    $rep_dict['peers'] .= $peer['ip'] . pack('n', $peer['port']);
                 } else {
                     $exchange_peer['ip'] = $peer['ip'];
-                    $exchange_peer["port"] = $peer['port'];
+                    $exchange_peer['port'] = $peer['port'];
                     $rep_dict['peers'][] = $exchange_peer;
                 }
             }
 
             if ($queries['ipv6'] && $peer['ipv6']) {
                 if ($compact) {
-                    $rep_dict['peers6'] .= inet_pton($peer['ipv6']) . pack('n', $peer['ipv6_port']);
+                    $rep_dict['peers6'] .= $peer['ipv6'] . pack('n', $peer['ipv6_port']);
                 } else {
-                    // If peer don't want compact response, we return ipv6-peer in `peers`
+                    // If peer don't want compact response, return ipv6-peer in `peers`
                     $exchange_peer['ip'] = $peer['ipv6'];
                     $exchange_peer['port'] = $peer['ipv6_port'];
                     $rep_dict['peers'][] = $exchange_peer;

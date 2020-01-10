@@ -58,7 +58,7 @@ $enabled_editor = $enabled_editor ?? false;
     <footer>
         <div class="reply-form" id="commentReplyForm1">
             <div class="avatar"><img src="<?= app()->auth->getCurUser()->getAvatar() ?>" alt=""></div>
-            <form class="form" method="post" action="/torrent/commit?id=<?= $torrent->getId() ?>">
+            <form class="form" method="post" action="/torrent/comments?id=<?= $torrent->getId() ?>">
                 <!-- FIXME commit point -->
                 <div class="form-group">
                     <textarea class="form-control new-comment-text<?= $enabled_editor ? ' to-load-editor': '' ?>" rows="3" placeholder="Quick Commit Here" data-autoresize></textarea>
