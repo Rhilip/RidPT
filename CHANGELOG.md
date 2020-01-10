@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Chore
+- **composer:** bump adhocore/cli (6647c9d)
+
 ### Docs
 - **Sponsor:** Add Sponsor `MeiHeZi` (ae612e0)
 
@@ -19,6 +22,9 @@
 
 ### Refactor
 - **Entity:** Move Class Torrent,User to namespace App\Entity (7814d88)
+
+### Style
+- **gitignore:** Add .php_cs.cache to .gitignore (15a2a15)
 
 
 <a name="v0.1.6-alpha"></a>
