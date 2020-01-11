@@ -8,7 +8,8 @@
 
 namespace App\Models\Form\Auth;
 
-use App\Entity\User;
+use App\Repository\User\UserStatus;
+
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;
 
@@ -51,7 +52,7 @@ class UserConfirmForm extends Validator
     protected function validConfirmSecret()
     {
         $record = app()->pdo->createCommand(
-            'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm` 
+            'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm`
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
             'secret' => $this->getInput('secret'), 'action' => $this->getInput('action')
@@ -78,12 +79,12 @@ class UserConfirmForm extends Validator
 
     private function flush_register()
     {
-        if ($this->user_status !== User::STATUS_PENDING) {
+        if ($this->user_status !== UserStatus::PENDING) {
             return 'user status is not pending , they may already confirmed or banned';  // FIXME msg
         }
 
         app()->pdo->createCommand('UPDATE `users` SET `status` = :s WHERE `id` = :uid')->bindParams([
-            's' => User::STATUS_CONFIRMED, 'uid' => $this->uid
+            's' => UserStatus::CONFIRMED, 'uid' => $this->uid
         ])->execute();
         $this->update_confirm_status();
         app()->redis->del('User:content_' . $this->uid);
@@ -92,7 +93,7 @@ class UserConfirmForm extends Validator
 
     private function flush_recover()
     {
-        if ($this->user_status !== User::STATUS_CONFIRMED) {
+        if ($this->user_status !== UserStatus::CONFIRMED) {
             return 'user status is not confirmed , they may in pending or banned';  // FIXME msg
         }
 

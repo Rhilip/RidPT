@@ -8,6 +8,8 @@
  * @var League\Plates\Template\Template $this
  * @var \App\Entity\User $user
  */
+
+use App\Repository\User\UserStatus;
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -51,7 +53,7 @@
                         <td class="text-center"><?= $invitee['status'] ?></td>
                         <?php if (app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
                         <td class="text-center">
-                            <?php if ($invitee['status'] == \App\Entity\User::STATUS_PENDING): ?>
+                            <?php if ($invitee['status'] == UserStatus::PENDING): ?>
                             <a class="btn btn-info btn-sm" href="?action=confirm&uid=<?= $this->e($invitee['id']) ?>" onclick="return confirm('Really?')">Confirm</a>
                             <?php endif ?>
                         </td>

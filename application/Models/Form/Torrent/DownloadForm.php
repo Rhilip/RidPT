@@ -48,12 +48,11 @@ class DownloadForm extends StructureForm
         $dict = $this->getTorrentFileContentDict();
 
         $scheme = 'http://';
-        if (filter_var($this->https, FILTER_VALIDATE_BOOLEAN))
+        if (isset($this->https)) {
+            $scheme = filter_var($this->https, FILTER_VALIDATE_BOOLEAN) ? 'https://' : 'http://';
+        } elseif (app()->request->isSecure()) {
             $scheme = 'https://';
-        else if (filter_var($this->https, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE))
-            $scheme = 'http://';
-        else if (app()->request->isSecure())
-            $scheme = 'https://';
+        }
 
         $announce_suffix = '/announce?passkey=' . app()->auth->getCurUser()->getPasskey();
         $dict['announce'] = $scheme . config('base.site_tracker_url') . $announce_suffix;

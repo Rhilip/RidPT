@@ -9,11 +9,11 @@
 namespace App\Controllers;
 
 use App\Libraries\Constant;
-use App\Entity\User;
-use Rid\Utils\IpUtils;
+use App\Repository\User\UserRole;
 use App\Libraries\Bencode\Bencode;
-
 use App\Exceptions\TrackerException;
+
+use Rid\Utils\IpUtils;
 
 /** @noinspection PhpUnused */
 class TrackerController
@@ -721,7 +721,7 @@ class TrackerController
                     throw new TrackerException(161, [':count' => config('tracker.user_max_leech')]);
             }
 
-            if ($userInfo['class'] < User::ROLE_VIP) {
+            if ($userInfo['class'] < UserRole::VIP) {
                 $ratio = (($userInfo['downloaded'] > 0) ? ($userInfo['uploaded'] / $userInfo['downloaded']) : 1);
                 $gigs = $userInfo['downloaded'] / (1024 * 1024 * 1024);
 

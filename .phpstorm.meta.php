@@ -97,7 +97,7 @@ namespace PHPSTORM_META {
         'buff.random_percent_free',
     );
 
-    /**
+    /** Config - gravatar
      * If you set config('user.avatar_provider') == 'gravatar' , then you should edit this section
      * Otherwise this section will not work
      *
@@ -110,7 +110,10 @@ namespace PHPSTORM_META {
          *   - https://secure.gravatar.com/avatar/
          *   - https://cn.gravatar.com/avatar/
          *   - https://cdn.v2ex.com/gravatar/
+         *   - https://gravatar.loli.net/
          *   - https://grv.luotianyi.vc/avatar/
+         *   - https://gravatar.cat.net/avatar/
+         *   - https://v2ex.assets.uxengine.net/gravatar/
          *
          * @var string
          * @example 'https://www.gravatar.com/avatar/'
@@ -123,7 +126,7 @@ namespace PHPSTORM_META {
          * across correctly since we not urlencode this value
          * Or you can use offical built in options ,
          * like:
-         *   - https%3A%2F%2Fexample.com%2Fimages%2Favatar.jpg   (URL-encoded)
+         *   - https://example.com/images/avatar.jpg
          *   - 404: do not load any image if none is associated with the email hash, instead return an HTTP 404 (File Not Found) response
          *   - mp: (mystery-person) a simple, cartoon-style silhouetted outline of a person (does not vary by email hash)
          *   - identicon: a geometric pattern based on an email hash
@@ -135,7 +138,6 @@ namespace PHPSTORM_META {
          *
          * @var string
          * @example 'identicon'
-         *
          */
         'gravatar.default_fallback',
 

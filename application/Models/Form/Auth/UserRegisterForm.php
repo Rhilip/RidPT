@@ -8,8 +8,10 @@
 
 namespace App\Models\Form\Auth;
 
-use App\Libraries\Constant;
 use App\Entity\User;
+use App\Libraries\Constant;
+use App\Repository\User\UserRole;
+use App\Repository\User\UserStatus;
 
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;
@@ -92,8 +94,8 @@ class UserRegisterForm extends Validator
 
     public function buildDefaultPropAfterValid()
     {
-        $this->status = config('register.user_default_status') ?? User::STATUS_PENDING;
-        $this->class = config('register.user_default_class') ?? User::ROLE_USER;
+        $this->status = config('register.user_default_status') ?? UserStatus::PENDING;
+        $this->class = config('register.user_default_class') ?? UserRole::USER;
         $this->uploadpos = config('register.user_default_uploadpos') ?? 1;
         $this->downloadpos = config('register.user_default_downloadpos') ?? 1;
         $this->uploaded = config('register.user_default_uploaded') ?? 1;
@@ -266,14 +268,14 @@ class UserRegisterForm extends Validator
          * and can access the (super)admin panel to change site config .
          */
         if (app()->site::fetchUserCount() == 0) {
-            $this->status = User::STATUS_CONFIRMED;
-            $this->class = User::ROLE_STAFFLEADER;
+            $this->status = UserStatus::CONFIRMED;
+            $this->class = UserRole::STAFFLEADER;
             $this->confirm_way = 'auto';
         }
 
         // User status should be confirmed if site confirm_way is auto
-        if ($this->confirm_way == 'auto' and $this->status != User::STATUS_CONFIRMED) {
-            $this->status = User::STATUS_CONFIRMED;
+        if ($this->confirm_way == 'auto' and $this->status != UserStatus::CONFIRMED) {
+            $this->status = UserStatus::CONFIRMED;
         }
 
         // Insert into `users` table and get insert id

@@ -8,8 +8,8 @@
 
 namespace App\Controllers;
 
-use App\Entity\User;
 use App\Models\Form\Auth;
+use App\Repository\User\UserStatus;
 
 use Rid\Http\Controller;
 
@@ -17,6 +17,7 @@ use Rid\Http\Controller;
 class AuthController extends Controller
 {
 
+    /** @noinspection PhpUnused */
     public function actionRegister()
     {
         if (app()->request->isPost()) {
@@ -31,7 +32,7 @@ class AuthController extends Controller
             } else {
                 $register_form->flush();  // Save this user in our database and do clean work~
 
-                if ($register_form->getStatus() == User::STATUS_CONFIRMED) {
+                if ($register_form->getStatus() == UserStatus::CONFIRMED) {
                     return app()->response->redirect('/index');
                 } else {
                     return $this->render('auth/register_pending', [
@@ -45,6 +46,7 @@ class AuthController extends Controller
         }
     }
 
+    /** @noinspection PhpUnused */
     public function actionConfirm()
     {
         $confirm = new Auth\UserConfirmForm();
@@ -64,6 +66,7 @@ class AuthController extends Controller
         }
     }
 
+    /** @noinspection PhpUnused */
     public function actionRecover()
     {
         if (app()->request->isPost()) {

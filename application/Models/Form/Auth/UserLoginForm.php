@@ -9,15 +9,12 @@
 namespace App\Models\Form\Auth;
 
 use App\Libraries\Constant;
-use App\Entity\User;
+use App\Repository\User\UserStatus;
 
 use Rid\Helpers\StringHelper;
 use Rid\Helpers\JWTHelper;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
-
-use RobThree\Auth\TwoFactorAuth;
-use RobThree\Auth\TwoFactorAuthException;
 
 
 class UserLoginForm extends Validator
@@ -87,7 +84,7 @@ class UserLoginForm extends Validator
             return;
         }
 
-        // User enable 2FA but it's code is wrong
+        // FIXME User enable 2FA but it's code is wrong
         /*
         if (!is_null($this->self['opt'])) {
             try {
@@ -104,7 +101,7 @@ class UserLoginForm extends Validator
         */
 
         // User 's status is banned or pending~
-        if (in_array($this->self['status'], [User::STATUS_DISABLED, User::STATUS_PENDING])) {
+        if (in_array($this->self['status'], [UserStatus::DISABLED, UserStatus::PENDING])) {
             $this->buildCallbackFailMsg('Account', 'User account is disabled or may not confirmed.');
             return;
         }

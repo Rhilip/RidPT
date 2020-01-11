@@ -9,10 +9,12 @@
 namespace App\Models\Form\Torrent;
 
 use App\Libraries\Constant;
-use Rid\Http\UploadFile;
-
+use App\Repository\Torrent\TorrentStatus;
+use App\Repository\Torrent\TorrentType;
 use App\Libraries\Bencode\Bencode;
 use App\Libraries\Bencode\ParseErrorException;
+
+use Rid\Http\UploadFile;
 
 class UploadForm extends EditForm
 {
@@ -22,24 +24,16 @@ class UploadForm extends EditForm
 
     private $info_hash; // the value of sha1($this->$torrent_dict['info'])
 
-    private $status = 'confirmed';
+    private $status = TorrentStatus::CONFIRMED;
 
     private $torrent_dict;
     private $torrent_name;    // the $torrent_dict['info']['name'] field
     private $torrent_list = [];  // the file list like ["filename" => "example.txt" , "size" => 12345]
     private $torrent_structure;  // JSON encode string
-    private $torrent_type = 'single'; // only in ['single','multi']
+    private $torrent_type = TorrentType::SINGLE; // only in ['single','multi']
     private $torrent_size = 0;  // the count of torrent's content size
 
     protected $file_name_check_rules;
-
-    const TORRENT_TYPE_SINGLE = 'single';
-    const TORRENT_TYPE_MULTI = 'multi';
-
-    const TORRENT_STATUS_DELETED = 'deleted';
-    const TORRENT_STATUS_BANNED = 'banned';
-    const TORRENT_STATUS_PENDING = 'pending';
-    const TORRENT_STATUS_CONFIRMED = 'confirmed';
 
     public function getId(): int
     {
@@ -226,7 +220,7 @@ class UploadForm extends EditForm
         try {
             $tags = $this->getTags();
 
-            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`tags`,`nfo`,`uplver`,`hr`) 
+            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`tags`,`nfo`,`uplver`,`hr`)
 VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :category, :filename, :torrent_name, :type, :size, :structure,:team,:audio,:codec,:medium,:resolution,:descr, JSON_ARRAY(:tags), :nfo, :uplver, :hr)')->bindParams([
                 'owner_id' => app()->auth->getCurUser()->getId(),
                 'info_hash' => $this->info_hash,
@@ -273,7 +267,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
 
     // TODO update torrent status based on user class or their owned torrents count
     private function determineTorrentStatus() {
-        $this->status = self::TORRENT_STATUS_CONFIRMED;
+        $this->status = TorrentStatus::CONFIRMED;
     }
 
     // TODO sep to Traits
@@ -327,7 +321,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
     private function getFileTree()
     {
         $structure = array_column($this->torrent_list, 'size', 'filename');
-        if ($this->torrent_type == self::TORRENT_TYPE_MULTI) {
+        if ($this->torrent_type == TorrentType::MULTI) {
             $structure = [$this->torrent_name => self::makeFileTree($structure)];
         }
         return json_encode($structure);

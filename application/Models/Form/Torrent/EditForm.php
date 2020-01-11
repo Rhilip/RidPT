@@ -13,6 +13,7 @@ use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidTorrentTrait;
 use App\Entity\Torrent;
 
+use App\Repository\Torrent\TorrentStatus;
 use Rid\Http\UploadFile;
 use Rid\Validators\Validator;
 
@@ -140,7 +141,7 @@ class EditForm extends Validator
         if (app()->auth->getCurUser()->isPrivilege('manage_torrents')) {
             $rules['status'] = [
                 ['required'],
-                ['InList', ['list' => Torrent::TORRENT_STATUSES]]
+                ['InList', ['list' => TorrentStatus::TORRENT_STATUSES]]
             ];
         }
 
@@ -178,7 +179,7 @@ class EditForm extends Validator
         $this->rewriteFlags();
         $tags = $this->getTags();
         app()->pdo->createCommand('
-            UPDATE `torrents` SET title = :title, subtitle = :subtitle, 
+            UPDATE `torrents` SET title = :title, subtitle = :subtitle,
                       category = :category, team = :team, quality_audio = :audio, quality_codec = :codec,
                       quality_medium = :medium, quality_resolution = :resolution,
                       descr = :descr, tags =  JSON_ARRAY(:tags), nfo=:nfo,uplver = :uplver, hr = :hr

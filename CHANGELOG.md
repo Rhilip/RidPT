@@ -15,6 +15,7 @@
 - **layout:** Add anti-robots html meta tag (9c21e73)
 
 ### Fix
+- **Config:** Fix JSON type config return False (1129008)
 - **Cron:** Fix components lost in CronTabProcess (1ced4bf)
 - **Redis:** Fix wrong type of Redis call function hMset() to hMSet() (a163150)
 - **Tracker:** Fix typo in TrackerController (323c8ec)

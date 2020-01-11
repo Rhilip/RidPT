@@ -45,7 +45,7 @@ class StringHelper
         $output = false;
         if ($action == 'e') {
             $output = base64_encode(openssl_encrypt($string, $encrypt_method, $key, 0, $iv));
-        } else if ($action == 'd') {
+        } elseif ($action == 'd') {
             $output = openssl_decrypt(base64_decode($string), $encrypt_method, $key, 0, $iv);
         }
         return $output;

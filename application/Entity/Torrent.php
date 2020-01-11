@@ -53,20 +53,6 @@ class Torrent
 
     protected $comment_perpage = 10;  // FIXME
 
-    const TORRENT_TYPE_SINGLE = 'single';
-    const TORRENT_TYPE_MULTI = 'multi';
-
-    const TORRENT_STATUSES = [
-        self::TORRENT_STATUS_CONFIRMED,
-        self::TORRENT_STATUS_PENDING,
-        self::TORRENT_STATUS_BANNED,
-    ];
-
-    const TORRENT_STATUS_DELETED = 'deleted';
-    const TORRENT_STATUS_BANNED = 'banned';
-    const TORRENT_STATUS_PENDING = 'pending';
-    const TORRENT_STATUS_CONFIRMED = 'confirmed';
-
     public function __construct($id = null)
     {
         $this->loadTorrentContentById($id);

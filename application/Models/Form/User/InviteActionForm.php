@@ -8,7 +8,8 @@
 
 namespace App\Models\Form\User;
 
-use App\Entity\User;
+use App\Repository\User\UserStatus;
+
 use Rid\Validators\Validator;
 
 class InviteActionForm extends Validator
@@ -78,7 +79,7 @@ class InviteActionForm extends Validator
             $this->confirm_info = app()->pdo->createCommand('SELECT `status` FROM users WHERE id= :invitee_id')->bindParams([
                 'invitee_id' => $this->getInput('invitee_id')
             ])->queryScalar();
-            if ($this->confirm_info === false || $this->confirm_info !== User::STATUS_PENDING) {
+            if ($this->confirm_info === false || $this->confirm_info !== UserStatus::PENDING) {
                 $this->buildCallbackFailMsg('user:confirm','The user to confirm is not exist or already confirmed');
             }
         }
@@ -108,7 +109,7 @@ class InviteActionForm extends Validator
 
     private function flush_confirm() {
         app()->pdo->createCommand('UPDATE `users` SET `status` = :new_status WHERE `id` = :invitee_id')->bindParams([
-            'new_status' => User::STATUS_CONFIRMED, 'invitee_id' => $this->invitee_id
+            'new_status' => UserStatus::CONFIRMED, 'invitee_id' => $this->invitee_id
         ])->execute();
         if (app()->pdo->getRowCount() > 1) {
             return 'Confirm Pending User Success!';
