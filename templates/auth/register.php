@@ -66,7 +66,11 @@ $register_type = app()->request->get('type', 'open')
                                         <span class="input-group-addon"><span class="fas fa-envelope fa-fw"></span></span>
                                         <input type="email" class="form-control" id="email" name="email" required>
                                     </div>
-                                    <div class="help-block">We only allow those Email: <code><?= config('register.email_white_list') ?></code></div>
+                                    <?php if (config('register.check_email_whitelist') && !empty(config('register.email_white_list'))): ?>
+                                        <div class="help-block">
+                                            We only allow those Emails: <code><?= implode(',', config('register.email_white_list')) ?></code>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
 
                                 <div class="form-group">

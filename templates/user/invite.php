@@ -139,10 +139,10 @@
                                     <?php $i = 1; ?>
                                     <?php foreach ($user->getTempInviteDetails() as $tempInviteDetail): ?>
                                         <?php $left = $tempInviteDetail['total'] - $tempInviteDetail['used']; ?>
-                                        <tr<?= strtotime($tempInviteDetail['expire_at']) - time() < 86400 ? ' class="warning"' : ''; ?>>
+                                        <tr <?= strtotime($tempInviteDetail['expire_at']) - time() < 86400 ? ' class="warning"' : ''; ?>>
                                             <td><?= $i ?></td>
                                             <td><?= $tempInviteDetail['total'] ?></td>
-                                            <td<?= $left < 2 ? ' class="text-danger"' : '' ?>><?= $left ?></td>
+                                            <td <?= $left < 2 ? ' class="text-danger"' : '' ?>><?= $left ?></td>
                                             <td><nobr><?= $tempInviteDetail['expire_at'] ?></nobr></td>
                                             <td><button class="btn btn-primary btn-sm invite-btn" type="button" data-type="temporarily" data-id="<?= $i ?>" data-temp-invite-id="<?= $tempInviteDetail['id'] ?>"<?= $left == 0 ? ' disabled': '' ?>>Use it!</button></td>
                                         </tr>
