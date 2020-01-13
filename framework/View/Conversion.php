@@ -16,7 +16,6 @@ use League\Plates\Extension\ExtensionInterface;
 
 class Conversion implements ExtensionInterface
 {
-
     public function register(Engine $engine)
     {
         $engine->registerFunction('format_bytes', [$this, 'format_bytes']);
@@ -28,7 +27,9 @@ class Conversion implements ExtensionInterface
 
     public static function setDefault(&$array, $defaults)
     {
-        if (!is_array($array)) $array = [$array];
+        if (!is_array($array)) {
+            $array = [$array];
+        }
         foreach ($defaults as $key => $default) {
             if (!array_key_exists($key, $array)) {
                 $array[$key] = $default;
@@ -79,7 +80,6 @@ class Conversion implements ExtensionInterface
 
     public function sec2hms($sec, $padHours = false)
     {
-
         $hms = '';
 
         $hours = intval(intval($sec) / 3600);

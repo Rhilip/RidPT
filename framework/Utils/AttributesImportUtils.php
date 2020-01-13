@@ -8,7 +8,6 @@
 
 namespace Rid\Utils;
 
-
 trait AttributesImportUtils
 {
     public function importAttributes($config)

@@ -19,7 +19,7 @@ class JWTHelper
         return JWT::encode($payload, $key ?? sha1(env('APP_SECRET_KEY')));
     }
 
-    public static function decode(string $jwt,string $key = null, array $allowed_algs = array(), $allow_exp = false)
+    public static function decode(string $jwt, string $key = null, array $allowed_algs = array(), $allow_exp = false)
     {
         try {
             $payload = (array) JWT::decode($jwt, $key ?? sha1(env('APP_SECRET_KEY')), $allowed_algs ?: ['HS256']);   // jwt data in array

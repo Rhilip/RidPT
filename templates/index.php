@@ -46,7 +46,7 @@
                         </h4>
                     </div>
                     <div class="item-content collapse<?= $index === 0 ? ' in' : '' ?>" id="new_<?= $new['id'] ?>">
-                        <div class="text"><?= $this->batch($new['body'],'format_ubbcode'); ?></div>
+                        <div class="text"><?= $this->batch($new['body'], 'format_ubbcode'); ?></div>
                     </div>
                 </div>
                 <?php endforeach; ?>

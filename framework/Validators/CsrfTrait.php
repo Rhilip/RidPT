@@ -8,7 +8,6 @@
 
 namespace Rid\Validators;
 
-
 trait CsrfTrait
 {
     public $csrf;

@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Auth;
 
-
 use App\Libraries\Constant;
 use Rid\Helpers\JWTHelper;
 use Rid\Validators\CsrfTrait;
@@ -43,16 +42,17 @@ class UserLogoutForm extends Validator
     }
 
     /** @noinspection PhpUnused */
-    protected function getUserSessionId() {
+    protected function getUserSessionId()
+    {
         $session = app()->request->cookie(Constant::cookie_name);
         if (is_null($session)) {
-            $this->buildCallbackFailMsg('session','How can you hit here without cookies?');
+            $this->buildCallbackFailMsg('session', 'How can you hit here without cookies?');
             return;
         }
 
         $payload = JWTHelper::decode($session);
         if ($payload === false || !isset($payload['jti'])) {
-            $this->buildCallbackFailMsg('jwt','Fail to get $jti information');
+            $this->buildCallbackFailMsg('jwt', 'Fail to get $jti information');
             return;
         }
 
@@ -67,7 +67,7 @@ class UserLogoutForm extends Validator
     private function invalidSession()
     {
         app()->cookie->delete(Constant::cookie_name);   // Clean cookie
-        app()->redis->zAdd(Constant::mapUserSessionToId,  0, $this->sid);   // Quick Mark this invalid in cache
+        app()->redis->zAdd(Constant::mapUserSessionToId, 0, $this->sid);   // Quick Mark this invalid in cache
 
         // Set this session expired
         app()->pdo->createCommand('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([

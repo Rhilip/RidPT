@@ -27,5 +27,4 @@ class NameHelper
         }
         return $name;
     }
-
 }

@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Links;
 
-
 class EditForm extends ApplyForm
 {
     public $link_id;
@@ -82,7 +81,7 @@ class EditForm extends ApplyForm
                 app()->auth->getCurUser()->getUsername() . '(' . app()->auth->getCurUser()->getId() . ').', app()->site::LOG_LEVEL_MOD);
         } else {  // to new a links
             app()->pdo->insert('links', $this->link_new_data)->execute();
-           app()->site->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
+            app()->site->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
                 app()->auth->getCurUser()->getUsername() . '(' . app()->auth->getCurUser()->getId() . ').', app()->site::LOG_LEVEL_MOD);
         }
         app()->redis->del('Site:links');

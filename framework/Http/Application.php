@@ -201,5 +201,4 @@ class Application extends \Rid\Base\Application
     {
         $this->_serv = $serv;
     }
-
 }

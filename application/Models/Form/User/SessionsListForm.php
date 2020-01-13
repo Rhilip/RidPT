@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\User;
 
-
 use Rid\Validators\Pagination;
 
 class SessionsListForm extends Pagination

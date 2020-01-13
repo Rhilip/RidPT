@@ -36,7 +36,7 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fas fa-user-alt fa-fw"></span></span>
                             <input type="text" class="form-control" id="username" name="username" required
-                                   placeholder="" value="<?= $this->e(app()->request->post('username','')) ?>">
+                                   placeholder="" value="<?= $this->e(app()->request->post('username', '')) ?>">
                         </div>
                     </div>
 
@@ -67,7 +67,7 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                         <legend><a href="#adv_option" data-toggle="collapse" class="btn btn-link">Advanced Options</a></legend>
                         <div id="adv_option" class="collapse">
                             <div class="form-group">
-                                <?php // -1 - disable -> 'disabled' ; 0 - option -> '' ; 1 - option but default checked -> 'checked' ; 2 - force -> 'checked disabled' ?>
+                                <?php // -1 - disable -> 'disabled' ; 0 - option -> '' ; 1 - option but default checked -> 'checked' ; 2 - force -> 'checked disabled'?>
                                 <div class="switch">
                                     <input type="checkbox" name="logout" id="logout" value="yes"
                                            <?php if (config('security.auto_logout') > 0): ?>checked<?php endif; ?>
@@ -78,7 +78,7 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                                 <div class="switch">
                                     <input type="checkbox" name="securelogin" id="securelogin" value="yes"
                                            <?php if (config('security.secure_login') > 0): ?>checked<?php endif; ?>
-                                           <?php if(in_array(config('security.secure_login'), [-1, 2])): ?>disabled<?php endif; ?>
+                                           <?php if (in_array(config('security.secure_login'), [-1, 2])): ?>disabled<?php endif; ?>
                                     >
                                     <label for="securelogin">Restrict session to my login IP</label>
                                 </div>

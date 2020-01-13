@@ -8,13 +8,13 @@
 
 namespace App\Controllers;
 
-
 use App\Models\Form\News;
 use Rid\Http\Controller;
 
 class NewsController extends Controller
 {
-    public function actionIndex() {
+    public function actionIndex()
+    {
         $pager = new News\SearchForm();
         $pager->setInput(app()->request->get());
 
@@ -26,7 +26,8 @@ class NewsController extends Controller
         }
     }
 
-    public function actionNew() {
+    public function actionNew()
+    {
         if (app()->request->isPost()) {
             $newform = new News\EditForm();
             $newform->setInput(app()->request->post());
@@ -66,16 +67,16 @@ class NewsController extends Controller
         return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
     }
 
-    public function actionDelete() {
+    public function actionDelete()
+    {
         if (app()->auth->getCurUser()->isPrivilege('manage_news')) {
-            $id = app()->request->get('id',0);
-            if (filter_var($id,FILTER_VALIDATE_INT) && $id > 0) {
+            $id = app()->request->get('id', 0);
+            if (filter_var($id, FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check
                 app()->pdo->createCommand('DELETE FROM news WHERE id= :id')->bindParams(['id'=>$id])->execute();
             }
             return app()->response->redirect('/news');
         }
         return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
-
     }
 }

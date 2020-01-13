@@ -8,7 +8,6 @@
 
 namespace App\Controllers;
 
-
 use App\Models\Form\Site;
 use Rid\Http\Controller;
 
@@ -23,8 +22,8 @@ class SiteController extends Controller
     {
         $logs = new Site\Logs();
         if (!$logs->validate()) {
-            return $this->render('action/fail',['msg'=>$logs->getError()]);
+            return $this->render('action/fail', ['msg'=>$logs->getError()]);
         }
-        return $this->render('site/logs',['logs'=>$logs]);
+        return $this->render('site/logs', ['logs'=>$logs]);
     }
 }

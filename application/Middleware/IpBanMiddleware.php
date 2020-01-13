@@ -24,5 +24,4 @@ class IpBanMiddleware
 
         return $next();
     }
-
 }

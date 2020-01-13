@@ -157,7 +157,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="switch<?= app()->auth->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key ?>">
+                        <div class="switch<?= app()->auth->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
                             <input type="checkbox" id="hr" name="hr" value="1"><label for="hr">H&R</label>
                         </div>
                     </div>

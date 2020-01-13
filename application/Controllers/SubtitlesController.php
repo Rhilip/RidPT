@@ -60,7 +60,7 @@ class SubtitlesController extends Controller
             return $this->render('action/fail', ['msg' => $delete->getError()]);  // TODO add redirect
         } else {
             $delete->flush();
-            return $this->render('action/success',['redirect' => '/subtitles']); // TODO add redirect
+            return $this->render('action/success', ['redirect' => '/subtitles']); // TODO add redirect
         }
     }
 }

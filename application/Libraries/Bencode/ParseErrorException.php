@@ -8,7 +8,6 @@
 
 namespace App\Libraries\Bencode;
 
-
 class ParseErrorException extends \RuntimeException
 {
 }

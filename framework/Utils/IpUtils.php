@@ -160,7 +160,9 @@ class IpUtils
         if ($data) {
             $ip = filter_var($data[1], FILTER_VALIDATE_IP | FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
             $port = $data[2];
-            if ($ip && $port) return ["ip" => $ip, "port" => $port];
+            if ($ip && $port) {
+                return ["ip" => $ip, "port" => $port];
+            }
         }
         return false;
     }

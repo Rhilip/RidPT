@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Repository\Torrent;
 
-
 class TorrentType
 {
     const SINGLE = 'single';

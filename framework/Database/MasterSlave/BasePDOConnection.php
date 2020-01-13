@@ -94,5 +94,4 @@ class BasePDOConnection extends \Rid\Database\BasePDOConnection
         $this->selectMaster();
         parent::beginTransaction();
     }
-
 }

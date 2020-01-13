@@ -115,5 +115,4 @@ class Route extends Component
         }
         return $result;
     }
-
 }

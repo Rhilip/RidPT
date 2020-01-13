@@ -13,12 +13,10 @@ use App\Libraries\Bencode\Bencode;
 
 class StructureForm extends DetailsForm
 {
-
     public function getTorrentFileContentDict()
     {
         $file_loc = Constant::getTorrentFileLoc($this->id);
         $content = Bencode::load($file_loc);
         return $content;
     }
-
 }

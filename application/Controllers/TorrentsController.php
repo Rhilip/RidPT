@@ -14,7 +14,6 @@ use Rid\Http\Controller;
 
 class TorrentsController extends Controller
 {
-
     public function actionIndex()
     {
         return $this->actionSearch();
@@ -47,6 +46,5 @@ class TorrentsController extends Controller
             }
             return $this->render('torrents/tags', ['pager' => $pager]);
         }
-
     }
 }

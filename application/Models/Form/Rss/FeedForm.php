@@ -12,5 +12,4 @@ use App\Models\Form\Torrents\SearchForm;
 
 class FeedForm extends SearchForm
 {
-
 }

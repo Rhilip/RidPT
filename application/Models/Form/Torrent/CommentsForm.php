@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Torrent;
 
-
 use Rid\Validators\PaginationTrait;
 
 class CommentsForm extends DetailsForm

@@ -33,5 +33,4 @@ trait StaticInstanceTrait
         }
         return $object;
     }
-
 }

@@ -27,5 +27,4 @@ interface ComponentInterface
 
     // 请求后置事件
     public function onRequestAfter();
-
 }

@@ -67,5 +67,4 @@ class ProcessHelper
         }
         return false;
     }
-
 }

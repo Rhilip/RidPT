@@ -43,7 +43,8 @@ class UserRecoverForm extends Validator
      * @return bool|string  bool(true) means flush success ,
      *                      any other value (string) performs like error msg
      */
-    public function flush() {
+    public function flush()
+    {
         // Check this email is in our database or not?
         $user_info = app()->pdo->createCommand('SELECT `id`,`username`,`status` FROM `users` WHERE `email` = :email;')->bindParams([
             'email' => $this->email
@@ -63,14 +64,16 @@ class UserRecoverForm extends Validator
                     'action' => $this->_action
                 ]);
 
-            app()->site->sendEmail([$this->email], 'Please confirm your action to recover your password',
-                'email/user_recover', [
+            app()->site->sendEmail(
+                [$this->email],
+                'Please confirm your action to recover your password',
+                'email/user_recover',
+                [
                     'username' => $user_info['username'],
                     'confirm_url' => $confirm_url,
-                ]);
+                ]
+            );
         }
         return true;
     }
-
-
 }

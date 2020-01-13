@@ -191,5 +191,4 @@ class Image
         $imageSave = $this->switchExecute('SAVE');
         $imageSave($this->image, $filename);
     }
-
 }

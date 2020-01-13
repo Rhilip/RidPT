@@ -40,24 +40,33 @@ class Config extends Component
     {
         // First Check config stored in Swoole Table. If it exist , then just return the cached key
         if (false === $setting_row = $this->cacheTable->get($name)) {
-            if (strpos($name, 'runtime.') === 0) return false; // Deal with config with prefix `runtime.`
-            if (strpos($name, 'route.') === 0) return 1;       // Deal with config with prefix `route.`
+            if (strpos($name, 'runtime.') === 0) {
+                return false;
+            } // Deal with config with prefix `runtime.`
+            if (strpos($name, 'route.') === 0) {
+                return 1;
+            }       // Deal with config with prefix `route.`
 
             // Get config From Database
             $setting_row = app()->pdo->createCommand('SELECT `name`, `value`, `type` from `site_config` WHERE `name` = :name')
                 ->bindParams(['name' => $name])->queryOne();
 
             // In this case (Load config From Database Failed) , A Exception should throw
-            if ($setting_row === false)
+            if ($setting_row === false) {
                 throw new ConfigException(sprintf('Dynamic Setting "%s" couldn\'t be found.', $name));
+            }
 
             $this->load($setting_row);
         }
 
         $setting = $setting_row['value'];  // Type String
-        if ($setting_row['type'] == 'json') $setting = json_decode($setting,true);
-        elseif ($setting_row['type'] == 'int') $setting = (int) $setting;
-        elseif ($setting_row['type'] == 'bool') $setting = (bool) $setting;
+        if ($setting_row['type'] == 'json') {
+            $setting = json_decode($setting, true);
+        } elseif ($setting_row['type'] == 'int') {
+            $setting = (int) $setting;
+        } elseif ($setting_row['type'] == 'bool') {
+            $setting = (bool) $setting;
+        }
 
         return $setting;
     }
@@ -66,7 +75,9 @@ class Config extends Component
     {
         $settings = [];
         foreach ($this->cacheTable as $k => $v) {
-            if (!is_null($prefix) && strpos($k, $prefix) !== 0) continue;
+            if (!is_null($prefix) && strpos($k, $prefix) !== 0) {
+                continue;
+            }
             $settings[$k] = $this->get($k);
         }
         return $settings;
@@ -97,7 +108,8 @@ class Config extends Component
 
     public function setMultiple(array $config_array)
     {
-        foreach ($config_array as $key => $value)
+        foreach ($config_array as $key => $value) {
             $this->set($key, $value);
+        }
     }
 }

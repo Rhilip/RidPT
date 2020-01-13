@@ -16,7 +16,8 @@ class TorrentsForm extends Validator
 {
     use isValidTorrentTrait;
 
-    public function updateRecord() {
+    public function updateRecord()
+    {
         $bookmark_exist = app()->pdo->createCommand('SELECT `id` FROM `bookmarks` WHERE `uid` = :uid AND `tid` = :tid ')->bindParams([
             'uid' => app()->auth->getCurUser()->getId(),
             'tid' => $this->getInput('id')

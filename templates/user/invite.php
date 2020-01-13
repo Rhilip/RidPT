@@ -10,6 +10,7 @@
  */
 
 use App\Repository\User\UserStatus;
+
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -19,7 +20,7 @@ use App\Repository\User\UserStatus;
     <div class="col-md-10 col-md-offset-1">
         <div class="text-center">
             <h2><?= $user->getUsername() ?>'s Invite System</h2>
-            <?php if(isset($msg)): ?>
+            <?php if (isset($msg)): ?>
             <small class="text-red"><?= $msg ?></small>
             <?php endif; ?>
         </div>
@@ -47,9 +48,9 @@ use App\Repository\User\UserStatus;
                     <tr>
                         <td class="text-center"><?= $invitee['username'] ?></td>
                         <td class="text-center"><?= $invitee['email'] ?></td>
-                        <td class="text-right"><?= $this->batch($invitee['uploaded'],'format_bytes') ?></td>
-                        <td class="text-right"><?= $this->batch($invitee['downloaded'],'format_bytes') ?></td>
-                        <td class="text-center"><?= number_format($invitee['uploaded']/($invitee['downloaded'] + 1),3) ?></td>
+                        <td class="text-right"><?= $this->batch($invitee['uploaded'], 'format_bytes') ?></td>
+                        <td class="text-right"><?= $this->batch($invitee['downloaded'], 'format_bytes') ?></td>
+                        <td class="text-center"><?= number_format($invitee['uploaded']/($invitee['downloaded'] + 1), 3) ?></td>
                         <td class="text-center"><?= $invitee['status'] ?></td>
                         <?php if (app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
                         <td class="text-center">
@@ -108,7 +109,7 @@ use App\Repository\User\UserStatus;
             </div>
         </div> <!-- User's Pending Invite -->
 
-        <?php if ($user->getId() === app()->auth->getCurUser()->getId()): // Same User, use $user as quick call ?>
+        <?php if ($user->getId() === app()->auth->getCurUser()->getId()): // Same User, use $user as quick call?>
         <?php $can_invite = config('base.enable_invite_system') && ($user->getInvites() + $user->getTempInvitesSum() > 0); ?>
         <div class="panel">
             <div class="panel-heading"><span class="text-red">Invite Warning!!!</span></div>

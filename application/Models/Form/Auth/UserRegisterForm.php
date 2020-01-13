@@ -125,12 +125,12 @@ class UserRegisterForm extends Validator
     protected function isRegisterSystemOpen()
     {
         if (config('base.enable_register_system') != true) {
-            $this->buildCallbackFailMsg('RegisterSystemOpen','The register isn\'t open in this site.');
+            $this->buildCallbackFailMsg('RegisterSystemOpen', 'The register isn\'t open in this site.');
             return;
         }
 
         if (config('register.by_' . $this->getInput('type')) != true) {
-            $this->buildCallbackFailMsg('RegisterSystemOpen',"The register by {$this->getInput('type')} ways isn't open in this site.");
+            $this->buildCallbackFailMsg('RegisterSystemOpen', "The register by {$this->getInput('type')} ways isn't open in this site.");
             return;
         }
     }
@@ -138,8 +138,9 @@ class UserRegisterForm extends Validator
     protected function isMaxUserReached()
     {
         if (config('register.check_max_user') &&
-            app()->site::fetchUserCount() >= config('base.max_user'))
-            $this->buildCallbackFailMsg('MaxUserReached','Max user limit Reached');
+            app()->site::fetchUserCount() >= config('base.max_user')) {
+            $this->buildCallbackFailMsg('MaxUserReached', 'Max user limit Reached');
+        }
     }
 
     protected function isMaxRegisterIpReached()
@@ -153,7 +154,7 @@ class UserRegisterForm extends Validator
             ])->queryScalar();
 
             if ($user_ip_count > $max_user_per_ip) {
-                $this->buildCallbackFailMsg('MaxRegisterIpReached',"The register member count in this ip `$client_ip` is reached");
+                $this->buildCallbackFailMsg('MaxRegisterIpReached', "The register member count in this ip `$client_ip` is reached");
             }
         }
     }
@@ -318,14 +319,18 @@ class UserRegisterForm extends Validator
                     'action' => $this->_action
                 ]);
 
-            app()->site->sendEmail([$this->email], 'Please confirm your accent',
-                'email/user_register', [
+            app()->site->sendEmail(
+                [$this->email],
+                'Please confirm your accent',
+                'email/user_register',
+                [
                     'username' => $this->username,
                     'confirm_url' => $confirm_url,
-                ]);
+                ]
+            );
         }
 
         // Add Site log for user signup
-       app()->site->writeLog($log_text, app()->site::LOG_LEVEL_MOD);
+        app()->site->writeLog($log_text, app()->site::LOG_LEVEL_MOD);
     }
 }

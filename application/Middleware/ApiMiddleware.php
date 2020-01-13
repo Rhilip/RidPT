@@ -8,7 +8,6 @@
 
 namespace App\Middleware;
 
-
 class ApiMiddleware
 {
     public function handle($callable, \Closure $next)
@@ -22,7 +21,7 @@ class ApiMiddleware
         app()->response->setHeader('Pragma', 'no-cache');
 
         if (env('APP_DEBUG')) {
-            app()->response->setHeader('access-control-allow-origin','*');
+            app()->response->setHeader('access-control-allow-origin', '*');
         }
 
         return $next();

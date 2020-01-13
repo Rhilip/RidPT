@@ -57,6 +57,4 @@ class EditForm extends Validator
         // Clean News Cache
         app()->redis->del('Site:recent_news');
     }
-
-
 }

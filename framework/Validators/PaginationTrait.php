@@ -8,8 +8,7 @@
 
 namespace Rid\Validators;
 
-
-Trait PaginationTrait
+trait PaginationTrait
 {
     public $page;
     public $limit;  // pecPage
@@ -102,8 +101,12 @@ Trait PaginationTrait
     protected function checkPager()
     {
         $limit = intval($this->getInput('limit', static::getDefaultLimit()));
-        if ($limit < static::getMinLimit()) $limit = static::getMinLimit();
-        if ($limit > static::getMaxLimit()) $limit = static::getMaxLimit();
+        if ($limit < static::getMinLimit()) {
+            $limit = static::getMinLimit();
+        }
+        if ($limit > static::getMaxLimit()) {
+            $limit = static::getMaxLimit();
+        }
         $page = intval($this->getInput('page', static::getDefaultPage()));
 
         $this->setInput(['limit' => $limit, 'page' => $page]);
@@ -112,14 +115,19 @@ Trait PaginationTrait
         $this->offset = ($page - 1) * $limit;
 
         // Quick return empty array when offset is much bigger than total, So we needn't hit remote or local data
-        if ($this->offset > $this->total) $this->pager_data = [];
+        if ($this->offset > $this->total) {
+            $this->pager_data = [];
+        }
     }
 
     final private function getDataTotal(): int
     {
         if (is_null($this->pager_data_total)) {
-            if (static::getDataSource() == 'remote') $this->pager_data_total = $this->getRemoteTotal();
-            else $this->pager_data_total = count($this->getInput('data', []));
+            if (static::getDataSource() == 'remote') {
+                $this->pager_data_total = $this->getRemoteTotal();
+            } else {
+                $this->pager_data_total = count($this->getInput('data', []));
+            }
         }
         return $this->pager_data_total;
     }
@@ -132,8 +140,11 @@ Trait PaginationTrait
     final public function getPagerData(): array
     {
         if (is_null($this->pager_data)) {
-            if (static::getDataSource() == 'remote') $this->pager_data = $this->getRemoteData();
-            else $this->pager_data = array_slice($this->getInput('data', []), $this->offset, $this->limit);
+            if (static::getDataSource() == 'remote') {
+                $this->pager_data = $this->getRemoteData();
+            } else {
+                $this->pager_data = array_slice($this->getInput('data', []), $this->offset, $this->limit);
+            }
         }
         return $this->pager_data;
     }

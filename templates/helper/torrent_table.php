@@ -33,11 +33,11 @@ $time_now = time();
                 <tr data-tid="<?= $torrent->getId() ?>">
                     <td class="text-center" data-item="category" style="margin: 0;padding: 0">
                         <?php $cat = $torrent->getCategory(); ?>
-                        <?php if ($cat['image']): // Show Category's Image as <img> tag with classname ?>
+                        <?php if ($cat['image']): // Show Category's Image as <img> tag with classname?>
                             <img src="<?= $cat['image'] ?>" class="category <?= $cat['class_name'] ?>"  alt="<?= $cat['name'] ?>">
-                        <?php elseif ($cat['class_name']):  // Show Category's Image as <div> tag with classname ?>
+                        <?php elseif ($cat['class_name']):  // Show Category's Image as <div> tag with classname?>
                             <div class="category <?= $cat['class_name'] ?>"></div>
-                        <?php else: // Show Category's Name if image not set ?>
+                        <?php else: // Show Category's Name if image not set?>
                             <?= $cat['name'] ?>
                         <?php endif; ?>
                     </td>
@@ -72,8 +72,8 @@ $time_now = time();
                         </div>
                     </td>
                     <td class="text-center" data-item="t-comments" data-comments="<?= $torrent->getComments() ?>"><?= $torrent->getComments() ?></td>
-                    <td class="text-center" data-item="t-size" data-size="<?= $torrent->getTorrentSize() ?>"><?= $this->batch($torrent->getTorrentSize(),'format_bytes_compact') ?></td>
-                    <td class="text-center" data-item="t-added-date"><time class="nowrap" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>" data-ttl="<?= $time_now - strtotime($torrent->getAddedAt()) ?>"><?= str_replace(' ','<br />',$torrent->getAddedAt()) ?></time></td>
+                    <td class="text-center" data-item="t-size" data-size="<?= $torrent->getTorrentSize() ?>"><?= $this->batch($torrent->getTorrentSize(), 'format_bytes_compact') ?></td>
+                    <td class="text-center" data-item="t-added-date"><time class="nowrap" data-timestamp="<?= strtotime($torrent->getAddedAt()) ?>" data-ttl="<?= $time_now - strtotime($torrent->getAddedAt()) ?>"><?= str_replace(' ', '<br />', $torrent->getAddedAt()) ?></time></td>
                     <td class="text-center" data-item="t-seeder" data-seeder="<?= $this->e($torrent->getComplete()) ?>"><?= number_format($torrent->getComplete()) ?></td>
                     <td class="text-center" data-item="t-leecher" data-leecher="<?= $this->e($torrent->getIncomplete()) ?>"><?= number_format($torrent->getIncomplete()) ?></td>
                     <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>">

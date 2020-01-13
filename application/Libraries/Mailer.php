@@ -48,7 +48,6 @@ class Mailer extends BaseObject
         $mail->Port = $this->port;        // TCP port to connect to
 
         $this->_mailer = $mail;
-
     }
 
     public function send(array $receivers, string $subject, string $body)

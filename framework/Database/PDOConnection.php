@@ -23,5 +23,4 @@ class PDOConnection extends BasePDOConnection
         // 关闭连接
         $this->disconnect();
     }
-
 }

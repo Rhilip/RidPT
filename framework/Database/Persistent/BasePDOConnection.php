@@ -103,5 +103,4 @@ class BasePDOConnection extends \Rid\Database\BasePDOConnection
         }
         return false;
     }
-
 }

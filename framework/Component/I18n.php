@@ -13,7 +13,6 @@ use Symfony\Component\Translation\Translator;
 
 class I18n extends Component
 {
-
     public $loader = [];
     public $resources = [];
 
@@ -89,18 +88,22 @@ class I18n extends Component
     private function getUserLang()
     {
         // Return Cache value
-        if (!is_null($this->_user_lang)) return $this->_user_lang;
+        if (!is_null($this->_user_lang)) {
+            return $this->_user_lang;
+        }
 
         // Determine
         $judged_langs = array();
 
         // 1nd highest priority: GET parameter 'lang'
-        if (!is_null(app()->request->get('lang')))
+        if (!is_null(app()->request->get('lang'))) {
             $judged_langs[] = app()->request->get('lang');
+        }
 
         // 2rd highest priority: user setting for login user
-        if (app()->auth->getCurUser() && !is_null(app()->auth->getCurUser()->getLang()))
+        if (app()->auth->getCurUser() && !is_null(app()->auth->getCurUser()->getLang())) {
             $judged_langs[] = app()->auth->getCurUser()->getLang();
+        }
 
         // 3th highest priority: HTTP_ACCEPT_LANGUAGE
         if (!is_null(app()->request->header('accept_language'))) {
@@ -120,7 +123,9 @@ class I18n extends Component
                     list($l, $q) = array_merge(explode(';q=', $el), [1]);
                     $res[$l] = (float)$q;
                     return $res;
-                }, []);
+                },
+                []
+            );
             arsort($prefLocales);
 
             foreach ($prefLocales as $part => $q) {
@@ -152,7 +157,6 @@ class I18n extends Component
      */
     public function trans($string, $args = [], $domain = null, $required_lang = null)
     {
-
         $local =
             $this->forcedLang ?? // Highest priority: forced language
             $required_lang ??    // 1st highest priority: required language

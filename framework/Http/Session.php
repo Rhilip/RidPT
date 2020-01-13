@@ -71,7 +71,9 @@ class Session extends Component
         }
         $this->_sessionKey = $this->saveKeyPrefix . $this->_sessionId;
 
-        if (!$this->_isNewSession) app()->redis->expire($this->_sessionKey, $this->maxLifetime); // 延长session有效期
+        if (!$this->_isNewSession) {
+            app()->redis->expire($this->_sessionKey, $this->maxLifetime);
+        } // 延长session有效期
     }
 
     // 创建SessionId
@@ -118,7 +120,8 @@ class Session extends Component
     }
 
     // 取值后删除
-    public function pop($name) {
+    public function pop($name)
+    {
         $value = $this->get($name);
         $this->delete($name);
         return $value;

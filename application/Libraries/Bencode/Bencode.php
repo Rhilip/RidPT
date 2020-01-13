@@ -11,7 +11,6 @@
 
 namespace App\Libraries\Bencode;
 
-
 class Bencode
 {
     /**

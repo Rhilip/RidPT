@@ -44,6 +44,10 @@
   "require-dev": {
     "eaglewu/swoole-ide-helper": "dev-master"
   },
+  "config": {
+    "preferred-install": "dist",
+    "optimize-autoloader": true
+  },
   "autoload": {
     "psr-4": {
       "Rid\\": "framework/",
@@ -53,5 +57,6 @@
       "framework/Rid.php",
       "framework/functions.php"
     ]
-  }
+  },
+  "prefer-stable": true
 }

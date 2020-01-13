@@ -150,11 +150,15 @@ class InviteForm extends UserRegisterForm
         }
 
         if ($invite_status === true) { // TODO use email queue
-            app()->site->sendEmail([$this->email], 'Invite To ' . config('base.site_name'),
-                'email/user_invite', [
+            app()->site->sendEmail(
+                [$this->email],
+                'Invite To ' . config('base.site_name'),
+                'email/user_invite',
+                [
                     'username' => $this->username,
                     'invite_link' => $this->invite_link,
-                ]);
+                ]
+            );
         }
         return $invite_status;
     }

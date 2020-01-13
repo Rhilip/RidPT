@@ -34,5 +34,4 @@ trait ComponentTrait
     {
         $this->setStatus(ComponentInterface::STATUS_READY);
     }
-
 }

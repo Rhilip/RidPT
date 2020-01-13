@@ -8,12 +8,10 @@
 
 namespace App\Models\Form\News;
 
-
 use Rid\Validators\Pagination;
 
 class SearchForm extends Pagination
 {
-
     public $query;
     public $search;
 

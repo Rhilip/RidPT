@@ -73,5 +73,4 @@ class Captcha extends BaseObject
     {
         return $this->_content;
     }
-
 }

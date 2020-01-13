@@ -49,5 +49,4 @@ class BaseRedisConnection extends \Rid\Redis\BaseRedisConnection
         }
         return false;
     }
-
 }

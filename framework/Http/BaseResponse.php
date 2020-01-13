@@ -45,7 +45,8 @@ class BaseResponse extends Component
         $this->statusCode = $code;
     }
 
-    public function setContent($content) {
+    public function setContent($content)
+    {
         $this->content = $content;
     }
 
@@ -86,5 +87,4 @@ class BaseResponse extends Component
         }
         $this->content = $content;
     }
-
 }

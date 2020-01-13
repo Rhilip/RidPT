@@ -8,10 +8,8 @@
 
 namespace App\Models\Form\Traits;
 
-
 trait FileSentTrait
 {
-
     use actionRateLimitCheckTrait;
 
     protected function getSendFileName(): string
@@ -43,8 +41,9 @@ trait FileSentTrait
         }
 
         app()->response->setHeader('Content-Type', $this->getSendFileContentType());
-        if ($this->getSendFileContentLength() != 0)
+        if ($this->getSendFileContentLength() != 0) {
             app()->response->setHeader('Content-Length', $this->getSendFileContentLength());
+        }
 
         $filename = $this->getSendFileName();
         if (strpos(app()->request->header('user-agent'), 'IE')) {

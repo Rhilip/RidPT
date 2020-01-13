@@ -16,7 +16,7 @@ namespace Rid\Validators;
  * Trait CaptchaTrait
  * @package Rid\Validators
  */
-Trait CaptchaTrait
+trait CaptchaTrait
 {
     public $captcha;
 

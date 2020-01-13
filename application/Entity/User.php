@@ -63,7 +63,9 @@ class User
             }
         }
 
-        if ($self === false) return false;
+        if ($self === false) {
+            return false;
+        }
 
         $this->importAttributes($self);
     }
@@ -273,10 +275,10 @@ class User
     public function getTempInviteDetails()
     {
         return $this->getCacheValue('temp_invites_details', function () {
-                return app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
+            return app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
                     "uid" => app()->auth->getCurUser()->getId()
                 ])->queryAll() ?: [];
-            }) ?? [];
+        }) ?? [];
     }
 
     public function getPendingInvites()

@@ -106,7 +106,9 @@ class Site extends Component
         ])->execute();
 
         app()->redis->hDel(Constant::userContent($receiver), 'unread_message_count', 'inbox_count');
-        if ($sender != 0) app()->redis->hDel(Constant::userContent($sender), 'outbox_count');
+        if ($sender != 0) {
+            app()->redis->hDel(Constant::userContent($sender), 'outbox_count');
+        }
     }
 
     public function sendEmail($receivers, $subject, $template, $data = [])
@@ -143,7 +145,9 @@ class Site extends Component
             $cats = [];
             $cats_raw = app()->pdo->createCommand('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
 
-            foreach ($cats_raw as $cat_raw) $cats[$cat_raw['id']] = $cat_raw;
+            foreach ($cats_raw as $cat_raw) {
+                $cats[$cat_raw['id']] = $cat_raw;
+            }
             app()->config->set('runtime.enabled_torrent_category', $cats, 'json');
         }
 
@@ -164,13 +168,17 @@ class Site extends Component
 
     public function ruleQuality($quality): array
     {
-        if (!in_array($quality, array_keys($this->getQualityTableList()))) throw new \RuntimeException('Unregister quality : ' . $quality);
+        if (!in_array($quality, array_keys($this->getQualityTableList()))) {
+            throw new \RuntimeException('Unregister quality : ' . $quality);
+        }
         if (false === $data = config('runtime.enabled_quality_' . $quality)) {
             $data = [];
 
             /** @noinspection SqlResolve */
             $data_raws = app()->pdo->createCommand("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
-            foreach ($data_raws as $data_raw) $data[$data_raw['id']] = $data_raw;
+            foreach ($data_raws as $data_raw) {
+                $data[$data_raw['id']] = $data_raw;
+            }
             app()->config->set('runtime.enabled_quality_' . $quality, $data, 'json');
         }
         return $data ?: [];
@@ -181,7 +189,9 @@ class Site extends Component
         if (false === $data = config('runtime.enabled_teams')) {
             $data = [];
             $data_raws = app()->pdo->createCommand('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
-            foreach ($data_raws as $data_raw) $data[$data_raw['id']] = $data_raw;
+            foreach ($data_raws as $data_raw) {
+                $data[$data_raw['id']] = $data_raw;
+            }
             app()->config->set('runtime.enabled_teams', $data, 'json');
         }
 
@@ -219,7 +229,9 @@ class Site extends Component
         $banips = $this->getBanIpsList();
 
         // Add ip if not exist
-        if (in_array($ip, $banips)) return;
+        if (in_array($ip, $banips)) {
+            return;
+        }
 
         // Rewrite config
         $banips[] = $ip;

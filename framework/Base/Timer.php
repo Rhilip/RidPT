@@ -8,7 +8,6 @@
 
 namespace Rid\Base;
 
-
 /**
  * Class Timer
  * @package Rid\Core

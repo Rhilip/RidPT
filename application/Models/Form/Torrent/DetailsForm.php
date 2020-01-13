@@ -14,10 +14,8 @@ use Rid\Validators\Validator;
 
 class DetailsForm extends Validator
 {
-
     protected $_autoload = true;
     protected $_autoload_from = ['get'];
 
     use isValidTorrentTrait;
-
 }

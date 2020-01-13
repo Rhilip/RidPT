@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Torrent;
 
-
 use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidTorrentTrait;
 use App\Entity\Torrent;
@@ -56,9 +55,11 @@ class EditForm extends Validator
             'title' => 'required',
             'category' => [
                 ['required'], ['Integer'],
-                ['InList', ['list' => array_map(function ($cat) {
+                ['InList', ['list' => array_map(
+                    function ($cat) {
                         return $cat['id'];
-                    }, app()->site->ruleCanUsedCategory()
+                    },
+                    app()->site->ruleCanUsedCategory()
                 )]]
             ],
             'descr' => 'required',
@@ -158,7 +159,8 @@ class EditForm extends Validator
         // Get Torrent if not in validate
         if ($this->torrent === null) {
             $this->isExistTorrent();
-            if ($this->getError()) { return false;
+            if ($this->getError()) {
+                return false;
             }
         }
 
@@ -250,5 +252,4 @@ class EditForm extends Validator
             ])->execute();
         }
     }
-
 }

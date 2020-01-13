@@ -18,5 +18,4 @@ class ErrorException extends \RuntimeException
         // 父类构造
         parent::__construct();
     }
-
 }

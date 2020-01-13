@@ -289,13 +289,14 @@ class BaseRedisConnection extends Component
     // 执行命令
     public function __call($name, $arguments)
     {
-
         $this->autoConnect();   // 自动连接
 
         if ($this->_recordData) {
             $arg_text = '';
             foreach ($arguments as $arg) {
-                if (!is_string($arg)) $arg = '[Array]';
+                if (!is_string($arg)) {
+                    $arg = '[Array]';
+                }
                 $arg_text .= ' ' . $arg;
             }
 

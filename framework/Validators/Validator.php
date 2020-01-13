@@ -68,7 +68,9 @@ class Validator extends BaseObject
     {
         foreach (static::callbackRules() as $rule) {
             call_user_func([$this, $rule]);
-            if (!$this->_success) break;
+            if (!$this->_success) {
+                break;
+            }
         }
     }
 
@@ -99,10 +101,13 @@ class Validator extends BaseObject
      */
     final public function getInput($key = null, $default = null)
     {
-        if (is_null($key)) return $this->_input;
+        if (is_null($key)) {
+            return $this->_input;
+        }
 
-        if (in_array($key, $this->_file_input_name))
+        if (in_array($key, $this->_file_input_name)) {
             return new UploadFile($this->_input[$key]);
+        }
 
         return $this->_input[$key] ?? $default;
     }
@@ -137,9 +142,15 @@ class Validator extends BaseObject
     private function autoloadDataFromRequests()
     {
         if ($this->_autoload) {
-            if (in_array('get', $this->_autoload_from)) $this->setInput(app()->request->get());
-            if (in_array('post', $this->_autoload_from)) $this->setInput(app()->request->post());
-            if (in_array('files', $this->_autoload_from)) $this->setFileInput(app()->request->files());
+            if (in_array('get', $this->_autoload_from)) {
+                $this->setInput(app()->request->get());
+            }
+            if (in_array('post', $this->_autoload_from)) {
+                $this->setInput(app()->request->post());
+            }
+            if (in_array('files', $this->_autoload_from)) {
+                $this->setFileInput(app()->request->files());
+            }
         }
     }
 
@@ -153,8 +164,12 @@ class Validator extends BaseObject
         $this->_success = $this->_validator->validate($this->_input);
         $this->_errors = $this->_validator->getMessages();
 
-        if ($this->_success) $this->validateCallbackRules(); // Valid callback rules
-        if ($this->_success) $this->releaseDataToProperties(); // release validate data to class properties which is type if public when valid success
+        if ($this->_success) {
+            $this->validateCallbackRules();
+        } // Valid callback rules
+        if ($this->_success) {
+            $this->releaseDataToProperties();
+        } // release validate data to class properties which is type if public when valid success
 
         $this->buildDefaultPropAfterValid();
 
@@ -167,7 +182,9 @@ class Validator extends BaseObject
         foreach ($this->_errors as $key => $error) {
             $msg = '';
             if (is_array($error)) {
-                foreach ($error as $value) $msg .= $value . '; ';
+                foreach ($error as $value) {
+                    $msg .= $value . '; ';
+                }
             } else {
                 $msg = $error;
             }
@@ -189,6 +206,4 @@ class Validator extends BaseObject
     {
         throw new \RuntimeException('No flush function exist');
     }
-
-
 }

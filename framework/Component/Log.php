@@ -109,5 +109,4 @@ class Log extends Component implements LoggerInterface
         $message = "[time] {$time} [message] {$message}";
         return $message;
     }
-
 }

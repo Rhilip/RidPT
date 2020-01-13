@@ -97,7 +97,7 @@
                         <label for="cat_parent_id" class="required">Parent Category</label>
                         <select id="cat_parent_id" name="cat_parent_id" class="form-control">
                             <?php foreach ($categories as $category) : ?>
-                                <?php $level = substr_count($category['full_path'],' - '); ?>
+                                <?php $level = substr_count($category['full_path'], ' - '); ?>
                                 <option value="<?= $category['id'] ?>"><?= str_repeat('&nbsp;', 4 * ($category['level'] + 1)) .  $category['name'] ?></option>
                             <?php endforeach; ?>
                         </select>

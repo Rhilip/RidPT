@@ -84,5 +84,4 @@ class Response extends BaseResponse
     {
         return isset($this->_responder);
     }
-
 }

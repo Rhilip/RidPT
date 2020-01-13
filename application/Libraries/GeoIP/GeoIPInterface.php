@@ -8,7 +8,6 @@
 
 namespace App\Libraries\GeoIP;
 
-
 interface GeoIPInterface
 {
     public static function getLocation();

@@ -13,7 +13,6 @@ use App\Repository\User\UserStatus;
 
 use Rid\Http\Controller;
 
-
 class AuthController extends Controller
 {
 

@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Torrents;
 
-
 use Rid\Validators\Pagination;
 
 class TagsForm extends Pagination
@@ -36,5 +35,4 @@ class TagsForm extends Pagination
             ['LIMIT :offset, :rows', 'params' => ['offset' => $this->offset, 'rows' => $this->limit]],
         ])->queryAll();
     }
-
 }

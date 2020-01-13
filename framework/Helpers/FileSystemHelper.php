@@ -25,5 +25,4 @@ class FileSystemHelper
         }
         return str_replace('/', '\\', basename(str_replace('\\', '/', $path)));
     }
-
 }

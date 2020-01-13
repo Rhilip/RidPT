@@ -13,10 +13,8 @@ use App\Libraries\Constant;
 
 use Rid\Base\Process;
 
-
 final class CronTabProcess extends Process
 {
-
     private $_print_flag = 1;  // FIXME debug model on
 
     private $_none_exist_job = [];
@@ -55,7 +53,8 @@ final class CronTabProcess extends Process
                     app()->pdo->createCommand('UPDATE `site_crontab` set last_run_at = FROM_UNIXTIME(:last_run_at) , next_run_at = FROM_UNIXTIME(:next_run_at) WHERE id=:id')->bindParams([
                         'id' => $job['id'], 'last_run_at' => $job_end_time, 'next_run_at' => $next_run_at
                     ])->execute();
-                    $this->print_log('The run job : ' . $job['job'] . ' Finished. ' .
+                    $this->print_log(
+                        'The run job : ' . $job['job'] . ' Finished. ' .
                         'Cost time: ' . number_format($job_end_time - $job_start_time, 10) . 's, ' . 'Next run at : ' . $next_run_at
                     );
 
@@ -73,11 +72,14 @@ final class CronTabProcess extends Process
             }
         }
         $end_time = time();
-        if ($hit > 0) $this->print_log('This Cron Work period Start At ' . $start_time . ', Cost Time: ' . number_format($end_time - $start_time, 10) . 's, With ' . $hit . ' Jobs hits.');
+        if ($hit > 0) {
+            $this->print_log('This Cron Work period Start At ' . $start_time . ', Cost Time: ' . number_format($end_time - $start_time, 10) . 's, With ' . $hit . ' Jobs hits.');
+        }
     }
 
     /** @noinspection PhpUnused */
-    protected function clean_expired_zset_cache() {
+    protected function clean_expired_zset_cache()
+    {
         $timenow = time();
 
         $clean_list = [
@@ -96,7 +98,9 @@ final class CronTabProcess extends Process
         foreach ($clean_list as $item) {
             [$field, $msg] = $item;
             $clean_count = app()->redis->zRemRangeByScore($field, 0, $timenow);
-            if ($clean_count > 0) $this->print_log(sprintf($msg, $clean_count));
+            if ($clean_count > 0) {
+                $this->print_log(sprintf($msg, $clean_count));
+            }
         }
     }
 
@@ -112,7 +116,8 @@ final class CronTabProcess extends Process
     }
 
     /** @noinspection PhpUnused */
-    protected function clean_expired_items_database() {
+    protected function clean_expired_items_database()
+    {
         $clean_sqls = [
             [  // expired session
                 'UPDATE `sessions` SET `expired` = 1 WHERE `expired` = 0 AND `login_at` < DATE_SUB(NOW(), INTERVAL 15 MINUTE)',
@@ -128,7 +133,9 @@ final class CronTabProcess extends Process
             [$clean_sql, $msg] = $item;
             app()->pdo->createCommand($clean_sql)->execute();
             $clean_count =  app()->pdo->getRowCount();
-            if ($clean_count > 0) $this->print_log(sprintf($msg, $clean_count));
+            if ($clean_count > 0) {
+                $this->print_log(sprintf($msg, $clean_count));
+            }
         }
     }
 
@@ -190,7 +197,8 @@ final class CronTabProcess extends Process
     }
 
     /** @noinspection PhpUnused */
-    protected function sync_ban_list() {
+    protected function sync_ban_list()
+    {
         // Sync Banned Emails list
         $ban_email_list = app()->pdo->createCommand('SELECT `email` from `ban_emails`')->queryColumn() ?: [];
         app()->redis->sAddArray(Constant::siteBannedEmailSet, $ban_email_list);

@@ -15,7 +15,6 @@ use Throwable;
  */
 class HttpServer
 {
-
     public $name = 'rid-httpd';
 
     // 运行参数
@@ -150,7 +149,9 @@ class HttpServer
     {
         // 刷新OpCode缓存，防止reload重载入时受到影响
         foreach (['apc_clear_cache', 'opcache_reset'] as $func) {
-            if (function_exists($func)) $func();
+            if (function_exists($func)) {
+                $func();
+            }
         }
 
         // 进程命名
@@ -248,8 +249,9 @@ class HttpServer
             $custom_process = new $process_class();
             if ($custom_process instanceof Process) {
                 $process = new \Swoole\Process(function ($process) use ($process_name, $process_config, $custom_process) {
-
-                    if ($process_config['title']) ProcessHelper::setTitle('rid-httpd: ' . $process_config['title']);
+                    if ($process_config['title']) {
+                        ProcessHelper::setTitle('rid-httpd: ' . $process_config['title']);
+                    }
 
                     // FIXME 实例化App
                     $config = require $this->_config['configFile'];
@@ -283,5 +285,4 @@ class HttpServer
         println('Config      File:      ' . $this->_config['configFile']);
         println('───────────────────────────────────────');
     }
-
 }

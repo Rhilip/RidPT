@@ -22,7 +22,7 @@ $copyright = "Copyright (c) " . $site_name . " " . (date("Y") != $yearfounded ? 
     <channel>
         <title><?= addslashes($site_name . ' Torrents') ?></title>
         <link><?= $url ?></link>
-        <description><![CDATA[<?= addslashes('Latest torrents from ' . $site_name ) ?>]]></description>
+        <description><![CDATA[<?= addslashes('Latest torrents from ' . $site_name) ?>]]></description>
         <language>en</language>
         <copyright><?= $copyright ?></copyright>
         <managingEditor><?= $site_email . "(" . $site_name . " Admin)" ?></managingEditor>
@@ -49,7 +49,7 @@ $copyright = "Copyright (c) " . $site_name . " " . (date("Y") != $yearfounded ? 
             <comments><![CDATA[<?= $url. '/torrent/details?id=' . $torrent->getId() . '&cmtpage=0#startcomments' ?>]]></comments>
             <enclosure url="<?= $url . '/torrent/download?id=' . $torrent->getId() . ('') ?>" length="<?= $torrent->getTorrentSize() ?>" type="application/x-bittorrent" />
             <guid isPermaLink="false"><?= $torrent->getInfoHash() ?></guid>
-            <pubDate><?= date('r',strtotime($torrent->getAddedAt())) ?></pubDate>
+            <pubDate><?= date('r', strtotime($torrent->getAddedAt())) ?></pubDate>
         </item>
         <?php endforeach; ?>
     </channel>

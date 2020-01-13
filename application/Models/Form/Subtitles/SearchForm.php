@@ -14,7 +14,6 @@ use Rid\Validators\Pagination;
 
 class SearchForm extends Pagination
 {
-
     public $search;
     public $letter;
 
@@ -69,5 +68,4 @@ class SearchForm extends Pagination
         }
         return $size;
     }
-
 }

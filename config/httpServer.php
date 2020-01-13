@@ -37,34 +37,44 @@ return [
     // 注册回调方法Hook
     'hook' => [
         // 主进程启动事件（onStart）回调
-        'hook_start' => function (Server $server) { },
+        'hook_start' => function (Server $server) {
+        },
 
         // 主进程停止事件回调
-        'hook_shutdown' => function (Server $server) { },
+        'hook_shutdown' => function (Server $server) {
+        },
 
         // 管理进程启动事件回调
-        'hook_manager_start' => function (Server $server) { },
+        'hook_manager_start' => function (Server $server) {
+        },
 
         // 管理进程停止事件回调
-        'hook_manager_stop' => function (Server $server) { },
+        'hook_manager_stop' => function (Server $server) {
+        },
 
         // 工作进程启动事件回调
-        'hook_worker_start' => function (Server $server, int $worker_id) { },
+        'hook_worker_start' => function (Server $server, int $worker_id) {
+        },
 
         // 工作进程停止事件回调
-        'hook_worker_stop' => function (Server $server, int $workerId) { },
+        'hook_worker_stop' => function (Server $server, int $workerId) {
+        },
 
         // 工作进程错误事件（onWorkerError）回调
-        'hook_worker_error' => function (Server $server, int $workerId, int $workerPid, int $exitCode, int $signal) { },
+        'hook_worker_error' => function (Server $server, int $workerId, int $workerPid, int $exitCode, int $signal) {
+        },
 
         // 工作进程退出事件（onWorkerExit）回调
-        'hook_worker_exit' => function (Server $server, int $workerId) { },
+        'hook_worker_exit' => function (Server $server, int $workerId) {
+        },
 
         // 请求成功（onRequestSuccess）回调
-        'hook_request_success' => function (Server $server, Request $request) { },
+        'hook_request_success' => function (Server $server, Request $request) {
+        },
 
         // 请求错误（onRequestException）回调
-        'hook_request_error' => function (Server $server, Request $request) { },
+        'hook_request_error' => function (Server $server, Request $request) {
+        },
     ],
 
     // 用户自定义进程 （用于常驻的任务清理，将会使用Server->addProcess添加到Server

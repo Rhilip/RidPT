@@ -176,7 +176,9 @@ class Torrent
 
     public function getTeam()
     {
-        if ($this->team == 0) return false;
+        if ($this->team == 0) {
+            return false;
+        }
         return app()->site->ruleTeam()[$this->team];
     }
 
@@ -187,7 +189,9 @@ class Torrent
 
     public function getQuality(string $quality)
     {
-        if ($this->getQualityId($quality) == 0) return false;
+        if ($this->getQualityId($quality) == 0) {
+            return false;
+        }
         return app()->site->ruleQuality($quality)[$this->getQualityId($quality)];
     }
 
@@ -201,7 +205,9 @@ class Torrent
      */
     public function getTags(): array
     {
-        if (is_string($this->tags)) $this->tags = json_decode($this->tags, true);
+        if (is_string($this->tags)) {
+            $this->tags = json_decode($this->tags, true);
+        }
         return $this->tags ?? [];
     }
 
@@ -214,7 +220,9 @@ class Torrent
         $tags = $this->getTags();
         $rule_pinned_tags = app()->site->rulePinnedTags();
         foreach ($rule_pinned_tags as $tag_name => $tag_class) {
-            if (in_array($tag_name, $tags)) $pinned_tags[$tag_name] = $tag_class;
+            if (in_array($tag_name, $tags)) {
+                $pinned_tags[$tag_name] = $tag_class;
+            }
         }
         return $pinned_tags;
     }
@@ -241,7 +249,9 @@ class Torrent
      */
     public function getNfo($convert = true, $swedishmagic = false)
     {
-        if ($convert) return self::nfoConvert($this->nfo, $swedishmagic);
+        if ($convert) {
+            return self::nfoConvert($this->nfo, $swedishmagic);
+        }
         return $this->nfo;
     }
 
@@ -275,7 +285,8 @@ class Torrent
             $s = preg_replace(
                 ["/([ -~])\305([ -~])/", "/([ -~])\304([ -~])/", "/([ -~])\326([ -~])/"],
                 ["\\1\217\\2", "\\1\216\\2", "\\1\231\\2"],
-                $s); // ?
+                $s
+            ); // ?
         }
         return $s;
     }
@@ -290,5 +301,4 @@ class Torrent
             ])->queryAll();
         });
     }
-
 }

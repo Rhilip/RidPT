@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Links;
 
-
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 

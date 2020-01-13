@@ -13,10 +13,8 @@ use App\Repository\User\UserStatus;
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;
 
-
 class UserConfirmForm extends Validator
 {
-
     public $action;
 
     const ACTION_REGISTER = 'register';
@@ -54,7 +52,8 @@ class UserConfirmForm extends Validator
         $record = app()->pdo->createCommand(
             'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm`
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
-                  WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;')->bindParams([
+                  WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;'
+        )->bindParams([
             'secret' => $this->getInput('secret'), 'action' => $this->getInput('action')
         ])->queryOne();
 
@@ -105,11 +104,15 @@ class UserConfirmForm extends Validator
         $this->update_confirm_status();
 
         // Send user email to tell his new password.
-        app()->site->sendEmail([$this->email], 'New Password',
-            'email/user_new_password', [
+        app()->site->sendEmail(
+            [$this->email],
+            'New Password',
+            'email/user_new_password',
+            [
                 'username' => $this->username,
                 'password' => $new_password,
-            ]);
+            ]
+        );
 
         return true;
     }
@@ -123,7 +126,8 @@ class UserConfirmForm extends Validator
         }
     }
 
-    public function getConfirmMsg() {
+    public function getConfirmMsg()
+    {
         if ($this->action == self::ACTION_REGISTER) {
             return 'Your account is success Confirmed.'; // FIXME i18n
         } elseif ($this->action == self::ACTION_RECOVER) {

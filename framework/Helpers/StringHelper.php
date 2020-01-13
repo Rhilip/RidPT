@@ -13,7 +13,7 @@ class StringHelper
      * @param string $chars
      * @return string
      */
-    public static function getRandomString($length , $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz')
+    public static function getRandomString($length, $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz')
     {
         $last = 61;
         $str = '';

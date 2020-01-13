@@ -39,8 +39,9 @@ class DownloadForm extends StructureForm
 
     protected function checkDownloadPos()
     {
-        if (!app()->auth->getCurUser()->getDownloadpos())
-            $this->buildCallbackFailMsg('pos','your download pos is disabled');
+        if (!app()->auth->getCurUser()->getDownloadpos()) {
+            $this->buildCallbackFailMsg('pos', 'your download pos is disabled');
+        }
     }
 
     public function getSendFileContent()

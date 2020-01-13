@@ -54,7 +54,7 @@ $torrent = $details->getTorrent();
                     </div><!-- FIXME external info div block which this site support -->
                 </header>
                 <section class="content ubbcode-block" id="torrent_descr">
-                    <?= $this->batch($torrent->getDescr() ?? '[h4]No description.[/h4]','format_ubbcode') ?>
+                    <?= $this->batch($torrent->getDescr() ?? '[h4]No description.[/h4]', 'format_ubbcode') ?>
                 </section>
             </article>
         </div> <!-- END //*[@id="torrent_descr"] -->
@@ -113,7 +113,7 @@ $torrent = $details->getTorrent();
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                     <a class="torrent-files" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-file fa-fw"></i>&nbsp;View Torrent's Files</a>
                 </div><!-- View Torrent's Files -->
-                <?php if ($torrent->hasNfo()): // TODO add global config key of NFO ?>
+                <?php if ($torrent->hasNfo()): // TODO add global config key of NFO?>
                     <div class="torrent-action-item">
                         <a class="torrent-nfo" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-info fa-fw"></i>&nbsp;View Torrent's Nfo file</a>
                     </div><!-- View Torrent's Nfo -->
@@ -137,7 +137,7 @@ $torrent = $details->getTorrent();
                 <?php if (count($tags) > 0) : ?>
                     <?php $pinned_tags = $torrent->getPinnedTags(); ?>
                     <?php foreach ($tags as $tag): ?>
-                        <a href="/torrents/search?tags=<?= $tag ?>" class="label label-outline <?= array_key_exists($tag,$pinned_tags) ? $pinned_tags[$tag] : '' ?>"><?= $tag ?></a>
+                        <a href="/torrents/search?tags=<?= $tag ?>" class="label label-outline <?= array_key_exists($tag, $pinned_tags) ? $pinned_tags[$tag] : '' ?>"><?= $tag ?></a>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <span class="text-muted">No tags for this torrent</span>

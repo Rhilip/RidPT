@@ -60,7 +60,8 @@ class InviteActionForm extends Validator
         ];
     }
 
-    protected function checkActionPrivilege() {
+    protected function checkActionPrivilege()
+    {
         $action = $this->getInput('action');
         if ($action == self::ACTION_CONFIRM) {
             if (!app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')) {
@@ -74,18 +75,20 @@ class InviteActionForm extends Validator
         }
     }
 
-    protected function checkConfirmInfo() {
+    protected function checkConfirmInfo()
+    {
         if ($this->getInput('action') == self::ACTION_CONFIRM) {
             $this->confirm_info = app()->pdo->createCommand('SELECT `status` FROM users WHERE id= :invitee_id')->bindParams([
                 'invitee_id' => $this->getInput('invitee_id')
             ])->queryScalar();
             if ($this->confirm_info === false || $this->confirm_info !== UserStatus::PENDING) {
-                $this->buildCallbackFailMsg('user:confirm','The user to confirm is not exist or already confirmed');
+                $this->buildCallbackFailMsg('user:confirm', 'The user to confirm is not exist or already confirmed');
             }
         }
     }
 
-    protected function checkRecycleInfo() {
+    protected function checkRecycleInfo()
+    {
         if ($this->getInput('action') == self::ACTION_RECYCLE) {
             // Get unused invite info
             $this->invite_info = app()->pdo->createCommand('SELECT * FROM `invite` WHERE `id` = :invite_id AND `inviter_id` = :inviter_id AND `used` = 0')->bindParams([
@@ -100,14 +103,15 @@ class InviteActionForm extends Validator
             // TODO Add recycle limit so that user can't make a temporarily invite like 'permanent'
             if ($this->invite_info['invite_type'] == InviteForm::INVITE_TYPE_TEMPORARILY) {
                 if (app()->redis->get('invite_recycle_limit:user_' . $this->invite_info['inviter_id']) !== false) {
-                    $this->buildCallbackFailMsg('invite_recycle_limit','Hit recycle limit');
+                    $this->buildCallbackFailMsg('invite_recycle_limit', 'Hit recycle limit');
                     return;
                 };
             }
         }
     }
 
-    private function flush_confirm() {
+    private function flush_confirm()
+    {
         app()->pdo->createCommand('UPDATE `users` SET `status` = :new_status WHERE `id` = :invitee_id')->bindParams([
             'new_status' => UserStatus::CONFIRMED, 'invitee_id' => $this->invitee_id
         ])->execute();
@@ -118,7 +122,8 @@ class InviteActionForm extends Validator
         }
     }
 
-    private function flush_recycle() {
+    private function flush_recycle()
+    {
         app()->pdo->beginTransaction();
         try {
             // Set this invite record's status as recycled
@@ -140,7 +145,7 @@ class InviteActionForm extends Validator
                         'life_time' => config('invite.recycle_invite_lifetime')
                     ])->execute();
                     $msg .= ' And return you a temporarily invite with ' . config('invite.recycle_invite_lifetime') . ' seconds lifetime.';
-                    app()->redis->hDel( 'User:' . $this->invite_info['inviter_id'] . ':base_content','temp_invite');
+                    app()->redis->hDel('User:' . $this->invite_info['inviter_id'] . ':base_content', 'temp_invite');
                 }
             }
             app()->pdo->commit();
@@ -159,5 +164,4 @@ class InviteActionForm extends Validator
             return $this->flush_recycle();
         }
     }
-
 }

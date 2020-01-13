@@ -12,7 +12,8 @@ use App\Models\Api\v1\Form\TorrentsForm;
 
 class TorrentController extends ApiController
 {
-    public function actionBookmark() {
+    public function actionBookmark()
+    {
         if ($this->checkMethod('POST')) {
             $bookmark = new TorrentsForm();
             $bookmark->setInput(app()->request->post());
@@ -34,7 +35,8 @@ class TorrentController extends ApiController
         }
     }
 
-    public function actionFileList() {
+    public function actionFileList()
+    {
         if ($this->checkMethod('GET')) {
             $filelist = new TorrentsForm();
             $filelist->setInput(app()->request->get());
@@ -51,7 +53,6 @@ class TorrentController extends ApiController
                     $ret
                 );
             }
-
         } else {
             return $this->buildMethodFailMsg('GET');
         }

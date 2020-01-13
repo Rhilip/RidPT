@@ -57,5 +57,4 @@ class Cookie extends Component
         }
         return true;
     }
-
 }

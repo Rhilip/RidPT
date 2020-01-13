@@ -2,7 +2,6 @@
 
 namespace Rid\Http;
 
-
 /**
  * UploadFile类
  */
@@ -62,7 +61,8 @@ class UploadFile
         return $this->name;
     }
 
-    public function getFileName(){
+    public function getFileName()
+    {
         return pathinfo($this->name)['filename'];
     }
 

@@ -8,7 +8,6 @@
 
 namespace App\Controllers;
 
-
 use Rid\Http\Controller;
 
 class AdminController extends Controller

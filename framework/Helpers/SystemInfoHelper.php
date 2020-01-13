@@ -81,7 +81,9 @@ class SystemInfoHelper
     {
         if (is_readable('/proc/cpuinfo') && is_readable('/proc/uptime')) {
             $processors = self::getProcessor();
-            if ($processors == 0) return 0;
+            if ($processors == 0) {
+                return 0;
+            }
 
             [$uptime, $idle] = explode(' ', file_get_contents('/proc/uptime'));
             return (float)$idle / ((float)$uptime * $processors);

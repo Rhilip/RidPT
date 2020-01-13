@@ -21,5 +21,4 @@ interface StaticInstanceInterface
      * @return $this
      */
     public static function newInstanceByConfig($name);
-
 }

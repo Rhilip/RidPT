@@ -11,6 +11,7 @@
 $user = app()->auth->getCurUser();
 
 use App\Repository\User\UserRole;
+
 ?>
 
 <!-- TODO fix nav miss in sm -->
@@ -72,7 +73,7 @@ use App\Repository\User\UserRole;
     </div>
     <div id="info_block_line_2">
         <span data-item="ratio" data-ratio="<?= $this->e($user->getRatio()) ?>">
-            <span class="color-ratio">Ratio:</span> <?= is_string($user->getRatio()) ? $user->getRatio() : round($user->getRatio(),3) ?>
+            <span class="color-ratio">Ratio:</span> <?= is_string($user->getRatio()) ? $user->getRatio() : round($user->getRatio(), 3) ?>
         </span>&nbsp;
         <span data-item="uploaded" data-uploaded="<?= $this->e($user->getUploaded()) ?>">
             <span class="color-seeding">Uploaded:</span> <?= $this->e($user->getUploaded(), 'format_bytes') ?>

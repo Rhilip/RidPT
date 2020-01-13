@@ -33,5 +33,4 @@ class Request extends BaseRequest
     {
         return $this->_requester->rawContent();
     }
-
 }

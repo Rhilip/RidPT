@@ -7,7 +7,6 @@ namespace Rid\Base;
  */
 abstract class BaseObject implements StaticInstanceInterface
 {
-
     use StaticInstanceTrait;
 
     // 构造
@@ -43,5 +42,4 @@ abstract class BaseObject implements StaticInstanceInterface
     public function onDestruct()
     {
     }
-
 }

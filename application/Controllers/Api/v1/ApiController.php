@@ -8,7 +8,6 @@
 
 namespace App\Controllers\Api\v1;
 
-
 use Rid\Http\Controller;
 
 class ApiController extends Controller
@@ -17,19 +16,25 @@ class ApiController extends Controller
      * @param array|string $methods
      * @return bool
      */
-    protected function checkMethod($methods) {
-        if (is_string($methods)) $methods = [$methods];
+    protected function checkMethod($methods)
+    {
+        if (is_string($methods)) {
+            $methods = [$methods];
+        }
 
         foreach ($methods as $method) {
-            if (strtolower(app()->request->method()) == strtolower($method))
+            if (strtolower(app()->request->method()) == strtolower($method)) {
                 return true;
+            }
         }
         return false;
     }
 
     protected function buildMethodFailMsg($want_methods)
     {
-        if (is_array($want_methods)) $want_methods = implode(',', $want_methods);
+        if (is_array($want_methods)) {
+            $want_methods = implode(',', $want_methods);
+        }
 
         app()->response->setStatusCode(405);
         $method = app()->request->method();

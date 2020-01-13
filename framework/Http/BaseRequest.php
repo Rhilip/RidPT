@@ -7,13 +7,11 @@ use Rid\Base\Component;
 use Rid\Utils\HeaderUtils;
 use Rid\Utils\IpUtils;
 
-
 /**
  * Request组件基类
  */
 class BaseRequest extends Component
 {
-
     const HEADER_FORWARDED = 0b00001; // When using RFC 7239
     const HEADER_X_FORWARDED_FOR = 0b00010;
     const HEADER_X_FORWARDED_HOST = 0b00100;
@@ -222,7 +220,8 @@ class BaseRequest extends Component
      * @see getClientIps()
      * @see http://en.wikipedia.org/wiki/X-Forwarded-For
      */
-    public function getClientIp() {
+    public function getClientIp()
+    {
         $ipAddresses = $this->getClientIps();
         return $ipAddresses[0];
     }
@@ -249,7 +248,6 @@ class BaseRequest extends Component
         }
 
         return $this->getTrustedValues(self::HEADER_X_FORWARDED_FOR, $ip) ?: array($ip);
-
     }
 
     public function isFromTrustedProxy()

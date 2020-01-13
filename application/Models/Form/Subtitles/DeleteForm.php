@@ -15,7 +15,6 @@ use Rid\Validators\Validator;
 
 class DeleteForm extends Validator
 {
-
     use isValidSubtitleTrait;
 
     public $reason;
@@ -60,7 +59,7 @@ class DeleteForm extends Validator
         // TODO Delete uploader bonus
 
         if ($this->subtitle['uppd_by'] != app()->auth->getCurUser()->getId()) {
-            app()->site->sendPM(0,$this->subtitle['uppd_by'],'msg_your_sub_deleted','msg_deleted_your_sub');
+            app()->site->sendPM(0, $this->subtitle['uppd_by'], 'msg_your_sub_deleted', 'msg_deleted_your_sub');
         }
 
         // TODO add user detail

@@ -8,10 +8,8 @@
 
 namespace Rid\Base;
 
-
 class Process implements StaticInstanceInterface
 {
-
     use StaticInstanceTrait;
 
     private $sleep_time;
@@ -19,12 +17,10 @@ class Process implements StaticInstanceInterface
 
     public function init()
     {
-
     }
 
     public function run()
     {
-
     }
 
     /**
@@ -65,7 +61,11 @@ class Process implements StaticInstanceInterface
 
     private function disablePdoAndRedisRecord()
     {
-        if (in_array('pdo', $this->_config['components'])) app()->pdo->setRecordData(false);
-        if (in_array('redis', $this->_config['components'])) app()->redis->setRecordData(false);
+        if (in_array('pdo', $this->_config['components'])) {
+            app()->pdo->setRecordData(false);
+        }
+        if (in_array('redis', $this->_config['components'])) {
+            app()->redis->setRecordData(false);
+        }
     }
 }

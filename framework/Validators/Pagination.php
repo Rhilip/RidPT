@@ -8,7 +8,6 @@
 
 namespace Rid\Validators;
 
-
 class Pagination extends Validator
 {
     use PaginationTrait;

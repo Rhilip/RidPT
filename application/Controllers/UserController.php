@@ -14,7 +14,6 @@ use Rid\Http\Controller;
 
 class UserController extends Controller
 {
-
     public function actionIndex()
     {
         return $this->actionDetails();

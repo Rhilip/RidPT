@@ -8,10 +8,8 @@
 
 namespace Rid\Utils;
 
-
 trait ClassValueCacheUtils
 {
-
     protected function getCacheNameSpace(): string
     {
         return 'Cache:default';
@@ -29,5 +27,4 @@ trait ClassValueCacheUtils
         }
         return $this->$key;
     }
-
 }

@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Manage\Categories;
 
-
 use Rid\Validators\Validator;
 
 class EditForm extends Validator
@@ -91,7 +90,9 @@ class EditForm extends Validator
                 $this->buildCallbackFailMsg('Category:update', 'No data update');
                 return;
             }
-            if (!isset($this->cat_data_diff['full_path'])) $flag_check_full_path = false;  // It means full path key not update, We shouldn't check anymore.
+            if (!isset($this->cat_data_diff['full_path'])) {
+                $flag_check_full_path = false;
+            }  // It means full path key not update, We shouldn't check anymore.
         }
 
         if ($flag_check_full_path) {  // Check if full path key is duplicate or not.

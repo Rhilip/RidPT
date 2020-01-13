@@ -52,5 +52,4 @@ trait isValidUserTrait
     {
         return is_null($key) ? $this->user_data : ($this->user_data[$key] ?? $default);
     }
-
 }

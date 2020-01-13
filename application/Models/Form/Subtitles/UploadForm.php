@@ -99,7 +99,9 @@ VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)
             $this->file->saveAs($file_loc);
             app()->pdo->commit();
         } catch (\Exception $e) {
-            if (isset($file_loc)) unlink($file_loc);
+            if (isset($file_loc)) {
+                unlink($file_loc);
+            }
             app()->pdo->rollback();
             throw $e;
         }

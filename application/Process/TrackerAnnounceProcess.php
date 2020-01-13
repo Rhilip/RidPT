@@ -112,8 +112,9 @@ class TrackerAnnounceProcess extends Process
             $upSpeed = (($trueUploaded > 0 && $duration > 0) ? $trueUploaded / $duration : 0);
 
             if (config('tracker.enable_upspeed_check')) {
-                if ($userInfo['class'] < config('authority.pass_tracker_upspeed_check') && $duration > 0)
+                if ($userInfo['class'] < config('authority.pass_tracker_upspeed_check') && $duration > 0) {
                     $this->checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration, $upSpeed);
+                }
             }
 
             $this->getTorrentBuff($userInfo['id'], $torrentInfo['id'], $trueUploaded, $trueDownloaded, $upSpeed, $thisUploaded, $thisDownloaded);
@@ -189,7 +190,6 @@ class TrackerAnnounceProcess extends Process
      */
     private function checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration, $upspeed)
     {
-
         $logCheater = function ($commit) use ($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration) {
             app()->pdo->createCommand("INSERT INTO `cheaters`(`added_at`,`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`)
             VALUES (CURRENT_TIMESTAMP, :uid, :tid, :uploaded, :downloaded, :anctime, :seeders, :leechers, :hit, :msg, :reviewed, :reviewed_by)
@@ -214,19 +214,22 @@ class TrackerAnnounceProcess extends Process
         }
 
         // Uploaded more than 1 GB with uploading rate higher than 25 MByte/S (For Consertive level). This is likely cheating.
-        if ($trueUploaded > 1 * (1024 ** 3) && $upspeed > 25 * (1024 ** 2))
+        if ($trueUploaded > 1 * (1024 ** 3) && $upspeed > 25 * (1024 ** 2)) {
             $logCheater('Abnormally high uploading rate');
+        }
 
         // Uploaded more than 1 GB with uploading rate higher than 1 MByte/S when there is less than 8 leechers (For Consertive level). This is likely cheating.
-        if ($trueUploaded > 1 * (1024 ** 3) && $upspeed > 1 * (1024 ** 2))
+        if ($trueUploaded > 1 * (1024 ** 3) && $upspeed > 1 * (1024 ** 2)) {
             $logCheater('User is uploading fast when there is few leechers');
+        }
 
         //Uploaded more than 10 MB with uploading speed faster than 100 KByte/S when there is no leecher. This is likely cheating.
-        if ($trueUploaded > 10 * (1024 ** 2) && $upspeed > 100 * 1024 && $torrentInfo['incomplete'] <= 0)
+        if ($trueUploaded > 10 * (1024 ** 2) && $upspeed > 100 * 1024 && $torrentInfo['incomplete'] <= 0) {
             $logCheater('User is uploading when there is no leecher');
+        }
     }
 
-    private function getTorrentBuff($userid, $torrentid, $trueUploaded, $trueDownloaded,$upspeed, &$thisUploaded, &$thisDownloaded)
+    private function getTorrentBuff($userid, $torrentid, $trueUploaded, $trueDownloaded, $upspeed, &$thisUploaded, &$thisDownloaded)
     {
         $buff = app()->redis->get("TRACKER:user_" . $userid . "_torrent_" . $torrentid . "_buff");
         if ($buff === false) {

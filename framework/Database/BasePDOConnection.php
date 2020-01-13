@@ -204,7 +204,9 @@ class BasePDOConnection extends Component
     // 清扫预处理数据
     protected function clearPrepare()
     {
-        if ($this->_recordData) $this->_sqlExecuteData[] = $this->getRawSql();
+        if ($this->_recordData) {
+            $this->_sqlExecuteData[] = $this->getRawSql();
+        }
         $this->_sql    = '';
         $this->_params = [];
         $this->_values = [];
@@ -427,7 +429,8 @@ class BasePDOConnection extends Component
         return array_shift($sqlPrepareData);
     }
 
-    public function getExecuteData() {
+    public function getExecuteData()
+    {
         return $this->_sqlExecuteData;
     }
 

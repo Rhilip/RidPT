@@ -66,14 +66,18 @@ class Auth extends Component
     protected function loadCurUser($grant = 'cookies')
     {
         $user_id = false;
-        if ($grant == 'cookies') $user_id = $this->loadCurUserIdFromCookies();
-        elseif ($grant == 'passkey') $user_id = $this->loadCurUserIdFromPasskey();
+        if ($grant == 'cookies') {
+            $user_id = $this->loadCurUserIdFromCookies();
+        } elseif ($grant == 'passkey') {
+            $user_id = $this->loadCurUserIdFromPasskey();
+        }
 
         if ($user_id !== false && is_int($user_id) && $user_id > 0) {
             $user_id = intval($user_id);
             $curuser = app()->site->getUser($user_id);
-            if ($curuser->getStatus() !== UserStatus::DISABLED)  // user status shouldn't be disabled
+            if ($curuser->getStatus() !== UserStatus::DISABLED) {  // user status shouldn't be disabled
                 return $curuser;
+            }
         }
 
         return false;
@@ -82,16 +86,24 @@ class Auth extends Component
     protected function loadCurUserIdFromCookies()
     {
         $user_session = app()->request->cookie(Constant::cookie_name);
-        if (is_null($user_session)) return false;  // quick return when cookies is not exist
+        if (is_null($user_session)) {
+            return false;
+        }  // quick return when cookies is not exist
 
         $payload = JWTHelper::decode($user_session);
-        if ($payload === false) return false;
-        if (!isset($payload['jti']) || !isset($payload['aud'])) return false;
+        if ($payload === false) {
+            return false;
+        }
+        if (!isset($payload['jti']) || !isset($payload['aud'])) {
+            return false;
+        }
 
         // Check if user lock access ip ?
         if (isset($payload['ip'])) {
             $now_ip_crc = sprintf('%08x', crc32(app()->request->getClientIp()));
-            if (strcasecmp($payload['ip'], $now_ip_crc) !== 0) return false;
+            if (strcasecmp($payload['ip'], $now_ip_crc) !== 0) {
+                return false;
+            }
         }
 
         // Verity $jti is force expired or not by checking mapUserSessionToId
@@ -101,14 +113,19 @@ class Auth extends Component
                 'sid' => $payload['jti']
             ])->queryScalar();
             app()->redis->zAdd(Constant::mapUserSessionToId, $uid ?: 0, $payload['jti']);  // Store 0 if session -> uid is invalid
-            if ($uid === false) return false;  // this session is not exist or marked as expired
-        } elseif ($expired_check != $payload['aud']) return false;    // may return (double) 0 , which means already make invalid ; or it check if user obtain this session (may Overdesign)
+            if ($uid === false) {
+                return false;
+            }  // this session is not exist or marked as expired
+        } elseif ($expired_check != $payload['aud']) {
+            return false;
+        }    // may return (double) 0 , which means already make invalid ; or it check if user obtain this session (may Overdesign)
 
         $this->cur_user_jit = $payload['jti'];
 
         // Check if user want secure access but his environment is not secure
         if (!app()->request->isSecure() &&                        // if User requests is not secure , and
-            (config('security.ssl_login') > 1 ||        // if Our site FORCE enabled ssl feature
+            (
+                config('security.ssl_login') > 1 ||        // if Our site FORCE enabled ssl feature
              (config('security.ssl_login') > 0 && isset($payload['ssl']) && $payload['ssl']) // if Our site support ssl feature and User want secure access
             )
         ) {
@@ -122,7 +139,9 @@ class Auth extends Component
     protected function loadCurUserIdFromPasskey()
     {
         $passkey = app()->request->get('passkey');
-        if (is_null($passkey)) return false;
+        if (is_null($passkey)) {
+            return false;
+        }
 
         // FIXME merge same function as tracker so
         $user_id = app()->redis->zScore(Constant::mapUserPasskeyToId, $passkey);

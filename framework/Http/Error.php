@@ -85,5 +85,4 @@ class Error extends Component
             println((PHP_EOL . PHP_EOL) . $message . (PHP_EOL));
         }
     }
-
 }

@@ -21,7 +21,7 @@ $upload_mode = $upload_mode ?? false;
 <div class="row">
     <div class="col-md-12">
         <div class="panel" id="subs_upload_panel">
-            <div class="panel-heading text-center"><a href="#subs_upload_body" data-toggle="collapse">Upload Subtitles</a> - total uploaded <span id="total_subs_size"><?= $this->e($search->getSubsSizeSum(),'format_bytes') ?></span></div>
+            <div class="panel-heading text-center"><a href="#subs_upload_body" data-toggle="collapse">Upload Subtitles</a> - total uploaded <span id="total_subs_size"><?= $this->e($search->getSubsSizeSum(), 'format_bytes') ?></span></div>
             <div class="panel-body collapse<?= $upload_mode ? ' in' : '' ?>" id="subs_upload_body">
                 <div class="col-md-12" id="subs_upload_rules">
                     <p>Rules:</p>
@@ -53,11 +53,13 @@ $upload_mode = $upload_mode ?? false;
                                 <div class="form-group">
                                     <label for="file" class="col-sm-2 required">Subs File</label>
                                     <div class="col-md-5 col-sm-10">
-                                        <?php  $allow_extension = array_map(function ($ext) {return '.' . $ext;},\App\Models\Form\Subtitles\UploadForm::SubtitleExtension) ?>
+                                        <?php  $allow_extension = array_map(function ($ext) {
+    return '.' . $ext;
+}, \App\Models\Form\Subtitles\UploadForm::SubtitleExtension) ?>
                                         <input type="file" class="form-control" id="file" name="file" required
                                                accept="<?= implode(', ', $allow_extension) ?>"> <!-- TODO accept -->
                                     </div>
-                                    <div class="help-block">(Maximum file size: <?= $this->e(config('upload.max_subtitle_file_size'),'format_bytes') ?>.)</div>
+                                    <div class="help-block">(Maximum file size: <?= $this->e(config('upload.max_subtitle_file_size'), 'format_bytes') ?>.)</div>
                                 </div>
                                 <div class="form-group">
                                     <label for="torrent_id" class="col-sm-2 required">Torrent ID</label>
@@ -152,7 +154,7 @@ $upload_mode = $upload_mode ?? false;
                             </td>
                             <td class="text-center"><a class="nowrap" href="/torrent/details?id=<?= $datum['torrent_id'] ?>"><?= $this->e($datum['torrent_id']) ?></a></td>
                             <td><time class="nowrap"><?= $this->e($datum['added_at']) ?></time></td>
-                            <td><span class="nowrap"><?= $this->e($datum['size'],'format_bytes') ?></span></td>
+                            <td><span class="nowrap"><?= $this->e($datum['size'], 'format_bytes') ?></span></td>
                             <td class="text-right"><span class="nowrap"><?= $this->e($datum['hits']) ?></span></td>
                             <td class="text-center"><span class="nowrap"><?= $this->insert('helper/username', ['user' => app()->site->getUser($datum['uppd_by']), 'hide' => $datum['anonymous']]) ?></span>
                             </td>

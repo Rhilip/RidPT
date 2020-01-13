@@ -15,5 +15,4 @@ class RedisConnection extends BaseRedisConnection
         // 关闭连接
         $this->disconnect();
     }
-
 }

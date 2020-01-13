@@ -16,7 +16,6 @@ use Rid\Helpers\JWTHelper;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 
-
 class UserLoginForm extends Validator
 {
     use CaptchaTrait;
@@ -170,8 +169,9 @@ class UserLoginForm extends Validator
             $payload['ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
         }
 
-        if ($this->ssl || config('security.ssl_login') > 1)
-            $payload['ssl'] = true;  // Store User want full ssl protect
+        if ($this->ssl || config('security.ssl_login') > 1) {
+            $payload['ssl'] = true;
+        }  // Store User want full ssl protect
 
         // Generate JWT content
         $this->jwt_payload = $payload;

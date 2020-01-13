@@ -8,14 +8,10 @@
 
 namespace App\Libraries;
 
-
 class Bonus
 {
-
-
     public function __construct()
     {
-
     }
 
     public function calculate($uid): float

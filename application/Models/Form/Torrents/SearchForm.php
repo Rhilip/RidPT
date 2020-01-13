@@ -12,7 +12,6 @@ use Rid\Validators\Pagination;
 
 class SearchForm extends Pagination
 {
-
     public static $MAX_LIMIT = 100;
 
     private $_tags;
@@ -35,8 +34,8 @@ class SearchForm extends Pagination
             $quality_id_list = [];
             if (config('torrent_upload.enable_quality_' . $quality)) {
                 $quality_id_list = [0] + array_map(function ($cat) {
-                        return $cat['id'];
-                    }, app()->site->ruleQuality($quality));
+                    return $cat['id'];
+                }, app()->site->ruleQuality($quality));
             }
 
             $rules[$quality . '[*]'] = [
@@ -81,7 +80,9 @@ class SearchForm extends Pagination
         if (is_null($this->_tags)) {
             $tags = $this->getInput('tags') ?? [];
 
-            if (is_string($tags)) $tags = explode(',', $tags);
+            if (is_string($tags)) {
+                $tags = explode(',', $tags);
+            }
             $this->_tags = array_map('trim', $tags);
         }
 
@@ -90,7 +91,9 @@ class SearchForm extends Pagination
 
     private function getSearchField(): array
     {
-        if (!is_null($this->_field)) return $this->_field;  // return cached search field
+        if (!is_null($this->_field)) {
+            return $this->_field;
+        }  // return cached search field
 
         $fields = [];
 
@@ -98,14 +101,18 @@ class SearchForm extends Pagination
         foreach (app()->site->getQualityTableList() as $quality => $title) {
             if (config('torrent_upload.enable_quality_' . $quality)) {
                 $value = $this->getInput($quality);
-                if (is_array($value)) $fields[] = ["AND `quality_$quality` IN (:quality) ", 'params' => ['quality' => array_map('intval', $value)]];
+                if (is_array($value)) {
+                    $fields[] = ["AND `quality_$quality` IN (:quality) ", 'params' => ['quality' => array_map('intval', $value)]];
+                }
             }
         }
 
         // Teams
         if (config('torrent_upload.enable_teams')) {
             $value = $this->getInput('team');
-            if (is_array($value)) $fields[] = ['AND `team` IN (:team) ', 'params' => ['team' => array_map('intval', $value)]];
+            if (is_array($value)) {
+                $fields[] = ['AND `team` IN (:team) ', 'params' => ['team' => array_map('intval', $value)]];
+            }
         }
 
         // TODO we may not use `&search_area=` to search in non-title/subtitle/descr field, Use sep `&ownerid=` , `&doubanid=` instead.
@@ -129,7 +136,9 @@ class SearchForm extends Pagination
                         $searchstr_exploded_count++;
                         $searchstr_exploded[] = $value;
                     }
-                    if ($searchstr_exploded_count > 10) break;
+                    if ($searchstr_exploded_count > 10) {
+                        break;
+                    }
                 }
             }
 

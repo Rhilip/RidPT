@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Traits;
 
-
 trait isValidSubtitleTrait
 {
     public $id;  // Subtitle Id

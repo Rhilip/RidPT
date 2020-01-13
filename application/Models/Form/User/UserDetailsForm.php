@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\User;
 
-
 use App\Models\Form\Traits\isValidUserTrait;
 use Rid\Validators\Validator;
 

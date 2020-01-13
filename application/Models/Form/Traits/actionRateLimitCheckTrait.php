@@ -8,13 +8,11 @@
 
 namespace App\Models\Form\Traits;
 
-
 use App\Libraries\Constant;
 use Redis;
 
 trait actionRateLimitCheckTrait
 {
-
     protected static function getRateLimitRules(): array
     {
         /** @noinspection PhpUnusedLocalVariableInspection */
@@ -52,7 +50,9 @@ trait actionRateLimitCheckTrait
     /** @noinspection PhpUnused */
     protected function rateLimitCheck()
     {
-        if (empty($this::getRateLimitRules())) return;  // It seems we don't need rate limit
+        if (empty($this::getRateLimitRules())) {
+            return;
+        }  // It seems we don't need rate limit
 
         foreach ($this::getRateLimitRules() as $limit_status) {
             list($vary, $count) = $this->isRateLimitHit($limit_status);

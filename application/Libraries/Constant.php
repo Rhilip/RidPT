@@ -8,7 +8,6 @@
 
 namespace App\Libraries;
 
-
 class Constant
 {
     const cookie_name = 'rid';

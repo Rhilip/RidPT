@@ -12,6 +12,7 @@
 $torrent = $edit->getTorrent();
 
 use App\Repository\Torrent\TorrentStatus;
+
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -157,7 +158,7 @@ use App\Repository\Torrent\TorrentStatus;
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="switch<?= app()->auth->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key ?>">
+                        <div class="switch<?= app()->auth->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
                             <input type="checkbox" id="hr" name="hr" value="1" <?= $torrent->getHr() ? ' checked' : '' ?>><label for="hr">H&R</label>
                         </div>
                     </div>

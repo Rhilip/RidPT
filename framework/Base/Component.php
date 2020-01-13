@@ -5,7 +5,7 @@ namespace Rid\Base;
 /**
  * 组件基类
  */
-abstract class Component extends BaseObject implements  ComponentInterface
+abstract class Component extends BaseObject implements ComponentInterface
 {
 
     // 状态
@@ -34,5 +34,4 @@ abstract class Component extends BaseObject implements  ComponentInterface
     {
         $this->setStatus(ComponentInterface::STATUS_READY);
     }
-
 }

@@ -52,8 +52,8 @@ $torrent = $snatch->getTorrent();
                             <td><?= inet_ntop($snatchDetail['ip']) ?></td>
                             <td><?= $snatchDetail['finish_ip'] ? inet_ntop($snatchDetail['finish_ip']) : '?' ?></td>
                             <td>
-                                <?= $this->e($snatchDetail['this_uploaded'],'format_bytes') ?>@<?= $this->e($snatchDetail['this_uploaded'] > 0 ? ($snatchDetail['this_uploaded'] / ($snatchDetail['seed_time'] + $snatchDetail['leech_time'])) : 0,'format_bytes') ?>/s <br>
-                                <?= $this->e($snatchDetail['this_download'],'format_bytes') ?>@<?= $this->e($snatchDetail['this_download'] > 0 ? ($snatchDetail['this_download'] / $snatchDetail['leech_time']) : 0,'format_bytes') ?>/s <br>
+                                <?= $this->e($snatchDetail['this_uploaded'], 'format_bytes') ?>@<?= $this->e($snatchDetail['this_uploaded'] > 0 ? ($snatchDetail['this_uploaded'] / ($snatchDetail['seed_time'] + $snatchDetail['leech_time'])) : 0, 'format_bytes') ?>/s <br>
+                                <?= $this->e($snatchDetail['this_download'], 'format_bytes') ?>@<?= $this->e($snatchDetail['this_download'] > 0 ? ($snatchDetail['this_download'] / $snatchDetail['leech_time']) : 0, 'format_bytes') ?>/s <br>
                             </td>
                             <td>
                                 <?php if ($snatchDetail['this_download'] > 0): ?>
