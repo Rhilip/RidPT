@@ -25,6 +25,7 @@
 - **Tracker:** Reduce Redis Calls for get User and Torrent Info in Tracker (e813435)
 
 ### Refactor
+- **Entity:** Separate Entity User, Torrent 's const to App\Repository (50ecdbf)
 - **Entity:** Move Class Torrent,User to namespace App\Entity (7814d88)
 
 ### Style
