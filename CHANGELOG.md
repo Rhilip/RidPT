@@ -8,6 +8,7 @@
 - **README:** fix typo of start command (657c71a)
 - **Redis:** Fix phpdoc for Redis Component (70ac399)
 - **Sponsor:** Add Sponsor `MeiHeZi` (ae612e0)
+- **phpstorm:** Add `.phpstorm.meat.php` for config() function (407bb66)
 
 ### Feat
 - **Torrent:** Per-add torrent edit (f06b342)
@@ -18,6 +19,7 @@
 - **Config:** Fix JSON type config return False (1129008)
 - **Cron:** Fix components lost in CronTabProcess (1ced4bf)
 - **Redis:** Fix wrong type of Redis call function hMset() to hMSet() (a163150)
+- **Route:** Fix user can access maintenance page even not on maintenance status (b29c2f6)
 - **Tracker:** Fix typo in TrackerController (323c8ec)
 
 ### Perf

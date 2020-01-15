@@ -26,8 +26,7 @@ class Constant
     const trackerAnnounceLockZset = 'Tracker:lock:announce_flood';
     const trackerAnnounceMinIntervalLockZset = 'Tracker:lock:announce_min_interval';
     const trackerValidPeerZset = 'Tracker:valid_peers';
-    const trackerToDealQueue = 'Tracker:queue:to_deal';
-    const trackerBackupQueue = 'Tracker:queue:backup';
+    const trackerToDealQueue = 'Tracker:announce_stream';
 
     // Site Status
     const siteSubtitleSize = 'Site:subtitle_size';  // TODO move to app()->config

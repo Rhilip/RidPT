@@ -837,7 +837,7 @@ class TrackerController
          * Don't use json_{encode,decode} for the value of info_hash and peer_id will make
          * those function return FALSE
          */
-        return app()->redis->lPush(Constant::trackerToDealQueue, [
+        return app()->redis->xAdd(Constant::trackerToDealQueue, '*', [
             'timestamp' => $this->timenow,
             'queries' => $queries,
             'role' => $role,

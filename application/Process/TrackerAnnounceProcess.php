@@ -10,31 +10,71 @@ namespace App\Process;
 
 use App\Libraries\Constant;
 use Rid\Base\Process;
+use Rid\Helpers\ProcessHelper;
 
 class TrackerAnnounceProcess extends Process
 {
+    private $_group_name = 'tracker:consumer';
+    private $_worker_name;
+
+    public function init()
+    {
+        // Make sure the stream exist then we can create our consumer group for Redis stream
+        while (!$queue_exist = app()->redis->exists(Constant::trackerToDealQueue)) {
+            sleep(3);
+        }
+        println('The tracker announce queue exist now, start to deal it');
+        $this->create_consumer();
+    }
+
+    private function create_consumer()
+    {
+        // Create Our Consumer Group
+        // It will return FALSE if this group has already exist
+        app()->redis->xGroup('CREATE', Constant::trackerToDealQueue, $this->_group_name, 0);
+
+        // Set our worker name for this process
+        $this->_worker_name = 'worker-' . ProcessHelper::getPid();
+        println('Tracker Announce Consumer Worker : ' . $this->_worker_name . ' Added Success!');
+    }
+
     public function run()
     {
         while (true) {
-            $data = app()->redis->brpoplpush(Constant::trackerToDealQueue, Constant::trackerBackupQueue, 5);
-            if ($data !== false) {
-                app()->pdo->beginTransaction();
-                try {
-                    /** We got data from Http Server Like
-                     * [
-                     *    'timestamp' => timestamp when controller receive the announce,
-                     *    'queries' => $queries, 'role' => $role,
-                     *    'userInfo' => $userInfo, 'torrentInfo' => $torrentInfo
-                     * ]
-                     */
-                    $this->processAnnounceRequest($data['timestamp'], $data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
+            $data_raw = app()->redis->xReadGroup(
+                $this->_group_name,
+                $this->_worker_name,
+                [Constant::trackerToDealQueue => '>'],
+                1,
+                5000
+            );
 
-                    app()->pdo->commit();
-                    app()->redis->lRem(Constant::trackerBackupQueue, $data, 0);
-                } catch (\Exception $e) {
-                    println($e->getMessage());
-                    app()->pdo->rollback();
-                    // TODO deal with the items in backup_queue
+            // Let's start to consume new messages.
+            if (!empty($data_raw)) {
+                $data_raw = $data_raw[Constant::trackerToDealQueue];
+                foreach ($data_raw as $key_id => $data) {
+                    print_r(['id' => $key_id, 'data' => $data]);
+                    app()->pdo->beginTransaction();
+                    try {
+                        /** We got data from Http Server and Process the message Like
+                         *
+                         * [
+                         *    'timestamp' => timestamp when controller receive the announce,
+                         *    'queries' => $queries, 'role' => $role,
+                         *    'userInfo' => $userInfo, 'torrentInfo' => $torrentInfo
+                         * ]
+                         *
+                         */
+                        $this->processAnnounceRequest($data['timestamp'], $data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
+
+                        app()->pdo->commit();
+                    } catch (\Exception $e) {
+                        println($e->getMessage());
+                        app()->pdo->rollback();
+                    } finally {
+                        // FIXME Every time we will Acknowledge the message as processed
+                        app()->redis->xAck(Constant::trackerToDealQueue, $this->_group_name, [$key_id]);
+                    }
                 }
             }
         }
@@ -96,11 +136,11 @@ class TrackerAnnounceProcess extends Process
                     app()->pdo->createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`ip`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`)
                         VALUES (:uid,:tid,:agent,INET6_ATON(:ip),:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,FROM_UNIXTIME(:create_at),FROM_UNIXTIME(:last_action_at))")->bindParams([
                         'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
-                        'agent' => $queries['user-agent'], 'ip'=>$queries['remote_ip'], 'port' => $queries['port'],
+                        'agent' => $queries['user-agent'], 'ip' => $queries['remote_ip'], 'port' => $queries['port'],
                         'true_up' => 0, 'true_dl' => 0,
                         'this_up' => 0, 'this_dl' => 0,
                         'to_go' => $queries['left'], 'time' => 0,
-                        'create_at' => $timenow,'last_action_at' => $timenow
+                        'create_at' => $timenow, 'last_action_at' => $timenow
                     ])->execute();
                 }
             }
@@ -150,7 +190,7 @@ class TrackerAnnounceProcess extends Process
                     `ip` = INET6_ATON(:ip),`port` = :port, `agent` = :agent WHERE `torrent_id` = :tid AND `user_id` = :uid")->bindParams([
                     'true_up' => $trueUploaded, 'true_dl' => $trueDownloaded, 'this_up' => $thisUploaded, 'this_dl' => $thisDownloaded,
                     'left' => $queries['left'], 'duration' => $duration,
-                    'ip'=>$queries['remote_ip'],'port' => $queries['port'], 'agent' => $queries['user-agent'],
+                    'ip' => $queries['remote_ip'], 'port' => $queries['port'], 'agent' => $queries['user-agent'],
                     'tid' => $torrentInfo['id'], 'uid' => $userInfo['id']
                 ])->execute();
             }
@@ -175,6 +215,26 @@ class TrackerAnnounceProcess extends Process
             'upload' => $thisUploaded, 'download' => $thisDownloaded,
             'uid' => $userInfo['id'], 'ip' => $queries['remote_ip']
         ])->execute();
+    }
+
+    private function getIpField($queries)
+    {
+        $setField = [];
+        $bindField = [];
+        if ($queries['ip'] && $queries['port']) {
+            $setField[] = '`ip` = INET6_ATON(:ip), `port` = :port';
+            $bindField['ip'] = $queries['ip'];
+            $bindField['port'] = $queries['port'];
+        }
+
+        if ($queries['ipv6'] && $queries['ipv6_port']) {
+            $setField[] = '`ipv6` = INET6_ATON(:ipv6), `ipv6_port` = :ipv6_port';
+            $bindField['ipv6'] = $queries['ipv6'];
+            $bindField['ipv6_port'] = $queries['ipv6_port'];
+        }
+        $setField = join(', ', $setField);
+
+        return [$setField, $bindField];
     }
 
     /** Cheater check function from NexusPHP based on user upload speed check
@@ -241,25 +301,5 @@ class TrackerAnnounceProcess extends Process
         }
         $thisUploaded = $trueUploaded * ($buff['up_ratio'] ?: 1);
         $thisDownloaded = $trueDownloaded * ($buff['dl_ratio'] ?: 1);
-    }
-
-    private function getIpField($queries)
-    {
-        $setField = [];
-        $bindField = [];
-        if ($queries['ip'] && $queries['port']) {
-            $setField[] = '`ip` = INET6_ATON(:ip), `port` = :port';
-            $bindField['ip'] = $queries['ip'];
-            $bindField['port'] = $queries['port'];
-        }
-
-        if ($queries['ipv6'] && $queries['ipv6_port']) {
-            $setField[] = '`ipv6` = INET6_ATON(:ipv6), `ipv6_port` = :ipv6_port';
-            $bindField['ipv6'] = $queries['ipv6'];
-            $bindField['ipv6_port'] = $queries['ipv6_port'];
-        }
-        $setField = join(', ', $setField);
-
-        return [$setField, $bindField];
     }
 }
