@@ -231,13 +231,13 @@ class TrackerAnnounceProcess extends Process
 
     private function getTorrentBuff($userid, $torrentid, $trueUploaded, $trueDownloaded, $upspeed, &$thisUploaded, &$thisDownloaded)
     {
-        $buff = app()->redis->get("TRACKER:user_" . $userid . "_torrent_" . $torrentid . "_buff");
+        $buff = app()->redis->get('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid);
         if ($buff === false) {
             $buff = app()->pdo->createCommand("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrent_buffs`
             WHERE start_at < NOW() AND NOW() < expired_at AND (torrent_id = :tid OR torrent_id = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 'tid' => $torrentid, 'bid' => $userid
             ])->queryOne();
-            app()->redis->setex("TRACKER:user_" . $userid . "_torrent_" . $torrentid . "_buff", 350, $buff);
+            app()->redis->setex('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid, intval((int) config('tracker.interval')), $buff);
         }
         $thisUploaded = $trueUploaded * ($buff['up_ratio'] ?: 1);
         $thisDownloaded = $trueDownloaded * ($buff['dl_ratio'] ?: 1);

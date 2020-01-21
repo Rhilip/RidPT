@@ -142,27 +142,28 @@ class User
         return $this->uploaded;
     }
 
-    public function getRealUploaded(): int
-    {
-        return $this->getCacheValue('true_uploaded', function () {
-            return app()->pdo->createCommand('SELECT SUM(`true_uploaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
-                    "uid" => $this->id
-                ])->queryScalar() ?? 0;
-        });
-    }
-
     public function getDownloaded(): int
     {
         return $this->downloaded;
     }
 
-    public function getRealDownloaded()
+    private function getRealTransfer(): array
     {
-        return $this->getCacheValue('true_downloaded', function () {
-            return app()->pdo->createCommand('SELECT SUM(`true_downloaded`) FROM `snatched` WHERE `user_id` = :uid')->bindParams([
+        return $this->getCacheValue('true_transfer', function () {
+            return app()->pdo->createCommand('SELECT SUM(`true_uploaded`) as `uploaded`, SUM(`true_downloaded`) as `download` FROM `snatched` WHERE `user_id` = :uid')->bindParams([
                     "uid" => $this->id
-                ])->queryScalar() ?? 0;
+                ])->queryOne() ?? ['uploaded' => 0, 'download' => 0];
         });
+    }
+
+    public function getRealUploaded(): int
+    {
+        return (int)$this->getRealTransfer()['uploaded'];
+    }
+
+    public function getRealDownloaded(): int
+    {
+        return (int)$this->getRealTransfer()['download'];
     }
 
     public function getRatio()

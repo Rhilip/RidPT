@@ -266,4 +266,15 @@ namespace PHPSTORM_META {
         argumentsSet('config.user'),
     );
 
+    registerArgumentsSet('view.function',
+        'format_bytes',
+        'format_bytes_compact',
+        'format_bytes_loose',
+        'format_ubbcode',
+        'sec2hms'
+    );
+
+    expectedArguments(\League\Plates\Template\Template::escape(), 1, argumentsSet('view.function'));
+    expectedArguments(\League\Plates\Template\Template::e(), 1, argumentsSet('view.function'));
+
 }
