@@ -54,15 +54,21 @@ class Site extends Component
     }
 
     /**
-     * @param $uid
-     * @return Entity\User|bool return False means this user is not exist
+     * @param int $uid
+     * @param bool $cur
+     * @return Entity\User\AbstractUserInterface|bool return False means this user is not exist
      */
-    public function getUser($uid)
+    public function getUser($uid, $cur = false)
     {
         if (array_key_exists($uid, $this->users)) {
             $user = $this->users[$uid];
         } else {
-            $user = new Entity\User($uid);  // TODO Handing if this user id does not exist
+            if ($cur) {
+                $user = new Entity\User($uid);
+            } else {
+                $user = new Entity\User\AbstractUser($uid);
+            }
+            // TODO Handing if this user id does not exist
             $this->users[$uid] = $user;
         }
         return $user;

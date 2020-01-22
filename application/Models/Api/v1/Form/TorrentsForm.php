@@ -48,6 +48,6 @@ class TorrentsForm extends Validator
 
     public function getNfoFileContent()
     {
-        return ['msg' => 'Get Nfo File Content success','result' => $this->torrent->getNfo()];
+        return ['msg' => 'Get Nfo File Content success', 'result' => $this->torrent->getNfo()];
     }
 }

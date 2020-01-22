@@ -75,21 +75,6 @@ class Rid
         return $config;
     }
 
-    /**
-     * 导入属性
-     * 注意此处只能向object导入public属性，如果object本身有private或者protected 属性需要导入，
-     * 请使用 trait Rid\Utils\AttributesImportUtils
-     *
-     * @param $object
-     * @param $config
-     */
-    public static function importAttributes($object, $config)
-    {
-        foreach ($config as $name => $value) {
-            $object->$name = $value;
-        }
-    }
-
     // 使用配置创建对象
     public static function createObject($config)
     {

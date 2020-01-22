@@ -76,6 +76,8 @@ class TorrentController extends ApiController
                     $ret
                 );
             }
+        } else {
+            return $this->buildMethodFailMsg('GET');
         }
     }
 }

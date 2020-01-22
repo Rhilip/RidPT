@@ -74,7 +74,7 @@ class Auth extends Component
 
         if ($user_id !== false && is_int($user_id) && $user_id > 0) {
             $user_id = intval($user_id);
-            $curuser = app()->site->getUser($user_id);
+            $curuser = app()->site->getUser($user_id, true);
             if ($curuser->getStatus() !== UserStatus::DISABLED) {  // user status shouldn't be disabled
                 return $curuser;
             }

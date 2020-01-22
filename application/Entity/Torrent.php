@@ -8,48 +8,49 @@
 
 namespace App\Entity;
 
+use App\Entity\User\AbstractUserInterface;
 use App\Libraries\Constant;
 
+use Rid\Base\BaseObject;
 use Rid\Utils;
 use Rid\Exceptions\NotFoundException;
 
-class Torrent
+class Torrent extends BaseObject
 {
-    use Utils\AttributesImportUtils;
     use Utils\ClassValueCacheUtils;
 
-    private $id = null;
+    protected $id = null;
 
-    private $owner_id;
-    private $info_hash;
+    protected $owner_id;
+    protected $info_hash;
 
-    private $status;
+    protected $status;
 
-    private $added_at;
+    protected $added_at;
 
-    private $complete;
-    private $incomplete;
-    private $downloaded;
-    private $comments;
+    protected $complete;
+    protected $incomplete;
+    protected $downloaded;
+    protected $comments;
 
-    private $title;
-    private $subtitle;
-    private $category;
-    private $descr;
-    private $uplver;
-    private $hr;
+    protected $title;
+    protected $subtitle;
+    protected $category;
+    protected $descr;
+    protected $uplver;
+    protected $hr;
 
-    private $nfo;
+    protected $nfo;
 
-    private $tags;
-    private $pinned_tags;
+    protected $tags;
+    protected $pinned_tags;
 
-    private $torrent_name;
-    private $torrent_type;
-    private $torrent_size;
-    private $torrent_structure;
+    protected $torrent_name;
+    protected $torrent_type;
+    protected $torrent_size;
+    protected $torrent_structure;
 
-    private $team;
+    protected $team;
 
     protected $comment_perpage = 10;  // FIXME
 
@@ -89,7 +90,7 @@ class Torrent
         return $this->owner_id;
     }
 
-    public function getOwner(): User
+    public function getOwner(): AbstractUserInterface
     {
         return app()->site->getUser($this->owner_id);
     }
