@@ -108,6 +108,7 @@ class Bencode
                 }
             } else {
                 $return .= 'd';
+                ksort($data, SORT_STRING);
                 foreach ($data as $key => $value) {
                     $return .= self::encode(strval($key));
                     $return .= self::encode($value);
