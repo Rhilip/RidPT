@@ -39,7 +39,8 @@
     "siriusphp/validation": "^2.3",
     "mjohnson/decoda": "^6.12",
     "symfony/translation": "^4.3",
-    "symfony/config": "^4.3"
+    "symfony/config": "^4.3",
+    "rhilip/bencode": "^1.0"
   },
   "require-dev": {
     "eaglewu/swoole-ide-helper": "dev-master"

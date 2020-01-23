@@ -11,10 +11,11 @@ namespace App\Models\Form\Torrent;
 use App\Libraries\Constant;
 use App\Repository\Torrent\TorrentStatus;
 use App\Repository\Torrent\TorrentType;
-use App\Libraries\Bencode\Bencode;
-use App\Libraries\Bencode\ParseErrorException;
 
 use Rid\Http\UploadFile;
+
+use Rhilip\Bencode\Bencode;
+use Rhilip\Bencode\ParseErrorException;
 
 class UploadForm extends EditForm
 {

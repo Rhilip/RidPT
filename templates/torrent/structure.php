@@ -9,7 +9,7 @@
  * @var \App\Models\Form\Torrent\StructureForm $structure
  */
 
-use App\Libraries\Bencode\Bencode;
+use Rhilip\Bencode\Bencode;
 
 if (!function_exists('torrent_structure_builder')) {
     function torrent_structure_builder($array, $parent = "")

@@ -10,10 +10,11 @@ namespace App\Controllers;
 
 use App\Libraries\Constant;
 use App\Repository\User\UserRole;
-use App\Libraries\Bencode\Bencode;
 use App\Exceptions\TrackerException;
 
 use Rid\Utils\IpUtils;
+
+use Rhilip\Bencode\Bencode;
 
 /** @noinspection PhpUnused */
 class TrackerController

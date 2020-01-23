@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b21bc34532e02a7faae7628d5344d4c3",
+    "content-hash": "67e558427ab92603bc9e8b88518ea3da",
     "packages": [
         {
             "name": "adhocore/cli",
@@ -380,6 +380,50 @@
                 "psr-3"
             ],
             "time": "2019-11-01T11:05:21+00:00"
+        },
+        {
+            "name": "rhilip/bencode",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Rhilip/Bencode.git",
+                "reference": "a37460e530d0d1edf429e4f915ff5bce46efd3d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Rhilip/Bencode/zipball/a37460e530d0d1edf429e4f915ff5bce46efd3d4",
+                "reference": "a37460e530d0d1edf429e4f915ff5bce46efd3d4",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6|^7.0|^8.0"
+            },
+            "suggest": {
+                "php-64bit": "Running 64 bit is recommended to prevent integer overflow"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Rhilip\\Bencode\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rhilip",
+                    "email": "rhilipruan@gmail.com"
+                }
+            ],
+            "description": "A pure and simple PHP library for encoding and decoding Bencode data",
+            "keywords": [
+                "bencode",
+                "bittorrent",
+                "torrent"
+            ],
+            "time": "2020-01-22T15:27:41+00:00"
         },
         {
             "name": "siriusphp/validation",

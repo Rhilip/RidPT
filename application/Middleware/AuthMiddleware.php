@@ -85,10 +85,10 @@ class AuthMiddleware
          */
         $route = strtolower(
             str_replace(
-            ['App\\Controllers\\', 'Controller', 'action'],
-            '',
-            $controllerName . '_' . $action
-        )
+                ['App\\Controllers\\', 'Controller', 'action'],
+                '',
+                $controllerName . '_' . $action
+            )
         );
 
         $required_class = config('route.' . $route) ?: 1;

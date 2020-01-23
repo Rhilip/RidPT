@@ -9,7 +9,8 @@
 namespace App\Models\Form\Torrent;
 
 use App\Libraries\Constant;
-use App\Libraries\Bencode\Bencode;
+
+use Rhilip\Bencode\Bencode;
 
 class StructureForm extends DetailsForm
 {
