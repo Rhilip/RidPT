@@ -15,6 +15,7 @@ use App\Exceptions\TrackerException;
 use Rid\Utils\IpUtils;
 
 use Rhilip\Bencode\Bencode;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @noinspection PhpUnused */
 class TrackerController
@@ -58,8 +59,8 @@ class TrackerController
 
         try {
             // Block NON-GET requests (Though non-GET request will not match this Route )
-            if (!app()->request->isGet()) {
-                throw new TrackerException(110, [':method' => app()->request->method()]);
+            if (!app()->request->isMethod(Request::METHOD_GET)) {
+                throw new TrackerException(110, [':method' => app()->request->getMethod()]);
             }
 
             if (!config('base.enable_tracker_system')) {
@@ -160,8 +161,8 @@ class TrackerController
 
     protected function logException(\Exception $exception, $userInfo = null, $torrentInfo = null)
     {
-        $req_info = app()->request->server('query_string') . "\n\n";
-        foreach (app()->request->header() as $key => $value) {
+        $req_info = app()->request->server->get('query_string') . "\n\n";
+        foreach (app()->request->headers->all() as $key => $value) {
             $req_info .= "$key : $value \n";
         }
 
@@ -172,8 +173,8 @@ class TrackerController
                                         `last_action_at` = NOW();')->bindParams([
             'tid' => $torrentInfo ? $torrentInfo['id'] : 0,
             'uid' => $userInfo ? $userInfo['id'] : 0,
-            'ua' => app()->request->header('user-agent', ''),
-            'peer_id' => app()->request->get('peer_id', ''),
+            'ua' => app()->request->headers->get('user-agent', ''),
+            'peer_id' => app()->request->query->get('peer_id', ''),
             'req_info' => $req_info,
             'msg' => $exception->getMessage()
         ])->execute();
@@ -185,13 +186,13 @@ class TrackerController
     private function blockClient()
     {
         // Miss Header User-Agent is not allowed.
-        if (!app()->request->header('user-agent')) {
+        if (!app()->request->headers->get('user-agent')) {
             throw new TrackerException(120);
         }
 
         // Block Other Browser, Crawler (, May Cheater or Faker Client) by check Requests headers
-        if (app()->request->header('accept-language') || app()->request->header('referer')
-            || app()->request->header('accept-charset')
+        if (app()->request->headers->get('accept-language') || app()->request->headers->get('referer')
+            || app()->request->headers->get('accept-charset')
 
             /**
              * This header check may block Non-bittorrent client `Aria2` to access tracker,
@@ -199,7 +200,7 @@ class TrackerController
              *
              * @see https://blog.rhilip.info/archives/1010/ ( in Chinese )
              */
-            || app()->request->header('want-digest')
+            || app()->request->headers->get('want-digest')
 
             /**
              * If your tracker is behind the Cloudflare or other CDN (proxy) Server,
@@ -215,12 +216,12 @@ class TrackerController
              * @see https://support.cloudflare.com/hc/en-us/articles/200170156
              *
              */
-            //|| app()->request->header('cookie')
+            //|| app()->request->headers->get('cookie')
         ) {
             throw new TrackerException(122);
         }
 
-        $ua = app()->request->header('user-agent');
+        $ua = app()->request->headers->get('user-agent');
 
         // Should also Block those too long User-Agent. ( For Database reason
         if (strlen($ua) > 64) {
@@ -240,8 +241,8 @@ class TrackerController
     private function checkUserAgent(bool $onlyCheckUA = false)
     {
         // Start Check Client by `User-Agent` and `peer_id`
-        $userAgent = app()->request->header('user-agent');
-        $peer_id = app()->request->get('peer_id', '');
+        $userAgent = app()->request->headers->get('user-agent');
+        $peer_id = app()->request->query->get('peer_id', '');
         $client_identity = $userAgent . ($onlyCheckUA ? '' : ':' . $peer_id);
 
         // if this user-agent and peer_id already checked valid or not ?
@@ -394,7 +395,7 @@ class TrackerController
      */
     private function checkPasskey(&$userInfo)
     {
-        $passkey = app()->request->get('passkey');
+        $passkey = app()->request->query->get('passkey');
 
         // First Check The param `passkey` is exist and valid
         if (is_null($passkey)) {
@@ -507,7 +508,7 @@ class TrackerController
         // Part.1 check Announce **Need** Fields
         // Notice: param `passkey` is not require in BEP , but is required in our private torrent tracker system
         foreach (['info_hash', 'peer_id', 'port', 'uploaded', 'downloaded', 'left', 'passkey'] as $item) {
-            $item_data = app()->request->get($item);
+            $item_data = app()->request->query->get($item);
             if (!is_null($item_data)) {
                 $queries[$item] = $item_data;
             } else {
@@ -534,7 +535,7 @@ class TrackerController
                      'numwant' => 50, 'corrupt' => 0, 'key' => '',
                      'ip' => '', 'ipv4' => '', 'ipv6' => '',
                  ] as $item => $value) {
-            $queries[$item] = app()->request->get($item, $value);
+            $queries[$item] = app()->request->query->get($item, $value);
         }
 
         foreach (['numwant', 'corrupt', 'no_peer_id', 'compact'] as $item) {
@@ -547,7 +548,7 @@ class TrackerController
             throw new TrackerException(136, [":event" => strtolower($queries['event'])]);
         }
 
-        $queries['user-agent'] = app()->request->header('user-agent');
+        $queries['user-agent'] = app()->request->headers->get('user-agent');
 
         // Part.3 check Announce *IP* Fields
         /**

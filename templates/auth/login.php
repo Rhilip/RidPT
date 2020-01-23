@@ -36,7 +36,7 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fas fa-user-alt fa-fw"></span></span>
                             <input type="text" class="form-control" id="username" name="username" required
-                                   placeholder="" value="<?= $this->e(app()->request->post('username', '')) ?>">
+                                   placeholder="" value="<?= $this->e(app()->request->request->get('username', '')) ?>">
                         </div>
                     </div>
 

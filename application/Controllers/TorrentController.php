@@ -13,16 +13,17 @@ use App\Models\Form\Torrent;
 use Rid\Http\Controller;
 
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 class TorrentController extends Controller
 {
     public function actionUpload()
     {
         // TODO Check user upload pos
-        if (app()->request->isPost()) {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
             $uploadForm = new Torrent\UploadForm();
-            $uploadForm->setInput(app()->request->post());
-            $uploadForm->setFileInput(app()->request->files());
+            $uploadForm->setInput(app()->request->request->all());
+            $uploadForm->setFileInput(app()->request->raw_files);
             $success = $uploadForm->validate();
             if (!$success) {
                 return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
@@ -55,8 +56,8 @@ class TorrentController extends Controller
     {
         $edit = new Torrent\EditForm();
 
-        if (app()->request->isPost()) {
-            $edit->setInput(app()->request->get() + app()->request->post());
+        if (app()->request->isMethod(Request::METHOD_POST)) {
+            $edit->setInput(app()->request->query->all() + app()->request->request->all());
             $success = $edit->validate();
             if (!$success) {
                 return $this->render('action/fail', ['msg' => $edit->getError()]);
@@ -65,7 +66,7 @@ class TorrentController extends Controller
                 return app()->response->redirect('/torrent/details?id=' . $edit->getTorrent()->getId());
             }
         } else {
-            $edit->setInput(app()->request->get());
+            $edit->setInput(app()->request->query->all());
             $permission_check = $edit->checkUserPermission();
             if ($permission_check === false) {
                 return $this->render('action/fail', ['msg' => $edit->getError()]);

@@ -23,7 +23,7 @@ class ApiController extends Controller
         }
 
         foreach ($methods as $method) {
-            if (strtolower(app()->request->method()) == strtolower($method)) {
+            if (strtolower(app()->request->getMethod()) == strtolower($method)) {
                 return true;
             }
         }
@@ -37,7 +37,7 @@ class ApiController extends Controller
         }
 
         app()->response->setStatusCode(405);
-        $method = app()->request->method();
+        $method = app()->request->getMethod();
 
         return [
             'error' => 'Method Not Allowed',

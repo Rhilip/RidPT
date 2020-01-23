@@ -82,15 +82,15 @@ class UploadForm extends Validator
      */
     public function flush()
     {
-        $title = $this->title ?: $this->file->getFileName();
+        $title = $this->title ?: $this->file->getClientOriginalFileName();
 
         app()->pdo->beginTransaction();
         try {
-            $ext = $this->file->getExtension();
-            app()->pdo->createCommand('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`) 
+            $ext = $this->file->getClientOriginalExtension();
+            app()->pdo->createCommand('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`)
 VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)')->bindParams([
                 'tid' => $this->torrent_id, 'hashs' => $this->hashs,
-                'title' => $title, 'filename' => $this->file->getBaseName(),
+                'title' => $title, 'filename' => $this->file->getClientOriginalName(),
                 'size' => $this->file->size, 'upper' => app()->auth->getCurUser()->getId(),
                 'anonymous' => $this->anonymous, 'ext' => $ext
             ])->execute();

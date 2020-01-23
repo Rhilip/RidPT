@@ -45,7 +45,6 @@ class Validator extends BaseObject
         $this->_validator = new \Sirius\Validation\Validator;
     }
 
-
     /**
      * @return array
      */
@@ -143,13 +142,13 @@ class Validator extends BaseObject
     {
         if ($this->_autoload) {
             if (in_array('get', $this->_autoload_from)) {
-                $this->setInput(app()->request->get());
+                $this->setInput(app()->request->query->all());
             }
             if (in_array('post', $this->_autoload_from)) {
-                $this->setInput(app()->request->post());
+                $this->setInput(app()->request->request->all());
             }
             if (in_array('files', $this->_autoload_from)) {
-                $this->setFileInput(app()->request->files());
+                $this->setFileInput(app()->request->raw_files);
             }
         }
     }

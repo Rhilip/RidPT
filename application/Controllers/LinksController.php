@@ -10,6 +10,7 @@ namespace App\Controllers;
 
 use App\Models\Form\Links;
 use Rid\Http\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class LinksController extends Controller
 {
@@ -20,9 +21,9 @@ class LinksController extends Controller
 
     public function actionApply()
     {
-        if (app()->request->isPost()) {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
             $form = new Links\ApplyForm();
-            $form->setInput(app()->request->post());
+            $form->setInput(app()->request->request->all());
             $success = $form->validate();
             if ($success) {
                 $form->flush();
@@ -37,10 +38,10 @@ class LinksController extends Controller
 
     public function actionManage()
     {
-        if (app()->request->isPost()) {
-            if (app()->request->post('action') == 'link_edit') {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
+            if (app()->request->request->get('action') == 'link_edit') {
                 $edit_form = new Links\EditForm();
-                $edit_form->setInput(app()->request->post());
+                $edit_form->setInput(app()->request->request->all());
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
@@ -48,9 +49,9 @@ class LinksController extends Controller
                 } else {
                     return $this->render('action/fail', ['msg' => $edit_form->getError()]);
                 }
-            } elseif (app()->request->post('action') == 'link_delete') {
+            } elseif (app()->request->request->get('action') == 'link_delete') {
                 $delete_form = new Links\RemoveForm();
-                $delete_form->setInput(app()->request->post());
+                $delete_form->setInput(app()->request->request->all());
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();

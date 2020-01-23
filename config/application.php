@@ -55,6 +55,8 @@ return [
         // 请求
         'request' => [
             'class' => Rid\Http\Request::class,
+            //'trustedHosts' => -1,
+            'trustedProxies' => ['127.0.0.1','::1']
         ],
 
         // 响应

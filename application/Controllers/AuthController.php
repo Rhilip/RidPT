@@ -12,6 +12,7 @@ use App\Models\Form\Auth;
 use App\Repository\User\UserStatus;
 
 use Rid\Http\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class AuthController extends Controller
 {
@@ -19,9 +20,9 @@ class AuthController extends Controller
     /** @noinspection PhpUnused */
     public function actionRegister()
     {
-        if (app()->request->isPost()) {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
             $register_form = new Auth\UserRegisterForm();
-            $register_form->setInput(app()->request->post());
+            $register_form->setInput(app()->request->request->all());
             $success = $register_form->validate();
             if (!$success) {
                 return $this->render('action/fail', [
@@ -49,7 +50,7 @@ class AuthController extends Controller
     public function actionConfirm()
     {
         $confirm = new Auth\UserConfirmForm();
-        $confirm->setInput(app()->request->get());
+        $confirm->setInput(app()->request->query->all());
         $success = $confirm->validate();
         if (!$success) {
             return $this->render('action/fail', [
@@ -68,9 +69,9 @@ class AuthController extends Controller
     /** @noinspection PhpUnused */
     public function actionRecover()
     {
-        if (app()->request->isPost()) {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
             $form = new Auth\UserRecoverForm();
-            $form->setInput(app()->request->post());
+            $form->setInput(app()->request->request->all());
             $success = $form->validate();
             if (!$success) {
                 return $this->render('action/fail', [
@@ -98,7 +99,7 @@ class AuthController extends Controller
     {
         $render_data = [];
 
-        if (app()->request->isPost()) {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
             $login = new Auth\UserLoginForm();
             if (false === $success = $login->validate()) {
                 $login->loginFail();

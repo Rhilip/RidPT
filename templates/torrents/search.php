@@ -34,7 +34,7 @@ $time_now = time();
                                 <br />
                                 <div class="row" style="margin-left: 15px">
                                 <?php foreach (app()->site->ruleQuality($quality) as $q): ?>
-                                <?php $req_quality = input2array(app()->request->get($quality, [])); ?>
+                                <?php $req_quality = input2array(app()->request->query->get($quality, [])); ?>
                                     <label class="col-md-2">
                                         <input type="checkbox" name="<?= $quality ?>[]" value="<?= $q['id'] ?>"<?= in_array($q['id'], $req_quality) ? ' checked': '' ?>> <?= $q['name'] ?>
                                     </label>
@@ -49,7 +49,7 @@ $time_now = time();
                                 <br />
                                 <div class="row" style="margin-left: 15px">
                                 <?php foreach (app()->site->ruleTeam() as $team) : ?>
-                                <?php $req_team = input2array(app()->request->get('team', [])); ?>
+                                <?php $req_team = input2array(app()->request->query->get('team', [])); ?>
                                     <label class="col-md-2">
                                         <input type="checkbox" name="team[]" value="<?= $team['id'] ?>"<?= in_array($team['id'], $req_team) ? ' checked': '' ?>> <?= $team['name'] ?>
                                     </label>
@@ -67,7 +67,7 @@ $time_now = time();
                 <div class="col-md-offset-3 col-md-6">
                     <div class="input-group">
                         <div class="input-control search-box search-box-circle has-icon-left has-icon-right">
-                            <input type="search" class="form-control search-input" name="search" id="search" placeholder="<?= __('search') ?>" value="<?= $this->e(app()->request->get('search')) ?>">
+                            <input type="search" class="form-control search-input" name="search" id="search" placeholder="<?= __('search') ?>" value="<?= $this->e(app()->request->query->get('search')) ?>">
                             <label for="search" class="input-control-icon-left search-icon"><i class="icon icon-search"></i></label>
                         </div>
                         <span class="input-group-btn">

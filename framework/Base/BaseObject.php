@@ -42,11 +42,4 @@ abstract class BaseObject implements StaticInstanceInterface
     public function onDestruct()
     {
     }
-
-    protected function importAttributes($config)
-    {
-        foreach ($config as $name => $value) {
-            $this->$name = $value;
-        }
-    }
 }

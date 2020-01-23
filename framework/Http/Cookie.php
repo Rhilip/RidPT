@@ -28,7 +28,7 @@ class Cookie extends Component
     // 取值
     public function get($name = null)
     {
-        return \Rid::app()->request->cookie($name);
+        return \Rid::app()->request->cookies->get($name);
     }
 
     // 赋值

@@ -64,7 +64,7 @@ class UploadForm extends EditForm
 
         if (config('torrent_upload.enable_upload_nfo') &&  // Enable nfo upload
             app()->auth->getCurUser()->isPrivilege('upload_nfo_file') &&  // This user can upload nfo
-            app()->request->post('nfo')  // Nfo file upload
+            app()->request->request->get('nfo')  // Nfo file upload
         ) {
             $rules['nfo'] = [
                 ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],
@@ -245,7 +245,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
                 'status' => $this->status,
                 'title' => $this->title, 'subtitle' => $this->subtitle,
                 'category' => $this->category,
-                'filename' => $this->file->getBaseName(),
+                'filename' => $this->file->getClientOriginalName(),
                 'torrent_name' => $this->torrent_name, 'type' => $this->torrent_type, 'size' => $this->torrent_size,
                 'structure' => $this->torrent_structure, 'tags' => $tags,  // JSON
                 'audio' => (int)$this->audio, 'codec' => (int)$this->codec,

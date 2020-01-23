@@ -31,9 +31,9 @@ class Application extends \Rid\Base\Application
     // 执行功能
     public function run()
     {
-        $server                        = \Rid::app()->request->server();
-        $method                        = strtoupper($server['request_method']);
-        $action                        = empty($server['path_info']) ? '' : substr($server['path_info'], 1);
+        $server                        = \Rid::app()->request->server->all();
+        $method                        = strtoupper($server['REQUEST_METHOD']);
+        $action                        = empty($server['PATH_INFO']) ? '' : substr($server['PATH_INFO'], 1);
         \Rid::app()->response->content = $this->runAction($method, $action);
         \Rid::app()->response->send();
     }

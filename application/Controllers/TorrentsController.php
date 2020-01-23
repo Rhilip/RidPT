@@ -22,7 +22,7 @@ class TorrentsController extends Controller
     public function actionSearch()
     {
         $search = new Torrents\SearchForm();
-        $search->setInput(app()->request->get());
+        $search->setInput(app()->request->query->all());
         $success = $search->validate();
         if (!$success) {
             return $this->render('action/fail', ['msg' => $search->getError()]);
@@ -34,7 +34,7 @@ class TorrentsController extends Controller
     public function actionTags()
     {
         $pager = new Torrents\TagsForm();
-        $pager->setInput(app()->request->get());
+        $pager->setInput(app()->request->query->all());
         $success = $pager->validate();
 
         if (!$success) {

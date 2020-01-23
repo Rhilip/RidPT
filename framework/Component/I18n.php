@@ -96,8 +96,8 @@ class I18n extends Component
         $judged_langs = array();
 
         // 1nd highest priority: GET parameter 'lang'
-        if (!is_null(app()->request->get('lang'))) {
-            $judged_langs[] = app()->request->get('lang');
+        if (!is_null(app()->request->query->get('lang'))) {
+            $judged_langs[] = app()->request->query->get('lang');
         }
 
         // 2rd highest priority: user setting for login user
@@ -106,7 +106,7 @@ class I18n extends Component
         }
 
         // 3th highest priority: HTTP_ACCEPT_LANGUAGE
-        if (!is_null(app()->request->header('accept_language'))) {
+        if (!is_null(app()->request->headers->get('accept_language'))) {
             /**
              * We get headers like this string 'en-US,en;q=0.8,uk;q=0.6'
              * And then sort to an array like this after sort
@@ -118,7 +118,7 @@ class I18n extends Component
              *
              */
             $prefLocales = array_reduce(
-                explode(',', app()->request->header('accept_language')),
+                explode(',', app()->request->headers->get('accept_language')),
                 function ($res, $el) {
                     list($l, $q) = array_merge(explode(';q=', $el), [1]);
                     $res[$l] = (float)$q;

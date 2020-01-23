@@ -17,37 +17,39 @@
   "version": "0.0.1",
   "require": {
     "php": ">=7.3.0",
-    "ext-gd": "*",
-    "ext-pdo": "*",
-    "ext-json": "*",
-    "ext-curl": "*",
-    "ext-intl": "*",
     "ext-ctype": "*",
-    "ext-pcntl": "*",
-    "ext-redis": "*",
+    "ext-curl": "*",
+    "ext-gd": "*",
     "ext-iconv": "*",
-    "ext-swoole": "*",
-    "ext-openssl": "*",
+    "ext-intl": "*",
+    "ext-json": "*",
     "ext-mbstring": "*",
-    "psr/log": "^1.1",
-    "vlucas/phpdotenv": "^3.5",
+    "ext-openssl": "*",
+    "ext-pcntl": "*",
+    "ext-pdo": "*",
+    "ext-redis": "*",
+    "ext-swoole": "*",
     "adhocore/cli": "^0.7.0",
-    "league/plates": "^3.3",
     "firebase/php-jwt": "^5.0",
-    "phpmailer/phpmailer": "^6.0",
-    "soundasleep/html2text": "^1.1",
-    "siriusphp/validation": "^2.3",
+    "league/plates": "^3.3",
     "mjohnson/decoda": "^6.12",
-    "symfony/translation": "^4.3",
+    "phpmailer/phpmailer": "^6.0",
+    "psr/log": "^1.1",
+    "rhilip/bencode": "^1.0",
+    "siriusphp/validation": "^2.3",
+    "soundasleep/html2text": "^1.1",
     "symfony/config": "^4.3",
-    "rhilip/bencode": "^1.0"
+    "symfony/http-foundation": "^5.0",
+    "symfony/translation": "^4.3",
+    "vlucas/phpdotenv": "^3.5"
   },
   "require-dev": {
     "eaglewu/swoole-ide-helper": "dev-master"
   },
   "config": {
     "preferred-install": "dist",
-    "optimize-autoloader": true
+    "optimize-autoloader": true,
+    "sort-packages": true
   },
   "autoload": {
     "psr-4": {

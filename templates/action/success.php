@@ -12,7 +12,7 @@
  * @var string $redirect
  */
 
-$redirect = app()->session->get('redirect') ?? $redirect ?? app()->request->fullUrl();
+$redirect = app()->session->get('redirect') ?? $redirect ?? app()->request->getUri();
 ?>
 
 <?= $this->layout('layout/base'); ?>

@@ -314,7 +314,7 @@ class UserRegisterForm extends Validator
             app()->pdo->createCommand('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
                 'uid' => $this->id, 'secret' => $confirm_key, 'action' => $this->_action
             ])->execute();
-            $confirm_url = app()->request->root() . '/auth/confirm?' . http_build_query([
+            $confirm_url = app()->request->getSchemeAndHttpHost() . '/auth/confirm?' . http_build_query([
                     'secret' => $confirm_key,
                     'action' => $this->_action
                 ]);

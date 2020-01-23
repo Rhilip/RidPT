@@ -85,7 +85,7 @@ class Auth extends Component
 
     protected function loadCurUserIdFromCookies()
     {
-        $user_session = app()->request->cookie(Constant::cookie_name);
+        $user_session = app()->request->cookies->get(Constant::cookie_name);
         if (is_null($user_session)) {
             return false;
         }  // quick return when cookies is not exist
@@ -129,7 +129,7 @@ class Auth extends Component
              (config('security.ssl_login') > 0 && isset($payload['ssl']) && $payload['ssl']) // if Our site support ssl feature and User want secure access
             )
         ) {
-            app()->response->redirect(str_replace('http://', 'https://', app()->request->fullUrl()));
+            app()->response->redirect(str_replace('http://', 'https://', app()->request->getUri()));
             app()->response->setHeader('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
         }
 
@@ -138,7 +138,7 @@ class Auth extends Component
 
     protected function loadCurUserIdFromPasskey()
     {
-        $passkey = app()->request->get('passkey');
+        $passkey = app()->request->query->get('passkey');
         if (is_null($passkey)) {
             return false;
         }
@@ -160,7 +160,7 @@ class Auth extends Component
         if (!is_null($this->cur_user_jit)) {
             $uid = $this->getCurUser()->getId();
             $now_ip = app()->request->getClientIp();
-            $ua = app()->request->header('user-agent');
+            $ua = app()->request->headers->get('user-agent');
 
             $identify_key = md5(implode('|', [
                 $this->cur_user_jit,  // `sessions`->session

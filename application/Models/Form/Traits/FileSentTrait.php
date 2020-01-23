@@ -46,7 +46,7 @@ trait FileSentTrait
         }
 
         $filename = $this->getSendFileName();
-        if (strpos(app()->request->header('user-agent'), 'IE')) {
+        if (strpos(app()->request->headers->get('user-agent'), 'IE')) {
             app()->response->setHeader('Content-Disposition', 'attachment; filename=' . str_replace('+', '%20', rawurlencode($filename)));
         } else {
             app()->response->setHeader('Content-Disposition', "attachment; filename=\"$filename\" ; charset=utf-8");

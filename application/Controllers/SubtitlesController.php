@@ -11,6 +11,7 @@ namespace App\Controllers;
 use App\Models\Form\Subtitles;
 
 use Rid\Http\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class SubtitlesController extends Controller
 {
@@ -30,7 +31,7 @@ class SubtitlesController extends Controller
 
     public function actionUpload()
     {
-        if (app()->request->isPost()) {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
             $upload = new Subtitles\UploadForm();
             if (false === $success = $upload->validate()) {
                 return $this->render('action/fail', ['msg' => $upload->getError()]);   // TODO add redirect

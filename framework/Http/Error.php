@@ -45,9 +45,9 @@ class Error extends Component
                 $message .= "[type] {$errors['type']} [code] {$errors['code']}" . PHP_EOL;
                 $message .= "[file] {$errors['file']} [line] {$errors['line']}" . PHP_EOL;
                 $message .= "[trace] {$errors['trace']}" . PHP_EOL;
-                $message .= '$_SERVER' . substr(print_r(\Rid::app()->request->server() + \Rid::app()->request->header(), true), 5);
-                $message .= '$_GET' . substr(print_r(\Rid::app()->request->get(), true), 5);
-                $message .= '$_POST' . substr(print_r(\Rid::app()->request->post(), true), 5, -1);
+                $message .= '$_SERVER' . substr(print_r(\Rid::app()->request->server->all() + \Rid::app()->request->headers->all(), true), 5);
+                $message .= '$_GET' . substr(print_r(\Rid::app()->request->query->all(), true), 5);
+                $message .= '$_POST' . substr(print_r(\Rid::app()->request->request->all(), true), 5, -1);
                 $message .= 'Memory used: ' . memory_get_usage();
                 println($message);
                 app()->log->error($message);

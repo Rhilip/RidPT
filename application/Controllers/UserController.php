@@ -11,6 +11,7 @@ namespace App\Controllers;
 use App\Models\Form\User;
 
 use Rid\Http\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends Controller
 {
@@ -27,9 +28,9 @@ class UserController extends Controller
     public function actionInvite()
     {
         $msg = '';
-        if (app()->request->isPost()) {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
             $form = new User\InviteForm();
-            $form->setInput(app()->request->post());
+            $form->setInput(app()->request->request->all());
             $success = $form->validate();
             if ($success) {
                 $form->flush();
@@ -40,7 +41,7 @@ class UserController extends Controller
         }
 
         $user = app()->auth->getCurUser();
-        $uid = app()->request->get('uid');
+        $uid = app()->request->query->get('uid');
         if (!is_null($uid) && $uid != app()->auth->getCurUser()->getId()) {
             if (app()->auth->getCurUser()->isPrivilege('view_invite')) {
                 $user = app()->site->getUser($uid);
@@ -50,9 +51,9 @@ class UserController extends Controller
         }
 
         // FIXME By using Form Class
-        if (!is_null(app()->request->get('action'))) {
+        if (!is_null(app()->request->query->get('action'))) {
             $action_form = new User\InviteActionForm();
-            $action_form->setInput(app()->request->get());
+            $action_form->setInput(app()->request->query->all());
             $success = $action_form->validate();
             if ($success) {
                 $msg = $action_form->flush();
@@ -77,10 +78,10 @@ class UserController extends Controller
 
     public function actionSessions()
     {
-        if (app()->request->isPost()) {
-            $action = app()->request->post('action');  // FIXME
+        if (app()->request->isMethod(Request::METHOD_POST)) {
+            $action = app()->request->request->get('action');  // FIXME
             if ($action == 'revoke') {
-                $to_del_session = app()->request->post('session');
+                $to_del_session = app()->request->request->get('session');
 
                 // expired it from Database first
                 app()->pdo->createCommand('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([

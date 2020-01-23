@@ -10,15 +10,16 @@ namespace App\Controllers;
 
 use Rid\Http\Controller;
 use App\Models\Form\Manage\Categories;
+use Symfony\Component\HttpFoundation\Request;
 
 class ManageController extends Controller
 {
     public function actionCategories()
     {
-        if (app()->request->isPost()) {
-            if (app()->request->post('action') == 'cat_edit') {
+        if (app()->request->isMethod(Request::METHOD_POST)) {
+            if (app()->request->request->get('action') == 'cat_edit') {
                 $edit_form = new Categories\EditForm();
-                $edit_form->setInput(app()->request->post());
+                $edit_form->setInput(app()->request->request->all());
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
@@ -26,9 +27,9 @@ class ManageController extends Controller
                 } else {
                     return $this->render('action/fail', ['msg' => $edit_form->getError()]);
                 }
-            } elseif (app()->request->post('action') == 'cat_delete') {
+            } elseif (app()->request->request->get('action') == 'cat_delete') {
                 $delete_form = new Categories\RemoveForm();
-                $delete_form->setInput(app()->request->post());
+                $delete_form->setInput(app()->request->request->all());
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();

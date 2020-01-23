@@ -23,18 +23,18 @@
                 <form class="form form-inline" method="get">
                     <div class="form-group">
                         <label for="query"></label>
-                        <input id="query" class="form-control col-md-6" type="text" name="query" value="<?= $this->e(app()->request->get('query')) ?>" style="width: 500px">
+                        <input id="query" class="form-control col-md-6" type="text" name="query" value="<?= $this->e(app()->request->query->get('query')) ?>" style="width: 500px">
                     </div>
                     <div class="form-group">
                         <label for="level"> In </label>
                         <select id="level" class="form-control" name="level">
-                            <option value="all"<?= app()->request->get('level') == 'all' ? ' selected' : '' ?>>all</option>
-                            <option value="normal"<?= app()->request->get('level') == 'normal' ? ' selected' : '' ?>>normal</option>
+                            <option value="all"<?= app()->request->query->get('level') == 'all' ? ' selected' : '' ?>>all</option>
+                            <option value="normal"<?= app()->request->query->get('level') == 'normal' ? ' selected' : '' ?>>normal</option>
                             <?php if (app()->auth->getCurUser()->isPrivilege('see_site_log_mod')): ?>
-                                <option value="mod"<?= app()->request->get('level') == 'mod' ? ' selected' : '' ?>>mod</option>
+                                <option value="mod"<?= app()->request->query->get('level') == 'mod' ? ' selected' : '' ?>>mod</option>
                             <?php endif; ?>
                             <?php if (app()->auth->getCurUser()->isPrivilege('see_site_log_leader')): ?>
-                                <option value="leader"<?= app()->request->get('level') == 'leader' ? ' selected' : '' ?>>leader</option>
+                                <option value="leader"<?= app()->request->query->get('level') == 'leader' ? ' selected' : '' ?>>leader</option>
                             <?php endif; ?>
                         </select>
                     </div>

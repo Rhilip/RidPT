@@ -2,10 +2,12 @@
 
 namespace Rid\Http;
 
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 /**
  * UploadFile类
  */
-class UploadFile
+class UploadFile extends UploadedFile
 {
 
     // 文件名
@@ -17,9 +19,6 @@ class UploadFile
     // 临时文件名
     public $tmpName;
 
-    // 错误码
-    public $error;
-
     // 文件尺寸
     public $size;
 
@@ -30,7 +29,7 @@ class UploadFile
      */
     public static function newInstanceByName($name)
     {
-        $file = \Rid::app()->request->files($name);
+        $file = \Rid::app()->request->raw_files[$name];
         return is_null($file) ? $file : new self($file);
     }
 
@@ -40,8 +39,8 @@ class UploadFile
         $this->name    = $file['name'];
         $this->type    = $file['type'];
         $this->tmpName = $file['tmp_name'];
-        $this->error   = $file['error'];
         $this->size    = $file['size'];
+        parent::__construct($file['tmp_name'], $file['name'], $file['type']?: 'application/octet-stream', $file['error'] ?: UPLOAD_ERR_OK, false);
     }
 
     // 文件另存为
@@ -51,30 +50,18 @@ class UploadFile
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $bytes = file_put_contents($filename, file_get_contents($this->tmpName));
+        $bytes = file_put_contents($filename, file_get_contents($this->getClientOriginalName()));
         return $bytes ? true : false;
     }
 
-    // 获取基础名称
-    public function getBaseName($suffix = null)
+    public function getClientOriginalFileName()
     {
-        return $this->name;
-    }
-
-    public function getFileName()
-    {
-        return pathinfo($this->name)['filename'];
-    }
-
-    // 获取扩展名
-    public function getExtension()
-    {
-        return pathinfo($this->name)['extension'];
+        return pathinfo($this->getClientOriginalName(), PATHINFO_FILENAME);
     }
 
     // 获取文件内容
     public function getFileContent()
     {
-        return file_get_contents($this->tmpName);
+        return file_get_contents($this->getClientOriginalName());
     }
 }

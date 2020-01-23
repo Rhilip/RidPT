@@ -19,7 +19,7 @@ class AdminController extends Controller
 
     public function actionService()
     {
-        $provider = app()->request->get('provider');
+        $provider = app()->request->query->get('provider');
         switch (strtolower($provider)) {
             case 'mysql':
                 return $this->infoMysql();
