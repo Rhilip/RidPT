@@ -31,16 +31,14 @@ class AbstractUser extends BaseObject implements AbstractUserInterface
 
     protected function getCacheNameSpace(): string
     {
-        if (is_null($this->info_cache_key)) {
-            $this->info_cache_key = Constant::userContent($this->id);
-        }
-
         return $this->info_cache_key;
     }
 
+    /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct($id = 0)
     {
         $this->id = $id;
+        $this->info_cache_key = Constant::userContent($this->id);
         $self = app()->redis->hGetAll($this->info_cache_key);
         if (empty($self) || !isset($self['id'])) {
             if (app()->redis->zScore(Constant::invalidUserIdZset, $id) === false) {

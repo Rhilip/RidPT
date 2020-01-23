@@ -161,10 +161,8 @@ class TrackerController
 
     protected function logException(\Exception $exception, $userInfo = null, $torrentInfo = null)
     {
-        $req_info = app()->request->server->get('query_string') . "\n\n";
-        foreach (app()->request->headers->all() as $key => $value) {
-            $req_info .= "$key : $value \n";
-        }
+        $req_info = app()->request->getQueryString() . "\n\n";
+        $req_info .= (string) app()->request->headers;
 
         app()->pdo->createCommand('INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`)
                 VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg)
@@ -472,7 +470,7 @@ class TrackerController
      */
     private function checkScrapeFields(&$info_hash_array)
     {
-        preg_match_all('/info_hash=([^&]*)/i', urldecode(app()->request->server->get('query_string')), $info_hash_match);
+        preg_match_all('/info_hash=([^&]*)/i', urldecode(app()->request->getQueryString()), $info_hash_match);
 
         $info_hash_array = $info_hash_match[1];
         if (count($info_hash_array) < 1) {
@@ -701,7 +699,7 @@ class TrackerController
      */
     private function lockAnnounceDuration()
     {
-        $identity = md5(urldecode(app()->request->server->get('query_string')));
+        $identity = md5(urldecode(app()->request->getQueryString()));
         if (false == $check = app()->redis->zScore(Constant::trackerAnnounceLockZset, $identity)) {  // this identity is not lock
             app()->redis->zAdd(Constant::trackerAnnounceLockZset, time() + 60, $identity);
         }
