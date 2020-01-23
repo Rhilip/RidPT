@@ -34,6 +34,7 @@
 - **Entity:** Move Class Torrent,User to namespace App\Entity (7814d88)
 
 ### Style
+- **Bencode:** Separate Bencode library to `Rhilip/Bencode` (18cbfa1)
 - **cs-fixer:** Update Composer config and php-cs-fixer whole project (e734812)
 - **gitignore:** Add .php_cs.cache to .gitignore (15a2a15)
 

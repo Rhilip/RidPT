@@ -30,11 +30,6 @@ class DownloadForm extends Validator
         return $this->subtitle['filename'];
     }
 
-    protected function getSendFileContentLength(): int
-    {
-        return (int)$this->subtitle['size'];
-    }
-
     protected function hookFileContentSend()
     {
         $this->addDownloadHit();
@@ -44,6 +39,6 @@ class DownloadForm extends Validator
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
         $file_loc = app()->getStoragePath('subs') . DIRECTORY_SEPARATOR . $filename;
-        return file_get_contents($file_loc);
+        app()->response->setFile($file_loc);
     }
 }

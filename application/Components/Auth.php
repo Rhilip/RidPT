@@ -129,8 +129,8 @@ class Auth extends Component
              (config('security.ssl_login') > 0 && isset($payload['ssl']) && $payload['ssl']) // if Our site support ssl feature and User want secure access
             )
         ) {
-            app()->response->redirect(str_replace('http://', 'https://', app()->request->getUri()));
-            app()->response->setHeader('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
+            app()->response->setRedirect(str_replace('http://', 'https://', app()->request->getUri()));
+            app()->response->headers->set('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
         }
 
         return $payload['aud'];

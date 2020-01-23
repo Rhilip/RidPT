@@ -37,7 +37,7 @@ class NewsController extends Controller
                 return $this->render('action/fail', ['title' => 'new blog failed', 'msg' => $newform->getError()]);
             } else {
                 $newform->flush();  // Save the news
-                return app()->response->redirect('/news');
+                return app()->response->setRedirect('/news');
             }
         } elseif (app()->auth->getCurUser()->isPrivilege('manage_news')) {
             return $this->render('news/edit');
@@ -55,7 +55,7 @@ class NewsController extends Controller
                 return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $newform->getError()]);
             } else {
                 $newform->flush();  // Save the news
-                return app()->response->redirect('/news');
+                return app()->response->setRedirect('/news');
             }
         } elseif (app()->auth->getCurUser()->isPrivilege('manage_news')) {
             $id = app()->request->query->get('id', 0);
@@ -76,7 +76,7 @@ class NewsController extends Controller
                 // TODO add other check
                 app()->pdo->createCommand('DELETE FROM news WHERE id= :id')->bindParams(['id'=>$id])->execute();
             }
-            return app()->response->redirect('/news');
+            return app()->response->setRedirect('/news');
         }
         return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
     }

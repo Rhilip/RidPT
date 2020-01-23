@@ -49,9 +49,9 @@ class TrackerController
     public function actionIndex()
     {
         // Set Response Header ( Format, HTTP Cache )
-        app()->response->setHeader('Content-Type', 'text/plain; charset=utf-8');
-        app()->response->setHeader('Connection', 'close');
-        app()->response->setHeader('Pragma', 'no-cache');
+        app()->response->headers->set('Content-Type', 'text/plain; charset=utf-8');
+        app()->response->headers->set('Connection', 'close');
+        app()->response->headers->set('Pragma', 'no-cache');
 
         $userInfo = null;
         $torrentInfo = null;
@@ -472,7 +472,7 @@ class TrackerController
      */
     private function checkScrapeFields(&$info_hash_array)
     {
-        preg_match_all('/info_hash=([^&]*)/i', urldecode(app()->request->server('query_string')), $info_hash_match);
+        preg_match_all('/info_hash=([^&]*)/i', urldecode(app()->request->server->get('query_string')), $info_hash_match);
 
         $info_hash_array = $info_hash_match[1];
         if (count($info_hash_array) < 1) {
@@ -701,7 +701,7 @@ class TrackerController
      */
     private function lockAnnounceDuration()
     {
-        $identity = md5(urldecode(app()->request->server('query_string')));
+        $identity = md5(urldecode(app()->request->server->get('query_string')));
         if (false == $check = app()->redis->zScore(Constant::trackerAnnounceLockZset, $identity)) {  // this identity is not lock
             app()->redis->zAdd(Constant::trackerAnnounceLockZset, time() + 60, $identity);
         }

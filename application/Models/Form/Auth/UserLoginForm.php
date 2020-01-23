@@ -15,6 +15,7 @@ use Rid\Helpers\StringHelper;
 use Rid\Helpers\JWTHelper;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
+use Symfony\Component\HttpFoundation\Cookie;
 
 class UserLoginForm extends Validator
 {
@@ -185,7 +186,7 @@ class UserLoginForm extends Validator
         ])->execute();
 
         // Sent JWT content AS Cookie
-        app()->response->setCookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true);
+        app()->response->headers->setCookie(new Cookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true));
     }
 
     private function updateUserLoginInfo()

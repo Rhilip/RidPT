@@ -5,6 +5,8 @@ namespace Rid\Http;
 use Rid\Base\Component;
 use Rid\Helpers\StringHelper;
 
+use Symfony\Component\HttpFoundation\Cookie;
+
 /**
  * Session组件
  */
@@ -64,7 +66,7 @@ class Session extends Component
     // 载入session_id
     public function loadSessionId()
     {
-        $this->_sessionId = \Rid::app()->request->cookie($this->name);
+        $this->_sessionId = \Rid::app()->request->cookies->get($this->name);
         if (is_null($this->_sessionId)) {
             $this->_isNewSession = true;
             $this->_sessionId = StringHelper::getRandomString($this->_sessionIdLength);
@@ -90,7 +92,7 @@ class Session extends Component
     {
         $success = app()->redis->hMSet($this->_sessionKey, [$name => $value]);
         app()->redis->expire($this->_sessionKey, $this->maxLifetime);
-        $success and $this->_isNewSession and \Rid::app()->response->setCookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly);
+        $success and $this->_isNewSession and \Rid::app()->response->headers->setCookie(new Cookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly));
         return $success ? true : false;
     }
 

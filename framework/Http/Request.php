@@ -2,19 +2,16 @@
 
 namespace Rid\Http;
 
-use Rid\Base\ComponentInterface;
-use Rid\Base\ComponentTrait;
-use Rid\Base\StaticInstanceInterface;
-use Rid\Base\StaticInstanceTrait;
+use Rid\Base;
 
 use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
 
 /**
  * Request组件
  */
-class Request extends HttpFoundationRequest implements StaticInstanceInterface, ComponentInterface
+class Request extends HttpFoundationRequest implements Base\StaticInstanceInterface, Base\ComponentInterface
 {
-    use StaticInstanceTrait, ComponentTrait;
+    use Base\StaticInstanceTrait, Base\ComponentTrait;
 
     protected $_swoole_request;
     protected $_route = [];

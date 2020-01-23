@@ -15,13 +15,13 @@ class ApiMiddleware
         app()->response->format = \Rid\Http\Response::FORMAT_JSON;
 
         // No cache for Api response
-        app()->response->setHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
-        app()->response->setHeader('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
-        app()->response->setHeader('Cache-Control', 'no-cache, must-revalidate');
-        app()->response->setHeader('Pragma', 'no-cache');
+        app()->response->headers->set('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
+        app()->response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');
+        app()->response->headers->set('Cache-Control', 'no-cache, must-revalidate');
+        app()->response->headers->set('Pragma', 'no-cache');
 
         if (env('APP_DEBUG')) {
-            app()->response->setHeader('access-control-allow-origin', '*');
+            app()->response->headers->set('access-control-allow-origin', '*');
         }
 
         return $next();

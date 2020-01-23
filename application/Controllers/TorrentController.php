@@ -34,7 +34,7 @@ class TorrentController extends Controller
                     return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
                 }
 
-                return app()->response->redirect('/torrent/details?id=' . $uploadForm->getId());
+                return app()->response->setRedirect('/torrent/details?id=' . $uploadForm->getId());
             }
         } else {
             return $this->render('torrent/upload');
@@ -63,7 +63,7 @@ class TorrentController extends Controller
                 return $this->render('action/fail', ['msg' => $edit->getError()]);
             } else {
                 $edit->flush();
-                return app()->response->redirect('/torrent/details?id=' . $edit->getTorrent()->getId());
+                return app()->response->setRedirect('/torrent/details?id=' . $edit->getTorrent()->getId());
             }
         } else {
             $edit->setInput(app()->request->query->all());

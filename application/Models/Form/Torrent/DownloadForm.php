@@ -28,7 +28,7 @@ class DownloadForm extends StructureForm
 
     protected function getSendFileName(): string
     {
-        return '[' . config('base.site_name') . ']' . $this->torrent->getTorrentName() . '.torrent';
+        return '[' . config('base.site_name') . '].' . $this->torrent->getTorrentName() . '.torrent';
     }
 
     protected function getRateLimitRules(): array

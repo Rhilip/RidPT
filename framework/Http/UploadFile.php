@@ -50,7 +50,7 @@ class UploadFile extends UploadedFile
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $bytes = file_put_contents($filename, file_get_contents($this->getClientOriginalName()));
+        $bytes = file_put_contents($filename, file_get_contents($this->tmpName));
         return $bytes ? true : false;
     }
 

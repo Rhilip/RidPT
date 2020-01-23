@@ -14,7 +14,7 @@ class CaptchaController
 {
     public function actionIndex()
     {
-        app()->response->setHeader('Content-Type', 'image/png');
+        app()->response->headers->set('Content-Type', 'image/png');
         $captcha = new Captcha([
             'width'      => 150,
             'height'     => 40,

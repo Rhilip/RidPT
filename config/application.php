@@ -55,22 +55,18 @@ return [
         // 请求
         'request' => [
             'class' => Rid\Http\Request::class,
+            'trustedProxies' => ['127.0.0.1', '::1'],
             //'trustedHosts' => -1,
-            'trustedProxies' => ['127.0.0.1','::1']
         ],
 
         // 响应
         'response' => [
-            // 类路径
             'class' => Rid\Http\Response::class,
-            // 默认输出格式
-            'defaultFormat' => Rid\Http\Response::FORMAT_HTML,
         ],
 
         // 错误
         'error' => [
-            'class' => Rid\Http\Error::class,
-            'format' => Rid\Http\Error::FORMAT_HTML,
+            'class' => Rid\Http\Error::class
         ],
 
         // 日志
@@ -135,22 +131,6 @@ return [
             'cookieSecure' => false,
             // 仅可通过 HTTP 协议访问
             'cookieHttpOnly' => false,
-        ],
-
-        // Cookie
-        'cookie' => [
-            // 类路径
-            'class' => Rid\Http\Cookie::class,
-            // 过期时间
-            'expires' => 31536000,
-            // 有效的服务器路径
-            'path' => '/',
-            // 有效域名/子域名
-            'domain' => '',
-            // 仅通过安全的 HTTPS 连接传给客户端
-            'secure' => false,
-            // 仅可通过 HTTP 协议访问
-            'httpOnly' => false,
         ],
 
         'view' => [

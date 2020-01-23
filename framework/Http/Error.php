@@ -9,14 +9,6 @@ use Rid\Base\Component;
  */
 class Error extends Component
 {
-
-    // 格式值
-    const FORMAT_HTML = 'html';
-    const FORMAT_JSON = 'json';
-
-    // 输出格式
-    public $format = self::FORMAT_HTML;
-
     // 异常处理
     public function handleException(\Throwable $e)
     {
@@ -32,7 +24,8 @@ class Error extends Component
         if (app()->response->getResponderStatus() !== false) {  // 在Web环境，存在 \Swoole\Http\Response 对象
             // debug处理 & exit处理
             if ($e instanceof \Rid\Exceptions\DebugException || $e instanceof \Rid\Exceptions\EndException) {
-                \Rid::app()->response->content = $e->getMessage();
+                \Rid::app()->response->setContent($e->getMessage());
+                \Rid::app()->response->prepare(\Rid::app()->request);
                 \Rid::app()->response->send();
                 return;
             }
@@ -55,9 +48,9 @@ class Error extends Component
             // 清空系统错误
             ob_get_contents() and ob_clean();
 
-            app()->response->statusCode = $statusCode;
-            app()->response->content    = app()->view->render('error', $errors);
-            app()->response->format     = Response::FORMAT_HTML;
+            app()->response->setStatusCode($statusCode);
+            app()->response->setContent(app()->view->render('error', $errors));
+            \Rid::app()->response->prepare(\Rid::app()->request);
 
             app()->response->send();
         } else {  // 在Task或Timer环境 （使用 Console\Error的处理方法）

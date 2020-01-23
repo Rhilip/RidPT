@@ -40,7 +40,7 @@ class AuthMiddleware
 
         // Check if Site in Maintenance status, and only let `bypass_maintenance` user access
         if (config('base.maintenance') && ($curuser === false || !$curuser->isPrivilege('bypass_maintenance'))) {
-            return app()->response->redirect('/maintenance');
+            return app()->response->setRedirect('/maintenance');
         }
 
         // Deal with Anonymous Visitor
@@ -59,16 +59,16 @@ class AuthMiddleware
                 }
 
                 // Prevent Other Route
-                app()->cookie->delete(Constant::cookie_name);  // Delete exist cookies
+                app()->response->headers->removeCookie(Constant::cookie_name);  // Delete exist cookies
                 app()->session->set('login_return_to', app()->request->getUri());  // Store the url which visitor want to hit
-                return app()->response->redirect('/auth/login');
+                return app()->response->setRedirect('/auth/login');
             }
         }
 
         // Don't allow Logged in user visit the auth/{login, register, confirm}
         if ($controllerName === Controllers\AuthController::class &&
             in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
-            return app()->response->redirect('/index');
+            return app()->response->setRedirect('/index');
         }
 
         /**

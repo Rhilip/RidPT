@@ -33,7 +33,7 @@ class AuthController extends Controller
                 $register_form->flush();  // Save this user in our database and do clean work~
 
                 if ($register_form->getStatus() == UserStatus::CONFIRMED) {
-                    return app()->response->redirect('/index');
+                    return app()->response->setRedirect('/index');
                 } else {
                     return $this->render('auth/register_pending', [
                         'confirm_way' => $register_form->getConfirmWay(),
@@ -108,7 +108,7 @@ class AuthController extends Controller
                 $login->flush();
 
                 $return_to = app()->session->pop('login_return_to') ?? '/index';
-                return app()->response->redirect($return_to);
+                return app()->response->setRedirect($return_to);
             }
         }
 
@@ -126,6 +126,6 @@ class AuthController extends Controller
             $logout->flush();
         }
 
-        return app()->response->redirect('/auth/login');
+        return app()->response->setRedirect('/auth/login');
     }
 }

@@ -44,7 +44,7 @@ class UserLogoutForm extends Validator
     /** @noinspection PhpUnused */
     protected function getUserSessionId()
     {
-        $session = app()->request->cookie(Constant::cookie_name);
+        $session = app()->request->cookies->get(Constant::cookie_name);
         if (is_null($session)) {
             $this->buildCallbackFailMsg('session', 'How can you hit here without cookies?');
             return;
@@ -66,7 +66,7 @@ class UserLogoutForm extends Validator
 
     private function invalidSession()
     {
-        app()->cookie->delete(Constant::cookie_name);   // Clean cookie
+        app()->response->headers->removeCookie(Constant::cookie_name);   // Clean cookie
         app()->redis->zAdd(Constant::mapUserSessionToId, 0, $this->sid);   // Quick Mark this invalid in cache
 
         // Set this session expired

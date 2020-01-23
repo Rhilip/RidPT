@@ -16,7 +16,7 @@ class MaintenanceController extends Controller
     {
         // Check if site is on maintenance status
         if (!config('base.maintenance')) {
-            return app()->response->redirect('/index');
+            return app()->response->setRedirect('/index');
         }
 
         return $this->render('maintenance');

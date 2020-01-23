@@ -42,7 +42,7 @@ class TorrentsController extends Controller
         } else {
             $tags = $pager->getPagerData();
             if (count($tags) == 1 && $tags[0]['tag'] == $pager->search) {  // If this search tag is unique and equal to the wanted, just redirect to search page
-                return app()->response->redirect('/torrents/search?tags=' . $pager->search);
+                return app()->response->setRedirect('/torrents/search?tags=' . $pager->search);
             }
             return $this->render('torrents/tags', ['pager' => $pager]);
         }

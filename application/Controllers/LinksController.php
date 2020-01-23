@@ -16,7 +16,7 @@ class LinksController extends Controller
 {
     public function actionIndex()
     {
-        return app()->response->redirect('/links/manage', 301);
+        return app()->response->setRedirect('/links/manage', 301);
     }
 
     public function actionApply()
