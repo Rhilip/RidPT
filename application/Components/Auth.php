@@ -164,11 +164,8 @@ class Auth extends Component
                 ])->execute();
 
                 // Insert Table `session_log`
-                $sid = app()->pdo->createCommand('SELECT `id` FROM `sessions` WHERE `session` = :jit')->bindParams([
-                    'jit' => $this->cur_user_jit
-                ])->queryScalar();
-                app()->pdo->createCommand('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES (:sid, NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
-                    'sid' => $sid, 'access_ip' => $now_ip, 'ua' => $ua
+                app()->pdo->createCommand('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
+                    'jit' => $this->cur_user_jit, 'access_ip' => $now_ip, 'ua' => $ua
                 ])->execute();
             }
         }

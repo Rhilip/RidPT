@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Build
+- **PHP:** bump PHP major version to min 7.4 (d5b1ff1)
+
 ### Chore
 - **composer:** bump adhocore/cli (6647c9d)
 
