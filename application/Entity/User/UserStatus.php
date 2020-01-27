@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\User;
+namespace App\Entity\User;
 
 class UserStatus
 {

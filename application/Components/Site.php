@@ -19,22 +19,34 @@ class Site extends Component
 {
     use ClassValueCacheUtils;
 
-    protected $users = [];
     protected $torrents = [];
-    protected $map_username_to_id = [];
 
     const LOG_LEVEL_NORMAL = 'normal';
     const LOG_LEVEL_MOD = 'mod';
     const LOG_LEVEL_SYSOP = 'sysop';
     const LOG_LEVEL_LEADER = 'leader';
 
+    protected Entity\User\UserFactory $user_factory;
+
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+        $this->user_factory = new Entity\User\UserFactory();
+    }
+
     public function onRequestBefore()
     {
         parent::onRequestBefore();
-
-        $this->users = [];
+        $this->user_factory->cleanCache();
         $this->torrents = [];
-        $this->map_username_to_id = [];
+    }
+
+    /**
+     * @return Entity\User\UserFactory
+     */
+    public function getUserFactory(): Entity\User\UserFactory
+    {
+        return $this->user_factory;
     }
 
     protected function getCacheNameSpace(): string
@@ -55,45 +67,11 @@ class Site extends Component
 
     /**
      * @param int $uid
-     * @param bool $cur
-     * @return Entity\User\AbstractUserInterface|bool return False means this user is not exist
+     * @return Entity\User\User|bool return False means this user is not exist
      */
-    public function getUser($uid, $cur = false)
+    public function getUser($uid)
     {
-        if (array_key_exists($uid, $this->users)) {
-            $user = $this->users[$uid];
-        } else {
-            if ($cur) {
-                $user = new Entity\User($uid);
-            } else {
-                $user = new Entity\User\AbstractUser($uid);
-            }
-            // TODO Handing if this user id does not exist
-            $this->users[$uid] = $user;
-        }
-        return $user;
-    }
-
-    /**
-     * @param $username
-     * @return Entity\User|bool
-     */
-    public function getUserByUserName($username)
-    {
-        if (array_key_exists($username, $this->map_username_to_id)) {
-            $uid = $this->map_username_to_id[$username];
-        } else {
-            $uid = app()->redis->hGet(Constant::mapUsernameToId, $username);
-            if (false === $uid) {
-                $uid = app()->pdo->createCommand('SELECT id FROM `users` WHERE LOWER(`username`) = LOWER(:uname) LIMIT 1;')->bindParams([
-                    'uname' => $username
-                ])->queryScalar() ?: 0;  // 0 means this username is not exist ???
-                app()->redis->hSet(Constant::mapUsernameToId, $username, $uid);
-                $this->map_username_to_id[$username] = $uid;
-            }
-        }
-
-        return $this->getUser($uid);
+        return $this->user_factory->getUserById($uid);
     }
 
     public function writeLog($msg, $level = self::LOG_LEVEL_NORMAL)

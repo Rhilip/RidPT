@@ -8,7 +8,7 @@
 
 namespace App\Models\Form\User;
 
-use App\Repository\User\UserStatus;
+use App\Entity\User\UserStatus;
 
 use Rid\Validators\Validator;
 

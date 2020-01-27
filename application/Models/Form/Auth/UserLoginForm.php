@@ -9,7 +9,7 @@
 namespace App\Models\Form\Auth;
 
 use App\Libraries\Constant;
-use App\Repository\User\UserStatus;
+use App\Entity\User\UserStatus;
 
 use Rid\Helpers\StringHelper;
 use Rid\Helpers\JWTHelper;

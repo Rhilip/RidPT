@@ -8,10 +8,13 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\User;
+namespace App\Entity\User;
 
 class UserRole
 {
+    // Anonymous Visitor
+    public const ANONYMOUS = -1;
+
     // User class
     public const PEASANT = 0;
     public const USER = 1;

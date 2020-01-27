@@ -10,7 +10,7 @@
 
 $user = app()->auth->getCurUser();
 
-use App\Repository\User\UserRole;
+use App\Entity\User\UserRole;
 
 ?>
 

@@ -6,10 +6,10 @@
  * Time: 16:33
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Entity\User $user
+ * @var \App\Entity\User\User $user
  */
 
-use App\Repository\User\UserStatus;
+use App\Entity\User\UserStatus;
 
 ?>
 

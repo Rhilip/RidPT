@@ -10,7 +10,7 @@ namespace App\Components;
 
 use App\Entity;
 use App\Libraries\Constant;
-use App\Repository\User\UserStatus;
+use App\Entity\User\UserStatus;
 
 use Rid\Base\Component;
 use Rid\Helpers\JWTHelper;
@@ -38,7 +38,7 @@ class Auth extends Component
     /**
      * @param string $grant
      * @param string|bool $flush
-     * @return Entity\User|bool return False means this user is anonymous
+     * @return Entity\User\User|bool return False means this user is anonymous
      */
     public function getCurUser($grant = 'cookies', $flush = false)
     {
@@ -61,7 +61,7 @@ class Auth extends Component
 
     /**
      * @param string $grant
-     * @return Entity\User|boolean
+     * @return Entity\User\User|boolean
      */
     protected function loadCurUser($grant = 'cookies')
     {
@@ -74,7 +74,7 @@ class Auth extends Component
 
         if ($user_id !== false && is_int($user_id) && $user_id > 0) {
             $user_id = intval($user_id);
-            $curuser = app()->site->getUser($user_id, true);
+            $curuser = app()->site->getUser($user_id);
             if ($curuser->getStatus() !== UserStatus::DISABLED) {  // user status shouldn't be disabled
                 return $curuser;
             }
@@ -86,12 +86,13 @@ class Auth extends Component
     protected function loadCurUserIdFromCookies()
     {
         $user_session = app()->request->cookies->get(Constant::cookie_name);
+        // quick return when cookies is not exist
         if (is_null($user_session)) {
             return false;
-        }  // quick return when cookies is not exist
+        }
 
-        $payload = JWTHelper::decode($user_session);
-        if ($payload === false) {
+        // quick return when decode JWT session failed
+        if (false === $payload = JWTHelper::decode($user_session)) {
             return false;
         }
         if (!isset($payload['jti']) || !isset($payload['aud'])) {
@@ -106,19 +107,12 @@ class Auth extends Component
             }
         }
 
-        // Verity $jti is force expired or not by checking mapUserSessionToId
-        $expired_check = app()->redis->zScore(Constant::mapUserSessionToId, $payload['jti']);
-        if ($expired_check === false) {  // session is not see in Zset Cache (may lost or first time init), load from database ( Lazy load... )
-            $uid = app()->pdo->createCommand('SELECT `uid` FROM sessions WHERE session = :sid AND `expired` != 1 LIMIT 1')->bindParams([
-                'sid' => $payload['jti']
-            ])->queryScalar();
-            app()->redis->zAdd(Constant::mapUserSessionToId, $uid ?: 0, $payload['jti']);  // Store 0 if session -> uid is invalid
-            if ($uid === false) {
-                return false;
-            }  // this session is not exist or marked as expired
-        } elseif ($expired_check != $payload['aud']) {
+        // Verity $payload['jti'] is force expired or not, And check if it same with $payload['aud']
+        // And if not match, it means user logout this session or change password....
+        $uid = app()->site->getUserFactory()->getUserIdBySession($payload['jti']);
+        if ($uid != $payload['aud']) {
             return false;
-        }    // may return (double) 0 , which means already make invalid ; or it check if user obtain this session (may Overdesign)
+        }
 
         $this->cur_user_jit = $payload['jti'];
 
@@ -143,15 +137,7 @@ class Auth extends Component
             return false;
         }
 
-        // FIXME merge same function as tracker so
-        $user_id = app()->redis->zScore(Constant::mapUserPasskeyToId, $passkey);
-        if (false === $user_id) {
-            $user_id = app()->pdo->createCommand('SELECT `id` FROM `users` WHERE `passkey` = :passkey LIMIT 1;')->bindParams([
-                'passkey' => $passkey
-            ])->queryScalar() ?: 0;
-            app()->redis->zAdd(Constant::mapUserPasskeyToId, $user_id, $passkey);
-        }
-
+        $user_id = app()->site->getUserFactory()->getUserIdByPasskey($passkey);
         return $user_id > 0 ? $user_id : false;
     }
 

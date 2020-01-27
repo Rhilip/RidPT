@@ -8,15 +8,12 @@
 
 namespace App\Models\Form\Traits;
 
-use App\Entity\User;
+use App\Entity\User\User;
 
 trait isValidUserTrait
 {
-    public $id;  // User Id
-
-    /** @var User */
-    protected $user;
-    protected $user_data;  // Full user line in table `users`
+    public int $id;  // User Id
+    protected User $user;
 
     public static function inputRules(): array
     {
@@ -33,23 +30,18 @@ trait isValidUserTrait
     /** @noinspection PhpUnused */
     protected function isExistUser()
     {
-        $uid = $this->getInput('id');
-        $this->user_data = app()->pdo->createCommand('SELECT * FROM users WHERE id = :uid LIMIT 1')->bindParams([
-            'uid' => $uid
-        ])->queryOne();
-        if ($this->user_data === false) {
+        $test_uid = $this->getInput('id');
+        $uid = app()->pdo->createCommand('SELECT id FROM users WHERE id = :uid LIMIT 1')->bindParams([
+            'uid' => $test_uid
+        ])->queryScalar();
+        if ($uid === false) {
             $this->buildCallbackFailMsg('User', 'The user id (' . $uid . ') is not exist in our database');
         }
-        $this->user = new User($uid);  // FIXME twice db load
+        $this->user = app()->site->getUser($uid);
     }
 
     public function getUser(): User
     {
         return $this->user;
-    }
-
-    public function getUserData($key = null, $default = null)
-    {
-        return is_null($key) ? $this->user_data : ($this->user_data[$key] ?? $default);
     }
 }

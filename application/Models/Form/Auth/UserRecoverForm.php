@@ -8,7 +8,7 @@
 
 namespace App\Models\Form\Auth;
 
-use App\Repository\User\UserStatus;
+use App\Entity\User\UserStatus;
 
 use Rid\Helpers\StringHelper;
 use Rid\Validators\CaptchaTrait;

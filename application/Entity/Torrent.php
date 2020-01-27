@@ -8,14 +8,14 @@
 
 namespace App\Entity;
 
-use App\Entity\User\AbstractUserInterface;
+use App\Entity\Torrent\AbstractTorrent;
+use App\Entity\User\User;
 use App\Libraries\Constant;
 
-use Rid\Base\BaseObject;
 use Rid\Utils;
 use Rid\Exceptions\NotFoundException;
 
-class Torrent extends BaseObject
+class Torrent extends AbstractTorrent
 {
     use Utils\ClassValueCacheUtils;
 
@@ -90,7 +90,7 @@ class Torrent extends BaseObject
         return $this->owner_id;
     }
 
-    public function getOwner(): AbstractUserInterface
+    public function getOwner(): User
     {
         return app()->site->getUser($this->owner_id);
     }

@@ -9,7 +9,7 @@
 namespace App\Controllers;
 
 use App\Models\Form\Auth;
-use App\Repository\User\UserStatus;
+use App\Entity\User\UserStatus;
 
 use Rid\Http\Controller;
 use Symfony\Component\HttpFoundation\Request;

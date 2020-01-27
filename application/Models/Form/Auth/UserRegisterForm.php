@@ -8,10 +8,10 @@
 
 namespace App\Models\Form\Auth;
 
-use App\Entity\User;
+use App\Entity\User\User;
 use App\Libraries\Constant;
-use App\Repository\User\UserRole;
-use App\Repository\User\UserStatus;
+use App\Entity\User\UserRole;
+use App\Entity\User\UserStatus;
 
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;
@@ -302,7 +302,7 @@ class UserRegisterForm extends Validator
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 
-            $invitee = new User($this->invite_by);
+            $invitee = app()->site->getUser($this->invite_by);
             $log_text .= '(Invite by ' . $invitee->getUsername() . '(' . $invitee->getId() . ')).';
 
             app()->site->sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");

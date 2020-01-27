@@ -9,7 +9,7 @@
 namespace App\Controllers;
 
 use App\Libraries\Constant;
-use App\Repository\User\UserRole;
+use App\Entity\User\UserRole;
 use App\Exceptions\TrackerException;
 
 use Rid\Utils\IpUtils;

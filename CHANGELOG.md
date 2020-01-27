@@ -11,6 +11,7 @@
 - **phpstorm:** Add `.phpstorm.meat.php` for config() function (407bb66)
 
 ### Feat
+- **Requests:** Make Response Component extends from `Symfony\Component\HttpFoundation\Response` (dd001d2)
 - **Requests:** Make Request Component extends from `Symfony\Component\HttpFoundation\Request` (9cd715b)
 - **Torrent:** Per-add torrent edit (f06b342)
 - **i18n:** Use symfony/translation and JSON format for locale (02cc251)
@@ -23,6 +24,7 @@
 - **Redis:** Fix wrong type of Redis call function hMset() to hMSet() (a163150)
 - **Route:** Fix user can access maintenance page even not on maintenance status (b29c2f6)
 - **Tracker:** Fix typo in TrackerController (323c8ec)
+- **User:** Fix all user class info become cur_user (77c7345)
 
 ### Perf
 - **Component:** View Become a component to perf load time (660c1f1)

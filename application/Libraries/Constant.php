@@ -12,13 +12,6 @@ class Constant
 {
     const cookie_name = 'rid';
 
-    const mapUsernameToId = 'Map:hash:user_username_to_user_id';
-    const mapUserPasskeyToId = 'Map:zset:user_passkey_to_user_id';  // (double) 0 means invalid
-    const mapUserSessionToId = 'Map:zset:user_session_to_user_id';  // (double) 0 means invalid
-
-    // --- invalid Zset  ---
-    const invalidUserIdZset = 'Site:zset:invalid_user_id';
-
     // Tracker Use
     const trackerAllowedClientList = 'Tracker:allowed_client_list';
     const trackerAllowedClientExceptionList = 'Tracker:allowed_client_exception_list';

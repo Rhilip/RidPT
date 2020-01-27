@@ -148,7 +148,7 @@ use Rid\Base\Component;
  * @method array bzPopMin(string|array $key1, string|array $key2, int $timeout)
  * @method array zPopMax(string $key, int $count = 1)
  * @method array zPopMin(string $key, int $count = 1)
- * @method int|bool hSet(string $key, string $hashKey, string $value)
+ * @method int|bool hSet(string $key, string $hashKey, string|int $value)
  * @method bool hSetNx(string $key, string $hashKey, string $value)
  * @method string hGet(string $key, string $hashKey)
  * @method int|bool hLen(string $key)

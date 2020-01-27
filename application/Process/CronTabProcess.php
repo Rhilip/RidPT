@@ -87,9 +87,6 @@ final class CronTabProcess extends Process
             [Constant::trackerAnnounceLockZset, 'Success Clean %s tracker announce locks.'],
             [Constant::trackerAnnounceMinIntervalLockZset, 'Success Clean %s tracker min announce interval locks.'],
 
-            // Invalid Zset
-            [Constant::invalidUserIdZset, 'Success Clean %s invalid user id.'],
-
             // Valid Zset
             [Constant::trackerValidClientZset, 'Success Clean %s valid bittorrent client.'],
             [Constant::trackerValidPeerZset, 'Success Clean %s valid peers.']
