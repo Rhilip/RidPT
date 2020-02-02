@@ -6,73 +6,59 @@
  * Time: 10:10
  */
 
-namespace App\Entity;
+namespace App\Entity\Torrent;
 
-use App\Entity\Torrent\AbstractTorrent;
 use App\Entity\User\User;
 use App\Libraries\Constant;
 
 use Rid\Utils;
-use Rid\Exceptions\NotFoundException;
+use Rid\Base\BaseObject;
 
-class Torrent extends AbstractTorrent
+class Torrent extends BaseObject
 {
     use Utils\ClassValueCacheUtils;
 
-    protected $id = null;
+    //-- Torrent Base Info --//
+    protected int $id;
+    protected int $owner_id;
+    protected string $info_hash;
+    protected string $status = TorrentStatus::PENDING;
+    protected string $added_at;
 
-    protected $owner_id;
-    protected $info_hash;
+    protected int $complete = 0;
+    protected int $incomplete = 0;
+    protected int $downloaded = 0;
+    protected int $comments = 0;
 
-    protected $status;
-
-    protected $added_at;
-
-    protected $complete;
-    protected $incomplete;
-    protected $downloaded;
-    protected $comments;
-
-    protected $title;
-    protected $subtitle;
-    protected $category;
-    protected $descr;
-    protected $uplver;
-    protected $hr;
-
-    protected $nfo;
-
+    protected string $title = '';
+    protected string $subtitle = '';
+    protected int $category = 0;
+    protected string $descr = '';
+    protected bool $uplver = false;
+    protected bool $hr = false;
     protected $tags;
-    protected $pinned_tags;
 
-    protected $torrent_name;
-    protected $torrent_type;
-    protected $torrent_size;
-    protected $torrent_structure;
+    protected int $team = 0;
+    protected int $quality_audio = 0;
+    protected int $quality_codec = 0;
+    protected int $quality_medium = 0;
+    protected int $quality_resolution = 0;
 
-    protected $team;
+    protected int $torrent_size;
+
+    //-- Torrent Extend Info --//
+    protected string $torrent_name;
+    protected string $torrent_type;
+    protected ?string $nfo;
+    protected ?string $torrent_structure;
+
 
     protected $comment_perpage = 10;  // FIXME
 
-    public function __construct($id = null)
+    /** @noinspection PhpMissingParentConstructorInspection */
+    public function __construct($config)
     {
-        $this->loadTorrentContentById($id);
-        if ($this->id == null) {
-            throw new NotFoundException('Not Found');  // FIXME
-        }
-    }
-
-    public function loadTorrentContentById($id)
-    {
-        $self = app()->redis->hGetAll(Constant::torrentContent($id));
-        if (empty($self)) {
-            $self = app()->pdo->createCommand("SELECT * FROM `torrents` WHERE id=:id LIMIT 1;")->bindParams([
-                    "id" => $id
-                ])->queryOne() ?? [];
-            app()->redis->hMSet(Constant::torrentContent($id), $self);
-            app()->redis->expire(Constant::torrentContent($id), 1800);
-        }
-        $this->importAttributes($self);
+        $this->importAttributes($config);
     }
 
     protected function getCacheNameSpace(): string
@@ -95,9 +81,9 @@ class Torrent extends AbstractTorrent
         return app()->site->getUser($this->owner_id);
     }
 
-    public function getInfoHash(): string
+    public function getInfoHash($hex = true): string
     {
-        return bin2hex($this->info_hash);
+        return $hex ? bin2hex($this->info_hash) : $this->info_hash;
     }
 
     public function getStatus(): string
@@ -150,24 +136,9 @@ class Torrent extends AbstractTorrent
         return app()->site->CategoryDetail($this->category);
     }
 
-    public function getTorrentName(): string
-    {
-        return $this->torrent_name;
-    }
-
-    public function getTorrentType(): string
-    {
-        return $this->torrent_type;
-    }
-
     public function getTorrentSize(): int
     {
         return $this->torrent_size;
-    }
-
-    public function getTorrentStructure(): array
-    {
-        return json_decode($this->torrent_structure, true);
     }
 
     public function getTeamId()
@@ -236,6 +207,21 @@ class Torrent extends AbstractTorrent
     public function getHr(): bool
     {
         return (boolean)$this->hr;
+    }
+
+    public function getTorrentName(): string
+    {
+        return $this->torrent_name;
+    }
+
+    public function getTorrentType(): string
+    {
+        return $this->torrent_type;
+    }
+
+    public function getTorrentStructure(): array
+    {
+        return json_decode($this->torrent_structure, true);
     }
 
     public function hasNfo(): bool

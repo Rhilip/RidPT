@@ -66,6 +66,7 @@ class User extends BaseObject
         return $this->cache_key_extra;
     }
 
+    /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct($id = 0)
     {
         $this->id = $id;
@@ -79,8 +80,7 @@ class User extends BaseObject
         if (false === $self) {
             return; // It means this user id is invalid
         }
-
-        parent::__construct($self);
+        $this->importAttributes($self);
     }
 
     public function getId(): int
@@ -201,7 +201,8 @@ class User extends BaseObject
         return $this->ratioHelper($this->seedtime, $this->leechtime);
     }
 
-    private function loadExtendProp() {
+    private function loadExtendProp()
+    {
         if (false === $this->extended_info_hit) {
             if (false === $self = app()->redis->get($this->cache_key_extended)) {
                 $self = app()->pdo->createCommand('SELECT `create_at`,`register_ip`,`last_login_at`,`last_access_at`,`last_upload_at`,`last_download_at`,`last_connect_at`,`last_login_ip`,`last_access_ip`,`last_tracker_ip` FROM `users` WHERE id = :uid')->bindParams([
@@ -372,10 +373,10 @@ class User extends BaseObject
     public function getTempInviteDetails(): array
     {
         return $this->getCacheValue('temp_invites_details', function () {
-                return app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
+            return app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
                     "uid" => app()->auth->getCurUser()->getId()
                 ])->queryAll() ?: [];
-            }) ?? [];
+        }) ?? [];
     }
 
     public function getPendingInvites()

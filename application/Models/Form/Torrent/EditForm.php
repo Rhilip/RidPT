@@ -10,9 +10,9 @@ namespace App\Models\Form\Torrent;
 
 use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidTorrentTrait;
-use App\Entity\Torrent;
+use App\Entity\Torrent\Torrent;
 
-use App\Repository\Torrent\TorrentStatus;
+use App\Entity\Torrent\TorrentStatus;
 use Rid\Http\UploadFile;
 use Rid\Validators\Validator;
 

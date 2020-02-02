@@ -171,15 +171,6 @@ class SearchForm extends Pagination
 
     protected function getRemoteData(): array
     {
-        $fetch = app()->pdo->createCommand(array_merge(array_merge([
-            ['SELECT `id`, `added_at` FROM `torrents` WHERE 1=1 ']
-        ], $this->getSearchField()), [
-            ['ORDER BY `added_at` DESC '],
-            ['LIMIT :offset, :rows', 'params' => ['offset' => $this->offset, 'rows' => $this->limit]]
-        ]))->queryColumn();
-
-        return array_map(function ($id) {
-            return app()->site->getTorrent($id);
-        }, $fetch);
+        return app()->site->getTorrentFactory()->getTorrentBySearch($this->getSearchField(), $this->offset, $this->limit);
     }
 }

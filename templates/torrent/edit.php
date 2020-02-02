@@ -11,7 +11,7 @@
 
 $torrent = $edit->getTorrent();
 
-use App\Repository\Torrent\TorrentStatus;
+use App\Entity\Torrent\TorrentStatus;
 
 ?>
 

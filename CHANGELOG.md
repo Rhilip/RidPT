@@ -32,6 +32,7 @@
 ### Perf
 - **Component:** View Become a component to perf load time (660c1f1)
 - **Tracker:** Reduce Redis Calls for get User and Torrent Info in Tracker (e813435)
+- **User:** Sort class User and create UserFactory (8fced36)
 - **User:** Add `Entity\User\AbstractUserInterface` (1d8e9e4)
 - **User:** Simple sql to get user real_transfer from table `snatched` (547c772)
 

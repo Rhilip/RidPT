@@ -9,8 +9,8 @@
 namespace App\Models\Form\Torrent;
 
 use App\Libraries\Constant;
-use App\Repository\Torrent\TorrentStatus;
-use App\Repository\Torrent\TorrentType;
+use App\Entity\Torrent\TorrentStatus;
+use App\Entity\Torrent\TorrentType;
 
 use Rid\Http\UploadFile;
 

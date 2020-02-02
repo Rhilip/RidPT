@@ -27,11 +27,13 @@ class Site extends Component
     const LOG_LEVEL_LEADER = 'leader';
 
     protected Entity\User\UserFactory $user_factory;
+    protected Entity\Torrent\TorrentFactory $torrent_factory;
 
     public function __construct($config = [])
     {
         parent::__construct($config);
         $this->user_factory = new Entity\User\UserFactory();
+        $this->torrent_factory = new Entity\Torrent\TorrentFactory();
     }
 
     public function onRequestBefore()
@@ -49,6 +51,14 @@ class Site extends Component
         return $this->user_factory;
     }
 
+    /**
+     * @return Entity\Torrent\TorrentFactory
+     */
+    public function getTorrentFactory(): Entity\Torrent\TorrentFactory
+    {
+        return $this->torrent_factory;
+    }
+
     protected function getCacheNameSpace(): string
     {
         return 'Site:hash:runtime_value';
@@ -56,13 +66,7 @@ class Site extends Component
 
     public function getTorrent($tid)
     {
-        if (array_key_exists($tid, $this->torrents)) {
-            $torrent = $this->torrents[$tid];
-        } else {
-            $torrent = new Entity\Torrent($tid);  // TODO Handing if this torrent id does not exist
-            $this->torrents[$tid] = $torrent;
-        }
-        return $torrent;
+        return $this->torrent_factory->getTorrentById($tid);
     }
 
     /**

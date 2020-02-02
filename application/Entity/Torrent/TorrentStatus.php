@@ -2,13 +2,13 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 1/11/2020
+ * Date: 1/27/2020
  * Time: 2020
  */
 
 declare(strict_types=1);
 
-namespace App\Repository\Torrent;
+namespace App\Entity\Torrent;
 
 class TorrentStatus
 {

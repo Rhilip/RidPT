@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace App\Repository\Torrent;
+namespace App\Entity\Torrent;
 
 class TorrentType
 {

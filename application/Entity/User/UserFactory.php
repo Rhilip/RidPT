@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
-
 class UserFactory
 {
     protected array $user_instances = [];

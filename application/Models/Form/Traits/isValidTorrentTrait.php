@@ -8,7 +8,7 @@
 
 namespace App\Models\Form\Traits;
 
-use App\Entity\Torrent;
+use App\Entity\Torrent\Torrent;
 
 trait isValidTorrentTrait
 {
