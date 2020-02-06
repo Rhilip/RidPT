@@ -8,10 +8,10 @@
 
 namespace App\Models\Form\Auth;
 
-use App\Entity\User\User;
 use App\Libraries\Constant;
 use App\Entity\User\UserRole;
 use App\Entity\User\UserStatus;
+use App\Entity\Site\LogLevel;
 
 use Rid\Helpers\StringHelper;
 use Rid\Validators\Validator;
@@ -331,6 +331,6 @@ class UserRegisterForm extends Validator
         }
 
         // Add Site log for user signup
-        app()->site->writeLog($log_text, app()->site::LOG_LEVEL_MOD);
+        app()->site->writeLog($log_text, LogLevel::LOG_LEVEL_MOD);
     }
 }

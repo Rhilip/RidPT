@@ -38,6 +38,7 @@
 - **User:** Simple sql to get user real_transfer from table `snatched` (547c772)
 
 ### Refactor
+- **Database:** Rename function creatCommand() to prepare() (09f6701)
 - **Entity:** Separate Entity User, Torrent 's const to App\Repository (50ecdbf)
 - **Entity:** Move Class Torrent,User to namespace App\Entity (7814d88)
 - **Torrent:** Add TorrentFactory (e7dc26e)

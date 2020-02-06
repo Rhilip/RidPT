@@ -19,13 +19,6 @@ class Site extends Component
 {
     use ClassValueCacheUtils;
 
-    protected $torrents = [];
-
-    const LOG_LEVEL_NORMAL = 'normal';
-    const LOG_LEVEL_MOD = 'mod';
-    const LOG_LEVEL_SYSOP = 'sysop';
-    const LOG_LEVEL_LEADER = 'leader';
-
     protected Entity\User\UserFactory $user_factory;
     protected Entity\Torrent\TorrentFactory $torrent_factory;
 
@@ -40,7 +33,6 @@ class Site extends Component
     {
         parent::onRequestBefore();
         $this->user_factory->cleanCache();
-        $this->torrents = [];
     }
 
     /**
@@ -78,7 +70,7 @@ class Site extends Component
         return $this->user_factory->getUserById($uid);
     }
 
-    public function writeLog($msg, $level = self::LOG_LEVEL_NORMAL)
+    public function writeLog($msg, $level = Entity\Site\LogLevel::LOG_LEVEL_NORMAL)
     {
         app()->pdo->prepare('INSERT INTO `site_log`(`create_at`,`msg`, `level`) VALUES (CURRENT_TIMESTAMP, :msg, :level)')->bindParams([
             'msg' => $msg, 'level' => $level
