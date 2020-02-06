@@ -159,12 +159,12 @@ class Auth extends Component
             $check = app()->redis->pfAdd('Site:hyperloglog:access_log_' . $grain_size, [$identify_key]);
             if ($check == 1) {
                 // Update Table `users`
-                app()->pdo->createCommand('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
+                app()->pdo->prepare('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
                     'ip' => $now_ip, 'id' => $uid
                 ])->execute();
 
                 // Insert Table `session_log`
-                app()->pdo->createCommand('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
+                app()->pdo->prepare('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
                     'jit' => $this->cur_user_jit, 'access_ip' => $now_ip, 'ua' => $ua
                 ])->execute();
             }

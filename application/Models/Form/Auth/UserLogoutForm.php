@@ -72,7 +72,7 @@ class UserLogoutForm extends Validator
         app()->redis->zAdd(UserFactory::mapUserSessionToId, 0, $this->sid);   // Quick Mark this invalid in cache
 
         // Set this session expired
-        app()->pdo->createCommand('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
+        app()->pdo->prepare('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
             'sid' => $this->sid
         ])->execute();
     }

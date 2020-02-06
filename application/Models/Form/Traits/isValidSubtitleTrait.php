@@ -31,7 +31,7 @@ trait isValidSubtitleTrait
     {
         $sub_id = $this->getInput('id');
 
-        $this->subtitle = app()->pdo->createCommand('SELECT * FROM `subtitles` WHERE id = :sid LIMIT 1;')->bindParams([
+        $this->subtitle = app()->pdo->prepare('SELECT * FROM `subtitles` WHERE id = :sid LIMIT 1;')->bindParams([
             'sid' => $sub_id
         ])->queryOne();
 

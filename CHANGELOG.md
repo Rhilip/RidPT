@@ -31,6 +31,7 @@
 
 ### Perf
 - **Component:** View Become a component to perf load time (660c1f1)
+- **Session_Log:** Use `insert with select` to log session (d786243)
 - **Tracker:** Reduce Redis Calls for get User and Torrent Info in Tracker (e813435)
 - **User:** Sort class User and create UserFactory (8fced36)
 - **User:** Add `Entity\User\AbstractUserInterface` (1d8e9e4)

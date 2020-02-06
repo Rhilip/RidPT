@@ -40,9 +40,9 @@ class SearchForm extends Pagination
         $search = $this->getInput('search');
         $query = $this->getInput('query');
         if (empty($search)) {
-            $count = app()->pdo->createCommand('SELECT COUNT(*) FROM `news`;')->queryScalar();
+            $count = app()->pdo->prepare('SELECT COUNT(*) FROM `news`;')->queryScalar();
         } else {
-            $count = app()->pdo->createCommand([
+            $count = app()->pdo->prepare([
                 ['SELECT COUNT(*) FROM `news` WHERE 1=1 '],
                 ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($query == 'title' && !empty($search))],
                 ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($query == 'body' && !empty($search))],
@@ -57,7 +57,7 @@ class SearchForm extends Pagination
         $search = $this->search;
         $query = $this->query;
 
-        return app()->pdo->createCommand([
+        return app()->pdo->prepare([
             ['SELECT * FROM `news` WHERE 1=1 '],
             ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($query == 'title' && !empty($search))],
             ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($query == 'body' && !empty($search))],

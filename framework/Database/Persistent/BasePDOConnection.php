@@ -60,7 +60,14 @@ class BasePDOConnection extends \Rid\Database\BasePDOConnection
         return $this->call(__FUNCTION__, func_get_args());
     }
 
-    // 执行方法
+    /**
+     * 执行方法
+     *
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @throws \Throwable
+     */
     public function call($name, $arguments)
     {
         try {

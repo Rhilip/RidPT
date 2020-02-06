@@ -44,7 +44,7 @@ class ApplyForm extends Validator
 
     protected function checkExistLinksByUrl()
     {
-        $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `links` WHERE url = :url')->bindParams([
+        $count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `links` WHERE url = :url')->bindParams([
             'url' => $this->getInput('link_url')
         ])->queryScalar();
         if ($count > 0) {
@@ -54,7 +54,7 @@ class ApplyForm extends Validator
 
     public function flush()
     {
-        app()->pdo->createCommand('INSERT INTO `links`(`name`, `url`, `title`, `status`, `administrator`, `email`, `reason`) VALUES (:name,:url,:title,:status,:admin,:email,:reason)')->bindParams([
+        app()->pdo->prepare('INSERT INTO `links`(`name`, `url`, `title`, `status`, `administrator`, `email`, `reason`) VALUES (:name,:url,:title,:status,:admin,:email,:reason)')->bindParams([
             'name' => $this->link_name, 'url' => $this->link_url, 'title' => $this->link_title,
             'status' => self::STATUS_PENDING, 'admin' => $this->link_admin, 'email' => $this->link_email,
             'reason' => $this->link_reason

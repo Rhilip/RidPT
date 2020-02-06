@@ -63,7 +63,7 @@ class LinksController extends Controller
         }
 
 
-        $all_links = app()->pdo->createCommand("SELECT * FROM `links` ORDER BY FIELD(`status`,'enabled','pending','disabled'),`id` ASC")->queryAll();
+        $all_links = app()->pdo->prepare("SELECT * FROM `links` ORDER BY FIELD(`status`,'enabled','pending','disabled'),`id` ASC")->queryAll();
 
         return $this->render('links/manage', ['links' => $all_links]);
     }

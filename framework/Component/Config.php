@@ -23,7 +23,7 @@ class Config extends Component
         $this->cacheTable = app()->getServ()->configTable;
 
         if ($this->cacheTable->count() == 0 && app()->getServ()->worker_id == 0) {
-            $configs = app()->pdo->createCommand('SELECT `name`, `value`, `type` FROM `site_config`')->queryAll();
+            $configs = app()->pdo->prepare('SELECT `name`, `value`, `type` FROM `site_config`')->queryAll();
             foreach ($configs as $config) {
                 $this->load($config);
             }
@@ -48,7 +48,7 @@ class Config extends Component
             }       // Deal with config with prefix `route.`
 
             // Get config From Database
-            $setting_row = app()->pdo->createCommand('SELECT `name`, `value`, `type` from `site_config` WHERE `name` = :name')
+            $setting_row = app()->pdo->prepare('SELECT `name`, `value`, `type` from `site_config` WHERE `name` = :name')
                 ->bindParams(['name' => $name])->queryOne();
 
             // In this case (Load config From Database Failed) , A Exception should throw
@@ -94,7 +94,7 @@ class Config extends Component
 
         // Update site_config if not a runtime setting
         if (strpos($name, 'runtime.') === false) {
-            app()->pdo->createCommand('UPDATE `site_config` SET `value` = :val WHERE `name` = :name')->bindParams([
+            app()->pdo->prepare('UPDATE `site_config` SET `value` = :val WHERE `name` = :name')->bindParams([
                 'val' => $value, 'name' => $name
             ])->execute();
         }

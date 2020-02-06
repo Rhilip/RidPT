@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpFullyQualifiedNameUsageInspection */
 
 namespace Rid\Database;
 
@@ -11,52 +11,48 @@ class BasePDOConnection extends Component
 {
 
     // 数据源格式
-    public $dsn = '';
+    public string $dsn = '';
 
     // 数据库用户名
-    public $username = 'root';
+    public string $username = 'root';
 
     // 数据库密码
-    public $password = '';
+    public string $password = '';
 
     // 驱动连接选项
-    public $driverOptions = [];
+    public array $driverOptions = [];
 
-    // PDOConnection
-    /** @var \PDO */
-    protected $_pdo;
-
-    // PDOStatement
-    /** @var \PDOStatement */
-    protected $_pdoStatement;
+    // PDO Class
+    protected ?\PDO $_pdo;
+    protected ?\PDOStatement $_pdoStatement;
 
     // sql片段
-    protected $_sqlFragments = [];
+    protected array $_sqlFragments = [];
 
     // sql
-    protected $_sql = '';
+    protected string $_sql = '';
 
     // params
-    protected $_params = [];
+    protected array $_params = [];
 
     // values
-    protected $_values = [];
+    protected array $_values = [];
 
     // sql原始数据
-    protected $_sqlPrepareData = [];
+    protected array $_sqlPrepareData = [];
 
-    protected $_recordData = true;
-    protected $_sqlExecuteData = [];
+    protected bool $_recordData = true;
+    protected array $_sqlExecuteData = [];
 
     // 默认驱动连接选项
-    protected $_defaultDriverOptions = [
+    protected array $_defaultDriverOptions = [
         \PDO::ATTR_EMULATE_PREPARES   => false,
         \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
         \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
     ];
 
     // 驱动连接选项
-    protected $_driverOptions = [];
+    protected array $_driverOptions = [];
 
     // 初始化事件
     public function onInitialize()
@@ -74,13 +70,7 @@ class BasePDOConnection extends Component
     // 创建连接
     protected function createConnection()
     {
-        $pdo = new \PDO(
-            $this->dsn,
-            $this->username,
-            $this->password,
-            $this->_driverOptions
-        );
-        return $pdo;
+        return new \PDO($this->dsn, $this->username, $this->password, $this->_driverOptions);
     }
 
     // 连接
@@ -110,7 +100,7 @@ class BasePDOConnection extends Component
     }
 
     // 创建命令
-    public function createCommand($sql = null)
+    public function prepare($sql = null)
     {
         // 清扫数据
         $this->_sql    = '';
@@ -165,6 +155,17 @@ class BasePDOConnection extends Component
         return [$sql, $params];
     }
 
+    // 清扫预处理数据
+    protected function clearPrepare()
+    {
+        if ($this->_recordData) {
+            $this->_sqlExecuteData[] = $this->getRawSql();
+        }
+        $this->_sql    = '';
+        $this->_params = [];
+        $this->_values = [];
+    }
+
     // 自动连接
     protected function autoConnect()
     {
@@ -174,7 +175,7 @@ class BasePDOConnection extends Component
     }
 
     // 预处理
-    protected function prepare()
+    protected function build()
     {
         // 自动连接
         $this->autoConnect();
@@ -201,24 +202,13 @@ class BasePDOConnection extends Component
         }
     }
 
-    // 清扫预处理数据
-    protected function clearPrepare()
-    {
-        if ($this->_recordData) {
-            $this->_sqlExecuteData[] = $this->getRawSql();
-        }
-        $this->_sql    = '';
-        $this->_params = [];
-        $this->_values = [];
-    }
-
     /**
      * 返回结果集
      * @return \PDOStatement
      */
     public function query()
     {
-        $this->prepare();
+        $this->build();
         $this->_pdoStatement->execute();
         $this->clearPrepare();
         return $this->_pdoStatement;
@@ -227,7 +217,7 @@ class BasePDOConnection extends Component
     // 返回一行
     public function queryOne()
     {
-        $this->prepare();
+        $this->build();
         $this->_pdoStatement->execute();
         $this->clearPrepare();
         return $this->_pdoStatement->fetch($this->_driverOptions[\PDO::ATTR_DEFAULT_FETCH_MODE]);
@@ -236,7 +226,7 @@ class BasePDOConnection extends Component
     // 返回多行
     public function queryAll()
     {
-        $this->prepare();
+        $this->build();
         $this->_pdoStatement->execute();
         $this->clearPrepare();
         return $this->_pdoStatement->fetchAll();
@@ -245,7 +235,7 @@ class BasePDOConnection extends Component
     // 返回一列 (第一列)
     public function queryColumn($columnNumber = 0)
     {
-        $this->prepare();
+        $this->build();
         $this->_pdoStatement->execute();
         $this->clearPrepare();
         $column = [];
@@ -258,7 +248,7 @@ class BasePDOConnection extends Component
     // 返回一个标量值
     public function queryScalar()
     {
-        $this->prepare();
+        $this->build();
         $this->_pdoStatement->execute();
         $this->clearPrepare();
         return $this->_pdoStatement->fetchColumn();
@@ -267,7 +257,7 @@ class BasePDOConnection extends Component
     // 执行SQL语句
     public function execute()
     {
-        $this->prepare();
+        $this->build();
         $success = $this->_pdoStatement->execute();
         $this->clearPrepare();
         return $success;
@@ -293,7 +283,7 @@ class BasePDOConnection extends Component
             return ":{$key}";
         }, $keys);
         $sql    = "INSERT INTO `{$table}` (`" . implode('`, `', $keys) . "`) VALUES (" . implode(', ', $fields) . ")";
-        $this->createCommand($sql);
+        $this->prepare($sql);
         $this->bindParams($data);
         return $this;
     }
@@ -316,7 +306,7 @@ class BasePDOConnection extends Component
             $valuesSql[] = "(" . implode(', ', $fields) . ")";
         }
         $sql .= implode(', ', $valuesSql);
-        $this->createCommand($sql);
+        $this->prepare($sql);
         $this->bindValues($values);
         return $this;
     }
@@ -341,7 +331,7 @@ class BasePDOConnection extends Component
             $whereParams["where_{$value[0]}"] = $value[2];
         }
         $sql = "UPDATE `{$table}` SET " . implode(', ', $setSql) . " WHERE " . implode(' AND ', $whereSql);
-        $this->createCommand($sql);
+        $this->prepare($sql);
         $this->bindParams($data);
         $this->bindParams($whereParams);
         return $this;
@@ -356,7 +346,7 @@ class BasePDOConnection extends Component
             $whereParams["{$value[0]}"] = $value[2];
         }
         $sql = "DELETE FROM `{$table}` WHERE " . implode(' AND ', $where);
-        $this->createCommand($sql);
+        $this->prepare($sql);
         $this->bindParams($whereParams);
         return $this;
     }

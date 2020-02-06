@@ -47,7 +47,7 @@ class SessionsListForm extends Pagination
     protected function getRemoteTotal(): int
     {
         var_dump($this->getInput('expired'));
-        return app()->pdo->createCommand([
+        return app()->pdo->prepare([
             ['SELECT COUNT(`id`) FROM sessions WHERE uid = :uid ', 'params' => ['uid' => $this->getInput('uid')]],
             ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->getInput('expired')]],
         ])->queryScalar();
@@ -55,7 +55,7 @@ class SessionsListForm extends Pagination
 
     protected function getRemoteData(): array
     {
-        return app()->pdo->createCommand([
+        return app()->pdo->prepare([
             ['SELECT `id`, session, `login_at`, `login_ip`, `expired` FROM sessions WHERE 1=1 '],
             ['AND `uid` = :uid ', 'params' => ['uid' => app()->auth->getCurUser()->getId()]],
             ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->expired]],

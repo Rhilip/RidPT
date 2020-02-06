@@ -73,7 +73,7 @@ class User extends BaseObject
         $this->cache_key_extended = 'user:' . $id . ':extended_content';
         $this->cache_key_extra = 'user:' . $id . ':extra_content';
 
-        $self = app()->pdo->createCommand('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_other, lang, invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
+        $self = app()->pdo->prepare('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_other, lang, invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
             'id' => $id
         ])->queryOne();
 
@@ -205,7 +205,7 @@ class User extends BaseObject
     {
         if (false === $this->extended_info_hit) {
             if (false === $self = app()->redis->get($this->cache_key_extended)) {
-                $self = app()->pdo->createCommand('SELECT `create_at`,`register_ip`,`last_login_at`,`last_access_at`,`last_upload_at`,`last_download_at`,`last_connect_at`,`last_login_ip`,`last_access_ip`,`last_tracker_ip` FROM `users` WHERE id = :uid')->bindParams([
+                $self = app()->pdo->prepare('SELECT `create_at`,`register_ip`,`last_login_at`,`last_access_at`,`last_upload_at`,`last_download_at`,`last_connect_at`,`last_login_ip`,`last_access_ip`,`last_tracker_ip` FROM `users` WHERE id = :uid')->bindParams([
                     'uid' => $this->id
                 ])->queryOne() ?: [];
                 app()->redis->set($this->cache_key_extended, $self, 15 * 60);  // Cache This User Extend Detail for 15 minutes
@@ -310,7 +310,7 @@ class User extends BaseObject
     private function getRealTransfer(): array
     {
         return $this->getCacheValue('true_transfer', function () {
-            return app()->pdo->createCommand('SELECT SUM(`true_uploaded`) as `uploaded`, SUM(`true_downloaded`) as `download` FROM `snatched` WHERE `user_id` = :uid')->bindParams([
+            return app()->pdo->prepare('SELECT SUM(`true_uploaded`) as `uploaded`, SUM(`true_downloaded`) as `download` FROM `snatched` WHERE `user_id` = :uid')->bindParams([
                     "uid" => $this->id
                 ])->queryOne() ?? ['uploaded' => 0, 'download' => 0];
         });
@@ -334,7 +334,7 @@ class User extends BaseObject
     private function getPeerStatus($seeder = null)
     {
         $peer_status = $this->getCacheValue('peer_count', function () {
-            $peer_count = app()->pdo->createCommand("SELECT `seeder`, COUNT(id) FROM `peers` WHERE `user_id` = :uid GROUP BY seeder")->bindParams([
+            $peer_count = app()->pdo->prepare("SELECT `seeder`, COUNT(id) FROM `peers` WHERE `user_id` = :uid GROUP BY seeder")->bindParams([
                 'uid' => $this->id
             ])->queryAll() ?: [];
             return array_merge(['yes' => 0, 'no' => 0, 'partial' => 0], $peer_count);
@@ -373,7 +373,7 @@ class User extends BaseObject
     public function getTempInviteDetails(): array
     {
         return $this->getCacheValue('temp_invites_details', function () {
-            return app()->pdo->createCommand('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
+            return app()->pdo->prepare('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
                     "uid" => app()->auth->getCurUser()->getId()
                 ])->queryAll() ?: [];
         }) ?? [];
@@ -382,7 +382,7 @@ class User extends BaseObject
     public function getPendingInvites()
     {
         return $this->getCacheValue('pending_invites', function () {
-            return app()->pdo->createCommand('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
+            return app()->pdo->prepare('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
                 'uid' => $this->id
             ])->queryAll();
         });
@@ -391,7 +391,7 @@ class User extends BaseObject
     public function getInvitees()
     {
         return $this->getCacheValue('invitees', function () {
-            return app()->pdo->createCommand('SELECT id,username,email,status,class,uploaded,downloaded FROM `users` WHERE `invite_by` = :uid')->bindParams([
+            return app()->pdo->prepare('SELECT id,username,email,status,class,uploaded,downloaded FROM `users` WHERE `invite_by` = :uid')->bindParams([
                 'uid' => $this->id
             ])->queryAll();
         });
@@ -400,7 +400,7 @@ class User extends BaseObject
     public function getBookmarkList()
     {
         return $this->getCacheValue('bookmark_list', function () {
-            return app()->pdo->createCommand('SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid')->bindParams([
+            return app()->pdo->prepare('SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid')->bindParams([
                 'uid' => $this->id
             ])->queryColumn() ?: [];
         });
@@ -409,7 +409,7 @@ class User extends BaseObject
     public function getUnreadMessageCount()
     {
         return $this->getCacheValue('unread_message_count', function () {
-            return app()->pdo->createCommand("SELECT COUNT(`id`) FROM `messages` WHERE receiver = :uid AND unread = 'no'")->bindParams([
+            return app()->pdo->prepare("SELECT COUNT(`id`) FROM `messages` WHERE receiver = :uid AND unread = 'no'")->bindParams([
                 'uid' => $this->id
             ])->queryScalar();
         });
@@ -418,7 +418,7 @@ class User extends BaseObject
     public function getInboxMessageCount()
     {
         return $this->getCacheValue('inbox_count', function () {
-            return app()->pdo->createCommand('SELECT COUNT(`id`) FROM `messages` WHERE `receiver` = :uid')->bindParams([
+            return app()->pdo->prepare('SELECT COUNT(`id`) FROM `messages` WHERE `receiver` = :uid')->bindParams([
                 'uid' => $this->id
             ])->queryScalar();
         });
@@ -427,7 +427,7 @@ class User extends BaseObject
     public function getOutboxMessageCount()
     {
         return $this->getCacheValue('outbox_count', function () {
-            return app()->pdo->createCommand('SELECT COUNT(`id`) FROM `messages` WHERE `sender` = :uid')->bindParams([
+            return app()->pdo->prepare('SELECT COUNT(`id`) FROM `messages` WHERE `sender` = :uid')->bindParams([
                 'uid' => $this->id
             ])->queryScalar();
         });

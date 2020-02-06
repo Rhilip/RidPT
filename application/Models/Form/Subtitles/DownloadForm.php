@@ -20,7 +20,7 @@ class DownloadForm extends Validator
 
     private function addDownloadHit()
     {
-        app()->pdo->createCommand('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
+        app()->pdo->prepare('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
             'sid' => $this->id
         ])->execute();
     }

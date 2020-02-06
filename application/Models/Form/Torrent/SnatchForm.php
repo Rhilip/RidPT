@@ -32,14 +32,14 @@ class SnatchForm extends DetailsForm
     protected function getRemoteTotal(): int
     {
         $tid = $this->getInput('id');
-        return app()->pdo->createCommand('SELECT COUNT(`id`) FROM `snatched` WHERE `torrent_id` = :tid')->bindParams([
+        return app()->pdo->prepare('SELECT COUNT(`id`) FROM `snatched` WHERE `torrent_id` = :tid')->bindParams([
             'tid' => $tid
         ])->queryScalar();
     }
 
     protected function getRemoteData(): array
     {
-        return app()->pdo->createCommand([
+        return app()->pdo->prepare([
             ['SELECT * FROM `snatched` WHERE `torrent_id` = :tid ORDER BY finish_at,create_at DESC ', 'params' => ['tid' => $this->id]],
             ['LIMIT :offset, :limit', 'params' => ['offset' => $this->offset, 'limit' => $this->limit]]
         ])->queryAll();

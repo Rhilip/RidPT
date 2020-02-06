@@ -32,7 +32,7 @@ class RemoveForm extends Validator
     /** @noinspection PhpUnused */
     protected function getExistCategoryData()
     {
-        $this->category_data = app()->pdo->createCommand('SELECT * FROM `categories` WHERE id = :id')->bindParams([
+        $this->category_data = app()->pdo->prepare('SELECT * FROM `categories` WHERE id = :id')->bindParams([
             'id' => $this->getInput('cat_id')
         ])->queryScalar();
         if ($this->category_data === false) {
@@ -43,7 +43,7 @@ class RemoveForm extends Validator
     /** @noinspection PhpUnused */
     protected function checkChildNode()
     {
-        $this->child_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
+        $this->child_count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
             'pid' => $this->getInput('cat_id')
         ])->queryScalar();
         if ($this->child_count !== 0) {
@@ -54,22 +54,22 @@ class RemoveForm extends Validator
     public function flush()
     {
         // FIXME Move Category's torrent from this to it's parent
-        app()->pdo->createCommand('UPDATE `torrents` SET `category` = :new WHERE `category` = :old ')->bindParams([
+        app()->pdo->prepare('UPDATE `torrents` SET `category` = :new WHERE `category` = :old ')->bindParams([
             'new' => $this->category_data['parent_id'], 'old' => $this->category_data['id']
         ])->execute();
 
         // Delete it~
-        app()->pdo->createCommand('DELETE FROM `categories` WHERE id = :id')->bindParams([
+        app()->pdo->prepare('DELETE FROM `categories` WHERE id = :id')->bindParams([
             'id' => $this->cat_id
         ])->execute();
 
         // Enabled parent category if no siblings
-        $siblings_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
+        $siblings_count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
             'pid' => $this->category_data['parent_id']
         ])->queryScalar();
 
         if ($siblings_count == 0) {
-            app()->pdo->createCommand('UPDATE `categories` SET `enabled` = 1 WHERE `id` = :id')->bindParams([
+            app()->pdo->prepare('UPDATE `categories` SET `enabled` = 1 WHERE `id` = :id')->bindParams([
                 'id' => $this->category_data['parent_id']
             ])->execute();
         }

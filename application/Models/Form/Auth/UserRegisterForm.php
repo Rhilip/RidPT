@@ -149,7 +149,7 @@ class UserRegisterForm extends Validator
             $client_ip = app()->request->getClientIp();
 
             $max_user_per_ip = config('register.per_ip_user') ?: 5;
-            $user_ip_count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
+            $user_ip_count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
                 "ip" => $client_ip
             ])->queryScalar();
 
@@ -176,7 +176,7 @@ class UserRegisterForm extends Validator
         }
 
         // Check this username is exist in Table `users` or not
-        $count = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
+        $count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
             'username' => $username
         ])->queryScalar();
         if ($count > 0) {
@@ -208,7 +208,7 @@ class UserRegisterForm extends Validator
             return;
         }
 
-        $email_check = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
+        $email_check = app()->pdo->prepare('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
             "email" => $email
         ])->queryScalar();
         if ($email_check > 0) {
@@ -226,7 +226,7 @@ class UserRegisterForm extends Validator
                 $this->buildCallbackFailMsg('Invite', "This invite hash : `$invite_hash` is not valid");
                 return;
             } else {
-                $inviteInfo = app()->pdo->createCommand('SELECT * FROM `invite` WHERE `hash`=:invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
+                $inviteInfo = app()->pdo->prepare('SELECT * FROM `invite` WHERE `hash`=:invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
                     'invite_hash' => $invite_hash
                 ])->queryOne();
                 if (false === $inviteInfo) {
@@ -280,7 +280,7 @@ class UserRegisterForm extends Validator
         }
 
         // Insert into `users` table and get insert id
-        app()->pdo->createCommand("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`)
+        app()->pdo->prepare("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`)
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus, :invites)")->bindParams(array(
             'name' => $this->username, 'passhash' => password_hash($this->password, PASSWORD_DEFAULT), 'email' => $this->email,
             'status' => $this->status, 'class' => $this->class, 'passkey' => $this->passkey,
@@ -298,7 +298,7 @@ class UserRegisterForm extends Validator
 
         // Send Invite Success PM to invitee
         if ($this->type == 'invite') {
-            app()->pdo->createCommand("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
+            app()->pdo->prepare("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 
@@ -311,7 +311,7 @@ class UserRegisterForm extends Validator
         // Send Confirm Email
         if ($this->confirm_way == 'email') {
             $confirm_key = StringHelper::getRandomString(32);
-            app()->pdo->createCommand('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
+            app()->pdo->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
                 'uid' => $this->id, 'secret' => $confirm_key, 'action' => $this->_action
             ])->execute();
             $confirm_url = app()->request->getSchemeAndHttpHost() . '/auth/confirm?' . http_build_query([

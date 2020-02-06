@@ -68,7 +68,7 @@ class UploadForm extends Validator
         $file = $this->getInput('file');
         $this->hashs = $file_md5 = md5_file($file->tmpName);
 
-        $exist_id = app()->pdo->createCommand('SELECT id FROM `subtitles` WHERE `hashs` = :hashs LIMIT 1;')->bindParams([
+        $exist_id = app()->pdo->prepare('SELECT id FROM `subtitles` WHERE `hashs` = :hashs LIMIT 1;')->bindParams([
             'hashs' => $file_md5
         ])->queryOne();
 
@@ -87,7 +87,7 @@ class UploadForm extends Validator
         app()->pdo->beginTransaction();
         try {
             $ext = $this->file->getClientOriginalExtension();
-            app()->pdo->createCommand('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`)
+            app()->pdo->prepare('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`)
 VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)')->bindParams([
                 'tid' => $this->torrent_id, 'hashs' => $this->hashs,
                 'title' => $title, 'filename' => $this->file->getClientOriginalName(),

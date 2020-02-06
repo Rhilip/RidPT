@@ -57,7 +57,7 @@ class TrackerAnnounceProcess extends Process
         [$ipField, $ipBindField] = $this->getIpField($queries);
 
         // Try to fetch session from Table `peers`
-        $self = app()->pdo->createCommand('SELECT `uploaded`, `downloaded`, UNIX_TIMESTAMP(`last_action_at`) as `last_action_at`
+        $self = app()->pdo->prepare('SELECT `uploaded`, `downloaded`, UNIX_TIMESTAMP(`last_action_at`) as `last_action_at`
         FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid LIMIT 1;')->bindParams([
             'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
         ])->queryOne();
@@ -67,14 +67,14 @@ class TrackerAnnounceProcess extends Process
             if ($queries['event'] != 'stopped') {
                 // Then create new session in database
                 // Update `torrents`, if peer's role is a seeder ,so complete +1 , elseif  he is a leecher or partial seeder , so incomplete +1
-                app()->pdo->createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
+                app()->pdo->prepare("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
                     'tid' => $torrentInfo['id']
                 ])->execute();
 
                 $trueUploaded = max(0, $queries['uploaded']);
                 $trueDownloaded = max(0, $queries['downloaded']);
 
-                app()->pdo->createCommand("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, `started_at`= FROM_UNIXTIME(:started_at) , `last_action_at` = FROM_UNIXTIME(:last_action_at) ,
+                app()->pdo->prepare("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid, `started_at`= FROM_UNIXTIME(:started_at) , `last_action_at` = FROM_UNIXTIME(:last_action_at) ,
                         `agent`= :agent, `seeder` = :seeder, {$ipField} ,
                         `uploaded` = :upload , `downloaded` = :download, `to_go` = :to_go,
                         `corrupt` = :corrupt , `key` = :key ;
@@ -87,13 +87,13 @@ class TrackerAnnounceProcess extends Process
                     ] + $ipBindField)->execute();
 
                 // Search history record, and create new record if not exist.
-                $selfRecordCount = app()->pdo->createCommand('SELECT COUNT(`id`) FROM snatched WHERE user_id=:uid AND torrent_id = :tid')->bindParams([
+                $selfRecordCount = app()->pdo->prepare('SELECT COUNT(`id`) FROM snatched WHERE user_id=:uid AND torrent_id = :tid')->bindParams([
                     'uid' => $userInfo['id'],
                     'tid' => $torrentInfo['id']
                 ])->queryScalar();
 
                 if ($selfRecordCount == 0) {
-                    app()->pdo->createCommand("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`ip`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`)
+                    app()->pdo->prepare("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`ip`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`)
                         VALUES (:uid,:tid,:agent,INET6_ATON(:ip),:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,FROM_UNIXTIME(:create_at),FROM_UNIXTIME(:last_action_at))")->bindParams([
                         'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
                         'agent' => $queries['user-agent'], 'ip'=>$queries['remote_ip'], 'port' => $queries['port'],
@@ -123,17 +123,17 @@ class TrackerAnnounceProcess extends Process
             // Notice : there MUST have history record in Table `snatched` if session is exist !!!!!!!!
             if ($queries['event'] === 'stopped') {
                 // Update `torrents`, if peer's role is a seeder ,so complete -1 , elseif  he is a leecher , so incomplete -1
-                app()->pdo->createCommand("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` -1 WHERE id=:tid")->bindParams([
+                app()->pdo->prepare("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` -1 WHERE id=:tid")->bindParams([
                     'tid' => $torrentInfo['id']
                 ])->execute();
 
                 // Peer stop seeding or leeching and should remove this peer from our peer list and update his data.
-                app()->pdo->createCommand('DELETE FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id` = :pid')->bindParams([
+                app()->pdo->prepare('DELETE FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id` = :pid')->bindParams([
                     'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
                 ])->execute();
             } else {
                 // if session is exist but event!=stopped , we should continue the old session
-                app()->pdo->createCommand("UPDATE `peers` SET `agent`=:agent, {$ipField}," .
+                app()->pdo->prepare("UPDATE `peers` SET `agent`=:agent, {$ipField}," .
                     "`seeder`=:seeder, `uploaded`=`uploaded` + :uploaded, `downloaded`= `downloaded` + :download, `to_go` = :left,
                     `last_action_at`= FROM_UNIXTIME(:last_action_at), `corrupt`=:corrupt, `key`=:key
                     WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id`=:pid")->bindParams([
@@ -145,7 +145,7 @@ class TrackerAnnounceProcess extends Process
                     ] + $ipBindField)->execute();
             }
             if (app()->pdo->getRowCount() > 0) {   // It means that the delete or update query affected so we can safety update `snatched` table
-                app()->pdo->createCommand("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
+                app()->pdo->prepare("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
                     `this_uploaded` = `this_uploaded` + :this_up, `this_download` = `this_download` + :this_dl, `to_go` = :left, `{$timeKey}`=`{$timeKey}` + :duration,
                     `ip` = INET6_ATON(:ip),`port` = :port, `agent` = :agent WHERE `torrent_id` = :tid AND `user_id` = :uid")->bindParams([
                     'true_up' => $trueUploaded, 'true_dl' => $trueDownloaded, 'this_up' => $thisUploaded, 'this_dl' => $thisDownloaded,
@@ -158,18 +158,18 @@ class TrackerAnnounceProcess extends Process
 
         // Deal with completed event
         if ($queries['event'] === 'completed') {
-            app()->pdo->createCommand("UPDATE `snatched` SET `finished` = 'yes', finish_ip = INET6_ATON(:ip), finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
+            app()->pdo->prepare("UPDATE `snatched` SET `finished` = 'yes', finish_ip = INET6_ATON(:ip), finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
                 'ip' => $queries['remote_ip'],
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
             ]);
             // Update `torrents`, with complete +1  incomplete -1 downloaded +1
-            app()->pdo->createCommand('UPDATE `torrents` SET `complete` = `complete` + 1, `incomplete` = `incomplete` -1 , `downloaded` = `downloaded` + 1 WHERE `id`=:tid')->bindParams([
+            app()->pdo->prepare('UPDATE `torrents` SET `complete` = `complete` + 1, `incomplete` = `incomplete` -1 , `downloaded` = `downloaded` + 1 WHERE `id`=:tid')->bindParams([
                 'tid' => $torrentInfo['id']
             ])->execute();
         }
 
         // Update Table `users` , record his upload and download data and connect time information
-        app()->pdo->createCommand('UPDATE `users` SET uploaded = uploaded + :upload, downloaded = downloaded + :download, '
+        app()->pdo->prepare('UPDATE `users` SET uploaded = uploaded + :upload, downloaded = downloaded + :download, '
             . ($trueUploaded > 0 ? 'last_upload_at=NOW(),' : '') . ($trueDownloaded > 0 ? 'last_download_at=NOW(),' : '') .
             "`last_connect_at`=NOW() , `last_tracker_ip`= INET6_ATON(:ip) WHERE id = :uid")->bindParams([
             'upload' => $thisUploaded, 'download' => $thisDownloaded,
@@ -191,7 +191,7 @@ class TrackerAnnounceProcess extends Process
     private function checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration, $upspeed)
     {
         $logCheater = function ($commit) use ($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration) {
-            app()->pdo->createCommand("INSERT INTO `cheaters`(`added_at`,`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`)
+            app()->pdo->prepare("INSERT INTO `cheaters`(`added_at`,`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`)
             VALUES (CURRENT_TIMESTAMP, :uid, :tid, :uploaded, :downloaded, :anctime, :seeders, :leechers, :hit, :msg, :reviewed, :reviewed_by)
             ON DUPLICATE KEY UPDATE `hit` = `hit` + 1, `reviewed` = 0,`reviewed_by` = '',`commit` = VALUES(`commit`)")->bindParams([
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
@@ -206,7 +206,7 @@ class TrackerAnnounceProcess extends Process
         if ($trueUploaded > 1 * (1024 ** 3) && $upspeed > 100 * (1024 ** 2)) {
             $logCheater('User account was automatically disabled by system');
             // Disable users and Delete user content in cache , so that user cannot get any data when next announce.
-            app()->pdo->createCommand("UPDATE `users` SET `status` = 'banned' WHERE `id` = :uid;")->bindParams([
+            app()->pdo->prepare("UPDATE `users` SET `status` = 'banned' WHERE `id` = :uid;")->bindParams([
                 'uid' => $userInfo['id'],
             ])->execute();
 
@@ -233,7 +233,7 @@ class TrackerAnnounceProcess extends Process
     {
         $buff = app()->redis->get('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid);
         if ($buff === false) {
-            $buff = app()->pdo->createCommand("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrent_buffs`
+            $buff = app()->pdo->prepare("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrent_buffs`
             WHERE start_at < NOW() AND NOW() < expired_at AND (torrent_id = :tid OR torrent_id = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 'tid' => $torrentid, 'bid' => $userid
             ])->queryOne();

@@ -164,7 +164,7 @@ class TrackerController
         $req_info = app()->request->getQueryString() . "\n\n";
         $req_info .= (string) app()->request->headers;
 
-        app()->pdo->createCommand('INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`)
+        app()->pdo->prepare('INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`)
                 VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg)
                 ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
                                         `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`),
@@ -250,7 +250,7 @@ class TrackerController
 
         // Get Client White List From Database and cache it
         if (false === $allowedFamily = app()->redis->get(Constant::trackerAllowedClientList)) {
-            $allowedFamily = app()->pdo->createCommand("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();
+            $allowedFamily = app()->pdo->prepare("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();
             app()->redis->set(Constant::trackerAllowedClientList, $allowedFamily, 86400);
         }
 
@@ -366,7 +366,7 @@ class TrackerController
             if ($acceptedAgentFamilyException) {
                 // Get Client Exception List From Database and cache it since we need to check it
                 if (false === $allowedFamilyException = app()->redis->get(Constant::trackerAllowedClientExceptionList)) {
-                    $allowedFamilyException = app()->pdo->createCommand('SELECT * FROM `agent_allowed_exception`')->queryAll();
+                    $allowedFamilyException = app()->pdo->prepare('SELECT * FROM `agent_allowed_exception`')->queryAll();
                     app()->redis->set(Constant::trackerAllowedClientExceptionList, $allowedFamilyException, 86400);
                 }
 
@@ -408,7 +408,7 @@ class TrackerController
 
         // Get userInfo from RedisConnection Cache and then Database
         if (false === $userInfo = app()->redis->get(Constant::userBaseContentByPasskey($passkey))) {
-            $userInfo = app()->pdo->createCommand('SELECT `id`, `status`, `passkey`, `downloadpos`, `class`, `uploaded`, `downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1')
+            $userInfo = app()->pdo->prepare('SELECT `id`, `status`, `passkey`, `downloadpos`, `class`, `uploaded`, `downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1')
                 ->bindParams(['passkey' => $passkey])->queryOne() ?: [];
 
             // Notice: We log empty array in Redis Cache if userInfo not find in our Database
@@ -445,7 +445,7 @@ class TrackerController
 
         // If Cache is not exist , We will get User info from Database
         if (false === $torrentInfo = app()->redis->get(Constant::trackerTorrentContentByInfoHash($bin2hex_hash))) {
-            $torrentInfo = app()->pdo->createCommand('SELECT `id`, `info_hash`, `owner_id`, `status`, `incomplete`, `complete`, `downloaded`, `added_at` FROM `torrents` WHERE `info_hash` = :info LIMIT 1')
+            $torrentInfo = app()->pdo->prepare('SELECT `id`, `info_hash`, `owner_id`, `status`, `incomplete`, `complete`, `downloaded`, `added_at` FROM `torrents` WHERE `info_hash` = :info LIMIT 1')
                 ->bindParams(['info' => $hash])->queryOne();
             if ($torrentInfo === false || $torrentInfo['status'] == 'deleted') {  // No-exist or deleted torrent
                 $torrentInfo = [];
@@ -748,7 +748,7 @@ class TrackerController
             // If session is not exist and &event!=stopped, a new session should start
 
             // Cache may miss
-            $self = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid;')->bindParams([
+            $self = app()->pdo->prepare('SELECT COUNT(`id`) FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid;')->bindParams([
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
             ])->queryScalar();
             if ($self !== 0) {  // True MISS
@@ -757,7 +757,7 @@ class TrackerController
             }
 
             // First check if this peer can open this NEW session then create it
-            $selfCount = app()->pdo->createCommand('SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;')->bindParams([
+            $selfCount = app()->pdo->prepare('SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;')->bindParams([
                 'uid' => $userInfo['id'],
                 'tid' => $torrentInfo['id']
             ])->queryScalar();
@@ -814,7 +814,7 @@ class TrackerController
                         }
                     }
                     if ($max > 0) {
-                        $count = app()->pdo->createCommand("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
+                        $count = app()->pdo->prepare("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
                             'uid' => $userInfo['id']
                         ])->queryScalar();
                         if ($count >= $max) {
@@ -876,7 +876,7 @@ class TrackerController
         $limit = (int) ($queries['numwant'] <= config('tracker.max_numwant')) ? $queries['numwant'] : config('tracker.max_numwant');
 
         // Query Peers in database
-        $peers = app()->pdo->createCommand([
+        $peers = app()->pdo->prepare([
             ['SELECT `port`, `ipv6_port` '],
             // Get ip and ipv6 field in binary or string depend on value of $compact
             [', `ip`, `ipv6` ', 'if' => $compact],

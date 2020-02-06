@@ -16,7 +16,7 @@ class TorrentFactory
 {
     public function getTorrentById($tid): Torrent
     {
-        $self = app()->pdo->createCommand('SELECT * FROM `torrents` WHERE id=:id LIMIT 1;')->bindParams([
+        $self = app()->pdo->prepare('SELECT * FROM `torrents` WHERE id=:id LIMIT 1;')->bindParams([
             'id' => $tid
         ])->queryOne();
 
@@ -29,7 +29,7 @@ class TorrentFactory
 
     public function getTorrentBySearch(array $search_field, int $offset = 0, int $limit = 50): array
     {
-        $fetch = app()->pdo->createCommand([
+        $fetch = app()->pdo->prepare([
             ['SELECT `id`, `owner_id`,`info_hash`,`status`,`added_at`,`complete`,`incomplete`,`downloaded`,`comments`,`title`,`subtitle`,`category`,`torrent_size`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`tags`,`uplver`,`hr` FROM `torrents` WHERE 1=1 '],
             ...$search_field,
             ['ORDER BY `added_at` DESC '],

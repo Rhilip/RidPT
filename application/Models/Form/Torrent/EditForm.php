@@ -180,7 +180,7 @@ class EditForm extends Validator
     {
         $this->rewriteFlags();
         $tags = $this->getTags();
-        app()->pdo->createCommand('
+        app()->pdo->prepare('
             UPDATE `torrents` SET title = :title, subtitle = :subtitle,
                       category = :category, team = :team, quality_audio = :audio, quality_codec = :codec,
                       quality_medium = :medium, quality_resolution = :resolution,
@@ -247,7 +247,7 @@ class EditForm extends Validator
     protected function updateTagsTable(array $tags)
     {
         foreach ($tags as $tag) {
-            app()->pdo->createCommand('INSERT INTO tags (tag) VALUES (:tag) ON DUPLICATE KEY UPDATE `count` = `count` + 1;')->bindParams([
+            app()->pdo->prepare('INSERT INTO tags (tag) VALUES (:tag) ON DUPLICATE KEY UPDATE `count` = `count` + 1;')->bindParams([
                 'tag' => $tag
             ])->execute();
         }

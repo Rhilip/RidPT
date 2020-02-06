@@ -84,7 +84,7 @@ class UserController extends Controller
                 $to_del_session = app()->request->request->get('session');
 
                 // expired it from Database first
-                app()->pdo->createCommand('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([
+                app()->pdo->prepare('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([
                     'uid' => app()->auth->getCurUser()->getId(), 'sid' => $to_del_session
                 ])->execute();
                 $success = app()->pdo->getRowCount();

@@ -153,7 +153,7 @@ class UploadForm extends EditForm
     protected function getFileNameCheckRules()
     {
         if (is_null($this->file_name_check_rules)) {
-            $rules = app()->pdo->createCommand('SELECT `rules` FROM `file_defender` WHERE `category_id` = 0 OR `category_id` = :cat')->bindParams([
+            $rules = app()->pdo->prepare('SELECT `rules` FROM `file_defender` WHERE `category_id` = 0 OR `category_id` = :cat')->bindParams([
                 'cat' => $this->getInput('category')  // Fix cat_id
             ])->queryColumn();
             $this->file_name_check_rules = '/' . implode('|', $rules) . '/iS';
@@ -212,7 +212,7 @@ class UploadForm extends EditForm
         $this->info_hash = pack('H*', sha1(Bencode::encode($this->torrent_dict['info'])));
 
         // Check if this torrent is exist or not before insert.
-        $count = app()->pdo->createCommand('SELECT COUNT(*) FROM torrents WHERE info_hash = :info_hash')->bindParams([
+        $count = app()->pdo->prepare('SELECT COUNT(*) FROM torrents WHERE info_hash = :info_hash')->bindParams([
             'info_hash' => $this->info_hash
         ])->queryScalar();
 
@@ -238,7 +238,7 @@ class UploadForm extends EditForm
         try {
             $tags = $this->getTags();
 
-            app()->pdo->createCommand('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`tags`,`nfo`,`uplver`,`hr`)
+            app()->pdo->prepare('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`tags`,`nfo`,`uplver`,`hr`)
 VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :category, :filename, :torrent_name, :type, :size, :structure,:team,:audio,:codec,:medium,:resolution,:descr, JSON_ARRAY(:tags), :nfo, :uplver, :hr)')->bindParams([
                 'owner_id' => app()->auth->getCurUser()->getId(),
                 'info_hash' => $this->info_hash,

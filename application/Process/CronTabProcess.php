@@ -33,7 +33,7 @@ final class CronTabProcess extends Process
     public function run()
     {
         // Get all run
-        $to_run_jobs = app()->pdo->createCommand('SELECT * FROM `site_crontab` WHERE `priority` > 0 AND `next_run_at` < NOW() ORDER BY priority;')->queryAll();
+        $to_run_jobs = app()->pdo->prepare('SELECT * FROM `site_crontab` WHERE `priority` > 0 AND `next_run_at` < NOW() ORDER BY priority;')->queryAll();
 
         $hit = 0;
         $start_time = time();
@@ -50,7 +50,7 @@ final class CronTabProcess extends Process
 
                     // Update the run information
                     $next_run_at = $job_end_time + $job['job_interval'];
-                    app()->pdo->createCommand('UPDATE `site_crontab` set last_run_at = FROM_UNIXTIME(:last_run_at) , next_run_at = FROM_UNIXTIME(:next_run_at) WHERE id=:id')->bindParams([
+                    app()->pdo->prepare('UPDATE `site_crontab` set last_run_at = FROM_UNIXTIME(:last_run_at) , next_run_at = FROM_UNIXTIME(:next_run_at) WHERE id=:id')->bindParams([
                         'id' => $job['id'], 'last_run_at' => $job_end_time, 'next_run_at' => $next_run_at
                     ])->execute();
                     $this->print_log(
@@ -105,7 +105,7 @@ final class CronTabProcess extends Process
     protected function clean_dead_peer()
     {
         $deadtime = floor(config('tracker.interval') * 1.8);
-        app()->pdo->createCommand('DELETE FROM `peers` WHERE last_action_at < DATE_SUB(NOW(), interval :deadtime second )')->bindParams([
+        app()->pdo->prepare('DELETE FROM `peers` WHERE last_action_at < DATE_SUB(NOW(), interval :deadtime second )')->bindParams([
             'deadtime' => $deadtime
         ])->execute();
         $affect_peer_count = app()->pdo->getRowCount();
@@ -128,7 +128,7 @@ final class CronTabProcess extends Process
 
         foreach ($clean_sqls as $item) {
             [$clean_sql, $msg] = $item;
-            app()->pdo->createCommand($clean_sql)->execute();
+            app()->pdo->prepare($clean_sql)->execute();
             $clean_count =  app()->pdo->getRowCount();
             if ($clean_count > 0) {
                 $this->print_log(sprintf($msg, $clean_count));
@@ -139,7 +139,7 @@ final class CronTabProcess extends Process
     protected function calculate_seeding_bonus() // TODO
     {
         $calculate = new Bonus();
-        $seeders = app()->pdo->createCommand("SELECT DISTINCT user_id FROM peers WHERE seeder = 'yes'")->queryColumn();
+        $seeders = app()->pdo->prepare("SELECT DISTINCT user_id FROM peers WHERE seeder = 'yes'")->queryColumn();
 
         foreach ($seeders as $seeder) {
             $bonus = $calculate->calculate($seeder);
@@ -155,7 +155,7 @@ final class CronTabProcess extends Process
     {
         $torrents_update = [];
 
-        $wrong_complete_records = app()->pdo->createCommand("
+        $wrong_complete_records = app()->pdo->prepare("
             SELECT torrents.`id`, `complete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents`
               LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND `peers`.`seeder` = 'yes'
             GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
@@ -164,7 +164,7 @@ final class CronTabProcess extends Process
                 $torrents_update[$arr['id']]['complete'] = $arr['real'];
             }
         }
-        $wrong_incomplete_records = app()->pdo->createCommand("
+        $wrong_incomplete_records = app()->pdo->prepare("
             SELECT torrents.`id`, `incomplete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents`
               LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND (`peers`.`seeder` = 'partial' OR `peers`.`seeder` = 'no')
             GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
@@ -174,7 +174,7 @@ final class CronTabProcess extends Process
             }
         }
 
-        $wrong_comment_records = app()->pdo->createCommand('
+        $wrong_comment_records = app()->pdo->prepare('
             SELECT t.id, t.comments as `record`, COUNT(tc.id) as `real` FROM torrents t
               LEFT JOIN torrent_comments tc on t.id = tc.torrent_id
             GROUP BY t.id HAVING `record` != `real`')->queryAll();
@@ -197,17 +197,17 @@ final class CronTabProcess extends Process
     protected function sync_ban_list()
     {
         // Sync Banned Emails list
-        $ban_email_list = app()->pdo->createCommand('SELECT `email` from `ban_emails`')->queryColumn() ?: [];
+        $ban_email_list = app()->pdo->prepare('SELECT `email` from `ban_emails`')->queryColumn() ?: [];
         app()->redis->sAddArray(Constant::siteBannedEmailSet, $ban_email_list);
 
         // Sync Banned Username list
-        $ban_username_list = app()->pdo->createCommand('SELECT `username` from `ban_usernames`')->queryColumn() ?: [];
+        $ban_username_list = app()->pdo->prepare('SELECT `username` from `ban_usernames`')->queryColumn() ?: [];
         app()->redis->sAddArray(Constant::siteBannedUsernameSet, $ban_username_list);
     }
 
     protected function update_expired_external_link_info()
     {
-        $expired_links_res = app()->pdo->createCommand('SELECT `source`,`sid` FROM `external_info` ORDER BY `update_at` ASC LIMIt 5')->queryAll();
+        $expired_links_res = app()->pdo->prepare('SELECT `source`,`sid` FROM `external_info` ORDER BY `update_at` ASC LIMIt 5')->queryAll();
         if ($expired_links_res !== false) {
             foreach ($expired_links_res as $link_res) {
                 $source = $link_res['source'];

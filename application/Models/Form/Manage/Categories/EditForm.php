@@ -55,7 +55,7 @@ class EditForm extends Validator
         ];
 
         // Generate New Full Path Key
-        $parent_cat_fpath = app()->pdo->createCommand('SELECT `full_path` FROM `categories` WHERE `id` = :pid')->bindParams([
+        $parent_cat_fpath = app()->pdo->prepare('SELECT `full_path` FROM `categories` WHERE `id` = :pid')->bindParams([
             'pid' => $cat_parent_id
         ])->queryScalar();
         if ($parent_cat_fpath === false) {
@@ -75,7 +75,7 @@ class EditForm extends Validator
 
         $cat_id = (int)$this->getInput('cat_id');
         if ($cat_id !== 0) {  // Check if old links should be update
-            $this->cat_old_data = app()->pdo->createCommand('SELECT * FROM `categories` WHERE id = :id')->bindParams([
+            $this->cat_old_data = app()->pdo->prepare('SELECT * FROM `categories` WHERE id = :id')->bindParams([
                 'id' => $cat_id
             ])->queryOne();
             if ($this->cat_old_data === false) {
@@ -96,7 +96,7 @@ class EditForm extends Validator
         }
 
         if ($flag_check_full_path) {  // Check if full path key is duplicate or not.
-            $check_full_path = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `categories` WHERE `full_path` = :fpath')->bindParams([
+            $check_full_path = app()->pdo->prepare('SELECT COUNT(`id`) FROM `categories` WHERE `full_path` = :fpath')->bindParams([
                 'fpath' => $full_path
             ])->queryScalar();
             if ($check_full_path > 0) {
@@ -111,7 +111,7 @@ class EditForm extends Validator
         if ((int)$this->cat_id !== 0) {  // to edit exist cat
             app()->pdo->update('categories', $this->cat_data_diff, [['id', '=', $this->cat_id]])->execute();
             if ($this->cat_parent_id !== 0) {  // Disabled post to parent cat
-                app()->pdo->createCommand('UPDATE `categories` SET `enabled` = 0 WHERE `id` = :pid')->bindParams([
+                app()->pdo->prepare('UPDATE `categories` SET `enabled` = 0 WHERE `id` = :pid')->bindParams([
                     'pid' => $this->cat_parent_id
                 ])->execute();
             }

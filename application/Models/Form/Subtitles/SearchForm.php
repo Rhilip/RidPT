@@ -37,7 +37,7 @@ class SearchForm extends Pagination
         $search = $this->getInput('search');
         $letter = $this->getInput('letter');
         $tid = $this->getInput('torrent_id') ?? $this->getInput('tid');
-        return app()->pdo->createCommand([
+        return app()->pdo->prepare([
             ['SELECT COUNT(`id`) FROM `subtitles` WHERE 1=1 '],
             ['AND torrent_id = :tid ', 'if' => !is_null($tid), 'params' => ['tid' => $tid]],
             ['AND title LIKE :search ', 'if' => !is_null($search) , 'params' => ['search' => "%$search%"]],
@@ -50,7 +50,7 @@ class SearchForm extends Pagination
         $search = $this->search;
         $letter = $this->letter;
         $tid = $this->torrent_id ?? $this->tid;
-        return app()->pdo->createCommand([
+        return app()->pdo->prepare([
             ['SELECT * FROM `subtitles` WHERE 1=1 '],
             ['AND torrent_id = :tid ', 'if' => !is_null($tid), 'params' => ['tid' => $tid]],
             ['AND title LIKE :search ', 'if' => !is_null($search) , 'params' => ['search' => "%$search%"]],
@@ -63,7 +63,7 @@ class SearchForm extends Pagination
     public function getSubsSizeSum()
     {
         if (false === $size = app()->redis->get(Constant::siteSubtitleSize)) {
-            $size = app()->pdo->createCommand('SELECT SUM(`size`) FROM `subtitles`')->queryScalar();
+            $size = app()->pdo->prepare('SELECT SUM(`size`) FROM `subtitles`')->queryScalar();
             app()->redis->set(Constant::siteSubtitleSize, $size);
         }
         return $size;

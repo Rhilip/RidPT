@@ -46,7 +46,7 @@ class UserRecoverForm extends Validator
     public function flush()
     {
         // Check this email is in our database or not?
-        $user_info = app()->pdo->createCommand('SELECT `id`,`username`,`status` FROM `users` WHERE `email` = :email;')->bindParams([
+        $user_info = app()->pdo->prepare('SELECT `id`,`username`,`status` FROM `users` WHERE `email` = :email;')->bindParams([
             'email' => $this->email
         ])->queryOne();
         if ($user_info !== false) {
@@ -56,7 +56,7 @@ class UserRecoverForm extends Validator
 
             // Send user email to get comfirm link
             $confirm_key = StringHelper::getRandomString(32);
-            app()->pdo->createCommand('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
+            app()->pdo->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
                 'uid' => $user_info['id'], 'secret' => $confirm_key, 'action' => $this->_action
             ])->execute();
             $confirm_url = app()->request->getSchemeAndHttpHost() . '/auth/confirm?' . http_build_query([

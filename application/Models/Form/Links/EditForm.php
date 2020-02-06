@@ -54,7 +54,7 @@ class EditForm extends ApplyForm
         ];
         $link_id = (int) $this->getInput('link_id');
         if ($link_id !== 0) {  // Check if old links should be update
-            $this->link_old_data = app()->pdo->createCommand('SELECT * FROM `links` WHERE id = :id')->bindParams([
+            $this->link_old_data = app()->pdo->prepare('SELECT * FROM `links` WHERE id = :id')->bindParams([
                 'id' => $link_id
             ])->queryOne();
             if (false === $this->link_old_data) {

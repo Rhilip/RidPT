@@ -38,7 +38,7 @@ trait isValidTorrentTrait
     protected function isExistTorrent()
     {
         $tid = $this->getInput('torrent_id') ?? $this->getInput('tid') ?? $this->getInput('id');
-        $torrent_exist = app()->pdo->createCommand('SELECT COUNT(`id`) FROM `torrents` WHERE `id` = :tid')->bindParams([
+        $torrent_exist = app()->pdo->prepare('SELECT COUNT(`id`) FROM `torrents` WHERE `id` = :tid')->bindParams([
             'tid' => $tid
         ])->queryScalar();
         if ($torrent_exist == 0) {
