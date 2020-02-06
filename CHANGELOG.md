@@ -40,6 +40,7 @@
 ### Refactor
 - **Entity:** Separate Entity User, Torrent 's const to App\Repository (50ecdbf)
 - **Entity:** Move Class Torrent,User to namespace App\Entity (7814d88)
+- **Torrent:** Add TorrentFactory (e7dc26e)
 
 ### Style
 - **Bencode:** Separate Bencode library to `Rhilip/Bencode` (18cbfa1)

@@ -154,7 +154,19 @@ class TrackerController
 
             return Bencode::encode([
                 'failure reason' => $e->getMessage(),
-                'retry in' => config('tracker.retry_interval')
+                'min interval' => (int) config('tracker.min_interval')
+                /**
+                 * BEP 31: Failure Retry Extension
+                 *
+                 * However most bittorrent client don't support it, so this feature is disabled default
+                 *  - libtorrent-rasterbar (e.g. qBittorrent, Deluge )
+                 *    This library will obey the `min interval` key if exist or it will retry in 60s (By default `min interval`)
+                 *  - libtransmission (e.g. Transmission )
+                 *    This library will ignore any other key if failed
+                 *
+                 * @see http://www.bittorrent.org/beps/bep_0031.html
+                 */
+                //'retry in' => config('tracker.retry_interval')
             ]);
         }
     }
@@ -708,25 +720,24 @@ class TrackerController
 
     /**
      * @param $queries
-     * @return float
      * @throws TrackerException
      */
     private function checkMinInterval($queries)
     {
-        $identity = implode(':', [
+        $identity = md5(implode(':', [
             // Use `passkey, info_hash, peer_id` as a unique key to check if this announce is in min interval
             $queries['passkey'], $queries['info_hash'], $queries['peer_id'],
             // We should also add `event` params to prevent peer completed announce been blocked after common announce
             $queries['event']
-        ]);
+        ]));
 
-        if (false == $check = app()->redis->zScore(Constant::trackerAnnounceMinIntervalLockZset, $identity)) {
-            $min_interval = intval(config('tracker.min_interval') * (3 / 4));
-            app()->redis->zAdd(Constant::trackerAnnounceMinIntervalLockZset, time() + $min_interval, $identity);
-        } else {
+        $prev_lock_expire = app()->redis->zScore(Constant::trackerAnnounceMinIntervalLockZset, $identity) ?: $this->timenow;
+        if ($prev_lock_expire > $this->timenow) {
             throw new TrackerException(162, [':min' => config('tracker.min_interval')]);
         }
-        return $check;
+
+        $min_interval = intval(config('tracker.min_interval') * (3 / 4));
+        app()->redis->zAdd(Constant::trackerAnnounceMinIntervalLockZset, $this->timenow + $min_interval, $identity);
     }
 
     /**

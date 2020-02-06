@@ -55,7 +55,7 @@ class TrackerException extends \Exception
         // Error message about Download Session
         160 => 'You cannot seed the same torrent from more than :count locations.',
         161 => 'You are already downloading the same torrent. You can only leech from :count location at a time!',
-        162 => 'There is a minimum announce time of :min seconds',
+        162 => 'There is a minimum announce lock of :min seconds, please wait.',
         163 => 'Your ratio is too low! You need to wait :sec seconds to start.',
         164 => "Your slot limit is reached! You may at most download :max torrents at the same time",
 
