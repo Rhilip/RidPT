@@ -27,10 +27,12 @@
 - **Redis:** Fix wrong type of Redis call function hMset() to hMSet() (a163150)
 - **Route:** Fix user can access maintenance page even not on maintenance status (b29c2f6)
 - **Tracker:** Fix typo in TrackerController (323c8ec)
+- **Tracker:** Disable `retry in` feature by default (4b1f767)
 - **User:** Fix all user class info become cur_user (77c7345)
 
 ### Perf
 - **Component:** View Become a component to perf load time (660c1f1)
+- **Log:** Separate Site Log Level from component Site (d110c2b)
 - **Session_Log:** Use `insert with select` to log session (d786243)
 - **Tracker:** Reduce Redis Calls for get User and Torrent Info in Tracker (e813435)
 - **User:** Sort class User and create UserFactory (8fced36)

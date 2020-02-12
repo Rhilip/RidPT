@@ -41,6 +41,14 @@ class Response extends HttpFoundationResponse implements Base\StaticInstanceInte
         // 设置响应者
         $this->_responder = $responder;
         $this->_isSent = false;
+        $this->cleanResponse();
+    }
+
+    private function cleanResponse() {
+        $this->headers->replace();
+        $this->setContent('');
+        $this->setStatusCode(200);
+        $this->setProtocolVersion('1.0');
     }
 
     public function getResponderStatus()
