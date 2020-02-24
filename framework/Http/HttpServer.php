@@ -15,13 +15,13 @@ use Throwable;
  */
 class HttpServer
 {
-    public $name = 'rid-httpd';
+    public string $name = 'rid-httpd';
 
     // 运行参数
-    public $settings = [];
+    public array $settings = [];
 
     // 默认运行参数
-    protected $_default_settings = [
+    protected array $_default_settings = [
         'enable_coroutine' => false,  // 开启协程
         'reactor_num' => 8,   // 主进程事件处理线程数
         'worker_num' => 8,  // 工作进程数

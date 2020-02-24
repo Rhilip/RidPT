@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Response as HttpFoundationResponse;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 /**
  * Response组件
@@ -16,17 +17,25 @@ class Response extends HttpFoundationResponse implements Base\StaticInstanceInte
 {
     use Base\StaticInstanceTrait, Base\ComponentTrait;
 
-    /** @var \Swoole\Http\Response */
-    protected $_responder;
+    /**
+     * Class of Response From Swoole
+     *
+     * @var \Swoole\Http\Response
+     */
+    protected \Swoole\Http\Response $_responder;
 
     /**
-     * @var File
+     * The file we want to send to client
      */
-    protected $file;
-    protected $filename;
+    protected ?File $file = null;
+    protected ?string $filename = null;
 
-    // 是否已经发送
-    protected $_isSent = false;
+    /**
+     * If this response have been sent to client
+     *
+     * @var bool
+     */
+    protected bool $_isSent = false;
 
     protected static $trustXSendfileTypeHeader = false;
 
@@ -45,7 +54,7 @@ class Response extends HttpFoundationResponse implements Base\StaticInstanceInte
     }
 
     private function cleanResponse() {
-        $this->headers->replace();
+        $this->headers = new ResponseHeaderBag([]);
         $this->setContent('');
         $this->setStatusCode(200);
         $this->setProtocolVersion('1.0');

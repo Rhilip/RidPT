@@ -59,7 +59,7 @@ class AuthMiddleware
                 }
 
                 // Prevent Other Route
-                app()->response->headers->removeCookie(Constant::cookie_name);  // Delete exist cookies
+                app()->response->headers->clearCookie(Constant::cookie_name);  // Delete exist cookies
                 app()->session->set('login_return_to', app()->request->getUri());  // Store the url which visitor want to hit
                 return app()->response->setRedirect('/auth/login');
             }

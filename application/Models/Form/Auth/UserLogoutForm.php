@@ -68,7 +68,7 @@ class UserLogoutForm extends Validator
 
     private function invalidSession()
     {
-        app()->response->headers->removeCookie(Constant::cookie_name);   // Clean cookie
+        app()->response->headers->clearCookie(Constant::cookie_name);   // Clean cookie
         app()->redis->zAdd(UserFactory::mapUserSessionToId, 0, $this->sid);   // Quick Mark this invalid in cache
 
         // Set this session expired
