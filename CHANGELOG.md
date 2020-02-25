@@ -26,6 +26,7 @@
 - **Cron:** Fix components lost in CronTabProcess (1ced4bf)
 - **Redis:** Fix wrong type of Redis call function hMset() to hMSet() (a163150)
 - **Response:** Fix Response header and status not clean (82977ea)
+- **Response:** Fix Header `Set-Cookie` header don't clean (144eef7)
 - **Route:** Fix user can access maintenance page even not on maintenance status (b29c2f6)
 - **Tracker:** Fix typo in TrackerController (323c8ec)
 - **Tracker:** Disable `retry in` feature by default (4b1f767)

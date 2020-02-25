@@ -397,6 +397,11 @@ class User extends BaseObject
         });
     }
 
+    public function updateBookmarkList() {
+        $this->removeCacheValue('bookmark_list');
+        $this->getBookmarkList();
+    }
+
     public function getBookmarkList()
     {
         return $this->getCacheValue('bookmark_list', function () {

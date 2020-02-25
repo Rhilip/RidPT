@@ -50,7 +50,7 @@ use App\Entity\User\UserRole;
         <?php if ($user->getClass() > UserRole::FORUM_MODERATOR): ?>
             <span><!--suppress HtmlUnknownTarget -->[<a href="/admin">Admin Panel</a>]</span>
         <?php endif; ?>
-        <span data-item="favour"><!--suppress HtmlUnknownTarget -->[<a href="/torrents/favour">Favour</a>]</span>
+        <span data-item="favour"><!--suppress HtmlUnknownTarget -->[<a href="/torrents?favour=1">Favour</a>]</span>
         <span data-item="invite" data-invite="<?= $user->getInvites() ?>" data-temp-invite="<?= $user->getTempInvitesSum() ?>">
             <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span> <?= $user->getInvites() ?>
             <?php if ($user->getTempInvitesSum() > 0): ?>

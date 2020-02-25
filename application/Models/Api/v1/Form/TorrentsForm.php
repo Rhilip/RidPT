@@ -26,7 +26,7 @@ class TorrentsForm extends Validator
             app()->pdo->prepare('DELETE FROM `bookmarks` WHERE `id` = :bid')->bindParams([
                 'bid' => $bookmark_exist
             ])->execute();
-            app()->redis->del('User:' . app()->auth->getCurUser()->getId() . ':bookmark_array');
+            app()->auth->getCurUser()->updateBookmarkList();
 
             return ['msg' => 'Delete Old Bookmark Success', 'result' => 'deleted'];
         } else {  // Add new record
@@ -34,7 +34,7 @@ class TorrentsForm extends Validator
                 'uid' => app()->auth->getCurUser()->getId(),
                 'tid' => $this->getInput('id')
             ])->execute();
-            app()->redis->del('User:' . app()->auth->getCurUser()->getId() . ':bookmark_array');
+            app()->auth->getCurUser()->updateBookmarkList();
 
             return ['msg' => 'Add New Bookmark Success', 'result' => 'added'];
         }

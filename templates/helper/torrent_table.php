@@ -29,7 +29,7 @@ $time_now = time();
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($search->getPagerData() as $torrent): /** @var \App\Entity\Torrent $torrent */ ?>
+            <?php foreach ($search->getPagerData() as $torrent): /** @var \App\Entity\Torrent\Torrent $torrent */ ?>
                 <tr data-tid="<?= $torrent->getId() ?>">
                     <td class="text-center" data-item="category" style="margin: 0;padding: 0">
                         <?php $cat = $torrent->getCategory(); ?>

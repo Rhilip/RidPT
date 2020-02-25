@@ -27,4 +27,9 @@ trait ClassValueCacheUtils
         }
         return $this->$key;
     }
+
+    final protected function removeCacheValue($key) {
+        unset($this->$key);
+        app()->redis->hDel($this->getCacheNameSpace(), $key);
+    }
 }
