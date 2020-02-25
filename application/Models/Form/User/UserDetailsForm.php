@@ -15,8 +15,8 @@ class UserDetailsForm extends Validator
 {
     use isValidUserTrait;
 
-    protected $_autoload = true;
-    protected $_autoload_from = ['get'];
+    protected bool $_autoload = true;
+    protected array $_autoload_from = ['get'];
 
     public static function defaultData(): array
     {

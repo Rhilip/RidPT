@@ -15,8 +15,8 @@ class DownloadForm extends Validator
 {
     use Traits\FileSentTrait, Traits\isValidSubtitleTrait;
 
-    protected $_autoload = true;
-    protected $_autoload_from = ['get'];
+    protected bool $_autoload = true;
+    protected array $_autoload_from = ['get'];
 
     private function addDownloadHit()
     {

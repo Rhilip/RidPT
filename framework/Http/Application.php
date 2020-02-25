@@ -30,10 +30,16 @@ class Application extends \Rid\Base\Application
     // 执行功能
     public function run()
     {
-        $server                        = \Rid::app()->request->server->all();
-        $method                        = strtoupper($server['REQUEST_METHOD']);
-        $action                        = empty($server['PATH_INFO']) ? '' : substr($server['PATH_INFO'], 1);
-        \Rid::app()->response->setContent($this->runAction($method, $action));
+        $server = \Rid::app()->request->server->all();
+        $method = strtoupper($server['REQUEST_METHOD']);
+        $action = empty($server['PATH_INFO']) ? '' : substr($server['PATH_INFO'], 1);
+        $content = $this->runAction($method, $action);
+        if (is_array($content)) {
+            \Rid::app()->response->setJson($content);
+        } else {
+            \Rid::app()->response->setContent($content);
+        }
+
         \Rid::app()->response->prepare(\Rid::app()->request);
         \Rid::app()->response->send();
     }

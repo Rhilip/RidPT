@@ -24,8 +24,8 @@ use ReflectionException;
 class Validator extends BaseObject
 {
     // Autoload user input from requests
-    protected $_autoload = false;
-    protected $_autoload_from = [];
+    protected bool $_autoload = false;
+    protected array $_autoload_from = [];
 
     /** @var array Input data */
     private $_input = [];

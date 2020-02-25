@@ -20,8 +20,8 @@ class SearchForm extends Pagination
     public $torrent_id;
     public $tid;
 
-    protected $_autoload = true;
-    protected $_autoload_from = ['get'];
+    protected bool $_autoload = true;
+    protected array $_autoload_from = ['get'];
 
     public static function inputRules(): array
     {

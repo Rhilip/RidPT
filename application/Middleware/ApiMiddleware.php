@@ -12,8 +12,6 @@ class ApiMiddleware
 {
     public function handle($callable, \Closure $next)
     {
-        app()->response->format = \Rid\Http\Response::FORMAT_JSON;
-
         // No cache for Api response
         app()->response->headers->set('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT');
         app()->response->headers->set('Last-Modified', gmdate('D, d M Y H:i:s') . ' GMT');

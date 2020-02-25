@@ -30,8 +30,8 @@ class UserLoginForm extends Validator
     private $self;
     private $jwt_payload;
 
-    protected $_autoload = true;
-    protected $_autoload_from = ['post'];
+    protected bool $_autoload = true;
+    protected array $_autoload_from = ['post'];
 
     public static function inputRules(): array
     {

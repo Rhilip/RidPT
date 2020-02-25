@@ -16,8 +16,8 @@ class Logs extends Pagination
 
     public static $MAX_LIMIT = 100;
 
-    protected $_autoload = true;
-    protected $_autoload_from = ['get'];
+    protected bool $_autoload = true;
+    protected array $_autoload_from = ['get'];
 
     public static function defaultData(): array
     {

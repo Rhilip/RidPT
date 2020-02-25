@@ -18,8 +18,8 @@ class SessionsListForm extends Pagination
     public static $DEFAULT_LIMIT = 10;
     public static $MAX_LIMIT = 50;
 
-    protected $_autoload = true;
-    protected $_autoload_from = ['get'];
+    protected bool $_autoload = true;
+    protected array $_autoload_from = ['get'];
 
     public static function defaultData(): array
     {
