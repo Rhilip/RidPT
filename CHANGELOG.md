@@ -21,6 +21,7 @@
 - **layout:** Add anti-robots html meta tag (9c21e73)
 
 ### Fix
+- **API:** ApiMiddleware not work after change Response Component (6da82a7)
 - **Bencode:** Fix dict keys may not in sorted order (81f0783)
 - **Config:** Fix JSON type config return False (1129008)
 - **Cron:** Fix components lost in CronTabProcess (1ced4bf)
