@@ -28,17 +28,14 @@ class Validator extends BaseObject
     protected array $_autoload_from = [];
 
     /** @var array Input data */
-    private $_input = [];
-    private $_file_input_name = [];
+    private array $_input = [];
+    private array $_file_input_name = [];
 
-    /** @var \Sirius\Validation\Validator */
-    private $_validator;
+    private ?\Sirius\Validation\Validator $_validator;
 
-    /** @var array */
-    private $_errors = [];
+    private array $_errors = [];
 
-    /** @var boolean */
-    private $_success;
+    private bool $_success;
 
     public function onConstruct()
     {

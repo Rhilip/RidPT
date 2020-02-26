@@ -33,9 +33,9 @@ $user = $details->getUser();
             </div>
             <div class="panel-body">
                 <dl class="dl-horizontal text-overflow">
-                    <dt>Registration Time</dt><dd><?= $user->getCreateAt() ?></dd>
-                    <dt>Last Login Time</dt><dd><?= $user->getLastLoginAt() ?></dd>
-                    <dt>Last Access Time</dt><dd><?= $user->getLastAccessAt() ?></dd>
+                    <dt>Registration Time</dt><dd><?= $user->getCreateAt() ?> (<?= \Carbon\Carbon::createFromTimeString($user->getCreateAt())->locale(app()->i18n->getUserLang())->diffForHumans() ?>)</dd>
+                    <dt>Last Login Time</dt><dd><?= $user->getLastLoginAt() ?> (<?= \Carbon\Carbon::createFromTimeString($user->getLastLoginAt())->locale(app()->i18n->getUserLang())->diffForHumans() ?>)</dd>
+                    <dt>Last Access Time</dt><dd><?= $user->getLastAccessAt() ?> (<?= \Carbon\Carbon::createFromTimeString($user->getLastAccessAt())->locale(app()->i18n->getUserLang())->diffForHumans() ?>)</dd>
                     <?php if ($user->getLastUploadAt() > 0 or $user->getLastDownloadAt() or $user->getLastConnectAt() > 0): ?>
                         <dt>Last Tracker Time</dt>
                         <dd>

@@ -13,7 +13,7 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
 {
     use Base\StaticInstanceTrait, Base\ComponentTrait;
 
-    protected $_swoole_request;
+    protected \Swoole\Http\Request $_swoole_request;
     protected $_route = [];
 
     /**
@@ -77,9 +77,6 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
         return is_null($name) ? $this->_route : ($this->_route[$name] ?? $default);
     }
 
-    /**
-     * @return mixed
-     */
     public function getSwooleRequest(): \Swoole\Http\Request
     {
         return $this->_swoole_request;

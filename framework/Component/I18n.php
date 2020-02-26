@@ -13,10 +13,10 @@ use Symfony\Component\Translation\Translator;
 
 class I18n extends Component
 {
-    public $loader = [];
-    public $resources = [];
+    public array $loader = [];
+    public array $resources = [];
 
-    public $cacheDir = '';
+    public string $cacheDir = '';
 
     /**
      * Allowed language
@@ -24,7 +24,7 @@ class I18n extends Component
      *
      * @var array
      */
-    public $allowedLangSet = ['en', 'zh-CN'];
+    public array $allowedLangSet = ['en', 'zh-CN'];
 
     /**
      * Fallback language
@@ -33,7 +33,7 @@ class I18n extends Component
      *
      * @var string
      */
-    public $fallbackLang = 'en';
+    public string $fallbackLang = 'en';
 
     /**
      * Forced language
@@ -41,15 +41,15 @@ class I18n extends Component
      *
      * @var string
      */
-    public $forcedLang = null;
+    public ?string $forcedLang = null;
 
     /*
      * The following properties are only available after calling init().
      */
-    protected $_user_lang = null;
+    protected ?string $_user_lang = null;
 
     /** @var Translator */
-    protected $_translator;
+    protected ?Translator $_translator;
 
     public function onRequestBefore()
     {
@@ -85,7 +85,7 @@ class I18n extends Component
      *
      * @return string the user languages sorted by priority.
      */
-    private function getUserLang()
+    public function getUserLang()
     {
         // Return Cache value
         if (!is_null($this->_user_lang)) {

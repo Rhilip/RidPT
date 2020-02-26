@@ -17,6 +17,7 @@
 - **Requests:** Make Response Component extends from `Symfony\Component\HttpFoundation\Response` (dd001d2)
 - **Requests:** Make Request Component extends from `Symfony\Component\HttpFoundation\Request` (9cd715b)
 - **Torrent:** Per-add torrent edit (f06b342)
+- **Torrents:** Allow search in user's favour (or you can say bookmark) (c0aa627)
 - **i18n:** Use symfony/translation and JSON format for locale (02cc251)
 - **layout:** Add anti-robots html meta tag (9c21e73)
 

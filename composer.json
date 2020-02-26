@@ -33,6 +33,7 @@
     "firebase/php-jwt": "^5.0",
     "league/plates": "^3.3",
     "mjohnson/decoda": "^6.12",
+    "nesbot/carbon": "^2.30",
     "phpmailer/phpmailer": "^6.0",
     "psr/log": "^1.1",
     "rhilip/bencode": "^1.0",
@@ -61,5 +62,8 @@
       "framework/functions.php"
     ]
   },
+  "prefer-stable": true
+}
+,
   "prefer-stable": true
 }
