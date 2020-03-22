@@ -3,6 +3,7 @@
 Another Private Torrent framework Project. <b>On Heavily Development now !!!</b><br/>
 </p>
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5e6d2c961bee44689bf03859482fb145)](https://app.codacy.com/manual/rhilipruan/RidPT?utm_source=github.com&utm_medium=referral&utm_content=Rhilip/RidPT&utm_campaign=Badge_Grade_Dashboard)
 [![GitHub Releases](https://img.shields.io/github/release/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/releases)
 [![used-Swoole-blue](https://img.shields.io/badge/used-Swoole-blue.svg)](https://www.swoole.com/)
 [![GitHub license](https://img.shields.io/github/license/Rhilip/RidPT.svg)](https://github.com/Rhilip/RidPT/blob/master/LICENSE)
