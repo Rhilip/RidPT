@@ -21,6 +21,7 @@ class SiteController extends Controller
     public function actionLogs()
     {
         $logs = new Site\Logs();
+        $logs->setInput(app()->request->query->all());
         if (!$logs->validate()) {
             return $this->render('action/fail', ['msg'=>$logs->getError()]);
         }

@@ -34,6 +34,8 @@ class AdminController extends Controller
     {
         $info = app()->redis->info();
         $dbsize = app()->redis->dbSize();
+
+        /** @var array $cmdstat_raw */
         $cmdstat_raw = app()->redis->info('commandstats');
 
         $cmdstat = array_map(function ($v) {

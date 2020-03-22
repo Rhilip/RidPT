@@ -44,6 +44,7 @@ class TorrentController extends Controller
     public function actionDetails()
     {
         $details = new Torrent\DetailsForm();
+        $details->setInput(app()->request->query->all());
         $success = $details->validate();
         if (!$success) {
             return $this->render('action/fail', ['msg' => $details->getError()]);
@@ -79,6 +80,7 @@ class TorrentController extends Controller
     public function actionSnatch()
     {
         $snatch = new Torrent\SnatchForm();
+        $snatch->setInput(app()->request->query->all());
         $success = $snatch->validate();
         if (!$success) {
             return $this->render('action/fail');
@@ -90,6 +92,7 @@ class TorrentController extends Controller
     public function actionDownload()
     {
         $downloader = new Torrent\DownloadForm();
+        $downloader->setInput(app()->request->query->all());
         $success = $downloader->validate();
         if (!$success) {
             return $this->render('action/fail');
@@ -101,6 +104,7 @@ class TorrentController extends Controller
     public function actionComments()
     {
         $comments = new Torrent\CommentsForm();
+        $comments->setInput(app()->request->query->all());
         $success = $comments->validate();
         if (!$success) {
             return $this->render('action/fail');
@@ -112,6 +116,7 @@ class TorrentController extends Controller
     public function actionStructure()
     {
         $structure = new Torrent\StructureForm();
+        $structure->setInput(app()->request->query->all());
         $success = $structure->validate();
         if (!$success) {
             return $this->render('action/fail');

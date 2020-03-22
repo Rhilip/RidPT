@@ -23,9 +23,6 @@ class UserLogoutForm extends Validator
 
     private $sid;
 
-    protected bool $_autoload = true;
-    protected array $_autoload_from = ['get'];
-
     public static function inputRules(): array
     {
         $ret = [

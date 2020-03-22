@@ -19,9 +19,6 @@ class DeleteForm extends Validator
 
     public $reason;
 
-    protected bool $_autoload = true;
-    protected array $_autoload_from = ['post'];
-
     public static function inputRules(): array
     {
         return [

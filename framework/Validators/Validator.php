@@ -23,10 +23,6 @@ use ReflectionException;
  */
 class Validator extends BaseObject
 {
-    // Autoload user input from requests
-    protected bool $_autoload = false;
-    protected array $_autoload_from = [];
-
     /** @var array Input data */
     private array $_input = [];
     private array $_file_input_name = [];
@@ -135,24 +131,8 @@ class Validator extends BaseObject
         }
     }
 
-    private function autoloadDataFromRequests()
-    {
-        if ($this->_autoload) {
-            if (in_array('get', $this->_autoload_from)) {
-                $this->setInput(app()->request->query->all());
-            }
-            if (in_array('post', $this->_autoload_from)) {
-                $this->setInput(app()->request->request->all());
-            }
-            if (in_array('files', $this->_autoload_from)) {
-                $this->setFileInput(app()->request->raw_files);
-            }
-        }
-    }
-
     public function validate(): bool
     {
-        $this->autoloadDataFromRequests();
         $this->_input = array_merge(static::defaultData(), $this->_input);
 
         // validate rules in static::inputRules()

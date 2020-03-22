@@ -101,6 +101,7 @@ class AuthController extends Controller
 
         if (app()->request->isMethod(Request::METHOD_POST)) {
             $login = new Auth\UserLoginForm();
+            $login->setInput(app()->request->request->all());
             if (false === $success = $login->validate()) {
                 $login->loginFail();
                 $render_data['error_msg'] =  $login->getError();
@@ -120,6 +121,7 @@ class AuthController extends Controller
     public function actionLogout()
     {
         $logout = new Auth\UserLogoutForm();
+        $logout->setInput(app()->request->query->all());
         if (false === $logout->validate()) {
             return $this->render('action/fail', ['msg' => $logout->getError()]);
         } else {

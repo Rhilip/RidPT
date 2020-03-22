@@ -15,9 +15,6 @@ class DownloadForm extends Validator
 {
     use Traits\FileSentTrait, Traits\isValidSubtitleTrait;
 
-    protected bool $_autoload = true;
-    protected array $_autoload_from = ['get'];
-
     private function addDownloadHit()
     {
         app()->pdo->prepare('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([

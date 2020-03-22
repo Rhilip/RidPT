@@ -69,6 +69,7 @@ class UserController extends Controller
     public function actionDetails()
     {
         $panel = new User\UserDetailsForm();
+        $panel->setInput(app()->request->query->all());
         if (!$panel->validate()) {
             return $this->render('action/fail', ['msg' => $panel->getError()]);
         }
@@ -98,6 +99,7 @@ class UserController extends Controller
         }
 
         $session_list = new User\SessionsListForm();
+        $session_list->setInput(app()->request->query->all());
         if (false === $session_list->validate()) {
             return $this->render('action/fail', ['msg' => $session_list->getError()]);
         }

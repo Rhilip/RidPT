@@ -28,9 +28,6 @@ class UploadForm extends Validator
 
     private $hashs;
 
-    protected bool $_autoload = true;
-    protected array $_autoload_from = ['post', 'files'];
-
     const SubtitleExtension = ['sub', 'srt', 'zip', 'rar', 'ace', 'txt', 'ssa', 'ass', 'cue'];
 
     public static function defaultData(): array

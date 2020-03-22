@@ -14,6 +14,7 @@
 - **phpstorm:** Add `.phpstorm.meat.php` for config() function (407bb66)
 
 ### Feat
+- **Cache:** Allow ttl key for Redis Hash type (85a9587)
 - **Requests:** Make Response Component extends from `Symfony\Component\HttpFoundation\Response` (dd001d2)
 - **Requests:** Make Request Component extends from `Symfony\Component\HttpFoundation\Request` (9cd715b)
 - **Torrent:** Per-add torrent edit (f06b342)
