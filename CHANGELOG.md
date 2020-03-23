@@ -56,6 +56,9 @@
 - **cs-fixer:** Update Composer config and php-cs-fixer whole project (e734812)
 - **gitignore:** Add .php_cs.cache to .gitignore (15a2a15)
 
+### Test
+- **Validator:** Remove Autoload from requests (3b3e585)
+
 
 <a name="v0.1.6-alpha"></a>
 ## [v0.1.6-alpha] - 2019-09-20
