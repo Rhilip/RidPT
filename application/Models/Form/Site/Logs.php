@@ -10,6 +10,13 @@ namespace App\Models\Form\Site;
 
 use Rid\Validators\Pagination;
 
+/**
+ * Class Logs
+ * @package App\Models\Form\Site
+ *
+ * @property-read string $query
+ * @property-read string $level
+ */
 class Logs extends Pagination
 {
     protected $_levels;
@@ -50,8 +57,7 @@ class Logs extends Pagination
             return $this->_levels;
         }
 
-        $input_level = $this->getInput('level');
-        if ($input_level == 'all') {
+        if ('all' == $input_level = $this->level) {
             $levels = ['normal'];
             if (app()->auth->getCurUser()->isPrivilege('see_site_log_mod')) {
                 $levels[] = 'mod';
@@ -69,7 +75,7 @@ class Logs extends Pagination
 
     protected function getRemoteTotal(): int
     {
-        $search = $this->getInput('query');
+        $search = $this->query;
         return app()->pdo->prepare([
             ['SELECT COUNT(*) FROM `site_log` WHERE 1=1 '],
             ['AND `level` IN (:l) ', 'params' => ['l' => $this->getLevels()]],
@@ -79,7 +85,7 @@ class Logs extends Pagination
 
     protected function getRemoteData(): array
     {
-        $search = $this->getInput('query');
+        $search = $this->query;
         return app()->pdo->prepare([
             ['SELECT * FROM `site_log` WHERE 1=1 '],
             ['AND `level` IN (:l) ', 'params' => ['l' => $this->getLevels()]],

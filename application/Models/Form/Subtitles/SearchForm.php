@@ -12,14 +12,15 @@ use App\Libraries\Constant;
 
 use Rid\Validators\Pagination;
 
+/**
+ * Class SearchForm
+ * @package App\Models\Form\Subtitles
+ * @property-read string $search The search String for Subtitle
+ * @property-read string $letter The search String which only contain the first Letter (A-Z) for Subtitle
+ * @property-read int $tid The search Subtitle for association torrent id
+ */
 class SearchForm extends Pagination
 {
-    public $search;
-    public $letter;
-
-    public $torrent_id;
-    public $tid;
-
     public static function inputRules(): array
     {
         return [
@@ -31,9 +32,9 @@ class SearchForm extends Pagination
 
     protected function getRemoteTotal(): int
     {
-        $search = $this->getInput('search');
-        $letter = $this->getInput('letter');
-        $tid = $this->getInput('torrent_id') ?? $this->getInput('tid');
+        $search = $this->search;
+        $letter = $this->letter;
+        $tid = $this->tid;
         return app()->pdo->prepare([
             ['SELECT COUNT(`id`) FROM `subtitles` WHERE 1=1 '],
             ['AND torrent_id = :tid ', 'if' => !is_null($tid), 'params' => ['tid' => $tid]],
@@ -46,7 +47,7 @@ class SearchForm extends Pagination
     {
         $search = $this->search;
         $letter = $this->letter;
-        $tid = $this->torrent_id ?? $this->tid;
+        $tid = $this->tid;
         return app()->pdo->prepare([
             ['SELECT * FROM `subtitles` WHERE 1=1 '],
             ['AND torrent_id = :tid ', 'if' => !is_null($tid), 'params' => ['tid' => $tid]],

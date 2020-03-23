@@ -8,16 +8,18 @@
 
 namespace Rid\Validators;
 
+/**
+ * Trait CsrfTrait
+ * @package Rid\Validators
+ * @property-read string $csrf
+ */
 trait CsrfTrait
 {
-    public $csrf;
-
     /** @noinspection PhpUnused */
     protected function validateCsrf()
     {
-        $csrfInput = $this->getInput('csrf');
         $csrfText = app()->session->pop('csrfText');
-        if (strcasecmp($csrfInput, $csrfText) != 0) {
+        if (strcasecmp($this->csrf, $csrfText) != 0) {
             $this->buildCallbackFailMsg('csrf', 'csrf verification failed.');
             return;
         }

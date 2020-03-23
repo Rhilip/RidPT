@@ -15,17 +15,15 @@ namespace Rid\Validators;
  *
  * Trait CaptchaTrait
  * @package Rid\Validators
+ * @property-read string $captcha
  */
 trait CaptchaTrait
 {
-    public $captcha;
-
     /** @noinspection PhpUnused */
     protected function validateCaptcha()
     {
-        $captchaInput = $this->getInput('captcha');
         $captchaText = app()->session->get('captchaText');
-        if (strcasecmp($captchaInput, $captchaText) != 0) {
+        if (strcasecmp($this->captcha, $captchaText) != 0) {
             $this->buildCallbackFailMsg('CAPTCHA', 'CAPTCHA verification failed.');
             return;
         }

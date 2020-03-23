@@ -27,9 +27,9 @@
                         </label>&nbsp;&nbsp;
                         <label> Range:
                             <select name="query" class="form-control">
-                                <option value="title"<?= $pager->query == 'title' ? ' selected': '' ?>>Title</option>
-                                <option value="body"<?= $pager->query == 'body' ? ' selected': '' ?>>Body</option>
-                                <option value="both"<?= $pager->query == 'both' ? ' selected': '' ?>>Both</option>
+                                <option value="title"<?= $pager->field == 'title' ? ' selected': '' ?>>Title</option>
+                                <option value="body"<?= $pager->field == 'body' ? ' selected': '' ?>>Body</option>
+                                <option value="both"<?= $pager->field == 'both' ? ' selected': '' ?>>Both</option>
                             </select>
                         </label>&nbsp;&nbsp;
                         <input type="submit" class="btn btn-primary" value="给我搜">

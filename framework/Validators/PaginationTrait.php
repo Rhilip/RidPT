@@ -8,11 +8,15 @@
 
 namespace Rid\Validators;
 
+/**
+ * Trait PaginationTrait
+ * @package Rid\Validators
+ * @property-read int $page current page number
+ * @property-read int $limit item count of each page, Or you can say `pecPage`
+ */
 trait PaginationTrait
 {
-    public $page;
-    public $limit;  // pecPage
-    public $data;
+    public ?array $data = null;
 
     protected $offset;
     protected $total;
@@ -100,14 +104,15 @@ trait PaginationTrait
     /** @noinspection PhpUnused */
     protected function checkPager()
     {
-        $limit = intval($this->getInput('limit', static::getDefaultLimit()));
+        $limit = (int) $this->limit ?? static::getDefaultLimit();
+        $page = (int) $this->page ?? static::getDefaultPage();
+
         if ($limit < static::getMinLimit()) {
             $limit = static::getMinLimit();
         }
         if ($limit > static::getMaxLimit()) {
             $limit = static::getMaxLimit();
         }
-        $page = intval($this->getInput('page', static::getDefaultPage()));
 
         $this->setInput(['limit' => $limit, 'page' => $page]);
 

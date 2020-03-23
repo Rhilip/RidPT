@@ -10,9 +10,15 @@ namespace App\Models\Form\User;
 
 use Rid\Validators\Pagination;
 
+/**
+ * Class SessionsListForm
+ * @package App\Models\Form\User
+ *
+ * @property-read int $uid
+ * @property-read array $expired
+ */
 class SessionsListForm extends Pagination
 {
-    public $uid;
     public $expired = [-1, 0]; // Default not show expired session
 
     public static $DEFAULT_LIMIT = 10;
@@ -44,8 +50,8 @@ class SessionsListForm extends Pagination
     protected function getRemoteTotal(): int
     {
         return app()->pdo->prepare([
-            ['SELECT COUNT(`id`) FROM sessions WHERE uid = :uid ', 'params' => ['uid' => $this->getInput('uid')]],
-            ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->getInput('expired')]],
+            ['SELECT COUNT(`id`) FROM sessions WHERE uid = :uid ', 'params' => ['uid' => $this->uid]],
+            ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->expired]],
         ])->queryScalar();
     }
 
@@ -53,7 +59,7 @@ class SessionsListForm extends Pagination
     {
         return app()->pdo->prepare([
             ['SELECT `id`, session, `login_at`, `login_ip`, `expired` FROM sessions WHERE 1=1 '],
-            ['AND `uid` = :uid ', 'params' => ['uid' => app()->auth->getCurUser()->getId()]],
+            ['AND `uid` = :uid ', 'params' => ['uid' => $this->uid]],
             ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->expired]],
             ['ORDER BY `expired`, `id` DESC'],
             ['LIMIT :o, :l', 'params' => ['o' => $this->offset, 'l' => $this->limit]]

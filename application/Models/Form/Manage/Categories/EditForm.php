@@ -10,15 +10,19 @@ namespace App\Models\Form\Manage\Categories;
 
 use Rid\Validators\Validator;
 
+/**
+ * Class EditForm
+ * @package App\Models\Form\Manage\Categories
+ *
+ * @property-read int $cat_id
+ * @property-read int $cat_parent_id
+ * @property-read string $cat_name
+ * @property-read int $cat_enabled
+ * @property-read string $cat_image
+ * @property-read string $cat_class_name
+ */
 class EditForm extends Validator
 {
-    public $cat_id;
-    public $cat_parent_id;
-    public $cat_name;
-    public $cat_enabled = 0;
-    public $cat_image;
-    public $cat_class_name;
-
     private $cat_new_data;
     private $cat_old_data;
     private $cat_data_diff;
@@ -47,11 +51,11 @@ class EditForm extends Validator
     /** @noinspection PhpUnused */
     protected function checkCategoryData()
     {
-        $cat_parent_id = (int)$this->getInput('cat_parent_id');
+        $cat_parent_id = (int)$this->cat_parent_id;
         $this->cat_new_data = [
             'parent_id' => $cat_parent_id,
-            'name' => $this->getInput('cat_name'), 'enabled' => $this->getInput('cat_enabled'),
-            'image' => $this->getInput('cat_image'), 'class_name' => $this->getInput('cat_class_name')
+            'name' => $this->cat_name, 'enabled' => $this->cat_enabled,
+            'image' => $this->cat_image, 'class_name' => $this->cat_class_name
         ];
 
         // Generate New Full Path Key
@@ -64,7 +68,7 @@ class EditForm extends Validator
         }
 
         if ($cat_parent_id == 0) {
-            $full_path = $this->getInput('cat_name');
+            $full_path = $this->cat_name;
         } else {
             $full_path = $parent_cat_fpath . ' - ' . $this->getInput('cat_name');
         }
@@ -73,7 +77,7 @@ class EditForm extends Validator
         $this->cat_new_data['level'] = substr_count($full_path, ' - ');
         $flag_check_full_path = true;
 
-        $cat_id = (int)$this->getInput('cat_id');
+        $cat_id = (int)$this->cat_id;
         if ($cat_id !== 0) {  // Check if old links should be update
             $this->cat_old_data = app()->pdo->prepare('SELECT * FROM `categories` WHERE id = :id')->bindParams([
                 'id' => $cat_id

@@ -15,7 +15,6 @@ use ReflectionException;
  * Wrapper of Class Validator
  * @package Rid\Validators
  *
- *
  * Any Properties from user post data MUST be public and use function getData() in CallbackRule function
  *                other should be private or protected
  * Any CallbackRule function should be protected
@@ -102,6 +101,11 @@ class Validator extends BaseObject
         }
 
         return $this->_input[$key] ?? $default;
+    }
+
+    final public function __get($name)
+    {
+        return $this->getInput($name);
     }
 
     protected function buildDefaultPropAfterValid()
