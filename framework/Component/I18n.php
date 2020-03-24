@@ -43,19 +43,8 @@ class I18n extends Component
      */
     public ?string $forcedLang = null;
 
-    /*
-     * The following properties are only available after calling init().
-     */
-    protected ?string $_user_lang = null;
-
     /** @var Translator */
     protected ?Translator $_translator;
-
-    public function onRequestBefore()
-    {
-        $this->_user_lang = null;
-        parent::onRequestBefore();
-    }
 
     public function onInitialize()
     {
@@ -88,8 +77,8 @@ class I18n extends Component
     public function getUserLang()
     {
         // Return Cache value
-        if (!is_null($this->_user_lang)) {
-            return $this->_user_lang;
+        if (!is_null(app()->request->attributes->get('user_lang'))) {
+            return app()->request->attributes->get('user_lang');
         }
 
         // Determine
@@ -139,7 +128,7 @@ class I18n extends Component
         );
 
         foreach ($userLangs as $lang) {
-            $this->_user_lang = $lang;  // Store it for last use if not in req mode
+            app()->request->attributes->set('user_lang', $lang);  // Store it for last use if not in req mode
             return $lang;
         }
         return null;

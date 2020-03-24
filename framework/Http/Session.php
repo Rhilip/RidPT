@@ -36,63 +36,37 @@ class Session extends Component
     // 仅可通过 HTTP 协议访问
     public $cookieHttpOnly = false;
 
-    // SessionKey
-    protected $_sessionKey;
-
-    // SessionID
-    protected $_sessionId;
-
     // SessionID长度
     protected $_sessionIdLength = 26;
 
-    protected $_isNewSession = false;
-
-    // 请求前置事件
-    public function onRequestBefore()
+    // 获取SessionId
+    public function getSessionId(): string
     {
-        parent::onRequestBefore();
-        $this->_isNewSession = false;
-        $this->loadSessionId();  // 载入session_id
-    }
+        $session_id = \Rid::app()->request->cookies->get($this->name);
+        if (is_null($session_id)) {
+            // Generate Unique Session Id
+            do {
+                $session_id = StringHelper::getRandomString($this->_sessionIdLength);
+            } while (app()->redis->exists($this->saveKeyPrefix . $session_id));
 
-    // 请求后置事件
-    public function onRequestAfter()
-    {
-        parent::onRequestAfter();
-        // 关闭连接
-        app()->redis->disconnect();
-    }
-
-    // 载入session_id
-    public function loadSessionId()
-    {
-        $this->_sessionId = \Rid::app()->request->cookies->get($this->name);
-        if (is_null($this->_sessionId)) {
-            $this->_isNewSession = true;
-            $this->_sessionId = StringHelper::getRandomString($this->_sessionIdLength);
+            // Save it both to request and response
+            app()->request->cookies->set($this->name, $session_id);
+            \Rid::app()->response->headers->setCookie(new Cookie($this->name, $session_id, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly));
         }
-        $this->_sessionKey = $this->saveKeyPrefix . $this->_sessionId;
 
-        if (!$this->_isNewSession) {
-            app()->redis->expire($this->_sessionKey, $this->maxLifetime);
-        } // 延长session有效期
+        return $session_id;
     }
 
-    // 创建SessionId
-    public function createSessionId()
+    public function getSessionKey(): string
     {
-        do {
-            $this->_sessionId  = StringHelper::getRandomString($this->_sessionIdLength);
-            $this->_sessionKey = $this->saveKeyPrefix . $this->_sessionId;
-        } while (app()->redis->exists($this->_sessionKey));
+        return $this->saveKeyPrefix . $this->getSessionId();
     }
 
     // 赋值
     public function set($name, $value)
     {
-        $success = app()->redis->hMSet($this->_sessionKey, [$name => $value]);
-        app()->redis->expire($this->_sessionKey, $this->maxLifetime);
-        $success and $this->_isNewSession and \Rid::app()->response->headers->setCookie(new Cookie($this->name, $this->_sessionId, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly));
+        $success = app()->redis->hMSet($this->getSessionKey(), [$name => $value]);
+        app()->redis->expire($this->getSessionKey(), $this->maxLifetime);
         return $success ? true : false;
     }
 
@@ -100,24 +74,22 @@ class Session extends Component
     public function get($name = null)
     {
         if (is_null($name)) {
-            $result = app()->redis->hgetall($this->_sessionKey);
+            $result = app()->redis->hgetall($this->getSessionKey());
             return $result ?: [];
         }
-        $value = app()->redis->hget($this->_sessionKey, $name);
+        $value = app()->redis->hget($this->getSessionKey(), $name);
         return $value === false ? null : $value;
     }
 
-    // 判断是否存在
-    public function has($name)
+    public function has($name): bool
     {
-        $exist = app()->redis->hexists($this->_sessionKey, $name);
-        return $exist ? true : false;
+        return (bool)app()->redis->hexists($this->getSessionKey(), $name);
     }
 
     // 删除
     public function delete($name)
     {
-        $success = app()->redis->hdel($this->_sessionKey, $name);
+        $success = app()->redis->hdel($this->getSessionKey(), $name);
         return $success ? true : false;
     }
 
@@ -132,14 +104,8 @@ class Session extends Component
     // 清除session
     public function clear()
     {
-        $success = app()->redis->del($this->_sessionKey);
+        $success = app()->redis->del($this->getSessionKey());
         return $success ? true : false;
-    }
-
-    // 获取SessionId
-    public function getSessionId()
-    {
-        return $this->_sessionId;
     }
 
     public function setCsrfToken()

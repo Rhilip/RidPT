@@ -17,18 +17,6 @@ use Rid\Helpers\JWTHelper;
 
 class Auth extends Component
 {
-    protected $cur_user;
-    protected $cur_user_jit;
-
-    protected $grant;
-
-    public function onRequestBefore()
-    {
-        parent::onRequestBefore();
-        $this->cur_user = null;
-        $this->cur_user_jit = null;
-    }
-
     public function onRequestAfter()
     {
         $this->logSessionInfo();
@@ -42,21 +30,24 @@ class Auth extends Component
      */
     public function getCurUser($grant = 'cookies', $flush = false)
     {
-        if (is_null($this->cur_user) || $flush) {
-            $this->grant = $grant;
-            $this->cur_user = $this->loadCurUser($grant);
+        $cur_user = app()->request->attributes->get('cur_user');
+        if (is_null($cur_user) || $flush) {
+            app()->request->attributes->set('auth_by', $grant);
+            $cur_user = $this->loadCurUser($grant);
+            app()->request->attributes->set('cur_user', $cur_user);
         }
-        return $this->cur_user;
+        return $cur_user;
     }
 
     public function getCurUserJIT(): string
     {
-        return $this->cur_user_jit ?? '';
+        $jwt = app()->request->attributes->get('jwt') ?? [];
+        return $jwt['jti'] ?? '';
     }
 
     public function getGrant(): string
     {
-        return $this->grant ?? '';
+        return app()->request->attributes->get('auth_by');
     }
 
     /**
@@ -114,13 +105,13 @@ class Auth extends Component
             return false;
         }
 
-        $this->cur_user_jit = $payload['jti'];
+        app()->request->attributes->set('jwt', $payload);
 
         // Check if user want secure access but his environment is not secure
         if (!app()->request->isSecure() &&                        // if User requests is not secure , and
             (
-                config('security.ssl_login') > 1 ||        // if Our site FORCE enabled ssl feature
-             (config('security.ssl_login') > 0 && isset($payload['ssl']) && $payload['ssl']) // if Our site support ssl feature and User want secure access
+                config('security.ssl_login') > 1       // if Our site FORCE enabled ssl feature
+                || (config('security.ssl_login') > 0 && isset($payload['ssl']) && $payload['ssl']) // if Our site support ssl feature and User want secure access
             )
         ) {
             app()->response->setRedirect(str_replace('http://', 'https://', app()->request->getUri()));
@@ -143,13 +134,13 @@ class Auth extends Component
 
     private function logSessionInfo()
     {
-        if (!is_null($this->cur_user_jit)) {
+        if (!is_null($this->getCurUserJIT()) && $this->getCurUser()) {
             $uid = $this->getCurUser()->getId();
             $now_ip = app()->request->getClientIp();
             $ua = app()->request->headers->get('user-agent');
 
             $identify_key = md5(implode('|', [
-                $this->cur_user_jit,  // `sessions`->session
+                $this->getCurUserJIT(),  // `sessions`->session
                 $now_ip /* user ip */, $ua  /* user agent */
             ]));
 
@@ -165,7 +156,7 @@ class Auth extends Component
 
                 // Insert Table `session_log`
                 app()->pdo->prepare('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
-                    'jit' => $this->cur_user_jit, 'access_ip' => $now_ip, 'ua' => $ua
+                    'jit' => $this->getCurUserJIT(), 'access_ip' => $now_ip, 'ua' => $ua
                 ])->execute();
             }
         }
