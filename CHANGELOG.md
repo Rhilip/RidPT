@@ -19,6 +19,7 @@
 - **Requests:** Make Request Component extends from `Symfony\Component\HttpFoundation\Request` (9cd715b)
 - **Torrent:** Per-add torrent edit (f06b342)
 - **Torrents:** Allow search in user's favour (or you can say bookmark) (c0aa627)
+- **Validator:** Add magic function __get() as alias of getInput() (86e69f7)
 - **composer:** Add `nesbot/carbon` to deal with Date and Time (9e37c41)
 - **i18n:** Use symfony/translation and JSON format for locale (02cc251)
 - **layout:** Add anti-robots html meta tag (9c21e73)

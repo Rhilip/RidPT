@@ -69,7 +69,7 @@ class TrackerController
 
             $this->blockClient();
 
-            $action = strtolower(app()->request->route('{tracker_action}'));
+            $action = strtolower(app()->request->attributes->get('route')['{tracker_action}']);
             $this->checkUserAgent($action == 'scrape');
 
             $this->checkPasskey($userInfo);

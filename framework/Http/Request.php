@@ -14,7 +14,6 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
     use Base\StaticInstanceTrait, Base\ComponentTrait;
 
     protected \Swoole\Http\Request $_swoole_request;
-    protected $_route = [];
 
     /**
      * Uploaded files from Swoole.
@@ -22,8 +21,6 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
      * @var array
      */
     public $raw_files;
-
-    public $start_at;
 
     /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct($config = [])
@@ -44,8 +41,8 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
     // 设置请求对象
     public function setRequester(\Swoole\Http\Request $request)
     {
+        $start_at = microtime(true);
         $this->_swoole_request = $request;
-        $this->start_at = microtime(true);
 
         $server = \array_change_key_case($request->server, CASE_UPPER);
 
@@ -57,24 +54,13 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
         $this->initialize(
             $request->get ?? [],
             $request->post ?? [],
-            [],
+            ['start_at' => $start_at],
             $request->cookie ?? [],
             $request->files ?? [],
             $server,
             $request->rawContent()
         );
         $this->raw_files = $request->files;
-    }
-
-    // 设置 ROUTE 值
-    public function setRoute($route)
-    {
-        $this->_route = $route;
-    }
-
-    public function route($name = null, $default = null)
-    {
-        return is_null($name) ? $this->_route : ($this->_route[$name] ?? $default);
     }
 
     public function getSwooleRequest(): \Swoole\Http\Request

@@ -53,7 +53,7 @@ class Application extends \Rid\Base\Application
         foreach ($result as $item) {
             list($route, $queryParams) = $item;
             // 路由参数导入请求类
-            \Rid::app()->request->setRoute($queryParams);
+            \Rid::app()->request->attributes->set('route', $queryParams);
             // 实例化控制器
             list($shortClass, $shortAction) = $route;
             $controllerDir    = \Rid\Helpers\FileSystemHelper::dirname($shortClass);

@@ -88,7 +88,7 @@ $extend_debug_info = app()->auth->getCurUser()  // Not Anonymous
                 &copy; <a href="/" target="_self"><?= config('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT" target="_blank">RidPT</a>
             </p>
             <p class="debug-info">
-                [ Page created in <b><?= number_format(microtime(true) - app()->request->start_at, 6) ?></b> sec
+                [ Page created in <b><?= number_format(microtime(true) - app()->request->attributes->get('start_at'), 6) ?></b> sec
                 with <b><?= $this->e(memory_get_usage(), 'format_bytes') ?></b> ram used,
                 <b><?= count(app()->pdo->getExecuteData()) ?></b> db queries,
                 <b><?= array_sum(app()->redis->getCalledData())?></b> calls of Redis ]
