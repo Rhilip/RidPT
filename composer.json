@@ -21,11 +21,9 @@
     "ext-curl": "*",
     "ext-gd": "*",
     "ext-iconv": "*",
-    "ext-intl": "*",
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-openssl": "*",
-    "ext-pcntl": "*",
     "ext-pdo": "*",
     "ext-redis": "*",
     "ext-swoole": "*",
@@ -50,7 +48,10 @@
   "config": {
     "preferred-install": "dist",
     "optimize-autoloader": true,
-    "sort-packages": true
+    "sort-packages": true,
+    "platform": {
+      "ext-swoole": "4.4.14"
+    }
   },
   "autoload": {
     "psr-4": {

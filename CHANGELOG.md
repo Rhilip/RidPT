@@ -27,6 +27,7 @@
 ### Fix
 - **API:** ApiMiddleware not work after change Response Component (6da82a7)
 - **Bencode:** Fix dict keys may not in sorted order (81f0783)
+- **Composer:** Fix wrong composer.json format (3f17e03)
 - **Config:** Fix JSON type config return False (1129008)
 - **Cron:** Fix components lost in CronTabProcess (1ced4bf)
 - **Redis:** Fix wrong type of Redis call function hMset() to hMSet() (a163150)
@@ -54,6 +55,7 @@
 
 ### Style
 - **Bencode:** Separate Bencode library to `Rhilip/Bencode` (18cbfa1)
+- **Request:** Move route as a part of attributes (aee4682)
 - **cs-fixer:** Update Composer config and php-cs-fixer whole project (e734812)
 - **gitignore:** Add .php_cs.cache to .gitignore (15a2a15)
 

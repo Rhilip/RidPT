@@ -1,6 +1,6 @@
 <?php
 
-namespace Rid\helpers;
+namespace Rid\Helpers;
 
 /**
  * FileSystemHelper类
