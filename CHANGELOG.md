@@ -59,6 +59,7 @@
 ### Style
 - **Bencode:** Separate Bencode library to `Rhilip/Bencode` (18cbfa1)
 - **Request:** Move route as a part of attributes (f63ed00)
+- **StringHelper:** Split part of StringHelper to `Rid\Utils\Random` (511e79f)
 - **cs-fixer:** Update Composer config and php-cs-fixer whole project (e734812)
 - **gitignore:** Add .php_cs.cache to .gitignore (15a2a15)
 

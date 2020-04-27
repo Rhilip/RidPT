@@ -28,7 +28,7 @@ class Ip extends HttpFoundationIpUtils
             $ip = self::isPublicIp($data[1]);
             $port = $data[2];
             if ($ip && $port) {
-                return ["ip" => $ip, "port" => $port];
+                return ['ip' => $ip, 'port' => $port];
             }
         }
         return false;

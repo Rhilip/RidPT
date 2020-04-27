@@ -25,23 +25,8 @@ class Conversion implements ExtensionInterface
         $engine->registerFunction('sec2hms', [$this, 'sec2hms']);
     }
 
-    public static function setDefault(&$array, $defaults)
+    public function format_bytes($bytes, $precision = 2, $separator = ' ')
     {
-        if (!is_array($array)) {
-            $array = [$array];
-        }
-        foreach ($defaults as $key => $default) {
-            if (!array_key_exists($key, $array)) {
-                $array[$key] = $default;
-            }
-        }
-    }
-
-    public function format_bytes($var)
-    {
-        array_set_default($var, ['precision' => 2, 'separator' => ' ']);
-        $bytes = array_shift($var);
-
         $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB');
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
@@ -50,27 +35,24 @@ class Conversion implements ExtensionInterface
         // Uncomment one of the following alternatives
         $bytes /= pow(1024, $pow);
 
-        return round($bytes, $var['precision']) . $var['separator'] . $units[$pow];
+        return round($bytes, $precision) . $separator . $units[$pow];
     }
 
     public function format_bytes_compact($var)
     {
-        array_set_default($var, ['precision' => 2, 'separator' => '<br />']);
-        return $this->format_bytes($var);
+        return $this->format_bytes($var, 2, '<br />');
     }
 
     public function format_bytes_loose($var)
     {
-        array_set_default($var, ['precision' => 2, 'separator' => '&nbsp;']);
-        return $this->format_bytes($var);
+        return $this->format_bytes($var, 2, '&nbsp;');
     }
 
-    public function format_ubbcode($var)
+    public function format_ubbcode($string)
     {
-        array_set_default($var, ['escapeHtml' => true]);
-        $string = array_shift($var);
-
-        $code = new Decoda($string, $var, 'Decoda:' . md5($string));
+        $code = new Decoda($string, [
+            'escapeHtml' => true
+        ], 'Decoda:' . md5($string));
 
         $code->defaults(); // TODO add support of tag [mediainfo]
 

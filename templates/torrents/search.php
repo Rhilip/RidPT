@@ -9,6 +9,8 @@
  * @var \App\Models\Form\Torrents\SearchForm $search
  */
 
+use Rid\Utils\Arr;
+
 $time_now = time();
 
 ?>
@@ -34,7 +36,7 @@ $time_now = time();
                                 <br />
                                 <div class="row" style="margin-left: 15px">
                                 <?php foreach (app()->site->ruleQuality($quality) as $q): ?>
-                                <?php $req_quality = input2array(app()->request->query->get($quality, [])); ?>
+                                <?php $req_quality = Arr::wrap(app()->request->query->get($quality)); ?>
                                     <label class="col-md-2">
                                         <input type="checkbox" name="<?= $quality ?>[]" value="<?= $q['id'] ?>"<?= in_array($q['id'], $req_quality) ? ' checked': '' ?>> <?= $q['name'] ?>
                                     </label>
@@ -49,7 +51,7 @@ $time_now = time();
                                 <br />
                                 <div class="row" style="margin-left: 15px">
                                 <?php foreach (app()->site->ruleTeam() as $team) : ?>
-                                <?php $req_team = input2array(app()->request->query->get('team', [])); ?>
+                                <?php $req_team = Arr::wrap(app()->request->query->get('team')); ?>
                                     <label class="col-md-2">
                                         <input type="checkbox" name="team[]" value="<?= $team['id'] ?>"<?= in_array($team['id'], $req_team) ? ' checked': '' ?>> <?= $team['name'] ?>
                                     </label>

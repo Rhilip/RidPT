@@ -10,6 +10,7 @@
  */
 
 use Rhilip\Bencode\Bencode;
+use Rid\Utils\Arr;
 
 if (!function_exists('torrent_structure_builder')) {
     function torrent_structure_builder($array, $parent = "")
@@ -18,7 +19,7 @@ if (!function_exists('torrent_structure_builder')) {
         foreach ($array as $item => $value) {
             $value_length = strlen(Bencode::encode($value));
             if (is_iterable($value)) {  // It may `dictionary` or `list`
-                $type = is_indexed_array($value) ? 'list' : 'dictionary';
+                $type = Arr::isAssoc($value) ? 'dictionary' : 'list';
                 $ret .= "<li" . (($item=='root' || $item == 'info') ? ' class="open"' : '') . "><a href='#'><span class='title'>[" . $item . "]</span> <span class='type' data-type='" . $type ."'>(" . ucfirst($type) . ")</span> <span class=length>[" . $value_length . "]</span></a>";
                 $ret .= "<ul>" . torrent_structure_builder($value, $item) . "</ul></li>";
             } else { // It may `integer` or `string`
