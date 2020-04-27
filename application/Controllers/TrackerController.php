@@ -12,6 +12,7 @@ use App\Libraries\Constant;
 use App\Entity\User\UserRole;
 use App\Exceptions\TrackerException;
 
+use Rid\Utils\Arr;
 use Rid\Utils\Ip;
 
 use Rhilip\Bencode\Bencode;
@@ -544,7 +545,6 @@ class TrackerController
         foreach ([
                      'event' => '', 'no_peer_id' => 1, 'compact' => 0,
                      'numwant' => 50, 'corrupt' => 0, 'key' => '',
-                     'ip' => '', 'ipv4' => '', 'ipv6' => '',
                  ] as $item => $value) {
             $queries[$item] = app()->request->query->get($item, $value);
         }
@@ -563,99 +563,65 @@ class TrackerController
 
         // Part.3 check Announce *IP* Fields
         /**
-         * We have `ip` , `ipv6` , `port` ,`ipv6_port` Columns in Table `peers`
+         * We have `ip`, `port`, `endpoints` Columns in Table `peers`
          * But peer 's ip can be find in Requests Headers and param like `&ip=` , `&ipv4=` , `&ipv6=`
          * So, we should deal with those situation.
          *
-         * We get `ipv6` and `ipv6_port` data from `&ipv6=` (address or endpoint) ,
-         * Which is a  Native-IPv6 , not as link-local site-local loop-back Terodo 6to4
-         * If fails , then fail back to $remote_ip (If it's IPv6 format) and `&port=`
+         * We record `ip` from $remote_ip, `port` from `&port=`,
+         * And Any other ip:port from `&ip=` , `&ipv4=` , `&ipv6=` in Array $endpoints [$ip => $port, ...]
          *
-         * As The same reason, `ip` will get Form `&ipv4=` (address or endpoint)
-         * and fail back to $remote_ip (If it's IPv4 format)
-         *
-         * However some bittorrent client may use `&ip=` to store peer's ipv4 or ipv6 address,
-         * So the check order is : `&ipv6=`, `&ipv4=` -> `&ip=` -> $remote_ip
-         *
-         * After valid those ip params , we will identify peer connect type AS:
-         *  1. Only IPv4  2. Only IPv6  3. Both IPv4-IPv6
+         * After valid those ip params, we will identify peer connect type AS:
+         *  1. Only IPv4       - 0b01 (1)
+         *  2. Only IPv6       - 0b10 (2)
+         *  3. Both IPv4-IPv6  - 0b11 (3)
          * Which is useful when generate Announce Response.
          *
          * See more: http://www.bittorrent.org/beps/bep_0007.html
          */
+        $endpoints = [];
 
-        $queries['remote_ip'] = $remote_ip = app()->request->getClientIp();  // IP address from Request Header (Which is NexusPHP used)
-        $queries['ipv6_port'] = $queries['port'];
+        // insert remote_ip:port
+        $queries['ip'] = $remote_ip = app()->request->getClientIp();  // IP address from Request Header (Which is NexusPHP used)
+        $endpoints[$remote_ip] = (int)$queries['port'];
 
-        // Get user ipv6 and ipv6_port data and store it in $queries['ipv6'] and $queries['ipv6_port']
-        if ($queries['ipv6']) {
-            if ($client = Ip::isEndPoint($queries['ipv6'])) {
-                $queries['ipv6'] = $client['ip'];
-                $queries['ipv6_port'] = $client['port'];
-            }
+        // insert ip:port from `&ipv6=`, `&ipv4=`, `&ip=`
+        foreach (['ip', 'ipv6', 'ipv4'] as $ip_type) {
+            if ($new_ip = app()->request->query->get($ip_type)) {
+                $new_port = (int)$queries['port'];
 
-            // Ignore all un-Native IPv6 address ( starting with FD or FC ; reserved IPv6 ) and IPv4-mapped-IPv6 address
-            if (!Ip::isPublicIPv6($queries['ipv6']) || strpos($queries['ipv6'], '.') !== false) {
-                $queries['ipv6'] = $queries['ipv6_port'] = '';
-            }
-        }
-
-        // If we can't get valid IPv6 address from `&ipv6=`
-        // fail back to `&ip=<IPv6>` then the IPv6 format remote_ip
-        if (!$queries['ipv6']) {
-            if ($queries['ip'] && Ip::isValidIPv6($queries['ip'])) {
-                $queries['ipv6'] = $queries['ip'];
-            } elseif (Ip::isValidIPv6($remote_ip)) {
-                $queries['ipv6'] = $remote_ip;
-            }
-            if ($queries['ipv6']) {
-                $queries['ipv6_port'] = $queries['port'];
-            }
-        }
-
-        // Clean $queries['ip'] field and then store ipv4 data in it to make sure this field is IPv4-Only
-        if ($queries['ip'] && !Ip::isValidIPv4($queries['ip'])) {
-            $queries['ip'] = '';
-        }
-
-        // handle param `&ipv4=` like `&ipv6=`
-        if ($queries['ipv4']) {
-            if ($client = Ip::isEndPoint($queries['ipv4'])) {
-                if (Ip::isValidIPv4($client['ip'])) {
-                    $queries['ip'] = $client['ip'];
-                    $queries['port'] = $client['port'];
+                // Deal with ip in endpoint format
+                if ($client = Ip::isEndPoint($new_ip)) {
+                    $new_ip = $client['ip'];
+                    $new_port = (int)$client['port'];
                 }
-            } elseif (Ip::isValidIPv4($queries['ipv4'])) {
-                $queries['ip'] = $queries['ipv4'];
+
+                // make sure every k-v is unique and Ignore all un-Native address
+                if (!array_key_exists($new_ip, $endpoints) && Ip::isPublicIp($new_ip)) {
+                    $endpoints[$new_ip] = $new_port;
+                }
             }
         }
+        $queries['endpoints'] = $endpoints;
 
-        // Fail back to remote_ip which in IPv4-format
-        if (!Ip::isPublicIPv4($queries['ip']) && Ip::isValidIPv4($remote_ip)) {
-            $queries['ip'] = $remote_ip;
+        [$ips, $ports] = Arr::divide($endpoints);
+
+        $connect_type = 0b00 /* No Connection */;
+        foreach ($ips as $ip) {
+            $connect_type |= Ip::isValidIPv6($ip) ? 0b10 /* IPv6 */ : 0b01 /* IPv4 */;
         }
+        $queries['connect_type'] = $connect_type;
 
         // Part.4 check Port Fields is Valid and Allowed
-        $this->checkPortFields($queries['port']);
-        if (isset($queries['ipv6_port']) && $queries['port'] != $queries['ipv6_port']) {
-            $this->checkPortFields($queries['ipv6_port']);
-        }
-        if ($queries['port'] == 0 && strtolower($queries['event']) != 'stopped') {
-            throw new TrackerException(137, [":event" => strtolower($queries['event'])]);
-        }
-    }
-
-    /** Check Port
-     *
-     * Normally , the port must in 1 - 65535 , that is ( $port > 0 && $port < 0xffff )
-     * However, in some case , When `&event=stopped` the port may set to 0.
-     * @param $port
-     * @throws TrackerException
-     */
-    private function checkPortFields($port)
-    {
-        if (!is_numeric($port) || $port < 0 || $port > 0xffff || in_array($port, self::portBlacklist)) {
-            throw new TrackerException(135, [':port' => $port]);
+        foreach (array_unique($ports) as $port) {
+            /**
+             * Normally , the port must in 1 - 65535 , that is ( $port > 0 && $port < 0xffff )
+             * However, in some case , When `&event=stopped` the port may set to 0.
+             */
+            if ($port == 0 && strtolower($queries['event']) != 'stopped') {
+                throw new TrackerException(137, [':event' => strtolower($queries['event'])]);
+            } elseif (!is_numeric($port) || $port < 0 || $port > 0xffff || in_array($port, self::portBlacklist)) {
+                throw new TrackerException(135, [':port' => $port]);
+            }
         }
     }
 
@@ -701,9 +667,9 @@ class TrackerController
 
     /**
      * If Our Tracker in those situation:
-     *    - Using multi-tracker Extension (BEP 0012), All query string are the same
+     *    - Using multi-tracker Extension (BEP 0012), All query_string are the same
      *    - Tracker Url can resolve to multiple IP addresses (BEP 0007 Tracker Hostname Resolution)，
-     *      All query element except `key` are the same
+     *      All element except `key` in query_string  are the same
      *
      * Some Bittorrent Client May ReAnnounce many times,
      * Depending on Client Behaviour, Tracker/Tier Number, Resolved IP of each Tracker
@@ -884,12 +850,16 @@ class TrackerController
             return;
         }
 
+        // peer_ip_type
+        $has_ipv4 = ($queries['connect_type'] & 0b01) == 0b01;
+        $has_ipv6 = ($queries['connect_type'] & 0b10) == 0b10;
+
         // Fix rep_dict format based on params `&compact=`, `&np_peer_id=`, `&numwant=` and our tracker config
         $compact = (bool)($queries['compact'] == 1 || config('tracker.force_compact_model'));
         if ($compact) {
             $queries['no_peer_id'] = 1;  // force `no_peer_id` when `compact` mode is enable
             $rep_dict['peers'] = '';  // Change `peers` from array to string
-            if ($queries['ipv6']) {   // If peer has IPv6 address , we should add packed string in `peers6`
+            if ($has_ipv6) {   // If peer has IPv6 address , we should add packed string in `peers6`
                 $rep_dict['peers6'] = '';
             }
         }
@@ -899,15 +869,15 @@ class TrackerController
 
         // Query Peers in database
         $peers = app()->pdo->prepare([
-            ['SELECT `port`, `ipv6_port` '],
-            // Get ip and ipv6 field in binary or string depend on value of $compact
-            [', `ip`, `ipv6` ', 'if' => $compact],
-            [', INET6_NTOA(`ip`) as `ip`, INET6_NTOA(`ipv6`) as `ipv6` ', 'if' => !$compact],
+            ['SELECT `endpoints`'],
             [', `peer_id` ', 'if' => !$no_peer_id],
             ['FROM `peers` WHERE torrent_id = :tid ', 'params' => ['tid' => $torrentInfo['id']]],
             ['AND peer_id != :pid  ', 'params' => ['pid' => $queries['peer_id']]],  // Don't select user himself
             ['AND `seeder` = \'no\' ', 'if' => $role != 'no'],  // Don't report seeders to other seeders (include partial seeders)
-            ['ORDER BY RAND() LIMIT :limit', 'params' => ['limit' => $limit]]  // Random select so that everyone will return
+            ['ORDER BY RAND() LIMIT :limit',
+                'if' => ($torrentInfo['complete'] + $torrentInfo['incomplete']) > $limit,  // LIMIT AND SORT only total peer plus numwant
+                'params' => ['limit' => $limit]
+            ]  // Random select so that everyone will return
         ])->queryAll();
 
         foreach ($peers as $peer) {
@@ -917,24 +887,22 @@ class TrackerController
                 $exchange_peer['peer_id'] = $peer['peer_id'];
             }
 
-            if ($queries['ip'] && $peer['ip']) {
-                if ($compact) {
-                    // $peerList .= pack("Nn", sprintf("%d",ip2long($peer["ip"])), $peer['port']);
-                    $rep_dict['peers'] .= $peer['ip'] . pack('n', $peer['port']);
-                } else {
-                    $exchange_peer['ip'] = $peer['ip'];
-                    $exchange_peer['port'] = $peer['port'];
-                    $rep_dict['peers'][] = $exchange_peer;
-                }
-            }
+            $endpoints = json_decode($peer['endpoints']);
+            foreach ($endpoints as $ip => $port) {
+                $is_ipv6 = Ip::isValidIPv6($ip);
 
-            if ($queries['ipv6'] && $peer['ipv6']) {
-                if ($compact) {
-                    $rep_dict['peers6'] .= $peer['ipv6'] . pack('n', $peer['ipv6_port']);
+                if ((!$has_ipv6 && $is_ipv6) ||  // if this peer don't have ipv6 address, don't send ipv6 peer to him
+                    (!$has_ipv4 && !$is_ipv6)    // if this peer don't have ipv4 address, don't send ipv4 peer to him
+                ) {
+                    continue;
+                }
+
+                if ($compact == 1) {
+                    $peer_insert_field = $is_ipv6 ? 'peers6' : 'peers';
+                    $rep_dict[$peer_insert_field] .= inet_pton($ip) . pack('n', $port);
                 } else {
-                    // If peer don't want compact response, return ipv6-peer in `peers`
-                    $exchange_peer['ip'] = $peer['ipv6'];
-                    $exchange_peer['port'] = $peer['ipv6_port'];
+                    $exchange_peer['ip'] = $ip;
+                    $exchange_peer['port'] = $port;
                     $rep_dict['peers'][] = $exchange_peer;
                 }
             }

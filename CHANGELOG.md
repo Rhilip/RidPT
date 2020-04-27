@@ -43,6 +43,7 @@
 - **User:** Fix all user class info become cur_user (77c7345)
 
 ### Perf
+- **Array:** Copy Array function from Laravel (e622472)
 - **Component:** View Become a component to perf load time (660c1f1)
 - **Log:** Separate Site Log Level from component Site (d110c2b)
 - **Session_Log:** Use `insert with select` to log session (d786243)

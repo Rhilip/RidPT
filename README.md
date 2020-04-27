@@ -172,7 +172,7 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 
 ## Sponsor
 
-![](https://meihezi.cache.ejcdn.com/images/common/logo.png) [MeiHeZi](https://www.meihezi.com) For Demo Site Host Server
+![](https://meihezi.cache.ejcdn.com/img/logos/header-light.png) [MeiHeZi](https://www.meihezi.com) For Demo Site Host Server
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_large)

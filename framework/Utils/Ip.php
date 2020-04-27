@@ -25,8 +25,8 @@ class Ip extends HttpFoundationIpUtils
         preg_match("/\[?([^\]]+)\]?:([0-9]+)/", $raw_ip, $data);
 
         if ($data) {
-            $ip = self::isPublicIp($data[1]);
-            $port = $data[2];
+            $ip = self::isValidIP($data[1]);
+            $port = (int)$data[2];
             if ($ip && $port) {
                 return ['ip' => $ip, 'port' => $port];
             }

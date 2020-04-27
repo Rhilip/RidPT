@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 10, 2020 at 10:28 PM
+-- Generation Time: 2020-04-27 21:19:29
 -- Server version: 8.0.17
--- PHP Version: 7.3.7
+-- PHP Version: 7.3.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -499,8 +499,8 @@ CREATE TABLE IF NOT EXISTS `peers` (
   `peer_id` varbinary(20) NOT NULL,
   `ip` varbinary(16) DEFAULT NULL,
   `port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
-  `ipv6` varbinary(16) DEFAULT NULL,
-  `ipv6_port` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
+  `endpoints` json NOT NULL,
+  `connect_type` tinyint(1) NOT NULL DEFAULT '0',
   `seeder` enum('yes','partial','no') NOT NULL DEFAULT 'no',
   `uploaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `downloaded` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
