@@ -18,9 +18,10 @@ use Rhilip\Bencode\Bencode;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @noinspection PhpUnused */
+
 class TrackerController
 {
-    protected $timenow;
+    protected int $timenow;
 
     /**
      * The Black List of Announce Port
@@ -28,7 +29,7 @@ class TrackerController
      * @var array
      * @see https://www.speedguide.net/port.php or other website
      */
-    const portBlacklist =  [
+    const portBlacklist = [
         22,  // SSH Port
         53,  // DNS queries
         80, 81, 8080, 8081,  // Hyper Text Transfer Protocol (HTTP) - port used for web traffic
@@ -77,71 +78,71 @@ class TrackerController
             switch ($action) {
                 // Tracker Protocol Extension: Scrape - http://www.bittorrent.org/beps/bep_0048.html
                 case 'scrape':
-                    {
-                        if (!config('tracker.enable_scrape')) {
-                            throw new TrackerException(101);
-                        }
-
-                        $this->checkScrapeFields($info_hash_array);
-                        $this->generateScrapeResponse($info_hash_array, $rep_dict);
-
-                        return Bencode::encode($rep_dict);
+                {
+                    if (!config('tracker.enable_scrape')) {
+                        throw new TrackerException(101);
                     }
+
+                    $this->checkScrapeFields($info_hash_array);
+                    $this->generateScrapeResponse($info_hash_array, $rep_dict);
+
+                    return Bencode::encode($rep_dict);
+                }
 
                 case 'announce':
-                    {
-                        if (!config('tracker.enable_announce')) {
-                            throw new TrackerException(102);
-                        }
-
-                        $this->checkAnnounceFields($queries);
-
-                        /**
-                         * If nothing error we start to get and cache the the torrent_info from database,
-                         * and check peer's privilege
-                         */
-                        $this->getTorrentInfo($queries, $userInfo, $torrentInfo);
-
-                        $role = '';
-
-                        /** Lock Announce Duration By Requests Uri hash to avoid **BAD** Bittorrent client */
-                        if ($this->lockAnnounceDuration() == false) {
-                            /** Lock Min Announce Interval */
-                            $this->checkMinInterval($queries);
-
-                            /** Get peer's Role
-                             *
-                             * In a P2P network , a peer's role can be describe as `seeder` or `leecher`,
-                             * Which We can judge from the `$left=` params.
-                             *
-                             * However BEP 0021 `Extension for partial seeds` add a new role `partial seed`.
-                             * A partial seed is a peer that is incomplete without downloading anything more.
-                             * This happens for multi file torrents where users only download some of the files.
-                             *
-                             * So another `&event=paused` is need to judge if peer is `paused` or `partial seed`.
-                             * However we still calculate it's duration as leech time, but only seed leecher info to him
-                             *
-                             * We Also Add a custom role which is empty string, Which means We needn't generate
-                             * peer_list for this peer.
-                             *
-                             * @see http://www.bittorrent.org/beps/bep_0021.html
-                             *
-                             */
-                            $role = ($queries['left'] == 0) ? 'yes' : 'no';
-                            if ($queries['event'] == 'paused') {
-                                $role = 'partial';
-                            }
-
-                            /** Check if user can open this session */
-                            $this->checkSession($queries, $role, $userInfo, $torrentInfo);
-
-                            // Send all info to task worker to quick return
-                            $this->sendToTaskWorker($queries, $role, $userInfo, $torrentInfo);
-                        }
-
-                        $this->generateAnnounceResponse($queries, $role, $torrentInfo, $rep_dict);
-                        return Bencode::encode($rep_dict);
+                {
+                    if (!config('tracker.enable_announce')) {
+                        throw new TrackerException(102);
                     }
+
+                    $this->checkAnnounceFields($queries);
+
+                    /**
+                     * If nothing error we start to get and cache the the torrent_info from database,
+                     * and check peer's privilege
+                     */
+                    $this->getTorrentInfo($queries, $userInfo, $torrentInfo);
+
+                    $role = '';
+
+                    /** Check if this announce request is a re-announce. */
+                    if ($this->isReAnnounce($queries) === false) {
+                        /** Lock Min Announce Interval */
+                        $this->checkMinInterval($queries);
+
+                        /** Get peer's Role
+                         *
+                         * In a P2P network , a peer's role can be describe as `seeder` or `leecher`,
+                         * Which We can judge from the `$left=` params.
+                         *
+                         * However BEP 0021 `Extension for partial seeds` add a new role `partial seed`.
+                         * A partial seed is a peer that is incomplete without downloading anything more.
+                         * This happens for multi file torrents where users only download some of the files.
+                         *
+                         * So another `&event=paused` is need to judge if peer is `paused` or `partial seed`.
+                         * However we still calculate it's duration as leech time, but only seed leecher info to him
+                         *
+                         * We Also Add a custom role which is empty string, Which means We needn't generate
+                         * peer_list for this peer.
+                         *
+                         * @see http://www.bittorrent.org/beps/bep_0021.html
+                         *
+                         */
+                        $role = ($queries['left'] == 0) ? 'yes' : 'no';
+                        if ($queries['event'] == 'paused') {
+                            $role = 'partial';
+                        }
+
+                        /** Check if user can open this session */
+                        $this->checkSession($queries, $role, $userInfo, $torrentInfo);
+
+                        // Send all info to task worker to quick return
+                        $this->sendToTaskWorker($queries, $role, $userInfo, $torrentInfo);
+                    }
+
+                    $this->generateAnnounceResponse($queries, $role, $torrentInfo, $rep_dict);
+                    return Bencode::encode($rep_dict);
+                }
 
                 default:
                     throw new TrackerException(111, [':action' => $action]);
@@ -154,7 +155,7 @@ class TrackerController
 
             return Bencode::encode([
                 'failure reason' => $e->getMessage(),
-                'min interval' => (int) config('tracker.min_interval')
+                'min interval' => (int)config('tracker.min_interval')
                 /**
                  * BEP 31: Failure Retry Extension
                  *
@@ -174,7 +175,7 @@ class TrackerController
     protected function logException(\Exception $exception, $userInfo = null, $torrentInfo = null)
     {
         $req_info = app()->request->getQueryString() . "\n\n";
-        $req_info .= (string) app()->request->headers;
+        $req_info .= (string)app()->request->headers;
 
         app()->pdo->prepare('INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`)
                 VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg)
@@ -343,7 +344,7 @@ class TrackerController
                             }
                             // Below requirement
                             if ($peerIdMatched[$i + 1] < $peerIdShould[$i + 1]) {
-                                throw new TrackerException(114, [':start' => $allowedItem['start_name']]);
+                                throw new TrackerException(125, [':start' => $allowedItem['start_name']]);
                             }
                             // Continue to loop. Unless the last bit is equal.
                             if ($peerIdMatched[$i + 1] == $peerIdShould[$i + 1] && $i + 1 == $allowedItem['agent_match_num']) {
@@ -699,23 +700,31 @@ class TrackerController
     }
 
     /**
-     * Some Bittorrent Client May ReAnnounce When we use multi-tracker Extension,
-     * At this time, Our tracker may receive same request twice or more.
+     * If Our Tracker in those situation:
+     *    - Using multi-tracker Extension (BEP 0012), All query string are the same
+     *    - Tracker Url can resolve to multiple IP addresses (BEP 0007 Tracker Hostname Resolution)，
+     *      All query element except `key` are the same
      *
-     * When our tracker receive the first announce request,
-     * This function will hit a 60s lock in Redis zset based on request uri,
-     * And if another same request hit the lock,
-     * We should pass the main announce check and just return the empty peer_list in other announce request
+     * Some Bittorrent Client May ReAnnounce many times,
+     * Depending on Client Behaviour, Tracker/Tier Number, Resolved IP of each Tracker
+     * Add we SHOULD only process the first announce requests which we received,
+     * and just return the empty peer_list in other announce request.
      *
-     * @return float|bool
+     * @param $queries
+     * @return bool
      */
-    private function lockAnnounceDuration()
+    private function isReAnnounce($queries)
     {
-        $identity = md5(urldecode(app()->request->getQueryString()));
-        if (false == $check = app()->redis->zScore(Constant::trackerAnnounceLockZset, $identity)) {  // this identity is not lock
-            app()->redis->zAdd(Constant::trackerAnnounceLockZset, time() + 60, $identity);
+        $query_string = urldecode(app()->request->getQueryString());
+        $identity = md5(str_replace($queries['key'], '', $query_string));
+
+        $prev_lock_expire_at = app()->redis->zScore(Constant::trackerAnnounceLockZset, $identity) ?: $this->timenow;
+        if ($this->timenow >= $prev_lock_expire_at) {  // this identity is not lock
+            app()->redis->zAdd(Constant::trackerAnnounceLockZset, $this->timenow + 30, $identity);
+            return false;
         }
-        return $check;
+
+        return true;
     }
 
     /**
@@ -725,8 +734,10 @@ class TrackerController
     private function checkMinInterval($queries)
     {
         $identity = md5(implode(':', [
-            // Use `passkey, info_hash, peer_id` as a unique key to check if this announce is in min interval
-            $queries['passkey'], $queries['info_hash'], $queries['peer_id'],
+            // Use `passkey, info_hash, peer_id, key` as a unique key to check if this announce is in min interval
+            $queries['passkey'],  // Identify User
+            $queries['info_hash'],  // Identify Torrent
+            $queries['peer_id'], $queries['key'],  // Identify Peer (peer_id + key)
             // We should also add `event` params to prevent peer completed announce been blocked after common announce
             $queries['event']
         ]));
@@ -736,7 +747,7 @@ class TrackerController
             throw new TrackerException(162, [':min' => config('tracker.min_interval')]);
         }
 
-        $min_interval = intval(config('tracker.min_interval') * (3 / 4));
+        $min_interval = (int)config('tracker.min_interval') * (3 / 4);
         app()->redis->zAdd(Constant::trackerAnnounceMinIntervalLockZset, $this->timenow + $min_interval, $identity);
     }
 
@@ -860,10 +871,10 @@ class TrackerController
     private function generateAnnounceResponse($queries, $role, $torrentInfo, &$rep_dict)
     {
         $rep_dict = [
-            'interval' => (int) config('tracker.interval') + rand(5, 20),   // random interval to avoid BOOM
-            'min interval' => (int) config('tracker.min_interval') + rand(1, 10),
-            'complete' => (int) $torrentInfo['complete'],
-            'incomplete' => (int) $torrentInfo['incomplete'],
+            'interval' => (int)config('tracker.interval') + rand(5, 20),   // random interval to avoid BOOM
+            'min interval' => (int)config('tracker.min_interval') + rand(1, 10),
+            'complete' => (int)$torrentInfo['complete'],
+            'incomplete' => (int)$torrentInfo['incomplete'],
             'peers' => []  // By default it is a array object, only when `&compact=1` then it should be a string
         ];
 
@@ -874,7 +885,7 @@ class TrackerController
         }
 
         // Fix rep_dict format based on params `&compact=`, `&np_peer_id=`, `&numwant=` and our tracker config
-        $compact = (bool) ($queries['compact'] == 1 || config('tracker.force_compact_model'));
+        $compact = (bool)($queries['compact'] == 1 || config('tracker.force_compact_model'));
         if ($compact) {
             $queries['no_peer_id'] = 1;  // force `no_peer_id` when `compact` mode is enable
             $rep_dict['peers'] = '';  // Change `peers` from array to string
@@ -883,8 +894,8 @@ class TrackerController
             }
         }
 
-        $no_peer_id = (bool) ($queries['no_peer_id'] == 1 || config('tracker.force_no_peer_id_model'));
-        $limit = (int) ($queries['numwant'] <= config('tracker.max_numwant')) ? $queries['numwant'] : config('tracker.max_numwant');
+        $no_peer_id = (bool)($queries['no_peer_id'] == 1 || config('tracker.force_no_peer_id_model'));
+        $limit = (int)($queries['numwant'] <= config('tracker.max_numwant')) ? $queries['numwant'] : config('tracker.max_numwant');
 
         // Query Peers in database
         $peers = app()->pdo->prepare([

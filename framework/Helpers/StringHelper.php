@@ -7,7 +7,6 @@ namespace Rid\Helpers;
  */
 class StringHelper
 {
-
     private static function my_simple_crypt(string $string, $action = 'e'): ?string
     {
         $secret_key = env('APP_SECRET_KEY');

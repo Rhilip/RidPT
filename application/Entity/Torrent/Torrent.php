@@ -284,7 +284,7 @@ class Torrent extends BaseObject
         return $this->getCacheValue('last_comments_details', function () {
             $offset = $this->comments / $this->comment_perpage;
             return app()->pdo->prepare('SELECT * FROM torrent_comments WHERE torrent_id = :tid LIMIT :o, :l;')->bindParams([
-                'tid' => $this->id, 'o' => intval($offset), 'l' => $this->comment_perpage
+                'tid' => $this->id, 'o' => (int)$offset, 'l' => $this->comment_perpage
             ])->queryAll();
         });
     }

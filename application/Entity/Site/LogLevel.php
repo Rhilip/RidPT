@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Entity\Site;
 
-
 class LogLevel
 {
     const LOG_LEVEL_NORMAL = 'normal';

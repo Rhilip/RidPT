@@ -53,7 +53,8 @@ class Response extends HttpFoundationResponse implements Base\StaticInstanceInte
         $this->cleanResponse();
     }
 
-    private function cleanResponse() {
+    private function cleanResponse()
+    {
         $this->headers = new ResponseHeaderBag([]);
         $this->setContent('');
         $this->setStatusCode(200);

@@ -17,6 +17,7 @@
 
 ### Feat
 - **Cache:** Allow ttl key for Redis Hash type (85a9587)
+- **IpUtils:** Rename to Ip and add isPublicIp function (a99e7c5)
 - **Request:** Move some Component prop to Request attributes (2f22b89)
 - **Requests:** Make Response Component extends from `Symfony\Component\HttpFoundation\Response` (dd001d2)
 - **Requests:** Make Request Component extends from `Symfony\Component\HttpFoundation\Request` (9cd715b)
