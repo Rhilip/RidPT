@@ -850,18 +850,12 @@ class TrackerController
             return;
         }
 
-        // peer_ip_type
-        $has_ipv4 = ($queries['connect_type'] & 0b01) == 0b01;
-        $has_ipv6 = ($queries['connect_type'] & 0b10) == 0b10;
-
         // Fix rep_dict format based on params `&compact=`, `&np_peer_id=`, `&numwant=` and our tracker config
         $compact = (bool)($queries['compact'] == 1 || config('tracker.force_compact_model'));
         if ($compact) {
             $queries['no_peer_id'] = 1;  // force `no_peer_id` when `compact` mode is enable
             $rep_dict['peers'] = '';  // Change `peers` from array to string
-            if ($has_ipv6) {   // If peer has IPv6 address , we should add packed string in `peers6`
-                $rep_dict['peers6'] = '';
-            }
+            $rep_dict['peers6'] = ''; // we should add Packed IPv6:port in `peers6`
         }
 
         $no_peer_id = (bool)($queries['no_peer_id'] == 1 || config('tracker.force_no_peer_id_model'));
@@ -889,16 +883,8 @@ class TrackerController
 
             $endpoints = json_decode($peer['endpoints']);
             foreach ($endpoints as $ip => $port) {
-                $is_ipv6 = Ip::isValidIPv6($ip);
-
-                if ((!$has_ipv6 && $is_ipv6) ||  // if this peer don't have ipv6 address, don't send ipv6 peer to him
-                    (!$has_ipv4 && !$is_ipv6)    // if this peer don't have ipv4 address, don't send ipv4 peer to him
-                ) {
-                    continue;
-                }
-
                 if ($compact == 1) {
-                    $peer_insert_field = $is_ipv6 ? 'peers6' : 'peers';
+                    $peer_insert_field = Ip::isValidIPv6($ip) ? 'peers6' : 'peers';
                     $rep_dict[$peer_insert_field] .= inet_pton($ip) . pack('n', $port);
                 } else {
                     $exchange_peer['ip'] = $ip;
