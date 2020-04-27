@@ -2,7 +2,8 @@
 ## [Unreleased]
 
 ### Build
-- **Composer:** remove unnecessary ext and some fix (e8b9adc)
+- **Composer:** remove unnecessary ext and some fix (0729389)
+- **Composer:** remove unnecessary ext and some fix (1235d86)
 - **PHP:** bump PHP major version to min 7.4 (d5b1ff1)
 
 ### Chore
@@ -16,12 +17,12 @@
 
 ### Feat
 - **Cache:** Allow ttl key for Redis Hash type (85a9587)
-- **Request:** Move some Component prop to Request attributes (497bc38)
+- **Request:** Move some Component prop to Request attributes (2f22b89)
 - **Requests:** Make Response Component extends from `Symfony\Component\HttpFoundation\Response` (dd001d2)
 - **Requests:** Make Request Component extends from `Symfony\Component\HttpFoundation\Request` (9cd715b)
 - **Torrent:** Per-add torrent edit (f06b342)
 - **Torrents:** Allow search in user's favour (or you can say bookmark) (c0aa627)
-- **Validator:** Add magic function __get() as alias of getInput() (86e69f7)
+- **Validator:** Add magic function __get() as alias of getInput() (3c23927)
 - **composer:** Add `nesbot/carbon` to deal with Date and Time (9e37c41)
 - **i18n:** Use symfony/translation and JSON format for locale (02cc251)
 - **layout:** Add anti-robots html meta tag (9c21e73)
@@ -29,7 +30,7 @@
 ### Fix
 - **API:** ApiMiddleware not work after change Response Component (6da82a7)
 - **Bencode:** Fix dict keys may not in sorted order (81f0783)
-- **Composer:** Fix wrong composer.json format (3f17e03)
+- **Composer:** Fix wrong composer.json format (2c4459c)
 - **Config:** Fix JSON type config return False (1129008)
 - **Cron:** Fix components lost in CronTabProcess (1ced4bf)
 - **Redis:** Fix wrong type of Redis call function hMset() to hMSet() (a163150)
@@ -57,7 +58,7 @@
 
 ### Style
 - **Bencode:** Separate Bencode library to `Rhilip/Bencode` (18cbfa1)
-- **Request:** Move route as a part of attributes (aee4682)
+- **Request:** Move route as a part of attributes (f63ed00)
 - **cs-fixer:** Update Composer config and php-cs-fixer whole project (e734812)
 - **gitignore:** Add .php_cs.cache to .gitignore (15a2a15)
 

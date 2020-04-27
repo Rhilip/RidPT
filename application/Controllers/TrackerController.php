@@ -12,7 +12,7 @@ use App\Libraries\Constant;
 use App\Entity\User\UserRole;
 use App\Exceptions\TrackerException;
 
-use Rid\Utils\IpUtils;
+use Rid\Utils\Ip;
 
 use Rhilip\Bencode\Bencode;
 use Symfony\Component\HttpFoundation\Request;
@@ -588,13 +588,13 @@ class TrackerController
 
         // Get user ipv6 and ipv6_port data and store it in $queries['ipv6'] and $queries['ipv6_port']
         if ($queries['ipv6']) {
-            if ($client = IpUtils::isEndPoint($queries['ipv6'])) {
+            if ($client = Ip::isEndPoint($queries['ipv6'])) {
                 $queries['ipv6'] = $client['ip'];
                 $queries['ipv6_port'] = $client['port'];
             }
 
             // Ignore all un-Native IPv6 address ( starting with FD or FC ; reserved IPv6 ) and IPv4-mapped-IPv6 address
-            if (!IpUtils::isPublicIPv6($queries['ipv6']) || strpos($queries['ipv6'], '.') !== false) {
+            if (!Ip::isPublicIPv6($queries['ipv6']) || strpos($queries['ipv6'], '.') !== false) {
                 $queries['ipv6'] = $queries['ipv6_port'] = '';
             }
         }
@@ -602,9 +602,9 @@ class TrackerController
         // If we can't get valid IPv6 address from `&ipv6=`
         // fail back to `&ip=<IPv6>` then the IPv6 format remote_ip
         if (!$queries['ipv6']) {
-            if ($queries['ip'] && IpUtils::isValidIPv6($queries['ip'])) {
+            if ($queries['ip'] && Ip::isValidIPv6($queries['ip'])) {
                 $queries['ipv6'] = $queries['ip'];
-            } elseif (IpUtils::isValidIPv6($remote_ip)) {
+            } elseif (Ip::isValidIPv6($remote_ip)) {
                 $queries['ipv6'] = $remote_ip;
             }
             if ($queries['ipv6']) {
@@ -613,24 +613,24 @@ class TrackerController
         }
 
         // Clean $queries['ip'] field and then store ipv4 data in it to make sure this field is IPv4-Only
-        if ($queries['ip'] && !IpUtils::isValidIPv4($queries['ip'])) {
+        if ($queries['ip'] && !Ip::isValidIPv4($queries['ip'])) {
             $queries['ip'] = '';
         }
 
         // handle param `&ipv4=` like `&ipv6=`
         if ($queries['ipv4']) {
-            if ($client = IpUtils::isEndPoint($queries['ipv4'])) {
-                if (IpUtils::isValidIPv4($client['ip'])) {
+            if ($client = Ip::isEndPoint($queries['ipv4'])) {
+                if (Ip::isValidIPv4($client['ip'])) {
                     $queries['ip'] = $client['ip'];
                     $queries['port'] = $client['port'];
                 }
-            } elseif (IpUtils::isValidIPv4($queries['ipv4'])) {
+            } elseif (Ip::isValidIPv4($queries['ipv4'])) {
                 $queries['ip'] = $queries['ipv4'];
             }
         }
 
         // Fail back to remote_ip which in IPv4-format
-        if (!IpUtils::isPublicIPv4($queries['ip']) && IpUtils::isValidIPv4($remote_ip)) {
+        if (!Ip::isPublicIPv4($queries['ip']) && Ip::isValidIPv4($remote_ip)) {
             $queries['ip'] = $remote_ip;
         }
 

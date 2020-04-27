@@ -8,7 +8,7 @@
 
 namespace App\Middleware;
 
-use Rid\Utils\IpUtils;
+use Rid\Utils\Ip;
 
 class IpBanMiddleware
 {
@@ -18,7 +18,7 @@ class IpBanMiddleware
         $ip = app()->request->getClientIp();
         $ip_ban_list = app()->site->getBanIpsList();
 
-        if (count($ip_ban_list) > 0 && IpUtils::checkIp($ip, $ip_ban_list)) {
+        if (count($ip_ban_list) > 0 && Ip::checkIp($ip, $ip_ban_list)) {
             return app()->response->setStatusCode(403);
         }
 
