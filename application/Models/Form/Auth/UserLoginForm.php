@@ -11,8 +11,8 @@ namespace App\Models\Form\Auth;
 use App\Libraries\Constant;
 use App\Entity\User\UserStatus;
 
-use Rid\Helpers\StringHelper;
 use Rid\Helpers\JWTHelper;
+use Rid\Utils\Random;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 use Symfony\Component\HttpFoundation\Cookie;
@@ -140,7 +140,7 @@ class UserLoginForm extends Validator
         $timenow = time();
 
         do { // Generate unique JWT ID
-            $jti = StringHelper::getRandomString(64);
+            $jti = Random::alnum(64);
             $count = app()->pdo->prepare('SELECT COUNT(`id`) FROM sessions WHERE session = :sid;')->bindParams([
                 'sid' => $jti
             ])->queryScalar();

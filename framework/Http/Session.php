@@ -3,8 +3,8 @@
 namespace Rid\Http;
 
 use Rid\Base\Component;
-use Rid\Helpers\StringHelper;
 
+use Rid\Utils\Random;
 use Symfony\Component\HttpFoundation\Cookie;
 
 /**
@@ -46,7 +46,7 @@ class Session extends Component
         if (is_null($session_id)) {
             // Generate Unique Session Id
             do {
-                $session_id = StringHelper::getRandomString($this->_sessionIdLength);
+                $session_id = Random::alnum($this->_sessionIdLength);
             } while (app()->redis->exists($this->saveKeyPrefix . $session_id));
 
             // Save it both to request and response
@@ -108,9 +108,10 @@ class Session extends Component
         return $success ? true : false;
     }
 
+    // FIXME
     public function setCsrfToken()
     {
-        $csrf = StringHelper::getRandomString(16);
+        $csrf = Random::alnum(16);
         $this->set('csrf', $csrf);
         return $csrf;
     }

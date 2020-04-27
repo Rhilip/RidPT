@@ -14,6 +14,7 @@ use App\Entity\User\UserStatus;
 use App\Entity\Site\LogLevel;
 
 use Rid\Helpers\StringHelper;
+use Rid\Utils\Random;
 use Rid\Validators\Validator;
 use Rid\Validators\CaptchaTrait;
 
@@ -261,7 +262,7 @@ class UserRegisterForm extends Validator
 
     public function flush()
     {
-        $this->passkey = StringHelper::md5($this->username . date("Y-m-d H:i:s"), 10);
+        $this->passkey = md5($this->username . date("Y-m-d H:i:s") . Random::alnum(10));
 
         /**
          * Set The First User enough privilege ,
@@ -310,7 +311,7 @@ class UserRegisterForm extends Validator
 
         // Send Confirm Email
         if ($this->confirm_way == 'email') {
-            $confirm_key = StringHelper::getRandomString(32);
+            $confirm_key = Random::alnum(32);
             app()->pdo->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
                 'uid' => $this->id, 'secret' => $confirm_key, 'action' => $this->_action
             ])->execute();

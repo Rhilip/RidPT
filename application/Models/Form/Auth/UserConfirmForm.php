@@ -10,7 +10,7 @@ namespace App\Models\Form\Auth;
 
 use App\Entity\User\UserStatus;
 
-use Rid\Helpers\StringHelper;
+use Rid\Utils\Random;
 use Rid\Validators\Validator;
 
 class UserConfirmForm extends Validator
@@ -97,7 +97,7 @@ class UserConfirmForm extends Validator
         }
 
         // generate new password
-        $new_password = StringHelper::getRandomString(10);
+        $new_password = Random::alnum(10);
         app()->pdo->prepare('UPDATE `users` SET `password` = :new_password WHERE `id` = :uid')->bindParams([
             'new_password' => password_hash($new_password, PASSWORD_DEFAULT), 'uid' => $this->uid
         ])->execute();

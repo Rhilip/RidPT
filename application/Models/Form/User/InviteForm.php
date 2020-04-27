@@ -10,7 +10,7 @@ namespace App\Models\Form\User;
 
 use App\Models\Form\Auth\UserRegisterForm;
 
-use Rid\Helpers\StringHelper;
+use Rid\Utils\Random;
 use Rid\Validators\CaptchaTrait;
 
 class InviteForm extends UserRegisterForm
@@ -106,7 +106,7 @@ class InviteForm extends UserRegisterForm
     private function insertInviteRecord()
     {
         do { // To make sure this hash is unique !
-            $invite_hash = StringHelper::getRandomString(32);
+            $invite_hash = Random::alnum(32);
 
             $count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `invite` WHERE `hash` = :hash')->bindParams([
                 'hash' => $invite_hash

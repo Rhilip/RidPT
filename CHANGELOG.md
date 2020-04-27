@@ -2,6 +2,7 @@
 ## [Unreleased]
 
 ### Build
+- **Composer:** remove unnecessary ext and some fix (e8b9adc)
 - **PHP:** bump PHP major version to min 7.4 (d5b1ff1)
 
 ### Chore
@@ -15,6 +16,7 @@
 
 ### Feat
 - **Cache:** Allow ttl key for Redis Hash type (85a9587)
+- **Request:** Move some Component prop to Request attributes (497bc38)
 - **Requests:** Make Response Component extends from `Symfony\Component\HttpFoundation\Response` (dd001d2)
 - **Requests:** Make Request Component extends from `Symfony\Component\HttpFoundation\Request` (9cd715b)
 - **Torrent:** Per-add torrent edit (f06b342)

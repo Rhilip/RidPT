@@ -10,7 +10,7 @@ namespace App\Models\Form\Auth;
 
 use App\Entity\User\UserStatus;
 
-use Rid\Helpers\StringHelper;
+use Rid\Utils\Random;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
 
@@ -55,7 +55,7 @@ class UserRecoverForm extends Validator
             }
 
             // Send user email to get comfirm link
-            $confirm_key = StringHelper::getRandomString(32);
+            $confirm_key = Random::alnum(32);
             app()->pdo->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
                 'uid' => $user_info['id'], 'secret' => $confirm_key, 'action' => $this->_action
             ])->execute();
