@@ -8,6 +8,7 @@
 
 namespace App\Controllers;
 
+use App\Helper\SwitchHelper;
 use App\Libraries\Constant;
 use App\Entity\User\UserRole;
 use App\Exceptions\TrackerException;
@@ -561,20 +562,15 @@ class TrackerController
 
         $queries['user-agent'] = app()->request->headers->get('user-agent');
 
-        // Part.3 check Announce *IP* Fields
         /**
+         * Part.3 check Announce *IP* Fields
+         *
          * We have `ip`, `port`, `endpoints` Columns in Table `peers`
          * But peer 's ip can be find in Requests Headers and param like `&ip=` , `&ipv4=` , `&ipv6=`
          * So, we should deal with those situation.
          *
          * We record `ip` from $remote_ip, `port` from `&port=`,
          * And Any other ip:port from `&ip=` , `&ipv4=` , `&ipv6=` in Array $endpoints [$ip => $port, ...]
-         *
-         * After valid those ip params, we will identify peer connect type AS:
-         *  1. Only IPv4       - 0b01 (1)
-         *  2. Only IPv6       - 0b10 (2)
-         *  3. Both IPv4-IPv6  - 0b11 (3)
-         * Which is useful when generate Announce Response.
          *
          * See more: http://www.bittorrent.org/beps/bep_0007.html
          */
@@ -605,13 +601,23 @@ class TrackerController
 
         [$ips, $ports] = Arr::divide($endpoints);
 
-        $connect_type = 0b00 /* No Connection */;
+        /**
+         * Part.4 Determine peer connect type by its announce ips
+         *
+         * After get valid endpoints, we will identify peer connect type AS:
+         *  0. No Connect      - 0b00 (0)
+         *  1. Only IPv4       - 0b01 (1)
+         *  2. Only IPv6       - 0b10 (2)
+         *  3. Both IPv4-IPv6  - 0b11 (3)
+         * Which is useful when generate Announce Response.
+         */
+        $connect_type = 0b00;
         foreach ($ips as $ip) {
-            $connect_type |= Ip::isValidIPv6($ip) ? 0b10 /* IPv6 */ : 0b01 /* IPv4 */;
+            $connect_type |= Ip::isValidIPv6($ip) ? 0b10 : 0b01;
         }
         $queries['connect_type'] = $connect_type;
 
-        // Part.4 check Port Fields is Valid and Allowed
+        // Part.5 check Port Fields is Valid and Allowed
         foreach (array_unique($ports) as $port) {
             /**
              * Normally , the port must in 1 - 65535 , that is ( $port > 0 && $port < 0xffff )
@@ -764,49 +770,26 @@ class TrackerController
             if ($userInfo['class'] < UserRole::VIP) {
                 $ratio = (($userInfo['downloaded'] > 0) ? ($userInfo['uploaded'] / $userInfo['downloaded']) : 1);
                 $gigs = $userInfo['downloaded'] / (1024 * 1024 * 1024);
-
-                // Wait System
-                if (config('tracker.enable_waitsystem')) {
-                    if ($gigs > 10) {
-                        if ($ratio < 0.4) {
-                            $wait = 24;
-                        } elseif ($ratio < 0.5) {
-                            $wait = 12;
-                        } elseif ($ratio < 0.6) {
-                            $wait = 6;
-                        } elseif ($ratio < 0.8) {
-                            $wait = 3;
-                        } else {
-                            $wait = 0;
-                        }
-
+                if ($gigs > 10) {
+                    // Wait System
+                    if (config('tracker.enable_waitsystem')) {
+                        $wait = SwitchHelper::selectRoundOneFromMap($ratio, ['0.4' => 24, '0.5' => 12, '0.6' => 6, '0.8' => 3], 0);
                         $elapsed = time() - $torrentInfo['added_at'];
                         if ($elapsed < $wait) {
                             throw new TrackerException(163, [':sec' => $wait * 3600 - $elapsed]);
                         }
                     }
-                }
 
-                // Max SLots System
-                if (config('tracker.enable_maxdlsystem')) {
-                    $max = 0;
-                    if ($gigs > 10) {
-                        if ($ratio < 0.5) {
-                            $max = 1;
-                        } elseif ($ratio < 0.65) {
-                            $max = 2;
-                        } elseif ($ratio < 0.8) {
-                            $max = 3;
-                        } elseif ($ratio < 0.95) {
-                            $max = 4;
-                        }
-                    }
-                    if ($max > 0) {
-                        $count = app()->pdo->prepare("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
-                            'uid' => $userInfo['id']
-                        ])->queryScalar();
-                        if ($count >= $max) {
-                            throw new TrackerException(164, [':max' => $max]);
+                    // Max SLots System
+                    if (config('tracker.enable_maxdlsystem')) {
+                        $max = SwitchHelper::selectRoundOneFromMap($ratio, ['0.5' => 1, '0.65' => 2, '0.8' => 3, '0.95' => 4], 0);
+                        if ($max > 0) {
+                            $count = app()->pdo->prepare("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
+                                'uid' => $userInfo['id']
+                            ])->queryScalar();
+                            if ($count >= $max) {
+                                throw new TrackerException(164, [':max' => $max]);
+                            }
                         }
                     }
                 }
@@ -866,8 +849,8 @@ class TrackerController
             ['SELECT `endpoints`'],
             [', `peer_id` ', 'if' => !$no_peer_id],
             ['FROM `peers` WHERE torrent_id = :tid ', 'params' => ['tid' => $torrentInfo['id']]],
-            ['AND peer_id != :pid  ', 'params' => ['pid' => $queries['peer_id']]],  // Don't select user himself
             ['AND `seeder` = \'no\' ', 'if' => $role != 'no'],  // Don't report seeders to other seeders (include partial seeders)
+            ['AND peer_id != :pid ', 'params' => ['pid' => $queries['peer_id']]],  // Don't select user himself
             ['ORDER BY RAND() LIMIT :limit',
                 'if' => ($torrentInfo['complete'] + $torrentInfo['incomplete']) > $limit,  // LIMIT AND SORT only total peer plus numwant
                 'params' => ['limit' => $limit]

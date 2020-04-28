@@ -43,7 +43,6 @@ class Constant
     }
 
     // Tracker User
-
     public static function trackerTorrentContentByInfoHash(string $bin2hex_hash)
     {
         return 'Tracker:torrent_infohash_content:' . $bin2hex_hash;  // Hash

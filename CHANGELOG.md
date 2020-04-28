@@ -38,9 +38,10 @@
 - **Response:** Fix Header `Set-Cookie` header don't clean (144eef7)
 - **Response:** Fix Response header and status not clean (82977ea)
 - **Route:** Fix user can access maintenance page even not on maintenance status (b29c2f6)
-- **Tracker:** Client Double Announce may Locked (8fe638a)
-- **Tracker:** Fix typo in TrackerController (323c8ec)
+- **Tracker:** Send all ip:port to peer without ip judge (7d7d6eb)
 - **Tracker:** Disable `retry in` feature by default (4b1f767)
+- **Tracker:** Fix typo in TrackerController (323c8ec)
+- **Tracker:** Client Double Announce may Locked (8fe638a)
 - **User:** Fix all user class info become cur_user (77c7345)
 
 ### Perf
@@ -48,6 +49,7 @@
 - **Component:** View Become a component to perf load time (660c1f1)
 - **Log:** Separate Site Log Level from component Site (d110c2b)
 - **Session_Log:** Use `insert with select` to log session (d786243)
+- **Tracker:** Use `endpoints` field to record peer's ip:port (87ae9bb)
 - **Tracker:** Reduce Redis Calls for get User and Torrent Info in Tracker (e813435)
 - **User:** Sort class User and create UserFactory (8fced36)
 - **User:** Add `Entity\User\AbstractUserInterface` (1d8e9e4)

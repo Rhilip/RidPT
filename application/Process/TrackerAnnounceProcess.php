@@ -89,7 +89,7 @@ class TrackerAnnounceProcess extends Process
                 ])->execute();
 
                 // Search history record, and create new record if not exist.
-                $selfRecordCount = app()->pdo->prepare('SELECT COUNT(`id`) FROM snatched WHERE user_id=:uid AND torrent_id = :tid')->bindParams([
+                $selfRecordCount = app()->pdo->prepare('SELECT COUNT(`id`) FROM snatched WHERE user_id = :uid AND torrent_id = :tid')->bindParams([
                     'uid' => $userInfo['id'],
                     'tid' => $torrentInfo['id']
                 ])->queryScalar();
@@ -176,7 +176,7 @@ class TrackerAnnounceProcess extends Process
 
         // Update Table `users` , record his upload and download data and connect time information
         app()->pdo->prepare('UPDATE `users` SET uploaded = uploaded + :upload, downloaded = downloaded + :download, '
-            . ($trueUploaded > 0 ? 'last_upload_at=NOW(),' : '') . ($trueDownloaded > 0 ? 'last_download_at=NOW(),' : '') .
+            . ($trueUploaded > 0 ? 'last_upload_at=NOW(), ' : '') . ($trueDownloaded > 0 ? 'last_download_at=NOW(), ' : '') .
             "`last_connect_at`=NOW() , `last_tracker_ip`= INET6_ATON(:ip) WHERE id = :uid")->bindParams([
             'upload' => $thisUploaded, 'download' => $thisDownloaded,
             'uid' => $userInfo['id'], 'ip' => $queries['ip']
@@ -243,9 +243,9 @@ class TrackerAnnounceProcess extends Process
             WHERE start_at < NOW() AND NOW() < expired_at AND (torrent_id = :tid OR torrent_id = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 'tid' => $torrentid, 'bid' => $userid
             ])->queryOne();
-            app()->redis->setex('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid, intval((int)config('tracker.interval')), $buff);
+            app()->redis->setex('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid, (int)config('tracker.interval'), $buff);
         }
-        $thisUploaded = $trueUploaded * ($buff['up_ratio'] ?: 1);
-        $thisDownloaded = $trueDownloaded * ($buff['dl_ratio'] ?: 1);
+        $thisUploaded = (int)($trueUploaded * ($buff['up_ratio'] ?: 1));
+        $thisDownloaded = (int)($trueDownloaded * ($buff['dl_ratio'] ?: 1));
     }
 }
