@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+
+<a name="v0.1.7-alpha"></a>
+## [v0.1.7-alpha] - 2020-04-28
 ### Build
 - **Composer:** remove unnecessary ext and some fix (0729389)
 - **Composer:** remove unnecessary ext and some fix (1235d86)
@@ -13,6 +16,7 @@
 - **README:** fix typo of start command (657c71a)
 - **Redis:** Fix phpdoc for Redis Component (70ac399)
 - **Sponsor:** Add Sponsor `MeiHeZi` (ae612e0)
+- **Tracker:** Change comment for announce query. (9856652)
 - **phpstorm:** Add `.phpstorm.meat.php` for config() function (407bb66)
 
 ### Feat
@@ -70,6 +74,10 @@
 
 ### Test
 - **Validator:** Remove Autoload from requests (3b3e585)
+
+### BREAKING CHANGE
+
+structure of Table `peers` changed
 
 
 <a name="v0.1.6-alpha"></a>
@@ -531,7 +539,8 @@ Structure of Table `users_session_log` Change
 <a name="v0.1.0-alpha"></a>
 ## v0.1.0-alpha - 2019-01-30
 
-[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.6-alpha...HEAD
+[Unreleased]: https://github.com/Rhilip/ridpt/compare/v0.1.7-alpha...HEAD
+[v0.1.7-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.6-alpha...v0.1.7-alpha
 [v0.1.6-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.5-alpha...v0.1.6-alpha
 [v0.1.5-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.4-alpha...v0.1.5-alpha
 [v0.1.4-alpha]: https://github.com/Rhilip/ridpt/compare/v0.1.3-alpha...v0.1.4-alpha
