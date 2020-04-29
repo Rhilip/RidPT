@@ -1,6 +1,9 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Fix
+- **Pager:** incorrect parseint may cause $offset negative (4fddce2)
+
 
 <a name="v0.1.7-alpha"></a>
 ## [v0.1.7-alpha] - 2020-04-28
@@ -15,6 +18,7 @@
 ### Docs
 - **README:** fix typo of start command (657c71a)
 - **Redis:** Fix phpdoc for Redis Component (70ac399)
+- **Release:** Version 'v0.1.7-alpha' (aaea86e)
 - **Sponsor:** Add Sponsor `MeiHeZi` (ae612e0)
 - **Tracker:** Change comment for announce query. (9856652)
 - **phpstorm:** Add `.phpstorm.meat.php` for config() function (407bb66)

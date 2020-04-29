@@ -53,8 +53,8 @@ if (!PHP_SAPI === 'cli') {
  * environment variables quickly and simply.
  *
  */
-$dotenv = Dotenv\Dotenv::create(RIDPT_ROOT);
-$dotenv->load();  // $dotenv->overload();
+$dotenv = new Symfony\Component\Dotenv\Dotenv();
+$dotenv->load(RIDPT_ROOT . '/.env');  // $dotenv->overload();
 
 /*
  * --------------------------------------------------------------------------
@@ -70,11 +70,11 @@ $commands = require RIDPT_ROOT . '/config/commands.php';
 foreach ($commands as $command) $console->add(new $command());
 
 $console->logo(<<<EOF
-  ____            __  ____    ______   
- /\  _`\   __    /\ \/\  _`\ /\__  _\  
- \ \ \L\ \/\_\   \_\ \ \ \L\ \/_/\ \/  
-  \ \ ,  /\/\ \  /'_` \ \ ,__/  \ \ \  
-   \ \ \\ \\ \ \/\ \L\ \ \ \/    \ \ \ 
+  ____            __  ____    ______
+ /\  _`\   __    /\ \/\  _`\ /\__  _\
+ \ \ \L\ \/\_\   \_\ \ \ \L\ \/_/\ \/
+  \ \ ,  /\/\ \  /'_` \ \ ,__/  \ \ \
+   \ \ \\ \\ \ \/\ \L\ \ \ \/    \ \ \
     \ \_\ \_\ \_\ \___,_\ \_\     \ \_\
      \/_/\/ /\/_/\/__,_ /\/_/      \/_/
 EOF);
