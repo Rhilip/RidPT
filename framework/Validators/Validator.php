@@ -3,7 +3,6 @@
 namespace Rid\Validators;
 
 use Rid\Base\BaseObject;
-use Rid\Http\UploadFile;
 
 use ReflectionClass;
 use ReflectionProperty;
@@ -24,7 +23,6 @@ class Validator extends BaseObject
 {
     /** @var array Input data */
     private array $_input = [];
-    private array $_file_input_name = [];
 
     private ?\Sirius\Validation\Validator $_validator;
 
@@ -79,25 +77,15 @@ class Validator extends BaseObject
         $this->_input = array_merge($this->_input, $config);
     }
 
-    final public function setFileInput($config)
-    {
-        $this->setInput($config);
-        $this->_file_input_name = array_merge($this->_file_input_name, array_keys($config));
-    }
-
     /**
      * @param $key
      * @param mixed $default
-     * @return mixed|UploadFile
+     * @return mixed
      */
     final public function getInput($key = null, $default = null)
     {
         if (is_null($key)) {
             return $this->_input;
-        }
-
-        if (in_array($key, $this->_file_input_name)) {
-            return new UploadFile($this->_input[$key]);
         }
 
         return $this->_input[$key] ?? $default;

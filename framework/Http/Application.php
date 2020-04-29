@@ -11,8 +11,8 @@ use Swoole\Http\Server;
  * @property \Rid\Http\Error $error
  * @property \Rid\Http\Session $session
  * @property \Rid\Http\Route $route
- * @property \Rid\Http\Request $request
- * @property \Rid\Http\Response $response
+ * @property \Rid\Http\Message\Request $request
+ * @property \Rid\Http\Message\Response $response
  * @property \App\Components\Auth $auth
  */
 class Application extends \Rid\Base\Application

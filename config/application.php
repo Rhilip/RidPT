@@ -54,14 +54,14 @@ return [
 
         // 请求
         'request' => [
-            'class' => Rid\Http\Request::class,
+            'class' => Rid\Http\Message\Request::class,
             'trustedProxies' => ['127.0.0.1', '::1'],
             //'trustedHosts' => -1,
         ],
 
         // 响应
         'response' => [
-            'class' => Rid\Http\Response::class,
+            'class' => Rid\Http\Message\Response::class,
         ],
 
         // 错误

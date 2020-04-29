@@ -719,7 +719,7 @@ class TrackerController
             throw new TrackerException(162, [':min' => config('tracker.min_interval')]);
         }
 
-        $min_interval = (int)config('tracker.min_interval') * (3 / 4);
+        $min_interval = (int)(config('tracker.min_interval') * (3 / 4));
         app()->redis->zAdd(Constant::trackerAnnounceMinIntervalLockZset, $this->timenow + $min_interval, $identity);
     }
 
@@ -820,8 +820,8 @@ class TrackerController
     private function generateAnnounceResponse($queries, $role, $torrentInfo, &$rep_dict)
     {
         $rep_dict = [
-            'interval' => (int)config('tracker.interval') + rand(5, 20),   // random interval to avoid BOOM
-            'min interval' => (int)config('tracker.min_interval') + rand(1, 10),
+            'interval' => (int)(config('tracker.interval') + rand(5, 20)),   // random interval to avoid BOOM
+            'min interval' => (int)(config('tracker.min_interval') + rand(1, 10)),
             'complete' => (int)$torrentInfo['complete'],
             'incomplete' => (int)$torrentInfo['incomplete'],
             'peers' => []  // By default it is a array object, only when `&compact=1` then it should be a string

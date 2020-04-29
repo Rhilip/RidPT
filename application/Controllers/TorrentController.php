@@ -22,8 +22,7 @@ class TorrentController extends Controller
         // TODO Check user upload pos
         if (app()->request->isMethod(Request::METHOD_POST)) {
             $uploadForm = new Torrent\UploadForm();
-            $uploadForm->setInput(app()->request->request->all());
-            $uploadForm->setFileInput(app()->request->raw_files);
+            $uploadForm->setInput(app()->request->request->all() + app()->request->files->all());
             $success = $uploadForm->validate();
             if (!$success) {
                 return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);

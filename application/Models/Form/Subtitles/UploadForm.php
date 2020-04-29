@@ -11,15 +11,15 @@ namespace App\Models\Form\Subtitles;
 use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidTorrentTrait;
 
-use Rid\Http\UploadFile;
 use Rid\Validators\Validator;
+
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadForm extends Validator
 {
     use isValidTorrentTrait;
 
-    /** @var UploadFile $file */
-    public $file;
+    public ?UploadedFile $file = null;
 
     public $title;
     public $torrent_id;
@@ -61,9 +61,9 @@ class UploadForm extends Validator
     /** @noinspection PhpUnused */
     protected function checkSubtitleUniqueByHash()
     {
-        /** @var UploadFile $file */
+        /** @var UploadedFile $file */
         $file = $this->getInput('file');
-        $this->hashs = $file_md5 = md5_file($file->tmpName);
+        $this->hashs = $file_md5 = md5_file($file->getPathname());
 
         $exist_id = app()->pdo->prepare('SELECT id FROM `subtitles` WHERE `hashs` = :hashs LIMIT 1;')->bindParams([
             'hashs' => $file_md5
@@ -79,7 +79,7 @@ class UploadForm extends Validator
      */
     public function flush()
     {
-        $title = $this->title ?: $this->file->getClientOriginalFileName();
+        $title = $this->title ?: pathinfo($this->file->getClientOriginalName(), PATHINFO_FILENAME);
 
         app()->pdo->beginTransaction();
         try {
@@ -88,12 +88,11 @@ class UploadForm extends Validator
 VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)')->bindParams([
                 'tid' => $this->torrent_id, 'hashs' => $this->hashs,
                 'title' => $title, 'filename' => $this->file->getClientOriginalName(),
-                'size' => $this->file->size, 'upper' => app()->auth->getCurUser()->getId(),
+                'size' => $this->file->getSize(), 'upper' => app()->auth->getCurUser()->getId(),
                 'anonymous' => $this->anonymous, 'ext' => $ext
             ])->execute();
             $id = app()->pdo->getLastInsertId();
-            $file_loc = app()->getStoragePath('subs') . DIRECTORY_SEPARATOR . $id . '.' . $ext;
-            $this->file->saveAs($file_loc);
+            $this->file->move(app()->getStoragePath('subs'), $id . '.' . $ext);
             app()->pdo->commit();
         } catch (\Exception $e) {
             if (isset($file_loc)) {

@@ -12,16 +12,16 @@ use App\Libraries\Constant;
 use App\Entity\Torrent\TorrentStatus;
 use App\Entity\Torrent\TorrentType;
 
-use Rid\Http\UploadFile;
-
 use Rhilip\Bencode\Bencode;
 use Rhilip\Bencode\ParseErrorException;
+
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadForm extends EditForm
 {
 
-    /**  @var UploadFile */
-    public $file;
+    /**  @var UploadedFile */
+    public ?UploadedFile $file = null;
 
     private $info_hash; // the value of sha1($this->$torrent_dict['info'])
 
@@ -92,7 +92,7 @@ class UploadForm extends EditForm
     protected function isValidTorrentFile()
     {
         try {
-            $this->torrent_dict = Bencode::load($this->getInput('file')->tmpName);
+            $this->torrent_dict = Bencode::load($this->getInput('file')->getPathname());
             $info = $this->checkTorrentDict($this->torrent_dict, 'info');
             if ($info) {
                 $this->checkTorrentDict($info, 'piece length', 'integer');  // Only Check without use
@@ -229,7 +229,7 @@ class UploadForm extends EditForm
     {
         $nfo_blob = '';
         if (isset($this->nfo)) {  // FIXME it seem always be true ???
-            $nfo_blob = $this->nfo->getFileContent();
+            $nfo_blob = file_get_contents($this->nfo->getPathname());
         }
 
         $this->rewriteFlags();
@@ -306,7 +306,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
     {
         $operator_id = 0;  // The buff operator id when torrent upload will be system
         // Add Large Buff and Random Buff
-        if (config("buff.enable_large") && $this->file->size > config("buff.large_size")) {
+        if (config("buff.enable_large") && $this->file->getSize() > config("buff.large_size")) {
             // TODO app()->pdo->createCommand();
         } elseif (config("buff.enable_random")) {
             // TODO app()->pdo->createCommand();

@@ -10,11 +10,11 @@ namespace App\Models\Form\Torrent;
 
 use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidTorrentTrait;
-use App\Entity\Torrent\Torrent;
-
 use App\Entity\Torrent\TorrentStatus;
-use Rid\Http\UploadFile;
+
 use Rid\Validators\Validator;
+
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class EditForm extends Validator
 {
@@ -26,12 +26,8 @@ class EditForm extends Validator
     public $links;
     public $descr;
 
-    /**
-     * The upload file class of Nfo
-     *
-     * @var UploadFile
-     */
-    public $nfo;
+    /** The upload file class of Nfo */
+    public ?UploadedFile $nfo = null;
 
     public $anonymous = 0;  // If user upload this torrent Anonymous
     public $hr = 0;  // If This torrent require hr check
@@ -204,7 +200,7 @@ class EditForm extends Validator
         if ($action == 'remove') {
             return '';
         } elseif ($action == 'update') {
-            return $this->nfo->getFileContent();
+            return file_get_contents($this->nfo->getPathname());
         } else {
             return $this->torrent->getNfo(false);
         }

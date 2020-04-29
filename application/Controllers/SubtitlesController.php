@@ -34,8 +34,7 @@ class SubtitlesController extends Controller
     {
         if (app()->request->isMethod(Request::METHOD_POST)) {
             $upload = new Subtitles\UploadForm();
-            $upload->setInput(app()->request->request->all());
-            $upload->setFileInput(app()->request->raw_files);
+            $upload->setInput(app()->request->request->all() + app()->request->files->all());
             if (false === $success = $upload->validate()) {
                 return $this->render('action/fail', ['msg' => $upload->getError()]);   // TODO add redirect
             } else {
