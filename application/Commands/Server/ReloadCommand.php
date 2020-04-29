@@ -15,7 +15,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ReloadCommand extends AbstractServerStartCommand
+class ReloadCommand extends AbstractServerCommand
 {
     protected static $defaultName = 'server:reload';
 
@@ -30,16 +30,17 @@ class ReloadCommand extends AbstractServerStartCommand
     {
         parent::execute($input, $output);
 
-        $sig = $input->getOption('part') === 'worker' ? SIGUSR1 : SIGUSR2;
+        $reload_part = $input->getOption('part');
+        $sig = $reload_part === 'worker' ? SIGUSR1 : SIGUSR2;
 
         if ($pid = $this->getPid()) {
             ProcessHelper::kill($pid, $sig);
+            $this->io->success('rid-httpd ' . $reload_part . ' process reload completed.');
+        } else {
+            $this->io->warning('rid-httpd is not running.');
+            exit(1);
         }
-        if (!$pid) {
-            println('rid-httpd is not running.');
-            return 1;
-        }
-        println('rid-httpd ' . ($sig == SIGUSR1 ? 'worker' : 'task') . ' process reload completed.');
+
         return 0; // 返回退出码
     }
 }

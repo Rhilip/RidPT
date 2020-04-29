@@ -14,7 +14,7 @@ use Rid\Helpers\ProcessHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class StopCommand extends AbstractServerStartCommand
+class StopCommand extends AbstractServerCommand
 {
     protected static $defaultName = 'server:stop';
 
@@ -27,6 +27,7 @@ class StopCommand extends AbstractServerStartCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         parent::execute($input, $output);
+        return $this->stopServer();
     }
 
     protected function stopServer()
@@ -36,9 +37,9 @@ class StopCommand extends AbstractServerStartCommand
             while (ProcessHelper::isRunning($pid)) {
                 usleep(100000);  // 等待进程退出
             }
-            println('rid-httpd stop completed.');
+            $this->io->success('rid-httpd stop completed.');
         } else {
-            println('rid-httpd is not running.');
+            $this->io->error('rid-httpd is not running.');
         }
         return 0; // 返回退出码
     }

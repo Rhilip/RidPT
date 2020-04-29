@@ -24,7 +24,6 @@ class Application extends \Rid\Base\Application
     // 全局中间件
     public $middleware = [];
 
-    protected $_serv;
     protected $_worker;
 
     // 执行功能
@@ -190,21 +189,5 @@ class Application extends \Rid\Base\Application
     public function end($content = '')
     {
         throw new \Rid\Exceptions\EndException($content);
-    }
-
-    /**
-     * @return Server
-     */
-    public function getServ()
-    {
-        return $this->_serv;
-    }
-
-    /**
-     * @param Server $serv
-     */
-    public function setServ(Server $serv): void
-    {
-        $this->_serv = $serv;
     }
 }

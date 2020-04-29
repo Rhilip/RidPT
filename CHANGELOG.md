@@ -1,6 +1,10 @@
 <a name="unreleased"></a>
 ## [Unreleased]
 
+### Build
+- **Composer:** Switch dotenv library from `adhocore/cli` to `symfony/console` (bd1949a)
+- **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
+
 ### Fix
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
 
