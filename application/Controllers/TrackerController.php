@@ -13,6 +13,9 @@ use App\Libraries\Constant;
 use App\Entity\User\UserRole;
 use App\Exceptions\TrackerException;
 
+use App\Tasks\Tracker\Announce;
+use Rid\Swoole\Task\TaskInfo;
+use Rid\Swoole\Helper\TaskHelper;
 use Rid\Utils\Arr;
 use Rid\Utils\Ip;
 
@@ -802,19 +805,14 @@ class TrackerController
 
     private function sendToTaskWorker($queries, $role, $userInfo, $torrentInfo)
     {
-        /**
-         * Push to Redis Queue so we can quick response
-         *
-         * Don't use json_{encode,decode} for the value of info_hash and peer_id will make
-         * those function return FALSE
-         */
-        return app()->redis->lPush(Constant::trackerToDealQueue, [
+        // Push to Task Worker so we can quick response
+        return TaskHelper::post(new TaskInfo(Announce::class, [
             'timestamp' => $this->timenow,
             'queries' => $queries,
             'role' => $role,
             'userInfo' => $userInfo,
             'torrentInfo' => $torrentInfo
-        ]);
+        ]));
     }
 
     private function generateAnnounceResponse($queries, $role, $torrentInfo, &$rep_dict)

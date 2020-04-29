@@ -14,7 +14,7 @@ use App\Commands\AbstractCommand;
 use Rid\Base\Process;
 use Rid\Base\Timer;
 use Rid\Helpers\ProcessHelper;
-use Rid\Swoole\Helper\Server as ServerHelper;
+use Rid\Swoole\Helper\ServerHelper;
 use Rid\Http\Application;
 
 use Swoole\Server;
@@ -83,19 +83,8 @@ abstract class AbstractServerCommand extends AbstractCommand
         }
 
         $this->server = new \Swoole\Http\Server($this->httpServerConfig['host'], $this->httpServerConfig['port']);
-
-        $this->server->set($this->serverSetting);
-
-        // 绑定事件
-        $this->server->on('start', [$this, 'onStart']);
-        $this->server->on('shutdown', [$this, 'onShutdown']);
-        $this->server->on('managerStart', [$this, 'onManagerStart']);
-        $this->server->on('managerStop', [$this, 'onManagerStop']);
-        $this->server->on('workerStart', [$this, 'onWorkerStart']);
-        $this->server->on('workerStop', [$this, 'onWorkerStop']);
-        $this->server->on('workerError', [$this, 'onWorkerError']);
-        $this->server->on('workerExit', [$this, 'onWorkerExit']);
-        $this->server->on('request', [$this, 'onRequest']);
+        $this->server->set($this->serverSetting);  // 设置服务器
+        $this->bindServerEvents();  // 绑定事件
 
         // FIXME 增加自定义进程
         $this->addCustomProcess();
@@ -130,150 +119,157 @@ abstract class AbstractServerCommand extends AbstractCommand
             ['Listen      Port      ', $this->httpServerConfig['port']],
             ['Reactor     Num       ', $this->serverSetting['reactor_num']],
             ['Worker      Num       ', $this->serverSetting['worker_num']],
+            ['Task Worker Num       ', $this->serverSetting['task_worker_num']],
             ['Hot         Update    ', ($this->serverSetting['max_request'] == 1 ? 'enabled' : 'disabled')],
             ['Coroutine   Mode      ', ($this->serverSetting['enable_coroutine'] ? 'enabled' : 'disabled')],
             ['Config      File      ', $this->httpServerConfig['configFile']]
         ]);
     }
 
-
-    /**
-     * 主进程启动事件
-     * 仅允许echo、打印Log、修改进程名称，不得执行其他操作
-     * @param Server $server
-     */
-    public function onStart(Server $server)
+    protected function bindServerEvents()
     {
-        ProcessHelper::setTitle(PROJECT_NAME . ": master {$this->httpServerConfig['host']}:{$this->httpServerConfig['port']}");
-        // 执行回调
-        $this->httpServerConfig['hook']['hook_start'] and call_user_func($this->httpServerConfig['hook']['hook_start'], $server);
-    }
+        /**
+         * 主进程启动事件
+         * 仅允许echo、打印Log、修改进程名称，不得执行其他操作
+         */
+        $this->server->on('start', function (Server $server) {
+            ProcessHelper::setTitle(PROJECT_NAME . ": Master {$this->httpServerConfig['host']}:{$this->httpServerConfig['port']}");
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_start'] and call_user_func($this->httpServerConfig['hook']['hook_start'], $server);
+        });
 
-    /**
-     * 主进程停止事件
-     * 请勿在onShutdown中调用任何异步或协程相关API，触发onShutdown时底层已销毁了所有事件循环设施
-     * @param Server $server
-     */
-    public function onShutdown(Server $server)
-    {
-        // 执行回调
-        $this->httpServerConfig['hook']['hook_shutdown'] and call_user_func($this->httpServerConfig['hook']['hook_shutdown'], $server);
-    }
+        /**
+         * 主进程停止事件
+         * 请勿在onShutdown中调用任何异步或协程相关API，触发onShutdown时底层已销毁了所有事件循环设施
+         */
+        $this->server->on('shutdown', function (Server $server) {
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_shutdown'] and call_user_func($this->httpServerConfig['hook']['hook_shutdown'], $server);
+        });
 
-    /**
-     * 管理进程启动事件
-     * 可以使用基于信号实现的同步模式定时器swoole_timer_tick，不能使用task、async、coroutine等功能
-     * @param Server $server
-     */
-    public function onManagerStart(Server $server)
-    {
-        ProcessHelper::setTitle(PROJECT_NAME . ": manager");  // 进程命名
-        // 执行回调
-        $this->httpServerConfig['hook']['hook_manager_start'] and call_user_func($this->httpServerConfig['hook']['hook_manager_start'], $server);
-    }
+        /**
+         * 管理进程启动事件
+         * 可以使用基于信号实现的同步模式定时器swoole_timer_tick，不能使用task、async、coroutine等功能
+         */
+        $this->server->on('managerStart', function (Server $server) {
+            ProcessHelper::setTitle(PROJECT_NAME . ": Manager");  // 进程命名
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_manager_start'] and call_user_func($this->httpServerConfig['hook']['hook_manager_start'], $server);
+        });
 
-    /**
-     * 管理进程停止事件
-     * @param Server $server
-     */
-    public function onManagerStop(Server $server)
-    {
-        // 执行回调
-        $this->httpServerConfig['hook']['hook_manager_stop'] and call_user_func($this->httpServerConfig['hook']['hook_manager_stop'], $server);
-    }
+        /**
+         * 管理进程停止事件
+         */
+        $this->server->on('managerStop', function (Server $server) {
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_manager_stop'] and call_user_func($this->httpServerConfig['hook']['hook_manager_stop'], $server);
+        });
 
-    /**
-     * 工作进程启动事件
-     * @param \Swoole\Http\Server $server
-     * @param int $workerId
-     */
-    public function onWorkerStart(\Swoole\Http\Server $server, int $workerId)
-    {
-        // 进程命名
-        if ($workerId < $server->setting['worker_num']) {
-            ProcessHelper::setTitle("rid-httpd: HTTP Worker #{$workerId}");
-        } else {
-            ProcessHelper::setTitle("rid-httpd: Task #{$workerId}");
-        }
+        /**
+         * FIXME 工作进程启动事件
+         */
+        $this->server->on('workerStart', function (\Swoole\Http\Server $server, int $workerId) {
+            // 进程命名
+            if ($workerId < $server->setting['worker_num']) {
+                ProcessHelper::setTitle("rid-httpd: HTTP Worker #{$workerId}");
+            } else {
+                ProcessHelper::setTitle("rid-httpd: Task #{$workerId}");
+            }
 
-        // 实例化App
-        $config = require $this->httpServerConfig['configFile'];
-        $app = new Application($config);
-        $app->loadAllComponents();
+            // 实例化App
+            $this->prepareApplication();
 
-        if ($workerId == 0) {  // 将系统设置中的 Timer 添加到 worker #0 中
-            foreach ($this->httpServerConfig['timer'] as $timer_name => $timer_config) {
-                $timer_class = $timer_config['class'];
-                $timer = new $timer_class();
-                if ($timer instanceof Timer) {
-                    $timer->run($timer_config);
+            if ($workerId == 0) {  // 将系统设置中的 Timer 添加到 worker #0 中
+                foreach ($this->httpServerConfig['timer'] as $timer_name => $timer_config) {
+                    $timer_class = $timer_config['class'];
+                    $timer = new $timer_class();
+                    if ($timer instanceof Timer) {
+                        $timer->run($timer_config);
+                    }
                 }
+            }
+
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_worker_start'] and call_user_func($this->httpServerConfig['hook']['hook_worker_start'], $server, $workerId);
+        });
+
+        /**
+         * 工作进程停止事件
+         */
+        $this->server->on('workerStop', function (Server $server, int $workerId) {
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_worker_stop'] and call_user_func($this->httpServerConfig['hook']['hook_worker_stop'], $server, $workerId);
+        });
+
+        /**
+         * 工作进程错误事件
+         * 当Worker/Task进程发生异常后会在Manager进程内回调此函数。
+         */
+        $this->server->on('workerError', function (Server $server, int $workerId, int $workerPid, int $exitCode, int $signal) {
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_worker_error'] and call_user_func($this->httpServerConfig['hook']['hook_worker_error'], $server, $workerId, $workerPid, $exitCode, $signal);
+        });
+
+        /**
+         * 工作进程退出事件
+         * 仅在开启reload_async特性后有效。异步重启特性，会先创建新的Worker进程处理新请求，旧的Worker进程自行退出
+         */
+        $this->server->on('workerExit', function (Server $server, int $workerId) {
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_worker_exit'] and call_user_func($this->httpServerConfig['hook']['hook_worker_exit'], $server, $workerId);
+        });
+
+        /**
+         * 请求事件
+         */
+        $this->server->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
+            try {
+                // 执行请求
+                app()->request->setRequester($request);
+                app()->response->setResponder($response);
+                app()->run();
+
+                // 执行回调
+                $this->httpServerConfig['hook']['hook_request_success'] and call_user_func($this->httpServerConfig['hook']['hook_request_success'], $this->server, $request);
+            } catch (\Throwable $e) {
+                app()->error->handleException($e);
+                // 执行回调
+                $this->httpServerConfig['hook']['hook_request_error'] and call_user_func($this->httpServerConfig['hook']['hook_request_error'], $this->server, $request);
+            }
+        });
+
+        /**
+         * Task事件
+         */
+        if (0 !== ($this->serverSetting['task_worker_num'] ?? -1)) {
+            // 判断是不是启用了task_enable_coroutine， 因为启用前后onTask函数原型不同
+            if ((!isset($this->serverSetting['enable_coroutine']) || $this->serverSetting['enable_coroutine'])
+                && isset($this->serverSetting['task_enable_coroutine']) && $this->serverSetting['task_enable_coroutine']) {
+                $this->server->on('task', function (Server $server, \Swoole\Server\Task $task) {
+                    /** @var \Rid\Swoole\Task\TaskInfo $taskInfo */
+                    $taskInfo = $task->data;
+                    $result = $taskInfo->getHandler()->handle($taskInfo->getParams(), $server, $task->id, $task->worker_id);
+                    $task->finish($result);
+                });
+            } else {
+                $this->server->on('task', function (Server $server, int $taskID, int $workerID, $taskInfo) {
+                    /** @var \Rid\Swoole\Task\TaskInfo $taskInfo */
+                    $result = $taskInfo->getHandler()->handle($taskInfo->getParams(), $server, $taskID, $workerID);
+                    $server->finish($result);
+                });
             }
         }
 
-        // 执行回调
-        $this->httpServerConfig['hook']['hook_worker_start'] and call_user_func($this->httpServerConfig['hook']['hook_worker_start'], $server, $workerId);
+        $this->server->on('finish', function (Server $server, int $taskID, $data) {
+        });
     }
 
-    /**
-     * 工作进程停止事件
-     * @param Server $server
-     * @param int $workerId
-     */
-    public function onWorkerStop(Server $server, int $workerId)
+    protected function prepareApplication($components = null)
     {
-        // 执行回调
-        $this->httpServerConfig['hook']['hook_worker_stop'] and call_user_func($this->httpServerConfig['hook']['hook_worker_stop'], $server, $workerId);
-    }
-
-    /**
-     * 工作进程错误事件
-     * 当Worker/Task进程发生异常后会在Manager进程内回调此函数。
-     * @param Server $server
-     * @param int $workerId
-     * @param int $workerPid
-     * @param int $exitCode
-     * @param int $signal
-     */
-    public function onWorkerError(Server $server, int $workerId, int $workerPid, int $exitCode, int $signal)
-    {
-        // 执行回调
-        $this->httpServerConfig['hook']['hook_worker_error'] and call_user_func($this->httpServerConfig['hook']['hook_worker_error'], $server, $workerId, $workerPid, $exitCode, $signal);
-    }
-
-    /**
-     * 工作进程退出事件
-     * 仅在开启reload_async特性后有效。异步重启特性，会先创建新的Worker进程处理新请求，旧的Worker进程自行退出
-     * @param Server $server
-     * @param int $workerId
-     */
-    public function onWorkerExit(Server $server, int $workerId)
-    {
-        // 执行回调
-        $this->httpServerConfig['hook']['hook_worker_exit'] and call_user_func($this->httpServerConfig['hook']['hook_worker_exit'], $server, $workerId);
-    }
-
-    /**
-     * 请求事件
-     * @param \Swoole\Http\Request $request
-     * @param \Swoole\Http\Response $response
-     */
-    public function onRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
-    {
-        try {
-            // 执行请求
-            app()->request->setRequester($request);
-            app()->response->setResponder($response);
-            app()->run();
-
-            // 执行回调
-            $this->httpServerConfig['hook']['hook_request_success'] and call_user_func($this->httpServerConfig['hook']['hook_request_success'], $this->server, $request);
-        } catch (\Throwable $e) {
-            // 错误处理
-            app()->error->handleException($e);
-            // 执行回调
-            $this->httpServerConfig['hook']['hook_request_error'] and call_user_func($this->httpServerConfig['hook']['hook_request_error'], $this->server, $request);
-        }
+        // FIXME 实例化App
+        $config = require $this->httpServerConfig['configFile'];
+        $app = new Application($config);
+        $app->loadAllComponents($components);
     }
 
     private function addCustomProcess()
@@ -287,11 +283,7 @@ abstract class AbstractServerCommand extends AbstractCommand
                         ProcessHelper::setTitle('rid-httpd: ' . $process_config['title']);
                     }
 
-                    // FIXME 实例化App
-                    $config = require $this->httpServerConfig['configFile'];
-                    $app = new Application($config);
-                    $app->loadAllComponents(array_flip($process_config['components']));
-
+                    $this->prepareApplication(array_flip($process_config['components']));
                     $custom_process->start($process_config);
                 });
 

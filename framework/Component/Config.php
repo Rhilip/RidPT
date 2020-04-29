@@ -10,7 +10,7 @@ namespace Rid\Component;
 
 use Rid\Base\Component;
 use Rid\Exceptions\ConfigException;
-use Rid\Swoole\Helper\Server;
+use Rid\Swoole\Helper\ServerHelper;
 use Swoole\Table;
 
 class Config extends Component
@@ -21,9 +21,9 @@ class Config extends Component
     public function onInitialize(array $config = [])
     {
         // Get \Swoole\Table object From \Server, So that we can share same dynamic config
-        $this->cacheTable = Server::getServer()->configTable;
+        $this->cacheTable = ServerHelper::getServer()->configTable;
 
-        if ($this->cacheTable->count() == 0 && Server::getServer()->worker_id == 0) {
+        if ($this->cacheTable->count() == 0 && ServerHelper::getServer()->worker_id == 0) {
             $configs = app()->pdo->prepare('SELECT `name`, `value`, `type` FROM `site_config`')->queryAll();
             foreach ($configs as $config) {
                 $this->load($config);

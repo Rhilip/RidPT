@@ -24,6 +24,7 @@ return [
         'enable_coroutine' => false,  // 开启协程
         'reactor_num' => 1,  // 连接处理线程数
         'worker_num' => 5,  // 工作进程数
+        'task_worker_num' => 10,  // TASK工作进程数
         'pid_file' => dirname(__DIR__) . '/var/runtime/ridpt.pid',  // PID 文件
         'log_file' => dirname(__DIR__) . '/var/runtime/ridpt.error.log',  // 日志文件路径
         'max_request' => 3000, // 进程的最大任务数
@@ -79,12 +80,14 @@ return [
 
     // 用户自定义进程 （用于常驻的任务清理，将会使用Server->addProcess添加到Server
     'process' => [
+        /*
         'tracker' => [
             'class' => App\Process\TrackerAnnounceProcess::class,
             'title' => 'Tracker Announce Worker',
             'components' => ['log', 'pdo', 'redis', 'config'],
             'sleep' => 5,
         ],
+        */
         'crontab' => [
             'class' => App\Process\CronTabProcess::class,
             'title' => 'Crontab Worker',

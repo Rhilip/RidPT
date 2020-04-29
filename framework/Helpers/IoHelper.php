@@ -8,11 +8,11 @@
 
 declare(strict_types=1);
 
-namespace Rid\Swoole\Helper;
+namespace Rid\Helpers;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class Io
+class IoHelper
 {
     protected static ?SymfonyStyle $io = null;
 

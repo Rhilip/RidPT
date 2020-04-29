@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Commands;
 
-use Rid\Swoole\Helper\Io;
+use Rid\Helpers\IoHelper;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -24,7 +24,7 @@ abstract class AbstractCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->io = new SymfonyStyle($input, $output);
-        Io::setIo($this->io);
+        IoHelper::setIo($this->io);
         $this->printLogo();
     }
 

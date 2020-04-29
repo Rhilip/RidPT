@@ -2,42 +2,43 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 7/30/2019
- * Time: 8:49 AM
+ * Date: 4/29/2020
+ * Time: 2020
  */
 
-namespace App\Process;
+declare(strict_types=1);
+
+namespace App\Tasks\Tracker;
 
 use App\Libraries\Constant;
-use Rid\Base\Process;
+use Rid\Swoole\Task\Interfaces\TaskHandlerInterface;
 
-class TrackerAnnounceProcess extends Process
+class Announce implements TaskHandlerInterface
 {
-    public function run()
+    public function handle(array $param, \Swoole\Server $server, int $taskId, int $workerId)
     {
-        while (true) {
-            $data = app()->redis->brpoplpush(Constant::trackerToDealQueue, Constant::trackerBackupQueue, 5);
-            if ($data !== false) {
-                app()->pdo->beginTransaction();
-                try {
-                    /** We got data from Http Server Like
-                     * [
-                     *    'timestamp' => timestamp when controller receive the announce,
-                     *    'queries' => $queries, 'role' => $role,
-                     *    'userInfo' => $userInfo, 'torrentInfo' => $torrentInfo
-                     * ]
-                     */
-                    $this->processAnnounceRequest($data['timestamp'], $data['queries'], $data['role'], $data['userInfo'], $data['torrentInfo']);
+        app()->pdo->beginTransaction();
+        try {
+            /** We got data from Http Server Like
+             * [
+             *    'timestamp' => timestamp when controller receive the announce,
+             *    'queries' => $queries, 'role' => $role,
+             *    'userInfo' => $userInfo, 'torrentInfo' => $torrentInfo
+             * ]
+             */
+            $this->processAnnounceRequest($param['timestamp'], $param['queries'], $param['role'], $param['userInfo'], $param['torrentInfo']);
 
-                    app()->pdo->commit();
-                    app()->redis->lRem(Constant::trackerBackupQueue, $data, 0);
-                } catch (\Exception $e) {
-                    println($e->getMessage());
-                    app()->pdo->rollback();
-                    // TODO deal with the items in backup_queue
-                }
-            }
+            app()->pdo->commit();
+        } catch (\Exception $e) {
+            println($e->getMessage());
+            app()->pdo->rollback();
+            // TODO deal with the items in backup_queue
         }
+    }
+
+    public function finish(\Swoole\Server $server, int $taskId, $data)
+    {
+        // TODO: Implement finish() method.
     }
 
     /**

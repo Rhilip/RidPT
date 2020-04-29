@@ -10,22 +10,24 @@ declare(strict_types=1);
 
 namespace Rid\Swoole\Helper;
 
-class Server
+use Swoole\Server;
+
+class ServerHelper
 {
-    protected static ?\Swoole\Server $server = null;
+    protected static ?Server $server = null;
 
     /**
-     * @return \Swoole\Server|null
+     * @return Server|null
      */
-    public static function getServer(): ?\Swoole\Server
+    public static function getServer(): ?Server
     {
         return self::$server;
     }
 
     /**
-     * @param \Swoole\Server|null $server
+     * @param Server|null $server
      */
-    public static function setServer(?\Swoole\Server $server): void
+    public static function setServer(?Server $server): void
     {
         self::$server = $server;
     }
