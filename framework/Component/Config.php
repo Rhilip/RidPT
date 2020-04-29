@@ -11,6 +11,7 @@ namespace Rid\Component;
 use Rid\Base\Component;
 use Rid\Exceptions\ConfigException;
 use Rid\Swoole\Helper\ServerHelper;
+use Rid\Utils\Text;
 use Swoole\Table;
 
 class Config extends Component
@@ -41,10 +42,10 @@ class Config extends Component
     {
         // First Check config stored in Swoole Table. If it exist , then just return the cached key
         if (false === $setting_row = $this->cacheTable->get($name)) {
-            if (strpos($name, 'runtime.') === 0) {
+            if (Text::startWith($name, 'runtime.')) {
                 return false;
             } // Deal with config with prefix `runtime.`
-            if (strpos($name, 'route.') === 0) {
+            if (Text::startWith($name, 'route.')) {
                 return 1;
             }       // Deal with config with prefix `route.`
 

@@ -3,6 +3,7 @@
 namespace Rid\Http;
 
 use Rid\Base\Component;
+use Rid\Utils\Text;
 use Swoole\Http\Server;
 
 /**
@@ -57,9 +58,9 @@ class Application extends \Rid\Base\Application
             list($shortClass, $shortAction) = $route;
             $controllerDir    = \Rid\Helpers\FileSystemHelper::dirname($shortClass);
             $controllerDir    = $controllerDir == '.' ? '' : "$controllerDir\\";
-            $controllerName   = \Rid\Helpers\NameHelper::snakeToCamel(\Rid\Helpers\FileSystemHelper::basename($shortClass), true);
+            $controllerName   = Text::toPascalName(\Rid\Helpers\FileSystemHelper::basename($shortClass));
             $controllerClass  = "{$this->controllerNamespace}\\{$controllerDir}{$controllerName}Controller";
-            $shortAction      = \Rid\Helpers\NameHelper::snakeToCamel($shortAction, true);
+            $shortAction      = Text::toPascalName($shortAction);
             $controllerAction = "action{$shortAction}";
             // 判断类是否存在
             if (class_exists($controllerClass)) {

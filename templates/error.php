@@ -19,7 +19,7 @@
  * @var string $trace the Exception stack trace as a string.
  */
 
-use Rid\Helpers\StringHelper;
+use Rid\Utils\Text;
 
 ?>
 <!DOCTYPE html>
@@ -64,7 +64,7 @@ if (env('APP_DEBUG')) {
     $output_trace .= $file . ' Line ' . $line . PHP_EOL. PHP_EOL;
     $output_trace .= $trace;
 } else {
-    $output_trace = StringHelper::encrypt($this->data());
+    $output_trace = Text::encrypt($this->data());
 }
 ?>
 

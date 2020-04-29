@@ -13,7 +13,6 @@ use App\Entity\User\UserRole;
 use App\Entity\User\UserStatus;
 use App\Entity\Site\LogLevel;
 
-use Rid\Helpers\StringHelper;
 use Rid\Utils\Random;
 use Rid\Validators\Validator;
 use Rid\Validators\CaptchaTrait;

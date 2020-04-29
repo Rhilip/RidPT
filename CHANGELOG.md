@@ -9,6 +9,9 @@
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
 
+### Perf
+- **Console:** Move HttpServer init to AbstractServerCommand (ce50f2d)
+
 
 <a name="v0.1.7-alpha"></a>
 ## [v0.1.7-alpha] - 2020-04-28
