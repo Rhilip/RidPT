@@ -104,8 +104,8 @@ trait PaginationTrait
     /** @noinspection PhpUnused */
     protected function checkPager()
     {
-        $limit = (int) $this->limit ?? static::getDefaultLimit();
-        $page = (int) $this->page ?? static::getDefaultPage();
+        $limit = (int)($this->limit ?? static::getDefaultLimit());
+        $page = (int)($this->page ?? static::getDefaultPage());
 
         if ($limit < static::getMinLimit()) {
             $limit = static::getMinLimit();
