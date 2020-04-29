@@ -7,5 +7,9 @@
  */
 
 return [
-    \App\Commands\ServerCommand::class,
+    'server:start' => \App\Commands\Server\StartCommand::class,
+    'server:stop' => \App\Commands\Server\StopCommand::class,
+    'server:restart' => \App\Commands\Server\RestartCommand::class,
+    'server:reload' => \App\Commands\Server\ReloadCommand::class,
+    'server:status' => \App\Commands\Server\StatusCommand::class
 ];

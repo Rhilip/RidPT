@@ -24,10 +24,10 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-openssl": "*",
+    "ext-pcntl": "*",
     "ext-pdo": "*",
     "ext-redis": "*",
     "ext-swoole": "*",
-    "adhocore/cli": "^0.7.0",
     "firebase/php-jwt": "^5.0",
     "league/plates": "^3.3",
     "mjohnson/decoda": "^6.12",
@@ -38,6 +38,7 @@
     "siriusphp/validation": "^2.3",
     "soundasleep/html2text": "^1.1",
     "symfony/config": "^5.0",
+    "symfony/console": "^5.0",
     "symfony/dotenv": "^5.0",
     "symfony/http-foundation": "^5.0",
     "symfony/translation": "^5.0"
@@ -50,7 +51,8 @@
     "optimize-autoloader": true,
     "sort-packages": true,
     "platform": {
-      "ext-swoole": "4.4.14"
+      "ext-swoole": "4.4.14",
+      "ext-pcntl" : "7.4"
     }
   },
   "replace": {

@@ -19,7 +19,7 @@ return [
     // 独立进程的配置文件
     'configFile' => __DIR__ . '/application.php',
 
-    // 运行参数：https://wiki.swoole.com/wiki/page/274.html
+    // 运行参数：https://wiki.swoole.com/#/http_server
     'settings' => [
         'enable_coroutine' => false,  // 开启协程
         'reactor_num' => 1,  // 连接处理线程数

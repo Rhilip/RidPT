@@ -62,21 +62,28 @@ edit in Admin Panel.
 5. Run Test by `php bin/console server start -u` , And Congratulation If you see those output **without error throwout**.
 
     ```bash
-    root@Ubuntu-iso-DND:/data/wwwroot/ridpt.top# php bin/console server start -u
-    2019-09-17 22:24:29 ───────────────────────────────────────
-    2019-09-17 22:24:29 Server      Name:      RidPT
-    2019-09-17 22:24:29 System      Name:      Linux
-    2019-09-17 22:24:29 Framework   Version:   v0.1.5-alpha
-    2019-09-17 22:24:29 PHP         Version:   7.3.7
-    2019-09-17 22:24:29 Swoole      Version:   4.4.0
-    2019-09-17 22:24:29 Listen      Addr:      127.0.0.1
-    2019-09-17 22:24:29 Listen      Port:      9501
-    2019-09-17 22:24:29 Reactor     Num:       1
-    2019-09-17 22:24:29 Worker      Num:       5
-    2019-09-17 22:24:29 Hot         Update:    disabled
-    2019-09-17 22:24:29 Coroutine   Mode:      disabled
-    2019-09-17 22:24:29 Config      File:      /data/wwwroot/ridpt.top/config/http_base.php
-    2019-09-17 22:24:29 ───────────────────────────────────────
+    root@Ubuntu-iso-DND:/data/wwwroot/ridpt.top# php bin/console server:start
+      ____            __  ____    ______
+     /\  _`\   __    /\ \/\  _`\ /\__  _\
+     \ \ \L\ \/\_\   \_\ \ \ \L\ \/_/\ \/
+      \ \ ,  /\/\ \  /'_` \ \ ,__/  \ \ \
+       \ \ \\ \\ \ \/\ \L\ \ \ \/    \ \ \
+        \ \_\ \_\ \_\ \___,_\ \_\     \ \_\
+         \/_/\/ /\/_/\/__,_ /\/_/      \/_/
+    2020-04-29 17:12:15 ───────────────────────────────────────
+    2020-04-29 17:12:15 Server      Name:      RidPT
+    2020-04-29 17:12:15 System      Name:      Linux
+    2020-04-29 17:12:15 Framework   Version:   v0.1.6-alpha
+    2020-04-29 17:12:15 PHP         Version:   7.4.1
+    2020-04-29 17:12:15 Swoole      Version:   4.4.14
+    2020-04-29 17:12:15 Listen      Addr:      127.0.0.1
+    2020-04-29 17:12:15 Listen      Port:      9501
+    2020-04-29 17:12:15 Reactor     Num:       1
+    2020-04-29 17:12:15 Worker      Num:       5
+    2020-04-29 17:12:15 Hot         Update:    disabled
+    2020-04-29 17:12:15 Coroutine   Mode:      disabled
+    2020-04-29 17:12:15 Config      File:      /data/wwwroot/ridpt.top/config/application.php
+    2020-04-29 17:12:15 ───────────────────────────────────────
     ```
 
 6. Then you can safely add Nginx reserve proxy config like `migration/nginx.conf`.And Notice : 
