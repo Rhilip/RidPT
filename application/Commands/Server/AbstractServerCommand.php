@@ -107,11 +107,18 @@ abstract class AbstractServerCommand extends AbstractCommand
 
     protected function printEnvironmentTable()
     {
-        $this->io->table(['Environment', 'Value'], [
-            ['System      Name      ', PHP_OS],
-            ['Framework   Version   ', PROJECT_VERSION],
+        $this->io->table(['Environment', ''], [
+            ['[System]'],
+            ['System      Name      ', defined('PHP_OS_FAMILY') ? PHP_OS_FAMILY : PHP_OS],
+            ['CPU         Cores     ', swoole_cpu_num()],
+            ['Disk        (Free/Total)', round(@disk_free_space('.') / (1024*1024*1024), 3). ' GB / ' . round(@disk_total_space('.') / (1024*1024*1024), 3). ' GB'],
+            ['Network               ', implode(',', swoole_get_local_ip())],
+            ['[Project]'],
             ['PHP         Version   ', PHP_VERSION],
             ['Swoole      Version   ', SWOOLE_VERSION],
+            ['Framework   Version   ', PROJECT_VERSION],
+            ['[Config]'],
+            ['Config      File      ', $this->httpServerConfig['configFile']],
             ['Listen      Addr      ', $this->httpServerConfig['host']],
             ['Listen      Port      ', $this->httpServerConfig['port']],
             ['Reactor     Num       ', $this->serverSetting['reactor_num']],
@@ -119,7 +126,6 @@ abstract class AbstractServerCommand extends AbstractCommand
             ['Task Worker Num       ', $this->serverSetting['task_worker_num']],
             ['Hot         Update    ', ($this->serverSetting['max_request'] == 1 ? 'enabled' : 'disabled')],
             ['Coroutine   Mode      ', ($this->serverSetting['enable_coroutine'] ? 'enabled' : 'disabled')],
-            ['Config      File      ', $this->httpServerConfig['configFile']]
         ]);
     }
 

@@ -6,7 +6,11 @@
  * Time: 10:09 PM
  */
 
-namespace Rid\Base;
+namespace Rid\Swoole\Process;
+
+use Rid\Base\StaticInstanceInterface;
+use Rid\Base\StaticInstanceTrait;
+use Rid\Helpers\IoHelper;
 
 class Process implements StaticInstanceInterface
 {
@@ -50,7 +54,7 @@ class Process implements StaticInstanceInterface
         $this->disablePdoAndRedisRecord();
         $this->resetSleepTime();
 
-        println('New Custom process `' . static::class . '` added.');
+        IoHelper::getIo()->text('New Custom process `' . static::class . '` added.');
 
         $this->init();
         while (true) {

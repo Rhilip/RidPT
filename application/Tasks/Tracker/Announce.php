@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace App\Tasks\Tracker;
 
 use App\Libraries\Constant;
+use Rid\Helpers\IoHelper;
 use Rid\Swoole\Task\Interfaces\TaskHandlerInterface;
 
 class Announce implements TaskHandlerInterface
@@ -30,7 +31,7 @@ class Announce implements TaskHandlerInterface
 
             app()->pdo->commit();
         } catch (\Exception $e) {
-            println($e->getMessage());
+            IoHelper::getIo()->note($e->getMessage());
             app()->pdo->rollback();
             // TODO deal with the items in backup_queue
         }

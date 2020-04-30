@@ -44,14 +44,6 @@ if (!function_exists('config')) {
     }
 }
 
-if (!function_exists('println')) {
-    // 输出字符串并换行
-    function println($expression)
-    {
-        echo date('Y-m-d H:i:s') . ' ' . $expression . PHP_EOL;
-    }
-}
-
 if (!function_exists('value')) {
     /**
      * Return the default value of the given value.

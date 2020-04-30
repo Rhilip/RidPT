@@ -10,6 +10,7 @@ namespace Rid\Component;
 
 use Rid\Base\Component;
 use Rid\Exceptions\ConfigException;
+use Rid\Helpers\IoHelper;
 use Rid\Swoole\Helper\ServerHelper;
 use Rid\Swoole\Memory\TableManager;
 use Rid\Utils\Text;
@@ -30,7 +31,7 @@ class Config extends Component
             foreach ($configs as $config) {
                 $this->load($config);
             }
-            println('Load Dynamic Site Config Success, Get ' . count($configs) . ' configs.');
+            IoHelper::getIo()->text('Load Dynamic Site Config Success, Get ' . count($configs) . ' configs.');
         }
     }
 

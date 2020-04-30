@@ -3,6 +3,7 @@
 namespace Rid\Http;
 
 use Rid\Base\Component;
+use Rid\Helpers\IoHelper;
 
 /**
  * Error类
@@ -25,38 +26,36 @@ class Error extends Component
             // debug处理 & exit处理
             if ($e instanceof \Rid\Exceptions\DebugException || $e instanceof \Rid\Exceptions\EndException) {
                 \Rid::app()->response->setContent($e->getMessage());
-                \Rid::app()->response->prepare(\Rid::app()->request);
-                \Rid::app()->response->send();
-                return;
-            }
-            // 错误参数定义
-            $statusCode = $e instanceof \Rid\Exceptions\NotFoundException ? 404 : 500;
-            $errors['status'] = $statusCode;
-            // 日志处理
-            if (!($e instanceof \Rid\Exceptions\NotFoundException)) {
-                $message = "{$errors['message']}" . PHP_EOL;
-                $message .= "[type] {$errors['type']} [code] {$errors['code']}" . PHP_EOL;
-                $message .= "[file] {$errors['file']} [line] {$errors['line']}" . PHP_EOL;
-                $message .= "[trace] {$errors['trace']}" . PHP_EOL;
-                $message .= '$_SERVER' . substr(print_r(\Rid::app()->request->server->all() + \Rid::app()->request->headers->all(), true), 5);
-                $message .= '$_GET' . substr(print_r(\Rid::app()->request->query->all(), true), 5);
-                $message .= '$_POST' . substr(print_r(\Rid::app()->request->request->all(), true), 5, -1);
-                $message .= 'Memory used: ' . memory_get_usage();
-                println($message);
-                app()->log->error($message);
-            }
-            // 清空系统错误
-            ob_get_contents() and ob_clean();
+            } else {
+                // 错误参数定义
+                $statusCode = $e instanceof \Rid\Exceptions\NotFoundException ? 404 : 500;
+                $errors['status'] = $statusCode;
+                // 日志处理
+                if (!($e instanceof \Rid\Exceptions\NotFoundException)) {
+                    $message = "{$errors['message']}" . PHP_EOL;
+                    $message .= "[type] {$errors['type']} [code] {$errors['code']}" . PHP_EOL;
+                    $message .= "[file] {$errors['file']} [line] {$errors['line']}" . PHP_EOL;
+                    $message .= "[trace] {$errors['trace']}" . PHP_EOL;
+                    $message .= '$_SERVER' . substr(print_r(\Rid::app()->request->server->all() + \Rid::app()->request->headers->all(), true), 5);
+                    $message .= '$_GET' . substr(print_r(\Rid::app()->request->query->all(), true), 5);
+                    $message .= '$_POST' . substr(print_r(\Rid::app()->request->request->all(), true), 5, -1);
+                    $message .= 'Memory used: ' . memory_get_usage();
+                    IoHelper::getIo()->error($message);
+                    app()->log->error($message);
+                }
+                // 清空系统错误
+                ob_get_contents() and ob_clean();
 
-            app()->response->setStatusCode($statusCode);
-            app()->response->setContent(app()->view->render('error', $errors));
+                app()->response->setStatusCode($statusCode);
+                app()->response->setContent(app()->view->render('error', $errors));
+            }
+
             \Rid::app()->response->prepare(\Rid::app()->request);
-
             app()->response->send();
         } else {  // 在Task或Timer环境 （使用 Console\Error的处理方法）
             if ($e instanceof \Rid\Exceptions\DebugException) {
                 $content = $e->getMessage();
-                println($content);
+                IoHelper::getIo()->note($content);
             }
 
             // 格式化输出
@@ -73,9 +72,8 @@ class Error extends Component
             // 清空系统错误
             ob_get_contents() and ob_clean();
 
-            // 增加边距 写入stdout
-            $message = str_repeat(' ', 4) . str_replace(PHP_EOL, PHP_EOL . str_repeat(' ', 4), $message);
-            println((PHP_EOL . PHP_EOL) . $message . (PHP_EOL));
+            // 写入stdout
+            IoHelper::getIo()->error($message);
         }
     }
 }

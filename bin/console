@@ -68,7 +68,7 @@ $dotenv->load(RIDPT_ROOT . '/.env');  // $dotenv->overload();
 $commands = require RIDPT_ROOT . '/config/commands.php';
 
 $console = new \Symfony\Component\Console\Application(PROJECT_NAME, PROJECT_VERSION);
-$commandLoader = new \Rid\Console\FactoryCommandLoader($commands);
+$commandLoader = new \Rid\Console\CommandLoader\FactoryCommandLoader($commands);
 $console->setCommandLoader($commandLoader);
 
 $exitCode = $console->run();

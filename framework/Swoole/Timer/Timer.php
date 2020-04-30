@@ -6,7 +6,11 @@
  * Time: 15:24
  */
 
-namespace Rid\Base;
+namespace Rid\Swoole\Timer;
+
+use Rid\Base\StaticInstanceInterface;
+use Rid\Base\StaticInstanceTrait;
+use Rid\Helpers\IoHelper;
 
 /**
  * Class Timer
@@ -108,6 +112,6 @@ class Timer implements StaticInstanceInterface
         $callback = $config['callback'];
 
         $this->{$type}($msec, [$this, $callback]);
-        println('New Timer ' . static::class . ' added. (Type: ' . $type . ', msec: ' . $msec . ', callback function: ' . $callback . ')');
+        IoHelper::getIo()->text('New Timer ' . static::class . ' added. (Type: ' . $type . ', msec: ' . $msec . ', callback function: ' . $callback . ')');
     }
 }

@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-namespace Rid\Console;
+namespace Rid\Console\CommandLoader;
 
 use Symfony\Component\Console\CommandLoader\CommandLoaderInterface;
 use Symfony\Component\Console\Exception\CommandNotFoundException;

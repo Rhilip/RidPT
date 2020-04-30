@@ -11,7 +11,8 @@ namespace App\Process;
 use App\Libraries\Bonus;
 use App\Libraries\Constant;
 
-use Rid\Base\Process;
+use Rid\Helpers\IoHelper;
+use Rid\Swoole\Process\Process;
 
 final class CronTabProcess extends Process
 {
@@ -19,11 +20,15 @@ final class CronTabProcess extends Process
 
     private $_none_exist_job = [];
 
-    private function print_log($log)
+    public function init()
     {
         $this->_print_flag = $this->_print_flag ?? config('debug.print_crontab_log');
+    }
+
+    private function print_log($log)
+    {
         if ($this->_print_flag) {
-            println($log);
+            IoHelper::getIo()->text($log);
         }
     }
 
