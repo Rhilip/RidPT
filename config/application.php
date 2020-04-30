@@ -125,26 +125,6 @@ return [
             'cookieHttpOnly' => false,
         ],
 
-        'i18n' => [
-            'class' => Rid\Component\I18n::class,
-            'fallbackLang' => 'en',
-            'cacheDir' => dirname(__DIR__) . '/var/translation',
-            'loader' => [
-                // 'format' => loaderClass
-                'json' => Symfony\Component\Translation\Loader\JsonFileLoader::class
-            ],
-            'resources' => [
-                // 'format' => [[$resource, $locale, $domain = null]]
-                'json' => [
-                    [dirname(__DIR__) . '/translations/locale-en.json', 'en'],
-                    [dirname(__DIR__) . '/translations/locale-zh_CN.json', 'zh-CN'],
-                ],
-            ],
-
-            'allowedLangSet' => ['en', 'zh-CN'],
-            'forcedLang' => null
-        ],
-
         'config' => [
             'class' => Rid\Component\Config::class,
         ],
@@ -160,16 +140,5 @@ return [
 
     // 类库配置
     'libraries' => [
-        'mailer' => [
-            'class' => App\Libraries\Mailer::class,
-            'debug' => env('MAILER_DEBUG'),
-            'host' => env('MAILER_HOST'),
-            'port' => env('MAILER_PORT'),
-            'encryption' => env('MAILER_ENCRYPTION'),
-            'username' => env('MAILER_USERNAME'),
-            'password' => env('MAILER_PASSWORD'),
-            'from' => env('MAILER_FROM'),
-            'fromname' => env('MAILER_FROMNAME'),
-        ],
     ],
 ];

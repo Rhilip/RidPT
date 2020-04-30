@@ -7,16 +7,12 @@ namespace Rid\Base;
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Component\Config $config
- * @property \Rid\Component\I18n $i18n
- * @property \Rid\Component\View $view
  * @property \App\Components\Site $site
  */
 class Application extends BaseObject
 {
     // 初始化回调
     public $initialize = [];
-    // 基础路径
-    public $basePath = '';
 
     // 组件配置
     public $components = [];

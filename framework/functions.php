@@ -33,7 +33,8 @@ if (!function_exists('env')) {
 if (!function_exists('__')) {
     function __(string $string, array $avg = [], $domain = null, $lang = null)
     {
-        return app()->i18n->trans($string, $avg, $domain, $lang);
+        $i18n = \Rid\Helpers\ContainerHelper::getContainer()->get('i18n');
+        return $i18n->trans($string, $avg, $domain, $lang);
     }
 }
 

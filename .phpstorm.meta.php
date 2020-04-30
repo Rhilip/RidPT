@@ -9,9 +9,14 @@
 namespace PHPSTORM_META {
 
     override(\DI\Container::get(0), map([
+        // 组件
         'logger' => Monolog\Logger::class,
         'mailer' => \App\Libraries\Mailer::class,
         'view' => \Rid\Component\View::class,
+        'i18n' => \Rid\Component\I18n::class,
+
+        // 对象
+        'captcha' => \Rid\Libraries\Captcha::class,
     ]));
 
 

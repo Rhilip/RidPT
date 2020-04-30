@@ -60,9 +60,6 @@ class Image
                 $imageSave = 'imagepng';
                 break;
             case 'image/jpeg':
-                $imageCreate = 'imagecreatefromjpeg';
-                $imageSave = 'imagejpeg';
-                break;
             default:
                 $imageCreate = 'imagecreatefromjpeg';
                 $imageSave = 'imagejpeg';

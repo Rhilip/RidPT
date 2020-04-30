@@ -8,16 +8,10 @@
 
 namespace Rid\Component;
 
-use Rid\Base\Component;
 use Symfony\Component\Translation\Translator;
 
-class I18n extends Component
+class I18n
 {
-    public array $loader = [];
-    public array $resources = [];
-
-    public string $cacheDir = '';
-
     /**
      * Allowed language
      * This is the set of language which is used to limit user languages. No-exist language will not accept.
@@ -25,15 +19,6 @@ class I18n extends Component
      * @var array
      */
     public array $allowedLangSet = ['en', 'zh-CN'];
-
-    /**
-     * Fallback language
-     * This is the language which is used when there is no language file for all other user languages. It has the lowest priority.
-     * Remember to create a language file for the fallback!!
-     *
-     * @var string
-     */
-    public string $fallbackLang = 'en';
 
     /**
      * Forced language
@@ -46,21 +31,9 @@ class I18n extends Component
     /** @var Translator */
     protected ?Translator $_translator;
 
-    public function onInitialize()
+    public function __construct(Translator $_translator)
     {
-        $this->_translator = new Translator($this->fallbackLang, null, $this->cacheDir, env('APP_DEBUG'));
-
-        // Add Loader
-        foreach ($this->loader as $format => $loader_type) {
-            $this->_translator->addLoader($format, new $loader_type());
-        }
-
-        // Add Resources
-        foreach ($this->resources as $format => $resources) {
-            foreach ($resources as $resource) {
-                $this->_translator->addResource($format, ...$resource);
-            }
-        }
+        $this->_translator = $_translator;
     }
 
     /**

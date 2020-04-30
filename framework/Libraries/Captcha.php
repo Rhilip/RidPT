@@ -1,54 +1,52 @@
 <?php
 
-namespace Rid\Http;
-
-use Rid\Base\BaseObject;
+namespace Rid\Libraries;
 
 /**
  * Captcha类
  */
-class Captcha extends BaseObject
+class Captcha
 {
 
     // 宽度
-    public $width = 100;
+    protected int $width;
 
     // 高度
-    public $height = 40;
+    protected int $height;
 
     // 字集合
-    public $wordSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
-    // 字体文件
-    public $fontFile = '';
-
-    // 字体大小
-    public $fontSize = 20;
+    protected string $wordSet;
 
     // 字数
-    public $wordNumber = 4;
+    protected int $wordNumber = 4;
 
-    // 角度随机
-    public $angleRand = [-20, 20];
+    // 字体文件
+    protected string $fontFile = '';
+
+    // 字体大小
+    protected int $fontSize = 20;
 
     // 字距
-    public $xSpacing = 0.8;
+    protected float $xSpacing = 0.8;
+
+    // 角度随机
+    protected array $angleRand = [-20, 20];
 
     // Y轴随机
-    public $yRand = [5, 15];
+    protected array $yRand = [5, 15];
 
     // 文本
-    protected $_text;
+    protected ?string $_text = null;
 
     // 内容
-    protected $_content;
+    protected ?string $_content = null;
 
     // 生成
     public function generate()
     {
-        $canvas     = imagecreatetruecolor($this->width, $this->height);
+        $canvas = imagecreatetruecolor($this->width, $this->height);
         $background = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
-        $fontColor  = imagecolorallocate($canvas, 32, 64, 160);
+        $fontColor = imagecolorallocate($canvas, 32, 64, 160);
         imagefill($canvas, 0, 0, $background);
         for ($i = 1; $i <= $this->wordNumber; $i++) {
             $word = iconv_substr($this->wordSet, floor(mt_rand(0, mb_strlen($this->wordSet, 'utf-8') - 1)), 1, 'utf-8');
