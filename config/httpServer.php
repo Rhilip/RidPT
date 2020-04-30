@@ -90,6 +90,11 @@ return [
         ]
     ],
 
+    // 进程间无锁计数器 Atomic 设置
+    'atomic' => [
+        //'init' => 0
+    ],
+
     // 用户自定义进程 （用于常驻的任务清理，将会使用Server->addProcess添加到Server
     'process' => [
         'crontab' => [

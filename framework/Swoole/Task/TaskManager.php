@@ -2,17 +2,17 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 4/29/2020
+ * Date: 4/30/2020
  * Time: 2020
  */
 
 declare(strict_types=1);
 
-namespace Rid\Swoole\Helper;
+namespace Rid\Swoole\Task;
 
-use Rid\Swoole\Task\TaskInfo;
+use Rid\Swoole\Helper\ServerHelper;
 
-class TaskHelper
+class TaskManager
 {
     /**
      * 投递异步任务

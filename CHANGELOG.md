@@ -12,6 +12,9 @@
 ### Perf
 - **Console:** Move HttpServer init to AbstractServerCommand (ce50f2d)
 
+### Style
+- **Utils:** Combine `NameHelper` and `StringHelper` (70304ce)
+
 
 <a name="v0.1.7-alpha"></a>
 ## [v0.1.7-alpha] - 2020-04-28

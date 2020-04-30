@@ -11,7 +11,7 @@ namespace Rid\Component;
 use Rid\Base\Component;
 use Rid\Exceptions\ConfigException;
 use Rid\Swoole\Helper\ServerHelper;
-use Rid\Swoole\Table\TableManager;
+use Rid\Swoole\Memory\TableManager;
 use Rid\Utils\Text;
 use Swoole\Table;
 

@@ -12,12 +12,10 @@ use App\Helper\SwitchHelper;
 use App\Libraries\Constant;
 use App\Entity\User\UserRole;
 use App\Exceptions\TrackerException;
-
 use App\Tasks\Tracker\Announce;
-use Rid\Swoole\Task\TaskInfo;
-use Rid\Swoole\Helper\TaskHelper;
-use Rid\Utils\Arr;
-use Rid\Utils\Ip;
+
+use Rid\Utils;
+use Rid\Swoole\Task;
 
 use Rhilip\Bencode\Bencode;
 use Symfony\Component\HttpFoundation\Request;
@@ -367,7 +365,7 @@ class TrackerController
             // Stop check Loop if matched once
             if ($agentAccepted && $peerIdAccepted) {
                 $acceptedAgentFamilyId = $allowedItem['id'];
-                $acceptedAgentFamilyException = $allowedItem['exception'] == 'yes' ? true : false;
+                $acceptedAgentFamilyException = $allowedItem['exception'] == 'yes';
                 break;
             }
         }
@@ -589,20 +587,20 @@ class TrackerController
                 $new_port = (int)$queries['port'];
 
                 // Deal with ip in endpoint format
-                if ($client = Ip::isEndPoint($new_ip)) {
+                if ($client = Utils\Ip::isEndPoint($new_ip)) {
                     $new_ip = $client['ip'];
                     $new_port = (int)$client['port'];
                 }
 
                 // make sure every k-v is unique and Ignore all un-Native address
-                if (!array_key_exists($new_ip, $endpoints) && Ip::isPublicIp($new_ip)) {
+                if (!array_key_exists($new_ip, $endpoints) && Utils\Ip::isPublicIp($new_ip)) {
                     $endpoints[$new_ip] = $new_port;
                 }
             }
         }
         $queries['endpoints'] = $endpoints;
 
-        [$ips, $ports] = Arr::divide($endpoints);
+        [$ips, $ports] = Utils\Arr::divide($endpoints);
 
         /**
          * Part.4 Determine peer connect type by its announce ips
@@ -616,7 +614,7 @@ class TrackerController
          */
         $connect_type = 0b00;
         foreach ($ips as $ip) {
-            $connect_type |= Ip::isValidIPv6($ip) ? 0b10 : 0b01;
+            $connect_type |= Utils\Ip::isValidIPv6($ip) ? 0b10 : 0b01;
         }
         $queries['connect_type'] = $connect_type;
 
@@ -806,7 +804,7 @@ class TrackerController
     private function sendToTaskWorker($queries, $role, $userInfo, $torrentInfo)
     {
         // Push to Task Worker so we can quick response
-        return TaskHelper::post(new TaskInfo(Announce::class, [
+        return Task\TaskManager::post(new Task\TaskInfo(Announce::class, [
             'timestamp' => $this->timenow,
             'queries' => $queries,
             'role' => $role,
@@ -865,7 +863,7 @@ class TrackerController
             $endpoints = json_decode($peer['endpoints']);
             foreach ($endpoints as $ip => $port) {
                 if ($compact == 1) {
-                    $peer_insert_field = Ip::isValidIPv6($ip) ? 'peers6' : 'peers';
+                    $peer_insert_field = Utils\Ip::isValidIPv6($ip) ? 'peers6' : 'peers';
                     $rep_dict[$peer_insert_field] .= inet_pton($ip) . pack('n', $port);
                 } else {
                     $exchange_peer['ip'] = $ip;

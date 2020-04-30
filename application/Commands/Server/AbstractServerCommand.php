@@ -17,7 +17,7 @@ use Rid\Base\Timer;
 use Rid\Http\Application;
 use Rid\Helpers\ProcessHelper;
 use Rid\Swoole\Helper\ServerHelper;
-use Rid\Swoole\Table\TableManager;
+use Rid\Swoole\Memory;
 
 use Swoole\Server;
 
@@ -93,7 +93,8 @@ abstract class AbstractServerCommand extends AbstractCommand
         // FIXME 增加自定义进程
         $this->addCustomProcess();
 
-        TableManager::init($this->httpServerConfig['table']);  // 创建全局的 \Swoole\Table
+        Memory\TableManager::init($this->httpServerConfig['table']);  // 创建全局的 \Swoole\Table
+        Memory\AtomicManager::init($this->httpServerConfig['atomic'] ?? []);  // 创建全局的 \Swoole\Atomic
 
         return $this->server;
     }

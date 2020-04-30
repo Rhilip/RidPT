@@ -8,16 +8,16 @@
 
 declare(strict_types=1);
 
-namespace Rid\Swoole\Table;
+namespace Rid\Swoole\Memory;
 
 use Swoole\Table;
 
 class TableManager
 {
     private static bool $init = false;
-
-    protected static array $table_configs = [];
     protected static array $tables = [];
+
+    protected static array $configs = [];
 
     public static function init($table_configs)
     {
@@ -25,7 +25,7 @@ class TableManager
             throw new \RuntimeException('TableManager can not repeated init.');
         }
 
-        self::$table_configs = $table_configs;
+        self::$configs = $table_configs;
         foreach ($table_configs as $name => $config) {
             $table = new Table($config['size'], $config['conflict_proportion'] ?? 0.2);
             foreach ($config['columns'] as $column) {
@@ -54,8 +54,8 @@ class TableManager
     /**
      * @return array
      */
-    public static function getTableConfigs(): array
+    public static function getConfigs(): array
     {
-        return self::$table_configs;
+        return self::$configs;
     }
 }
