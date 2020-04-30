@@ -15,6 +15,7 @@ use App\Entity\Torrent\TorrentType;
 use Rhilip\Bencode\Bencode;
 use Rhilip\Bencode\ParseErrorException;
 
+use Rid\Helpers\ContainerHelper;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadForm extends EditForm
@@ -263,7 +264,8 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
             $this->setBuff();
 
             // Save this torrent
-            $dump_status = Bencode::dump(Constant::getTorrentFileLoc($this->id), $this->torrent_dict);
+            $save_to = ContainerHelper::getContainer()->get('path.storage.torrents') . $this->id . '.torrent';
+            $dump_status = Bencode::dump($save_to, $this->torrent_dict);
             if ($dump_status === false) {
                 throw new \Exception('std_torrent_cannot_save');
             }
@@ -272,7 +274,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
         } catch (\Exception $e) {
             // Delete the saved torrent file when torrent save success but still get Exception on other side
             if (isset($dump_status) && $dump_status === true) {
-                unlink(Constant::getTorrentFileLoc($this->id));
+                unlink(ContainerHelper::getContainer()->get('path.storage.torrents') . $this->id . '.torrent');
             }
 
             app()->pdo->rollback();

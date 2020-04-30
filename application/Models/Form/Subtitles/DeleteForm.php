@@ -11,6 +11,7 @@ namespace App\Models\Form\Subtitles;
 use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidSubtitleTrait;
 
+use Rid\Helpers\ContainerHelper;
 use Rid\Validators\Validator;
 
 class DeleteForm extends Validator
@@ -46,7 +47,7 @@ class DeleteForm extends Validator
     public function flush()
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
-        $file_loc = app()->getStoragePath('subs') . DIRECTORY_SEPARATOR . $filename;
+        $file_loc = ContainerHelper::getContainer()->get('path.storage.subs') . $filename;
 
         app()->pdo->prepare('DELETE FROM subtitles WHERE id = :sid')->bindParams([
             'sid' => $this->subtitle['id']

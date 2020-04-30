@@ -9,19 +9,30 @@
 declare(strict_types=1);
 
 return [
+    // 定义路径
+    'path.root' => RIDPT_ROOT,
+    'path.config' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'config'),
+    'path.public' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'public'),
+    'path.runtime' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'var'),
+    'path.storage' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'storage'),
+
+    'path.storage.torrents' => DI\string('{path.storage}' . DIRECTORY_SEPARATOR . 'torrents'),
+    'path.storage.subs' => DI\string('{path.storage}' . DIRECTORY_SEPARATOR . 'subs'),
 
 
     'logger' => DI\create(Monolog\Logger::class)
         ->constructor(PROJECT_NAME)
         ->method('pushHandler', DI\get(\Monolog\Handler\RotatingFileHandler::class)),
 
-    'mailer' => DI\autowire(\App\Libraries\Mailer::class)
+    'mailer' => DI\autowire(\App\Components\Mailer::class)
         ->property('from', DI\env('MAILER_FROM'))
         ->property('fromname', DI\env('MAILER_FROMNAME')),
 
 
     \Monolog\Handler\RotatingFileHandler::class => DI\create()
-        ->constructor(RIDPT_ROOT . '/var/logs/ridpt.log', 10),
+        ->constructor(
+            DI\string('{path.runtime}' . DIRECTORY_SEPARATOR . 'log' . DIRECTORY_SEPARATOR . 'ridpt.log'),
+            10),
 
     \PHPMailer\PHPMailer\PHPMailer::class => DI\create()
         ->constructor(DI\env('APP_DEBUG'))

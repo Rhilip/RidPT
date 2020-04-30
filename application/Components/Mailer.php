@@ -7,7 +7,7 @@
  * Time: 17:30
  */
 
-namespace App\Libraries;
+namespace App\Components;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;

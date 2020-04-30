@@ -19,8 +19,6 @@ class Constant
     const trackerAnnounceLockZset = 'Tracker:lock:announce_flood';
     const trackerAnnounceMinIntervalLockZset = 'Tracker:lock:announce_min_interval';
     const trackerValidPeerZset = 'Tracker:valid_peers';
-    const trackerToDealQueue = 'Tracker:queue:to_deal';
-    const trackerBackupQueue = 'Tracker:queue:backup';
 
     // Site Status
     const siteSubtitleSize = 'Site:subtitle_size';  // TODO move to app()->config
@@ -51,10 +49,5 @@ class Constant
     public static function rateLimitPool($pool, $action)
     {
         return 'RateLimit:' . $pool . ':action_' . $action;  // Zset
-    }
-
-    public static function getTorrentFileLoc($tid)
-    {
-        return app()->getStoragePath('torrents') . DIRECTORY_SEPARATOR . $tid . '.torrent';
     }
 }

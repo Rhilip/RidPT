@@ -7,6 +7,7 @@
 
 ### Feat
 - **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)
+- **DI:** Prepare replace component by PHP-DI (a287244)
 - **MemoryTable:** Use New `TableManager` to manager Swoole Table instead of hardcode (37cf209)
 - **SwooleMemory:** Add `AtomicManager` (6190d60)
 

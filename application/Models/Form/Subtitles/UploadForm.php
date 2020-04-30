@@ -11,6 +11,7 @@ namespace App\Models\Form\Subtitles;
 use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidTorrentTrait;
 
+use Rid\Helpers\ContainerHelper;
 use Rid\Validators\Validator;
 
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -92,7 +93,7 @@ VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)
                 'anonymous' => $this->anonymous, 'ext' => $ext
             ])->execute();
             $id = app()->pdo->getLastInsertId();
-            $this->file->move(app()->getStoragePath('subs'), $id . '.' . $ext);
+            $this->file->move(ContainerHelper::getContainer()->get('path.storage.subs') . $id . '.' . $ext);
             app()->pdo->commit();
         } catch (\Exception $e) {
             if (isset($file_loc)) {

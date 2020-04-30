@@ -163,17 +163,6 @@ class Application extends \Rid\Base\Application
         }
     }
 
-    // 获取公开目录路径
-    public function getPublicPath()
-    {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'public';
-    }
-
-    public function getStoragePath($sub_folder = null)
-    {
-        return $this->basePath . DIRECTORY_SEPARATOR . 'storage' . (is_null($sub_folder) ? '' : DIRECTORY_SEPARATOR . $sub_folder);
-    }
-
     // 打印变量的相关信息
     public function dump($var, $send = false)
     {

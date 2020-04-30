@@ -9,6 +9,7 @@
 namespace App\Models\Form\Subtitles;
 
 use App\Models\Form\Traits;
+use Rid\Helpers\ContainerHelper;
 use Rid\Validators\Validator;
 
 class DownloadForm extends Validator
@@ -35,7 +36,7 @@ class DownloadForm extends Validator
     protected function getSendFileContent()
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
-        $file_loc = app()->getStoragePath('subs') . DIRECTORY_SEPARATOR . $filename;
+        $file_loc = ContainerHelper::getContainer()->get('path.storage.subs') . $filename;
         app()->response->setFile($file_loc);
     }
 }
