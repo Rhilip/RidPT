@@ -11,14 +11,16 @@ declare(strict_types=1);
 namespace App\Commands\Server;
 
 use App\Commands\AbstractCommand;
+
 use Rid\Base\Process;
 use Rid\Base\Timer;
+use Rid\Http\Application;
 use Rid\Helpers\ProcessHelper;
 use Rid\Swoole\Helper\ServerHelper;
-use Rid\Http\Application;
+use Rid\Swoole\Table\TableManager;
 
 use Swoole\Server;
-use Swoole\Table;
+
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -86,18 +88,12 @@ abstract class AbstractServerCommand extends AbstractCommand
         $this->server->set($this->serverSetting);  // 设置服务器
         $this->bindServerEvents();  // 绑定事件
 
+        ServerHelper::setServer($this->server);
+
         // FIXME 增加自定义进程
         $this->addCustomProcess();
 
-        // FIXME 在此处创建全局的 \Swoole\Table
-
-        $configTable = new Table(4096);
-        $configTable->column('value', Table::TYPE_STRING, 4096);
-        $configTable->column('type', Table::TYPE_STRING, 64);
-        $configTable->create();
-        $this->server->configTable = $configTable;
-
-        ServerHelper::setServer($this->server);
+        TableManager::init($this->httpServerConfig['table']);  // 创建全局的 \Swoole\Table
 
         return $this->server;
     }

@@ -8,6 +8,7 @@
 
 use Swoole\Http\Request;
 use Swoole\Http\Server;
+use Swoole\Table;
 
 return [
     //异步Server对象运行的主机地址
@@ -78,16 +79,19 @@ return [
         },
     ],
 
+    // 高性能共享内存 Table 设置
+    'table' => [
+        'config' => [
+            'size' => 4096,
+            'columns' => [
+                ['value', Table::TYPE_STRING, 4096],
+                ['type', Table::TYPE_STRING, 64]
+            ]
+        ]
+    ],
+
     // 用户自定义进程 （用于常驻的任务清理，将会使用Server->addProcess添加到Server
     'process' => [
-        /*
-        'tracker' => [
-            'class' => App\Process\TrackerAnnounceProcess::class,
-            'title' => 'Tracker Announce Worker',
-            'components' => ['log', 'pdo', 'redis', 'config'],
-            'sleep' => 5,
-        ],
-        */
         'crontab' => [
             'class' => App\Process\CronTabProcess::class,
             'title' => 'Crontab Worker',
