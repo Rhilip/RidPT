@@ -5,6 +5,10 @@
 - **Composer:** Switch dotenv library from `adhocore/cli` to `symfony/console` (bd1949a)
 - **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
 
+### Feat
+- **MemoryTable:** Use New `TableManager` to manager Swoole Table instead of hardcode (c301d4a)
+- **SwooleMemory:** Add `AtomicManager` (96ddbbc)
+
 ### Fix
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)

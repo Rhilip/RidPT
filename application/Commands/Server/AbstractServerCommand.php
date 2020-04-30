@@ -12,13 +12,13 @@ namespace App\Commands\Server;
 
 use App\Commands\AbstractCommand;
 
-use Rid\Base\Process;
-use Rid\Base\Timer;
 use Rid\Http\Application;
 use Rid\Helpers\ProcessHelper;
 use Rid\Swoole\Helper\ServerHelper;
 use Rid\Swoole\Memory;
 
+use Rid\Swoole\Process\Process;
+use Rid\Swoole\Timer\Timer;
 use Swoole\Server;
 
 use Symfony\Component\Console\Input\InputInterface;

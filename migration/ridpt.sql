@@ -895,12 +895,11 @@ DROP TABLE IF EXISTS `site_crontab`;
 CREATE TABLE IF NOT EXISTS `site_crontab` (
   `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `job` varchar(64) NOT NULL,
+  `expr` varchar(16) NOT NULL DEFAULT '@hourly',
   `priority` int(10) UNSIGNED NOT NULL DEFAULT '100' COMMENT '0 - disable this crontab work, else the lower number job have higher priority, by default 100',
-  `job_interval` int(11) UNSIGNED NOT NULL DEFAULT '600',
   `last_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `next_run_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `IN_site_crontab_priority_next_run_at` (`priority`,`next_run_at`) USING BTREE
+  KEY `priority` (`priority`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --

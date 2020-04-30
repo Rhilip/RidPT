@@ -8,21 +8,35 @@
 
 namespace App\Process;
 
+use Ahc\Cron\Expression;
 use App\Libraries\Bonus;
 use App\Libraries\Constant;
 
 use Rid\Helpers\IoHelper;
 use Rid\Swoole\Process\Process;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 final class CronTabProcess extends Process
 {
-    private $_print_flag = 1;  // FIXME debug model on
+    private bool $_print_flag = true;  // FIXME debug model on
 
-    private $_none_exist_job = [];
+    /**
+     * @var Stopwatch
+     */
+    private ?Stopwatch $stopwatch = null;
+    /**
+     * @var Expression
+     */
+    private ?Expression $expr = null;
+
+    private ?array $jobs = [];
 
     public function init()
     {
         $this->_print_flag = $this->_print_flag ?? config('debug.print_crontab_log');
+        $this->stopwatch = new Stopwatch();
+        $this->expr = new Expression();
+        $this->jobs = app()->pdo->prepare('SELECT * FROM `site_crontab` WHERE `priority` > 0 ORDER BY priority;')->queryAll();
     }
 
     private function print_log($log)
@@ -37,48 +51,46 @@ final class CronTabProcess extends Process
      */
     public function run()
     {
-        // Get all run
-        $to_run_jobs = app()->pdo->prepare('SELECT * FROM `site_crontab` WHERE `priority` > 0 AND `next_run_at` < NOW() ORDER BY priority;')->queryAll();
-
         $hit = 0;
-        $start_time = time();
-        foreach ($to_run_jobs as $job) {
+        $this->stopwatch->start('cron_all');
+        foreach ($this->jobs as $index => $job) {
+            if (!$this->expr->isCronDue($job['expr'], $job['last_run_at'])) {
+                continue;
+            };
+
             if (method_exists($this, $job['job'])) {
+                $hit++;
+                $this->stopwatch->start('cron_' . $job['job']);
+
                 app()->pdo->beginTransaction();
                 $this->print_log('CronTab Worker Start To run job : ' . $job['job']);
                 try {
                     // Run this job
-                    $job_start_time = time();
                     $this->{$job['job']}($job);
-                    $job_end_time = time();
-                    $hit++;
 
-                    // Update the run information
-                    $next_run_at = $job_end_time + $job['job_interval'];
-                    app()->pdo->prepare('UPDATE `site_crontab` set last_run_at = FROM_UNIXTIME(:last_run_at) , next_run_at = FROM_UNIXTIME(:next_run_at) WHERE id=:id')->bindParams([
-                        'id' => $job['id'], 'last_run_at' => $job_end_time, 'next_run_at' => $next_run_at
-                    ])->execute();
-                    $this->print_log(
-                        'The run job : ' . $job['job'] . ' Finished. ' .
-                        'Cost time: ' . number_format($job_end_time - $job_start_time, 10) . 's, ' . 'Next run at : ' . $next_run_at
-                    );
-
-                    // Finish The Transaction and commit~
-                    app()->pdo->commit();
+                    app()->pdo->commit(); // Finish The Transaction and commit~
                 } catch (\Exception $e) {
                     app()->pdo->rollback();
                     app()->log->critical('The run job throw Exception : ' . $e->getMessage());
                 }
+
+                $job_event = $this->stopwatch->stop('cron_' . $job['job']);
+
+                // Update the run information
+                $last_run_at = time();
+                $this->jobs[$index]['last_run_at'] = $last_run_at;
+                app()->pdo->prepare('UPDATE `site_crontab` set last_run_at = FROM_UNIXTIME(:last_run_at) WHERE id=:id')->bindParams([
+                    'id' => $job['id'], 'last_run_at' => $last_run_at
+                ])->execute();
+                $this->print_log('The run job : ' . $job['job'] . ' Finished. ' . 'Cost: ' . (string)$job_event . '.');
             } else {
-                if (!in_array($job['job'], $this->_none_exist_job)) {
-                    $this->_none_exist_job[] = $job['job'];
-                    app()->log->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
-                }
+                app()->log->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
+                unset($this->jobs[$index]);
             }
         }
-        $end_time = time();
+        $event = $this->stopwatch->stop('cron_all');
         if ($hit > 0) {
-            $this->print_log('This Cron Work period Start At ' . $start_time . ', Cost Time: ' . number_format($end_time - $start_time, 10) . 's, With ' . $hit . ' Jobs hits.');
+            $this->print_log('This Cron Work period Start At ' . $event->getOrigin() . ', Cost: ' . (string)$event . ', With ' . $hit . ' Jobs hits.');
         }
     }
 
@@ -134,7 +146,7 @@ final class CronTabProcess extends Process
         foreach ($clean_sqls as $item) {
             [$clean_sql, $msg] = $item;
             app()->pdo->prepare($clean_sql)->execute();
-            $clean_count =  app()->pdo->getRowCount();
+            $clean_count = app()->pdo->getRowCount();
             if ($clean_count > 0) {
                 $this->print_log(sprintf($msg, $clean_count));
             }
