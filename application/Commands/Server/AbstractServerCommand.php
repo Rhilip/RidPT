@@ -12,6 +12,7 @@ namespace App\Commands\Server;
 
 use App\Commands\AbstractCommand;
 
+use Rid\Helpers\ContainerHelper;
 use Rid\Http\Application;
 use Rid\Helpers\ProcessHelper;
 use Rid\Swoole\Helper\ServerHelper;
@@ -272,6 +273,12 @@ abstract class AbstractServerCommand extends AbstractCommand
         // FIXME 实例化App
         $config = require $this->httpServerConfig['configFile'];
         $app = new Application($config);
+
+        $builder = new \DI\ContainerBuilder();
+        $builder->addDefinitions(RIDPT_ROOT . '/config/components.php');
+        $container = $builder->build();
+        ContainerHelper::setContainer($container);
+
         $app->loadAllComponents($components);
     }
 

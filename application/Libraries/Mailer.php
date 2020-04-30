@@ -9,45 +9,22 @@
 
 namespace App\Libraries;
 
-use Rid\Base\BaseObject;
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 use Soundasleep\Html2Text;
 use Soundasleep\Html2TextException;
 
-class Mailer extends BaseObject
+class Mailer
 {
-    public $debug;
-    public $host;
-    public $port;
-    public $username;
-    public $password;
-    public $encryption;
+    public string $from;
+    public string $fromname;
 
-    public $from;
-    public $fromname;
+    public PHPMailer $_mailer;
 
-    /** @var PHPMailer */
-    public $_mailer;
-
-    public function onInitialize()
+    public function __construct(PHPMailer $mailer)
     {
-        $mail = new PHPMailer(true);
-
-        //Server settings
-        $mail->SMTPDebug = $this->debug;
-        $mail->isSMTP();
-
-        $mail->Host = $this->host;        // Specify main and backup SMTP servers
-        $mail->SMTPAuth = true;               // Enable SMTP authentication
-        $mail->Username = $this->username;    // SMTP username
-        $mail->Password = $this->password;    // SMTP password
-        $mail->SMTPSecure = $this->encryption;  // Enable TLS encryption, `ssl` also accepted
-        $mail->Port = $this->port;        // TCP port to connect to
-
-        $this->_mailer = $mail;
+        $this->_mailer = $mailer;
     }
 
     public function send(array $receivers, string $subject, string $body)
@@ -65,7 +42,7 @@ class Mailer extends BaseObject
             }
 
             // Content
-            $mail->isHTML(true);                                  // Set email format to HTML
+            $mail->isHTML(true);  // Set email format to HTML
             $mail->Subject = $subject;
             $mail->Body = $body;
             try {

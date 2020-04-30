@@ -53,8 +53,8 @@ if (!PHP_SAPI === 'cli') {
  * environment variables quickly and simply.
  *
  */
-$dotenv = new Symfony\Component\Dotenv\Dotenv();
-$dotenv->load(RIDPT_ROOT . '/.env');  // $dotenv->overload();
+$dotenv = new Symfony\Component\Dotenv\Dotenv(true);
+$dotenv->load(RIDPT_ROOT . '/.env');
 
 /*
  * --------------------------------------------------------------------------
