@@ -274,6 +274,7 @@ abstract class AbstractServerCommand extends AbstractCommand
         $config = require $this->httpServerConfig['configFile'];
         $app = new Application($config);
 
+        // FIXME Container转移到APP中
         $builder = new \DI\ContainerBuilder();
         $builder->addDefinitions(RIDPT_ROOT . '/config/components.php');
         $container = $builder->build();

@@ -69,14 +69,6 @@ return [
             'class' => Rid\Http\Error::class
         ],
 
-        // 日志
-        'log' => [
-            'class' => Rid\Component\Log::class,  // 类路径
-            'dir' => 'logs',  // 日志目录
-            'rotate' => Rid\Component\Log::ROTATE_DAY,  // 日志轮转类型
-            'maxFileSize' => 0,  // 最大文件尺寸
-        ],
-
         // 数据库
         'pdo' => [
             // 类路径

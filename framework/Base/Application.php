@@ -4,7 +4,6 @@ namespace Rid\Base;
 
 /**
  *
- * @property \Rid\Component\Log $log
  * @property \Rid\Database\PDOConnection $pdo
  * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Component\Config $config
@@ -18,6 +17,7 @@ class Application extends BaseObject
     public $initialize = [];
     // 基础路径
     public $basePath = '';
+
     // 组件配置
     public $components = [];
     // 类库配置

@@ -3,6 +3,7 @@
 namespace Rid\Http;
 
 use Rid\Base\Component;
+use Rid\Helpers\ContainerHelper;
 use Rid\Helpers\IoHelper;
 
 /**
@@ -41,7 +42,7 @@ class Error extends Component
                     $message .= '$_POST' . substr(print_r(\Rid::app()->request->request->all(), true), 5, -1);
                     $message .= 'Memory used: ' . memory_get_usage();
                     IoHelper::getIo()->error($message);
-                    app()->log->error($message);
+                    ContainerHelper::getContainer()->get('logger')->error($message);
                 }
                 // 清空系统错误
                 ob_get_contents() and ob_clean();
@@ -67,7 +68,7 @@ class Error extends Component
             // 日志处理
             if (!($e instanceof \Rid\Exceptions\NotFoundException)) {
                 $log_message = $message . '$_SERVER' . substr(print_r($_SERVER, true), 5, -1);
-                \Rid::app()->log->error($log_message);
+                ContainerHelper::getContainer()->get('logger')->error($log_message);
             }
             // 清空系统错误
             ob_get_contents() and ob_clean();

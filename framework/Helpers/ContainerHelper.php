@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Rid\Helpers;
 
-
 use DI\Container;
 
 class ContainerHelper

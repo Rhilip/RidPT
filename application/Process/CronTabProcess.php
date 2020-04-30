@@ -12,6 +12,7 @@ use Ahc\Cron\Expression;
 use App\Libraries\Bonus;
 use App\Libraries\Constant;
 
+use Rid\Helpers\ContainerHelper;
 use Rid\Helpers\IoHelper;
 use Rid\Swoole\Process\Process;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -71,7 +72,7 @@ final class CronTabProcess extends Process
                     app()->pdo->commit(); // Finish The Transaction and commit~
                 } catch (\Exception $e) {
                     app()->pdo->rollback();
-                    app()->log->critical('The run job throw Exception : ' . $e->getMessage());
+                    ContainerHelper::getContainer()->get('logger')->critical('The run job throw Exception : ' . $e->getMessage());
                 }
 
                 $job_event = $this->stopwatch->stop('cron_' . $job['job']);
@@ -84,7 +85,7 @@ final class CronTabProcess extends Process
                 ])->execute();
                 $this->print_log('The run job : ' . $job['job'] . ' Finished. ' . 'Cost: ' . (string)$job_event . '.');
             } else {
-                app()->log->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
+                ContainerHelper::getContainer()->get('logger')->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
                 unset($this->jobs[$index]);
             }
         }

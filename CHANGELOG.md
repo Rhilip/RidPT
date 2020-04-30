@@ -6,18 +6,20 @@
 - **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
 
 ### Feat
-- **MemoryTable:** Use New `TableManager` to manager Swoole Table instead of hardcode (c301d4a)
-- **SwooleMemory:** Add `AtomicManager` (96ddbbc)
+- **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)
+- **MemoryTable:** Use New `TableManager` to manager Swoole Table instead of hardcode (37cf209)
+- **SwooleMemory:** Add `AtomicManager` (6190d60)
 
 ### Fix
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
+- **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
 
 ### Perf
 - **Console:** Move HttpServer init to AbstractServerCommand (ce50f2d)
 
 ### Style
-- **Utils:** Combine `NameHelper` and `StringHelper` (70304ce)
+- **Utils:** Combine `NameHelper` and `StringHelper` (85f311b)
 
 
 <a name="v0.1.7-alpha"></a>

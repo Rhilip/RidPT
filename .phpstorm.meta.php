@@ -8,6 +8,12 @@
 
 namespace PHPSTORM_META {
 
+    override(\DI\Container::get(0), map([
+        'logger' => Monolog\Logger::class,
+        'mailer' => \App\Libraries\Mailer::class
+    ]));
+
+
     // TODO
     registerArgumentsSet('config.authority',
         'authority.apply_for_links',
@@ -276,5 +282,4 @@ namespace PHPSTORM_META {
 
     expectedArguments(\League\Plates\Template\Template::escape(), 1, argumentsSet('view.function'));
     expectedArguments(\League\Plates\Template\Template::e(), 1, argumentsSet('view.function'));
-
 }

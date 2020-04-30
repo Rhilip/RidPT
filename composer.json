@@ -36,7 +36,6 @@
     "nesbot/carbon": "^2.30",
     "php-di/php-di": "^6.1",
     "phpmailer/phpmailer": "^6.0",
-    "psr/log": "^1.1",
     "rhilip/bencode": "^1.0",
     "siriusphp/validation": "^2.3",
     "soundasleep/html2text": "^1.1",

@@ -9,13 +9,19 @@
 declare(strict_types=1);
 
 return [
+
+
+    'logger' => DI\create(Monolog\Logger::class)
+        ->constructor(PROJECT_NAME)
+        ->method('pushHandler', DI\get(\Monolog\Handler\RotatingFileHandler::class)),
+
     'mailer' => DI\autowire(\App\Libraries\Mailer::class)
         ->property('from', DI\env('MAILER_FROM'))
         ->property('fromname', DI\env('MAILER_FROMNAME')),
 
 
-
-
+    \Monolog\Handler\RotatingFileHandler::class => DI\create()
+        ->constructor(RIDPT_ROOT . '/var/logs/ridpt.log', 10),
 
     \PHPMailer\PHPMailer\PHPMailer::class => DI\create()
         ->constructor(DI\env('APP_DEBUG'))
