@@ -13,11 +13,11 @@ use App\Libraries\Constant;
 
 use Rid\Base\Component;
 use Rid\Helpers\ContainerHelper;
-use Rid\Utils\ClassValueCacheUtils;
+use Rid\Utils\Traits\ClassValueCache;
 
 class Site extends Component
 {
-    use ClassValueCacheUtils;
+    use ClassValueCache;
 
     protected Entity\User\UserFactory $user_factory;
     protected Entity\Torrent\TorrentFactory $torrent_factory;

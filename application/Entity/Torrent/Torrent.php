@@ -11,12 +11,12 @@ namespace App\Entity\Torrent;
 use App\Entity\User\User;
 use App\Libraries\Constant;
 
-use Rid\Utils;
+use Rid\Utils\Traits\ClassValueCache;
 use Rid\Base\BaseObject;
 
 class Torrent extends BaseObject
 {
-    use Utils\ClassValueCacheUtils;
+    use ClassValueCache;
 
     //-- Torrent Base Info --//
     protected int $id;

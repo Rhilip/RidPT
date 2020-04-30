@@ -7,6 +7,7 @@
 
 ### Feat
 - **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)
+- **DI:** merge Component `View` into Container (75f6edf)
 - **DI:** Add path info in container (1569795)
 - **DI:** Prepare replace component by PHP-DI (already mailer, logger) (73cc3f6)
 - **DI:** Prepare replace component by PHP-DI (a287244)

@@ -7,9 +7,9 @@
  * Time: 10:31 PM
  */
 
-namespace Rid\Utils;
+namespace Rid\Utils\Traits;
 
-trait ClassValueCacheUtils
+trait ClassValueCache
 {
     protected function getCacheNameSpace(): string
     {

@@ -11,11 +11,11 @@ declare(strict_types=1);
 namespace App\Entity\User;
 
 use Rid\Base\BaseObject;
-use Rid\Utils\ClassValueCacheUtils;
+use Rid\Utils\Traits\ClassValueCache;
 
 class User extends BaseObject
 {
-    use ClassValueCacheUtils;
+    use ClassValueCache;
 
     //-- Start User Base Info --//
     protected int $id = 0;
