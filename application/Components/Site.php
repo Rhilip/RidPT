@@ -9,10 +9,10 @@
 namespace App\Components;
 
 use App\Entity;
-use App\Libraries\Mailer;
 use App\Libraries\Constant;
 
 use Rid\Base\Component;
+use Rid\Helpers\ContainerHelper;
 use Rid\Utils\ClassValueCacheUtils;
 
 class Site extends Component
@@ -93,8 +93,9 @@ class Site extends Component
 
     public function sendEmail($receivers, $subject, $template, $data = [])
     {
-        $mail_body = app()->view->render($template, $data);
-        $mail_sender = Mailer::newInstanceByConfig('Libraries.[mailer]');
+        $container = ContainerHelper::getContainer();
+        $mail_body = $container->get('view')->render($template, $data);
+        $mail_sender = $container->get('mailer');
         $mail_sender->send($receivers, $subject, $mail_body);
     }
 

@@ -8,7 +8,6 @@
 
 namespace App\Models\Form\Torrent;
 
-use App\Libraries\Constant;
 use App\Entity\Torrent\TorrentStatus;
 use App\Entity\Torrent\TorrentType;
 

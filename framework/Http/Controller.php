@@ -2,15 +2,15 @@
 
 namespace Rid\Http;
 
-use Rid\Base\BaseObject;
+use Rid\Helpers\ContainerHelper;
 
 /**
  * Controller类
  */
-class Controller extends BaseObject
+class Controller
 {
     public function render($name, $data = [])
     {
-        return app()->view->render($name, $data);
+        return ContainerHelper::getContainer()->get('view')->render($name, $data);
     }
 }

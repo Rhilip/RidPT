@@ -10,7 +10,8 @@ namespace PHPSTORM_META {
 
     override(\DI\Container::get(0), map([
         'logger' => Monolog\Logger::class,
-        'mailer' => \App\Libraries\Mailer::class
+        'mailer' => \App\Libraries\Mailer::class,
+        'view' => \Rid\Component\View::class,
     ]));
 
 

@@ -125,14 +125,6 @@ return [
             'cookieHttpOnly' => false,
         ],
 
-        'view' => [
-            'class' => Rid\Component\View::class,
-            'templates_path' => dirname(__DIR__) . '/templates',
-            'extensions' => [
-                Rid\View\Conversion::class,
-            ]
-        ],
-
         'i18n' => [
             'class' => Rid\Component\I18n::class,
             'fallbackLang' => 'en',

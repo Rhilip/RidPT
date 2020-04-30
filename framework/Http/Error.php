@@ -48,7 +48,7 @@ class Error extends Component
                 ob_get_contents() and ob_clean();
 
                 app()->response->setStatusCode($statusCode);
-                app()->response->setContent(app()->view->render('error', $errors));
+                app()->response->setContent(ContainerHelper::getContainer()->get('view')->render('error', $errors));
             }
 
             \Rid::app()->response->prepare(\Rid::app()->request);

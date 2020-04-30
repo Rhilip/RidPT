@@ -8,8 +8,6 @@
 
 namespace App\Models\Form\Torrent;
 
-use App\Libraries\Constant;
-
 use Rhilip\Bencode\Bencode;
 use Rid\Helpers\ContainerHelper;
 
