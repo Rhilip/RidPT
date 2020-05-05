@@ -48,6 +48,7 @@ class Captcha
         $background = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
         $fontColor = imagecolorallocate($canvas, 32, 64, 160);
         imagefill($canvas, 0, 0, $background);
+        $this->_text = '';
         for ($i = 1; $i <= $this->wordNumber; $i++) {
             $word = iconv_substr($this->wordSet, floor(mt_rand(0, mb_strlen($this->wordSet, 'utf-8') - 1)), 1, 'utf-8');
             $this->_text .= $word;
