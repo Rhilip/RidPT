@@ -55,6 +55,6 @@ class EditForm extends Validator
             ])->execute();
         }
         // Clean News Cache
-        app()->redis->del('Site:recent_news');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:recent_news');
     }
 }

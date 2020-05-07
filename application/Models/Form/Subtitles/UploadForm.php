@@ -102,6 +102,6 @@ VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)
             app()->pdo->rollback();
             throw $e;
         }
-        app()->redis->del(Constant::siteSubtitleSize);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::siteSubtitleSize);
     }
 }

@@ -11,41 +11,60 @@ declare(strict_types=1);
 return [
     // 定义路径
     'path.root' => RIDPT_ROOT,
-    'path.config' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'config'),
-    'path.public' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'public'),
-    'path.templates' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'templates'),
-    'path.translations' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'translations'),
+    'path.config' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'config'),
+    'path.public' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'public'),
+    'path.templates' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'templates'),
+    'path.translations' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'translations'),
 
-    'path.runtime' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'var'),
-    'path.runtime.logs' => DI\string('{path.runtime}' . DIRECTORY_SEPARATOR . 'logs'),
-    'path.runtime.translation' => DI\string('{path.runtime}' . DIRECTORY_SEPARATOR . 'translation'),
+    'path.runtime' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'var'),
+    'path.runtime.logs' => \DI\string('{path.runtime}' . DIRECTORY_SEPARATOR . 'logs'),
+    'path.runtime.translation' => \DI\string('{path.runtime}' . DIRECTORY_SEPARATOR . 'translation'),
 
-    'path.storage' => DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'storage'),
-    'path.storage.torrents' => DI\string('{path.storage}' . DIRECTORY_SEPARATOR . 'torrents'),
-    'path.storage.subs' => DI\string('{path.storage}' . DIRECTORY_SEPARATOR . 'subs'),
+    'path.storage' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'storage'),
+    'path.storage.torrents' => \DI\string('{path.storage}' . DIRECTORY_SEPARATOR . 'torrents'),
+    'path.storage.subs' => \DI\string('{path.storage}' . DIRECTORY_SEPARATOR . 'subs'),
 
     // 定义组件
-    'view' => DI\autowire(\Rid\Component\View::class),
+    'redis' => \DI\autowire(\Rid\Redis\BaseRedisConnection::class)
+        ->property('host', \DI\env('REDIS_HOST'))
+        ->property('port', \DI\env('REDIS_PORT'))
+        ->property('password', \DI\env('REDIS_PASSWORD'))
+        ->property('database', \DI\env('REDIS_DATABASE'))
+        ->property('options', [
+            \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
+            \Redis::OPT_PREFIX => ''
+        ])
+        ->method('connectRedis'),
 
-    'mailer' => DI\autowire(\App\Components\Mailer::class)
-        ->property('from', DI\env('MAILER_FROM'))
-        ->property('fromname', DI\env('MAILER_FROMNAME')),
+    'view' => \DI\autowire(\Rid\Component\View::class),
 
-    'logger' => DI\autowire(Monolog\Logger::class)
+    'mailer' => \DI\autowire(\App\Components\Mailer::class)
+        ->property('from', \DI\env('MAILER_FROM'))
+        ->property('fromname', \DI\env('MAILER_FROMNAME')),
+
+    'logger' => \DI\autowire(Monolog\Logger::class)
         ->constructor(PROJECT_NAME)
-        ->method('pushHandler', DI\get(\Monolog\Handler\RotatingFileHandler::class)),
+        ->method('pushHandler', \DI\get(\Monolog\Handler\RotatingFileHandler::class)),
 
-    'i18n' => DI\autowire(\Rid\Component\I18n::class)
+    'i18n' => \DI\autowire(\Rid\Component\I18n::class)
         ->property('allowedLangSet', ['en', 'zh-CN'])
         ->property('forcedLang', null),
 
     // 定义对象
-    'captcha' => DI\get(\Rid\Libraries\Captcha::class),
+    'captcha' => \DI\get(\Rid\Libraries\Captcha::class),
+    'emitter' => \DI\get(\League\Event\Emitter::class),
 
     // 定义组件依赖
+    \League\Event\Emitter::class => \DI\create(),  // FIXME add listener
+
     \League\Plates\Engine::class => \DI\create()
         ->constructor(DI\get('path.templates'))
-        ->method('loadExtension', DI\create(Rid\View\Conversion::class)),
+        ->method('loadExtension', DI\autowire(Rid\View\Conversion::class)),
+
+    \Decoda\Decoda::class => \DI\create()
+        ->constructor('', ['escapeHtml' => true], '')
+        ->method('defaults')  // TODO add support of tag [mediainfo]
+        ->method('setStorage', DI\autowire(\Decoda\Storage\RedisStorage::class)),
 
     \Monolog\Handler\RotatingFileHandler::class => DI\create()
         ->constructor(DI\string('{path.runtime.logs}' . DIRECTORY_SEPARATOR . 'ridpt.log'), 10),

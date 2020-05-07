@@ -32,11 +32,11 @@ class AdminController extends Controller
 
     private function infoRedis()
     {
-        $info = app()->redis->info();
-        $dbsize = app()->redis->dbSize();
+        $info = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->info();
+        $dbsize = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->dbSize();
 
         /** @var array $cmdstat_raw */
-        $cmdstat_raw = app()->redis->info('commandstats');
+        $cmdstat_raw = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->info('commandstats');
 
         $cmdstat = array_map(function ($v) {
             preg_match('/calls=(?P<calls>\d+),usec=(?P<usec>\d+),usec_per_call=(?P<usec_per_call>[\d\.]+)/', $v, $m);

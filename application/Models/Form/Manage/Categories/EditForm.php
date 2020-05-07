@@ -126,6 +126,6 @@ class EditForm extends Validator
         }
 
         // flush Redis Cache
-        app()->redis->del('site:enabled_torrent_category');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('site:enabled_torrent_category');
     }
 }

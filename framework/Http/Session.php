@@ -47,7 +47,7 @@ class Session extends Component
             // Generate Unique Session Id
             do {
                 $session_id = Random::alnum($this->_sessionIdLength);
-            } while (app()->redis->exists($this->saveKeyPrefix . $session_id));
+            } while (\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->exists($this->saveKeyPrefix . $session_id));
 
             // Save it both to request and response
             app()->request->cookies->set($this->name, $session_id);
@@ -65,8 +65,8 @@ class Session extends Component
     // 赋值
     public function set($name, $value)
     {
-        $success = app()->redis->hMSet($this->getSessionKey(), [$name => $value]);
-        app()->redis->expire($this->getSessionKey(), $this->maxLifetime);
+        $success = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hMSet($this->getSessionKey(), [$name => $value]);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->expire($this->getSessionKey(), $this->maxLifetime);
         return $success ? true : false;
     }
 
@@ -74,22 +74,22 @@ class Session extends Component
     public function get($name = null)
     {
         if (is_null($name)) {
-            $result = app()->redis->hgetall($this->getSessionKey());
+            $result = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hgetall($this->getSessionKey());
             return $result ?: [];
         }
-        $value = app()->redis->hget($this->getSessionKey(), $name);
+        $value = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hget($this->getSessionKey(), $name);
         return $value === false ? null : $value;
     }
 
     public function has($name): bool
     {
-        return (bool)app()->redis->hexists($this->getSessionKey(), $name);
+        return (bool)\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hexists($this->getSessionKey(), $name);
     }
 
     // 删除
     public function delete($name)
     {
-        $success = app()->redis->hdel($this->getSessionKey(), $name);
+        $success = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hdel($this->getSessionKey(), $name);
         return $success ? true : false;
     }
 
@@ -104,7 +104,7 @@ class Session extends Component
     // 清除session
     public function clear()
     {
-        $success = app()->redis->del($this->getSessionKey());
+        $success = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del($this->getSessionKey());
         return $success ? true : false;
     }
 

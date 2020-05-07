@@ -78,6 +78,6 @@ class RemoveForm extends Validator
         }
 
         // TODO flush Redis cache
-        app()->redis->del('site:enabled_torrent_category');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('site:enabled_torrent_category');
     }
 }

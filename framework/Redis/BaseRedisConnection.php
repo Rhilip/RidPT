@@ -2,7 +2,7 @@
 
 namespace Rid\Redis;
 
-use Rid\Base\Component;
+use League\Event\Emitter;
 
 /**
  * BaseRedis组件
@@ -201,132 +201,82 @@ use Rid\Base\Component;
  * @method int xTrim(string $stream, int $maxLen, bool $isApproximate)
  * @method int|bool sAddArray(string $key, array $values)
  */
-class BaseRedisConnection extends Component
+class BaseRedisConnection
 {
+    protected string $host;
+    protected string $port;
+    protected string $password;
+    protected string $database;
+    protected array $options;
 
-    // 主机
-    public $host = '';
+    /** @var \Redis redis对象 */
+    protected \Redis $_redis;
 
-    // 端口
-    public $port = '';
+    protected Emitter $_emitter;
 
-    // 数据库
-    public $database = '';
-
-    // 密码
-    public $password = '';
-
-    // 驱动连接选项
-    public $driverOptions = [];
-
-    // 默认驱动连接选项
-    protected $_defaultDriverOptions = [
-        \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,  // 默认做序列化
-        \Redis::OPT_PREFIX => '',
-    ];
-
-    // 驱动连接选项
-    protected $_driverOptions = [];
-
-    // redis对象
-    /** @var \Redis */
-    protected $_redis;
-
-    protected $_recordData = true;
-    protected $_calledData = [];
-
-    // 初始化事件
-    public function onInitialize()
+    public function __construct(\Redis $_redis, Emitter $_emitter)
     {
-        parent::onInitialize();
-        $this->_driverOptions = $this->driverOptions + $this->_defaultDriverOptions;  // 设置驱动连接选项
+        $this->_redis = $_redis;
+        $this->_emitter = $_emitter;
     }
 
-    public function onRequestBefore()
+    public function connectRedis()
     {
-        parent::onRequestBefore();
-        $this->_calledData = [];
-    }
-
-    // 创建连接
-    protected function createConnection()
-    {
-        $redis = new \Redis();
-        // connect 这里如果设置timeout，是全局有效的，执行brPop时会受影响
-        if (!$redis->connect($this->host, $this->port)) {
-            throw new \Rid\Exceptions\ConnectionException('redis connection failed.');
-        }
-        $redis->auth($this->password);
-        $redis->select($this->database);
-
-        foreach ($this->_driverOptions as $key => $value) {
-            $redis->setOption($key, $value);
-        }
-
-        return $redis;
-    }
-
-    // 连接
-    protected function connect()
-    {
-        $this->_redis = $this->createConnection();
-    }
-
-    // 关闭连接
-    public function disconnect()
-    {
-        $this->_redis = null;
-    }
-
-    // 自动连接
-    protected function autoConnect()
-    {
-        if (!isset($this->_redis)) {
-            $this->connect();
+        if (!$this->_redis->connect($this->host, $this->port)) {
+            throw new \RuntimeException('redis connection failed.');
+        };
+        $this->_redis->auth($this->password);
+        $this->_redis->select($this->database);
+        foreach ($this->options as $key => $value) {
+            $this->_redis->setOption($key, $value);
         }
     }
 
     // 执行命令
     public function __call($name, $arguments)
     {
-        $this->autoConnect();   // 自动连接
-
-        if ($this->_recordData) {
-            $arg_text = '';
-            foreach ($arguments as $arg) {
-                if (!is_string($arg)) {
-                    $arg = '[Array]';
-                }
-                $arg_text .= ' ' . $arg;
-            }
-
-            $calling = $name . ($arguments ? ' ' . $arg_text : '');
-            if (isset($this->_calledData[$calling])) {
-                $this->_calledData[$calling] += 1;
-            } else {
-                $this->_calledData[$calling] = 1;
-            }
+        $this->_emitter->emit('redis.command.call', [$name, $arguments]);
+        try {
+            return $this->_redis->$name(...$arguments);  // 执行命令
+        } catch (\RedisException $e) {
+            $this->_emitter->emit('redis.command.fail', [$name, $arguments]);
+            $this->connectRedis();
+            return $this->_redis->$name(...$arguments);  // 执行命令
         }
-
-        return call_user_func_array([$this->_redis, $name], $arguments);  // 执行命令
     }
 
+    // 扩展命令
+
+    /**
+     * del扩展方法，支持使用通配符批量删除
+     *
+     * @param $pattern
+     * @return int
+     */
     public function multiDelete($pattern)
     {
         return $this->del($this->keys($pattern));
     }
 
-    public function getCalledData()
-    {
-        return $this->_calledData;
-    }
-
     /**
-     * @param bool $recordData
+     * eval扩展方法，结合了 eval、evalSha
+     *
+     * 优先使用 evalSha 尝试，失败则使用 eval 方法
+     *
+     * @param string $script
+     * @param array $args
+     * @param int $num_keys
+     * @return mixed
      */
-    public function setRecordData(bool $recordData): void
+    public function evalEx($script, $args = null, $num_keys = null)
     {
-        $this->_recordData = $recordData;
+        $sha1 = sha1($script);
+        $this->clearLastError();
+        $result = $this->evalSha($sha1, $args, $num_keys);
+        if ('NOSCRIPT No matching script. Please use EVAL.' === $this->getLastError()) {
+            $result = $this->eval($script, $args, $num_keys);
+        }
+        return $result;
     }
 
     /**

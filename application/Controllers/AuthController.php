@@ -113,7 +113,7 @@ class AuthController extends Controller
             }
         }
 
-        $render_data['test_attempts'] = app()->redis->hGet('Site:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
+        $render_data['test_attempts'] = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hGet('Site:fail_login_ip_count', app()->request->getClientIp()) ?: 0;
         return $this->render('auth/login', $render_data);
     }
 

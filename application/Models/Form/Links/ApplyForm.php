@@ -59,7 +59,7 @@ class ApplyForm extends Validator
             'status' => self::STATUS_PENDING, 'admin' => $this->link_admin, 'email' => $this->link_email,
             'reason' => $this->link_reason
         ])->execute();
-        app()->redis->del('Site:links');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:links');
         // TODO Send system PM to site group
     }
 }

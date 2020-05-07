@@ -9,13 +9,19 @@
 namespace Rid\View;
 
 use Decoda\Decoda;
-use Decoda\Storage\RedisStorage;
 
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;
 
 class Conversion implements ExtensionInterface
 {
+    protected Decoda $decoda;
+
+    public function __construct(Decoda $decoda)
+    {
+        $this->decoda = $decoda;
+    }
+
     public function register(Engine $engine)
     {
         $engine->registerFunction('format_bytes', [$this, 'format_bytes']);
@@ -50,14 +56,8 @@ class Conversion implements ExtensionInterface
 
     public function format_ubbcode($string)
     {
-        $code = new Decoda($string, [
-            'escapeHtml' => true
-        ], 'Decoda:' . md5($string));
-
-        $code->defaults(); // TODO add support of tag [mediainfo]
-
-        $code->setStorage(new RedisStorage(app()->redis->getRedis()));
-        return $code->parse();
+        $this->decoda->reset($string,false,'Decoda:' . md5($string));
+        return $this->decoda->parse();
     }
 
     public function sec2hms($sec, $padHours = false)

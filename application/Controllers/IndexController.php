@@ -11,19 +11,19 @@ class IndexController extends Controller
     public function actionIndex()
     {
         // Get Last News from redis cache
-        $news = app()->redis->get('Site:recent_news');
+        $news = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get('Site:recent_news');
         if ($news === false) { // Get news from Database and cache it in redis
             $news = app()->pdo->prepare('SELECT * FROM news ORDER BY create_at DESC LIMIT :max')->bindParams([
                 'max' => config('base.max_news_sum')
             ])->queryAll();
-            app()->redis->set('Site:recent_news', $news, 86400);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set('Site:recent_news', $news, 86400);
         }
 
         // Get All Links from redis cache
-        $links = app()->redis->get('Site:links');
+        $links = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get('Site:links');
         if ($links === false) {
             $links = app()->pdo->prepare("SELECT `name`,`title`,`url` FROM links WHERE `status` = 'enabled' ORDER BY id ASC")->queryAll();
-            app()->redis->set('Site:links', $links, 86400);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set('Site:links', $links, 86400);
         }
 
 

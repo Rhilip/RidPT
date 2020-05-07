@@ -3,8 +3,8 @@
 namespace Rid\Http;
 
 use Rid\Base\Component;
+use Rid\Helpers\ContainerHelper;
 use Rid\Utils\Text;
-use Swoole\Http\Server;
 
 /**
  * App类
@@ -64,7 +64,7 @@ class Application extends \Rid\Base\Application
             $controllerAction = "action{$shortAction}";
             // 判断类是否存在
             if (class_exists($controllerClass)) {
-                $controllerInstance = new $controllerClass();
+                $controllerInstance = ContainerHelper::getContainer()->make($controllerClass);
                 // 判断方法是否存在
                 if (method_exists($controllerInstance, $controllerAction)) {
                     // 执行中间件
@@ -161,23 +161,5 @@ class Application extends \Rid\Base\Application
         if ($component->getStatus() == Component::STATUS_RUNNING) {
             $component->onRequestAfter();
         }
-    }
-
-    // 打印变量的相关信息
-    public function dump($var, $send = false)
-    {
-        ob_start();
-        var_dump($var);
-        $dumpContent                   = ob_get_clean();
-        \Rid::app()->response->setContent(\Rid::app()->response->getContent() . $dumpContent);
-        if ($send) {
-            throw new \Rid\Exceptions\DebugException(\Rid::app()->response->getContent());
-        }
-    }
-
-    // 终止程序
-    public function end($content = '')
-    {
-        throw new \Rid\Exceptions\EndException($content);
     }
 }

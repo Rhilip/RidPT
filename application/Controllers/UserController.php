@@ -91,7 +91,7 @@ class UserController extends Controller
                 $success = app()->pdo->getRowCount();
 
                 if ($success > 0) {
-                    app()->redis->zRem(app()->auth->getCurUser()->sessionSaveKey, $to_del_session);
+                    \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zRem(app()->auth->getCurUser()->sessionSaveKey, $to_del_session);
                 } else {
                     return $this->render('action/fail', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
                 }

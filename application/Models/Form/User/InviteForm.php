@@ -140,7 +140,7 @@ class InviteForm extends UserRegisterForm
             }
 
             $this->insertInviteRecord();
-            app()->redis->del('User:' . app()->auth->getCurUser()->getId() . ':base_content');  // flush it's cache
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('User:' . app()->auth->getCurUser()->getId() . ':base_content');  // flush it's cache
 
             $invite_status = true;
             app()->pdo->commit();

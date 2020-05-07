@@ -86,7 +86,7 @@ class UserConfirmForm extends Validator
             's' => UserStatus::CONFIRMED, 'uid' => $this->uid
         ])->execute();
         $this->update_confirm_status();
-        app()->redis->del('User:content_' . $this->uid);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('User:content_' . $this->uid);
         return true;
     }
 

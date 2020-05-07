@@ -85,9 +85,9 @@ class Site extends Component
             'save' => $save, 'location' => $location
         ])->execute();
 
-        app()->redis->hDel(Constant::userContent($receiver), 'unread_message_count', 'inbox_count');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hDel(Constant::userContent($receiver), 'unread_message_count', 'inbox_count');
         if ($sender != 0) {
-            app()->redis->hDel(Constant::userContent($sender), 'outbox_count');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hDel(Constant::userContent($sender), 'outbox_count');
         }
     }
 

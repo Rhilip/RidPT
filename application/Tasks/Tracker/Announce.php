@@ -218,7 +218,7 @@ class Announce implements TaskHandlerInterface
                 'uid' => $userInfo['id'],
             ])->execute();
 
-            app()->redis->del(Constant::userBaseContentByPasskey($userInfo['passkey']));
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::userBaseContentByPasskey($userInfo['passkey']));
         }
 
         // Uploaded more than 1 GB with uploading rate higher than 25 MByte/S (For Consertive level). This is likely cheating.
@@ -239,13 +239,13 @@ class Announce implements TaskHandlerInterface
 
     private function getTorrentBuff($userid, $torrentid, $trueUploaded, $trueDownloaded, $upspeed, &$thisUploaded, &$thisDownloaded)
     {
-        $buff = app()->redis->get('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid);
+        $buff = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid);
         if ($buff === false) {
             $buff = app()->pdo->prepare("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrent_buffs`
             WHERE start_at < NOW() AND NOW() < expired_at AND (torrent_id = :tid OR torrent_id = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 'tid' => $torrentid, 'bid' => $userid
             ])->queryOne();
-            app()->redis->setex('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid, (int)config('tracker.interval'), $buff);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->setex('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid, (int)config('tracker.interval'), $buff);
         }
         $thisUploaded = (int)($trueUploaded * ($buff['up_ratio'] ?: 1));
         $thisDownloaded = (int)($trueDownloaded * ($buff['dl_ratio'] ?: 1));

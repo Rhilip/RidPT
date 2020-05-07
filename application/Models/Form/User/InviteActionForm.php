@@ -102,7 +102,7 @@ class InviteActionForm extends Validator
 
             // TODO Add recycle limit so that user can't make a temporarily invite like 'permanent'
             if ($this->invite_info['invite_type'] == InviteForm::INVITE_TYPE_TEMPORARILY) {
-                if (app()->redis->get('invite_recycle_limit:user_' . $this->invite_info['inviter_id']) !== false) {
+                if (\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get('invite_recycle_limit:user_' . $this->invite_info['inviter_id']) !== false) {
                     $this->buildCallbackFailMsg('invite_recycle_limit', 'Hit recycle limit');
                     return;
                 };
@@ -145,7 +145,7 @@ class InviteActionForm extends Validator
                         'life_time' => config('invite.recycle_invite_lifetime')
                     ])->execute();
                     $msg .= ' And return you a temporarily invite with ' . config('invite.recycle_invite_lifetime') . ' seconds lifetime.';
-                    app()->redis->hDel('User:' . $this->invite_info['inviter_id'] . ':base_content', 'temp_invite');
+                    \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hDel('User:' . $this->invite_info['inviter_id'] . ':base_content', 'temp_invite');
                 }
             }
             app()->pdo->commit();

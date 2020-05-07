@@ -5,7 +5,6 @@ namespace Rid\Base;
 /**
  *
  * @property \Rid\Database\PDOConnection $pdo
- * @property \Rid\Redis\RedisConnection $redis
  * @property \Rid\Component\Config $config
  * @property \App\Components\Site $site
  */

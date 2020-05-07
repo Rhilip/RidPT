@@ -60,9 +60,9 @@ class SearchForm extends Pagination
 
     public function getSubsSizeSum()
     {
-        if (false === $size = app()->redis->get(Constant::siteSubtitleSize)) {
+        if (false === $size = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get(Constant::siteSubtitleSize)) {
             $size = app()->pdo->prepare('SELECT SUM(`size`) FROM `subtitles`')->queryScalar();
-            app()->redis->set(Constant::siteSubtitleSize, $size);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set(Constant::siteSubtitleSize, $size);
         }
         return $size;
     }

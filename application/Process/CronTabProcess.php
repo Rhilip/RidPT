@@ -112,7 +112,7 @@ final class CronTabProcess extends Process
 
         foreach ($clean_list as $item) {
             [$field, $msg] = $item;
-            $clean_count = app()->redis->zRemRangeByScore($field, 0, $timenow);
+            $clean_count = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zRemRangeByScore($field, 0, $timenow);
             if ($clean_count > 0) {
                 $this->print_log(sprintf($msg, $clean_count));
             }
@@ -205,7 +205,7 @@ final class CronTabProcess extends Process
         if ($torrents_update) {
             foreach ($torrents_update as $tid => $update) {
                 app()->pdo->update('torrents', $update, [['id', '=', $tid]])->execute();
-                app()->redis->del(Constant::torrentContent($tid));
+                \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::torrentContent($tid));
             }
             $this->print_log('Fix ' . count($torrents_update) . ' wrong torrents records about complete, incomplete, comments.');
         }
@@ -216,11 +216,11 @@ final class CronTabProcess extends Process
     {
         // Sync Banned Emails list
         $ban_email_list = app()->pdo->prepare('SELECT `email` from `ban_emails`')->queryColumn() ?: [];
-        app()->redis->sAddArray(Constant::siteBannedEmailSet, $ban_email_list);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->sAddArray(Constant::siteBannedEmailSet, $ban_email_list);
 
         // Sync Banned Username list
         $ban_username_list = app()->pdo->prepare('SELECT `username` from `ban_usernames`')->queryColumn() ?: [];
-        app()->redis->sAddArray(Constant::siteBannedUsernameSet, $ban_username_list);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->sAddArray(Constant::siteBannedUsernameSet, $ban_username_list);
     }
 
     protected function update_expired_external_link_info()

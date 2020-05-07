@@ -31,7 +31,7 @@ trait actionRateLimitCheckTrait
         $period = $limit_status['period'] ?? 60;
 
         $now_ts = time();
-        $pipe = app()->redis->multi(Redis::PIPELINE);
+        $pipe = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->multi(Redis::PIPELINE);
 
         $pipe->zAdd($key, $now_ts, $now_ts);
         $pipe->zRemRangeByScore($key, 0, $now_ts - $period);

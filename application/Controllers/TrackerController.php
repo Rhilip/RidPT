@@ -260,14 +260,14 @@ class TrackerController
         $client_identity = $userAgent . ($onlyCheckUA ? '' : ':' . $peer_id);
 
         // if this user-agent and peer_id already checked valid or not ?
-        if (app()->redis->zScore(Constant::trackerValidClientZset, $client_identity) > 0) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zScore(Constant::trackerValidClientZset, $client_identity) > 0) {
             return;
         }
 
         // Get Client White List From Database and cache it
-        if (false === $allowedFamily = app()->redis->get(Constant::trackerAllowedClientList)) {
+        if (false === $allowedFamily = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get(Constant::trackerAllowedClientList)) {
             $allowedFamily = app()->pdo->prepare("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();
-            app()->redis->set(Constant::trackerAllowedClientList, $allowedFamily, 86400);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set(Constant::trackerAllowedClientList, $allowedFamily, 86400);
         }
 
         $agentAccepted = null;
@@ -374,16 +374,16 @@ class TrackerController
             if (!$agentAccepted) {
                 throw new TrackerException(126, [':ua' => $userAgent]);
             }
-            app()->redis->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
             return;
         }
 
         if ($agentAccepted && $peerIdAccepted) {
             if ($acceptedAgentFamilyException) {
                 // Get Client Exception List From Database and cache it since we need to check it
-                if (false === $allowedFamilyException = app()->redis->get(Constant::trackerAllowedClientExceptionList)) {
+                if (false === $allowedFamilyException = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get(Constant::trackerAllowedClientExceptionList)) {
                     $allowedFamilyException = app()->pdo->prepare('SELECT * FROM `agent_allowed_exception`')->queryAll();
-                    app()->redis->set(Constant::trackerAllowedClientExceptionList, $allowedFamilyException, 86400);
+                    \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set(Constant::trackerAllowedClientExceptionList, $allowedFamilyException, 86400);
                 }
 
                 foreach ($allowedFamilyException as $exceptionItem) {
@@ -395,8 +395,8 @@ class TrackerController
                         throw new TrackerException(127, [':ua' => $userAgent, ':comment' => $exceptionItem['comment']]);
                     }
                 }
-                app()->redis->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
-                // app()->redis->rawCommand('bf.add', [Constant::trackerValidClientZset, $client_identity]);
+                \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
+                // \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->rawCommand('bf.add', [Constant::trackerValidClientZset, $client_identity]);
             }
         } else {
             throw new TrackerException(126, [':ua' => $userAgent]);
@@ -423,12 +423,12 @@ class TrackerController
         }
 
         // Get userInfo from RedisConnection Cache and then Database
-        if (false === $userInfo = app()->redis->get(Constant::userBaseContentByPasskey($passkey))) {
+        if (false === $userInfo = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get(Constant::userBaseContentByPasskey($passkey))) {
             $userInfo = app()->pdo->prepare('SELECT `id`, `status`, `passkey`, `downloadpos`, `class`, `uploaded`, `downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1')
                 ->bindParams(['passkey' => $passkey])->queryOne() ?: [];
 
             // Notice: We log empty array in Redis Cache if userInfo not find in our Database
-            app()->redis->set(Constant::userBaseContentByPasskey($passkey), $userInfo, 3600 + rand(0, 300));
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set(Constant::userBaseContentByPasskey($passkey), $userInfo, 3600 + rand(0, 300));
         }
 
         /**
@@ -460,7 +460,7 @@ class TrackerController
         $bin2hex_hash = bin2hex($hash);
 
         // If Cache is not exist , We will get User info from Database
-        if (false === $torrentInfo = app()->redis->get(Constant::trackerTorrentContentByInfoHash($bin2hex_hash))) {
+        if (false === $torrentInfo = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get(Constant::trackerTorrentContentByInfoHash($bin2hex_hash))) {
             $torrentInfo = app()->pdo->prepare('SELECT `id`, `info_hash`, `owner_id`, `status`, `incomplete`, `complete`, `downloaded`, `added_at` FROM `torrents` WHERE `info_hash` = :info LIMIT 1')
                 ->bindParams(['info' => $hash])->queryOne();
             if ($torrentInfo === false || $torrentInfo['status'] == 'deleted') {  // No-exist or deleted torrent
@@ -468,7 +468,7 @@ class TrackerController
             }
 
             // Notice: We log empty array in Redis Cache if torrentInfo not find in our Database or in deleted status
-            app()->redis->set(Constant::trackerTorrentContentByInfoHash($bin2hex_hash), $torrentInfo, 600 + rand(0, 50));
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set(Constant::trackerTorrentContentByInfoHash($bin2hex_hash), $torrentInfo, 600 + rand(0, 50));
         }
 
         // Return false when this info_hash is invalid (Not exist in our database or this status is 'deleted'
@@ -691,9 +691,9 @@ class TrackerController
         $query_string = urldecode(app()->request->getQueryString());
         $identity = md5(str_replace($queries['key'], '', $query_string));
 
-        $prev_lock_expire_at = app()->redis->zScore(Constant::trackerAnnounceLockZset, $identity) ?: $this->timenow;
+        $prev_lock_expire_at = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zScore(Constant::trackerAnnounceLockZset, $identity) ?: $this->timenow;
         if ($this->timenow >= $prev_lock_expire_at) {  // this identity is not lock
-            app()->redis->zAdd(Constant::trackerAnnounceLockZset, $this->timenow + 30, $identity);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zAdd(Constant::trackerAnnounceLockZset, $this->timenow + 30, $identity);
             return false;
         }
 
@@ -715,13 +715,13 @@ class TrackerController
             $queries['event']
         ]));
 
-        $prev_lock_expire = app()->redis->zScore(Constant::trackerAnnounceMinIntervalLockZset, $identity) ?: $this->timenow;
+        $prev_lock_expire = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zScore(Constant::trackerAnnounceMinIntervalLockZset, $identity) ?: $this->timenow;
         if ($prev_lock_expire > $this->timenow) {
             throw new TrackerException(162, [':min' => config('tracker.min_interval')]);
         }
 
         $min_interval = (int)(config('tracker.min_interval') * (3 / 4));
-        app()->redis->zAdd(Constant::trackerAnnounceMinIntervalLockZset, $this->timenow + $min_interval, $identity);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zAdd(Constant::trackerAnnounceMinIntervalLockZset, $this->timenow + $min_interval, $identity);
     }
 
     /**
@@ -735,9 +735,9 @@ class TrackerController
     {
         // Check if exist peer or not
         $identity = implode(':', [$torrentInfo['id'], $userInfo['id'], $queries['peer_id']]);
-        if (app()->redis->zScore(Constant::trackerValidPeerZset, $identity)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zScore(Constant::trackerValidPeerZset, $identity)) {
             // this peer is already announce before , just expire cache key lifetime and return.
-            app()->redis->zIncrBy(Constant::trackerValidPeerZset, config('tracker.interval') * 2, $identity);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zIncrBy(Constant::trackerValidPeerZset, config('tracker.interval') * 2, $identity);
             return;
         } elseif ($queries['event'] != 'stopped') {
             // If session is not exist and &event!=stopped, a new session should start
@@ -747,7 +747,7 @@ class TrackerController
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
             ])->queryScalar();
             if ($self !== 0) {  // True MISS
-                app()->redis->zAdd(Constant::trackerValidPeerZset, $this->timenow + config('tracker.interval') * 2, $identity);
+                \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zAdd(Constant::trackerValidPeerZset, $this->timenow + config('tracker.interval') * 2, $identity);
                 return;
             }
 
@@ -797,7 +797,7 @@ class TrackerController
             }
 
             // All Check Passed
-            app()->redis->zAdd(Constant::trackerValidPeerZset, $this->timenow + config('tracker.interval') * 2, $identity);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zAdd(Constant::trackerValidPeerZset, $this->timenow + config('tracker.interval') * 2, $identity);
         }
     }
 

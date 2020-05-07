@@ -170,7 +170,7 @@ class UserRegisterForm extends Validator
         }
 
         // Check if this username is in blacklist or not
-        if (app()->redis->sIsMember(Constant::siteBannedUsernameSet, $username)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->sIsMember(Constant::siteBannedUsernameSet, $username)) {
             $this->buildCallbackFailMsg('ValidUsername', 'This username is in our blacklist.');
             return;
         }
@@ -203,7 +203,7 @@ class UserRegisterForm extends Validator
         }
 
         // Check $email is in blacklist or not
-        if (app()->redis->sIsMember(Constant::siteBannedEmailSet, $email)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->sIsMember(Constant::siteBannedEmailSet, $email)) {
             $this->buildCallbackFailMsg('ValidEmail', 'This email is in our blacklist.');
             return;
         }

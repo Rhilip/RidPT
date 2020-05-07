@@ -91,13 +91,13 @@ $extend_debug_info = app()->auth->getCurUser()  // Not Anonymous
                 [ Page created in <b><?= number_format(microtime(true) - app()->request->attributes->get('start_at'), 6) ?></b> sec
                 with <b><?= $this->e(memory_get_usage(), 'format_bytes') ?></b> ram used,
                 <b><?= count(app()->pdo->getExecuteData()) ?></b> db queries,
-                <b><?= array_sum(app()->redis->getCalledData())?></b> calls of Redis ]
+                <b><?= array_sum([]) // FIXME ?></b> calls of Redis ]
                 <?php if ($extend_debug_info): ?>
                     <a href="javascript:" id="extend_debug_info"><span class="label label-warning label-outline">Debug info</span></a>
                     <script>
                         const _extend_debug_info = true;
                         const _sql_data = '<?= json_encode(app()->pdo->getExecuteData(), JSON_HEX_APOS) ?>';
-                        const _redis_data = '<?= json_encode(app()->redis->getCalledData(), JSON_HEX_APOS) ?>';
+                        const _redis_data = '<?= json_encode([], JSON_HEX_APOS) // FIXME  ?>';
                     </script>
                 <?php endif; ?>
             </p>

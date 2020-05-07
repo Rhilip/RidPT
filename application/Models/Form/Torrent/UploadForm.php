@@ -299,7 +299,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
     private function getExternalLinkInfo()
     {
         if ($this->links) {
-            app()->redis->lPush('queue:external_link_via_torrent_upload', ['tid' => $this->id, 'links' => $this->links]);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->lPush('queue:external_link_via_torrent_upload', ['tid' => $this->id, 'links' => $this->links]);
         }
     }
 

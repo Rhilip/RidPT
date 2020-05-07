@@ -147,7 +147,7 @@ class Auth extends Component
             // Update User access info by HyperLogLog
             $grain_size = date('YmdH') ; // per hour
             // $grain_size = date('YmdH') . floor(date('i') / 15);  // per 15 minutes
-            $check = app()->redis->pfAdd('Site:hyperloglog:access_log_' . $grain_size, [$identify_key]);
+            $check = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->pfAdd('Site:hyperloglog:access_log_' . $grain_size, [$identify_key]);
             if ($check == 1) {
                 // Update Table `users`
                 app()->pdo->prepare('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([

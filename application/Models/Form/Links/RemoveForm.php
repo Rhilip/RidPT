@@ -42,6 +42,6 @@ class RemoveForm extends Validator
         app()->pdo->prepare('DELETE FROM `links` WHERE id = :id')->bindParams([
             'id' => $this->link_id
         ])->execute();
-        app()->redis->del('Site:links');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:links');
     }
 }

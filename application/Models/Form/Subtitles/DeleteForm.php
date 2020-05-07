@@ -62,6 +62,6 @@ class DeleteForm extends Validator
 
         // TODO add user detail
         app()->site->writeLog('Subtitle \'' . $this->subtitle['title'] . '\'(' . $this->subtitle['id'] .') was deleted by ' . app()->auth->getCurUser()->getUsername());
-        app()->redis->del(Constant::siteSubtitleSize);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::siteSubtitleSize);
     }
 }

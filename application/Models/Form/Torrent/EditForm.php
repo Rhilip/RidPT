@@ -190,7 +190,7 @@ class EditForm extends Validator
             'uplver' => $this->anonymous, 'hr' => $this->hr
         ])->execute();
 
-        app()->redis->del(Constant::torrentContent($this->id));
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::torrentContent($this->id));
         // Delete cache
     }
 

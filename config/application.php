@@ -86,23 +86,6 @@ return [
             ],
         ],
 
-        // redis
-        'redis' => [
-            // 类路径
-            'class' => Rid\Redis\Persistent\RedisConnection::class,
-            // 主机
-            'host' => env('REDIS_HOST'),
-            // 端口
-            'port' => env('REDIS_PORT'),
-            // 数据库
-            'database' => env('REDIS_DATABASE'),
-            // 密码
-            'password' => env('REDIS_PASSWORD'),
-            'driverOptions' => [
-                Redis::OPT_SERIALIZER => Redis::SERIALIZER_PHP,
-            ]
-        ],
-
         // Session
         'session' => [
             // 类路径

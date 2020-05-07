@@ -204,11 +204,11 @@ class User extends BaseObject
     private function loadExtendProp()
     {
         if (false === $this->extended_info_hit) {
-            if (false === $self = app()->redis->get($this->cache_key_extended)) {
+            if (false === $self = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get($this->cache_key_extended)) {
                 $self = app()->pdo->prepare('SELECT `create_at`,`register_ip`,`last_login_at`,`last_access_at`,`last_upload_at`,`last_download_at`,`last_connect_at`,`last_login_ip`,`last_access_ip`,`last_tracker_ip` FROM `users` WHERE id = :uid')->bindParams([
                     'uid' => $this->id
                 ])->queryOne() ?: [];
-                app()->redis->set($this->cache_key_extended, $self, 15 * 60);  // Cache This User Extend Detail for 15 minutes
+                \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set($this->cache_key_extended, $self, 15 * 60);  // Cache This User Extend Detail for 15 minutes
             }
 
             $this->importAttributes($self);

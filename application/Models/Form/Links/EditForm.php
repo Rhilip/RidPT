@@ -86,6 +86,6 @@ class EditForm extends ApplyForm
             app()->site->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
                 app()->auth->getCurUser()->getUsername() . '(' . app()->auth->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
         }
-        app()->redis->del('Site:links');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:links');
     }
 }
