@@ -21,7 +21,7 @@ class Constant
     const trackerValidPeerZset = 'Tracker:valid_peers';
 
     // Site Status
-    const siteSubtitleSize = 'Site:subtitle_size';  // TODO move to app()->config
+    const siteSubtitleSize = 'Site:subtitle_size';  // TODO move to \Rid\Helpers\ContainerHelper::getContainer()->get('config')
     const siteBannedEmailSet = 'Site:set:banned_list:email';
     const siteBannedUsernameSet = 'Site:set:banned_list:username';
 

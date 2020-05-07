@@ -25,7 +25,7 @@ class Error extends Component
 
         if (app()->response->getResponderStatus() !== false) {  // 在Web环境，存在 \Swoole\Http\Response 对象
             // debug处理 & exit处理
-            if ($e instanceof \Rid\Exceptions\DebugException || $e instanceof \Rid\Exceptions\EndException) {
+            if ($e instanceof \Rid\Exceptions\DebugException) {
                 \Rid::app()->response->setContent($e->getMessage());
             } else {
                 // 错误参数定义

@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Rid\Http\Middleware;
 
-
 use Rid\Base\AbstractObject;
 
 abstract class AbstractMiddleware extends AbstractObject implements MiddlewareInterface

@@ -13,6 +13,7 @@
 - **DI:** Prepare replace component by PHP-DI (already mailer, logger) (73cc3f6)
 - **DI:** Prepare replace component by PHP-DI (a287244)
 - **MemoryTable:** Use New `TableManager` to manager Swoole Table instead of hardcode (37cf209)
+- **Redis:** Move Redis into DI (bd9c108)
 - **SwooleMemory:** Add `AtomicManager` (6190d60)
 
 ### Fix

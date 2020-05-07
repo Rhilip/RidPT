@@ -5,7 +5,6 @@ namespace Rid\Base;
 /**
  *
  * @property \Rid\Database\PDOConnection $pdo
- * @property \Rid\Component\Config $config
  * @property \App\Components\Site $site
  */
 class Application extends BaseObject

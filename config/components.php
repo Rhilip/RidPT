@@ -33,6 +33,8 @@ return [
         ->property('from', \DI\env('MAILER_FROM'))
         ->property('fromname', \DI\env('MAILER_FROMNAME')),
 
+    'config' => \DI\autowire(\Rid\Component\Config::class),
+
     'redis' => \DI\autowire(\Rid\Redis\BaseRedisConnection::class)
         ->property('host', \DI\env('REDIS_HOST'))
         ->property('port', \DI\env('REDIS_PORT'))

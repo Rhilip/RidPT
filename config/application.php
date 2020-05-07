@@ -86,32 +86,6 @@ return [
             ],
         ],
 
-        // Session
-        'session' => [
-            // 类路径
-            'class' => Rid\Http\Session::class,
-            // 保存的Key前缀
-            'saveKeyPrefix' => 'Session:',
-            // 生存时间
-            'maxLifetime' => 7200,
-            // session键名
-            'name' => 'session_id',
-            // 过期时间
-            'cookieExpires' => 0,
-            // 有效的服务器路径
-            'cookiePath' => '/',
-            // 有效域名/子域名
-            'cookieDomain' => '',
-            // 仅通过安全的 HTTPS 连接传给客户端
-            'cookieSecure' => false,
-            // 仅可通过 HTTP 协议访问
-            'cookieHttpOnly' => false,
-        ],
-
-        'config' => [
-            'class' => Rid\Component\Config::class,
-        ],
-
         'site' => [
             'class' => App\Components\Site::class
         ],

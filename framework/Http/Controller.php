@@ -2,21 +2,13 @@
 
 namespace Rid\Http;
 
-use DI\Container;
+use Rid\Base\AbstractObject;
 
 /**
  * Controller类
  */
-class Controller
+class Controller extends AbstractObject
 {
-
-    protected Container $container;
-
-    public function __construct(Container $container)
-    {
-    }
-
-
     public function render($name, $data = [])
     {
         return $this->container->get('view')->render($name, $data);

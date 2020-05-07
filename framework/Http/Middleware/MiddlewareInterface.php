@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Rid\Http\Middleware;
 
-
 interface MiddlewareInterface
 {
     public function handle($callable, \Closure $next);

@@ -8,20 +8,18 @@
 
 namespace Rid\Component;
 
-use Rid\Base\Component;
-use Rid\Exceptions\ConfigException;
 use Rid\Helpers\IoHelper;
 use Rid\Swoole\Helper\ServerHelper;
 use Rid\Swoole\Memory\TableManager;
 use Rid\Utils\Text;
 use Swoole\Table;
 
-class Config extends Component
+class Config
 {
     /** @var Table */
     private Table $cacheTable;
 
-    public function onInitialize(array $config = [])
+    public function __construct()
     {
         // Get \Swoole\Table object From \Server, So that we can share same dynamic config
         $this->cacheTable = TableManager::get('config');
@@ -57,7 +55,7 @@ class Config extends Component
 
             // In this case (Load config From Database Failed) , A Exception should throw
             if ($setting_row === false) {
-                throw new ConfigException(sprintf('Dynamic Setting "%s" couldn\'t be found.', $name));
+                throw new \RuntimeException('Dynamic Setting ' . $name . ' couldn\'t be found.');
             }
 
             $this->load($setting_row);
@@ -94,7 +92,6 @@ class Config extends Component
         $value = ($type == 'json') ? json_encode($value) : (string) $value;  // array(json), bool, int -> string
 
         $this->cacheTable->set($name, ['value' => $value, 'type' => $type]);
-        // println(sprintf('Set new Dynamic Setting "%s", Type: "%s", Value: "%s".', $name, $type, $value));
 
         // Update site_config if not a runtime setting
         if (strpos($name, 'runtime.') === false) {

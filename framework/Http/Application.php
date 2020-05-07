@@ -99,7 +99,7 @@ class Application extends \Rid\Base\Application
     {
         $middleware = [];
         foreach (array_merge($this->middleware, $routeMiddleware) as $key => $class) {
-            $middleware[$key] = new $class();
+            $middleware[$key] = ContainerHelper::getContainer()->make($class);
         }
         return $middleware;
     }

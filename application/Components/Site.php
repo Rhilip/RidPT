@@ -129,7 +129,7 @@ class Site extends Component
             foreach ($cats_raw as $cat_raw) {
                 $cats[$cat_raw['id']] = $cat_raw;
             }
-            app()->config->set('runtime.enabled_torrent_category', $cats, 'json');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.enabled_torrent_category', $cats, 'json');
         }
 
         return $cats ?: [];
@@ -160,7 +160,7 @@ class Site extends Component
             foreach ($data_raws as $data_raw) {
                 $data[$data_raw['id']] = $data_raw;
             }
-            app()->config->set('runtime.enabled_quality_' . $quality, $data, 'json');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.enabled_quality_' . $quality, $data, 'json');
         }
         return $data ?: [];
     }
@@ -173,7 +173,7 @@ class Site extends Component
             foreach ($data_raws as $data_raw) {
                 $data[$data_raw['id']] = $data_raw;
             }
-            app()->config->set('runtime.enabled_teams', $data, 'json');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.enabled_teams', $data, 'json');
         }
 
         return $data ?: [];
@@ -188,7 +188,7 @@ class Site extends Component
             /** @noinspection SqlResolve */
             $raw = app()->pdo->prepare('SELECT `tag`, `class_name` FROM `tags` WHERE `pinned` = 1;')->queryAll();
             $data = array_column($raw, 'class_name', 'tag');
-            app()->config->set('runtime.pinned_tags', $data, 'json');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.pinned_tags', $data, 'json');
         }
 
         return $data;
@@ -198,7 +198,7 @@ class Site extends Component
     {
         if (false === $ban_ips = config('runtime.ban_ips_list')) {
             $ban_ips = app()->pdo->prepare('SELECT `ip` FROM `ban_ips`')->queryColumn() ?: [];
-            app()->config->set('runtime.ban_ips_list', $ban_ips, 'json');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.ban_ips_list', $ban_ips, 'json');
         }
 
         return $ban_ips;
@@ -216,7 +216,7 @@ class Site extends Component
 
         // Rewrite config
         $banips[] = $ip;
-        app()->config->set('runtime.ban_ips_list', $banips, 'json');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.ban_ips_list', $banips, 'json');
 
         if ($persistence === true) {  // Save it in table `ban_ips`
             $add_by = app()->auth->getCurUser() ? app()->auth->getCurUser()->getId() : 0;  // 0 - system
@@ -235,7 +235,7 @@ class Site extends Component
         // unban ip if exist
         if (in_array($ip, $banips)) {
             unset($banips[$ip]);
-            app()->config->set('runtime.ban_ips_list', $banips, 'json');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.ban_ips_list', $banips, 'json');
 
             if ($persistence === true) {  // delete it from table `ban_ips`
                 app()->pdo->prepare('DELETE FROM `ban_ips` WHERE `ip` = :ip')->bindParams(['ip' => $ip])->execute();

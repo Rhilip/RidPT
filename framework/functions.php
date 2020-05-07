@@ -41,7 +41,7 @@ if (!function_exists('__')) {
 if (!function_exists('config')) {
     function config(string $config)
     {
-        return app()->config->get($config);
+        return \Rid\Helpers\ContainerHelper::getContainer()->get('config')->get($config);
     }
 }
 
