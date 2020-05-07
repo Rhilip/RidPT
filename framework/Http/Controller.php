@@ -2,15 +2,23 @@
 
 namespace Rid\Http;
 
-use Rid\Helpers\ContainerHelper;
+use DI\Container;
 
 /**
  * Controller类
  */
 class Controller
 {
+
+    protected Container $container;
+
+    public function __construct(Container $container)
+    {
+    }
+
+
     public function render($name, $data = [])
     {
-        return ContainerHelper::getContainer()->get('view')->render($name, $data);
+        return $this->container->get('view')->render($name, $data);
     }
 }

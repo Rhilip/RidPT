@@ -16,6 +16,7 @@
 - **SwooleMemory:** Add `AtomicManager` (6190d60)
 
 ### Fix
+- **Captcha:** the captcha library's status not clean when re-generate (021212c)
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
@@ -25,6 +26,7 @@
 
 ### Style
 - **Utils:** Combine `NameHelper` and `StringHelper` (85f311b)
+- **ValueCache:** trait `ClassValueCacheUtils` rename as `Rid\Utils\Traits\ClassValueCache` (2bea55f)
 
 
 <a name="v0.1.7-alpha"></a>

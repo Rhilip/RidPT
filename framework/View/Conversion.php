@@ -56,7 +56,7 @@ class Conversion implements ExtensionInterface
 
     public function format_ubbcode($string)
     {
-        $this->decoda->reset($string,false,'Decoda:' . md5($string));
+        $this->decoda->reset($string, false, 'Decoda:' . md5($string));
         return $this->decoda->parse();
     }
 

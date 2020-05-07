@@ -8,16 +8,16 @@
 
 namespace App\Controllers;
 
-use Rid\Helpers\ContainerHelper;
+use Rid\Http\Controller;
 
-class CaptchaController
+class CaptchaController extends Controller
 {
     public function actionIndex()
     {
         app()->response->headers->set('Content-Type', 'image/png');
-        $captcha = ContainerHelper::getContainer()->get('captcha');
+        $captcha = $this->container->get('captcha');
         $captcha->generate();
-        app()->session->set('captchaText', $captcha->getText());
+        $this->container->get('session')->set('captchaText', $captcha->getText());
         return $captcha->getContent();
     }
 }

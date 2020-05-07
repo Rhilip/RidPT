@@ -14,10 +14,11 @@ namespace PHPSTORM_META {
         'view' => \Rid\Component\View::class,
         'i18n' => \Rid\Component\I18n::class,
         'redis' => \Rid\Redis\BaseRedisConnection::class,
-        'logger' => \Monolog\Logger::class,
-
+        'session' => \Rid\Http\Session::class,
         // 对象
         'captcha' => \Rid\Libraries\Captcha::class,
+
+        'logger' => \Monolog\Logger::class,
         'emitter' => \League\Event\Emitter::class,
     ]));
 

@@ -8,7 +8,9 @@
 
 namespace App\Middleware;
 
-class ApiMiddleware
+use Rid\Http\Middleware\AbstractMiddleware;
+
+class ApiMiddleware extends AbstractMiddleware
 {
     public function handle($callable, \Closure $next)
     {

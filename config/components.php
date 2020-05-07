@@ -25,6 +25,14 @@ return [
     'path.storage.subs' => \DI\string('{path.storage}' . DIRECTORY_SEPARATOR . 'subs'),
 
     // 定义组件
+    'logger' => \DI\autowire(Monolog\Logger::class)
+        ->constructor(PROJECT_NAME)
+        ->method('pushHandler', \DI\get(\Monolog\Handler\RotatingFileHandler::class)),
+
+    'mailer' => \DI\autowire(\App\Components\Mailer::class)
+        ->property('from', \DI\env('MAILER_FROM'))
+        ->property('fromname', \DI\env('MAILER_FROMNAME')),
+
     'redis' => \DI\autowire(\Rid\Redis\BaseRedisConnection::class)
         ->property('host', \DI\env('REDIS_HOST'))
         ->property('port', \DI\env('REDIS_PORT'))
@@ -36,15 +44,22 @@ return [
         ])
         ->method('connectRedis'),
 
+    'session' => \DI\autowire(\Rid\Http\Session::class)
+        ->property('idLength', 26)  // SessionId长度
+
+        // 服务器保存设置（暂只支持使用Redis保存）
+        ->property('saveKeyPrefix', 'Session:')   // 保存的Key前缀
+        ->property('maxLifetime', 7200)           // 生存时间
+
+        // 用户侧Cookies设置
+        ->property('cookieName', 'session_id') // session名
+        ->property('cookieExpires', 0)         // 过期时间
+        ->property('cookiePath', '/')          // 有效的服务器路径
+        ->property('cookieDomain', '')         // 有效域名/子域名
+        ->property('cookieSecure', false)      // 仅通过安全的 HTTPS 连接传给客户端
+        ->property('cookieHttpOnly', false),   // 仅可通过 HTTP 协议访问
+
     'view' => \DI\autowire(\Rid\Component\View::class),
-
-    'mailer' => \DI\autowire(\App\Components\Mailer::class)
-        ->property('from', \DI\env('MAILER_FROM'))
-        ->property('fromname', \DI\env('MAILER_FROMNAME')),
-
-    'logger' => \DI\autowire(Monolog\Logger::class)
-        ->constructor(PROJECT_NAME)
-        ->method('pushHandler', \DI\get(\Monolog\Handler\RotatingFileHandler::class)),
 
     'i18n' => \DI\autowire(\Rid\Component\I18n::class)
         ->property('allowedLangSet', ['en', 'zh-CN'])

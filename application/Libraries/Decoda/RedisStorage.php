@@ -10,14 +10,12 @@ declare(strict_types=1);
 
 namespace App\Libraries\Decoda;
 
-
 use Decoda\Exception\MissingItemException;
 use Decoda\Storage\AbstractStorage;
 use Rid\Redis\BaseRedisConnection;
 
 class RedisStorage extends AbstractStorage
 {
-
     protected BaseRedisConnection $_redis;
 
     public function __construct(BaseRedisConnection $redisConnection)
@@ -30,7 +28,8 @@ class RedisStorage extends AbstractStorage
      *
      * @return BaseRedisConnection
      */
-    public function getRedis() {
+    public function getRedis()
+    {
         return $this->_redis;
     }
 

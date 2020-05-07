@@ -7,4 +7,4 @@
  */
 ?>
 
-<label for="csrf" class="hidden"><input id="csrf" name="csrf" value="<?= app()->session->setCsrfToken() ?>"></label>
+<label for="csrf" class="hidden"><input id="csrf" name="csrf" value="<?= \Rid\Helpers\ContainerHelper::getContainer()->get('session')->setCsrfToken() ?>"></label>

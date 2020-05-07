@@ -25,8 +25,6 @@ class Application extends \Rid\Base\Application
     // 全局中间件
     public $middleware = [];
 
-    protected $_worker;
-
     // 执行功能
     public function run()
     {

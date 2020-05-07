@@ -10,8 +10,9 @@ namespace App\Middleware;
 
 use App\Controllers;
 use App\Libraries\Constant;
+use Rid\Http\Middleware\AbstractMiddleware;
 
-class AuthMiddleware
+class AuthMiddleware extends AbstractMiddleware
 {
     const authByPasskeyAction = [
         [Controllers\RssController::class, 'actionIndex'],  // `/rss?passkey=`
@@ -60,7 +61,7 @@ class AuthMiddleware
 
                 // Prevent Other Route
                 app()->response->headers->clearCookie(Constant::cookie_name);  // Delete exist cookies
-                app()->session->set('login_return_to', app()->request->getUri());  // Store the url which visitor want to hit
+                $this->container->get('session')->set('login_return_to', app()->request->getUri());  // Store the url which visitor want to hit
                 return app()->response->setRedirect('/auth/login');
             }
         }

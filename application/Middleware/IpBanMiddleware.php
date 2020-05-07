@@ -8,11 +8,11 @@
 
 namespace App\Middleware;
 
+use Rid\Http\Middleware\AbstractMiddleware;
 use Rid\Utils\Ip;
 
-class IpBanMiddleware
+class IpBanMiddleware extends AbstractMiddleware
 {
-    /** @noinspection PhpUnused */
     public function handle($callable, \Closure $next)
     {
         $ip = app()->request->getClientIp();

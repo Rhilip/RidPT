@@ -18,7 +18,7 @@ trait CsrfTrait
     /** @noinspection PhpUnused */
     protected function validateCsrf()
     {
-        $csrfText = app()->session->pop('csrfText');
+        $csrfText = \Rid\Helpers\ContainerHelper::getContainer()->get('session')->pop('csrfText');
         if (strcasecmp($this->csrf, $csrfText) != 0) {
             $this->buildCallbackFailMsg('csrf', 'csrf verification failed.');
             return;

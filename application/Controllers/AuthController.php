@@ -108,7 +108,7 @@ class AuthController extends Controller
             } else {
                 $login->flush();
 
-                $return_to = app()->session->pop('login_return_to') ?? '/index';
+                $return_to = $this->container->get('session')->pop('login_return_to') ?? '/index';
                 return app()->response->setRedirect($return_to);
             }
         }
