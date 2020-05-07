@@ -47,9 +47,9 @@ class DeleteForm extends Validator
     public function flush()
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
-        $file_loc = ContainerHelper::getContainer()->get('path.storage.subs') . $filename;
+        $file_loc = ContainerHelper::getContainer()->get('path.storage.subs') . DIRECTORY_SEPARATOR . $filename;
 
-        app()->pdo->prepare('DELETE FROM subtitles WHERE id = :sid')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM subtitles WHERE id = :sid')->bindParams([
             'sid' => $this->subtitle['id']
         ])->execute();
         unlink($file_loc);

@@ -48,9 +48,9 @@ class AdminController extends Controller
 
     private function infoMysql()
     {
-        $res = app()->pdo->prepare('SHOW GLOBAL STATUS')->queryAll();
+        $res = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SHOW GLOBAL STATUS')->queryAll();
         $serverStatus = array_column($res, 'Value', 'Variable_name');
-        $startAt = app()->pdo->prepare('SELECT UNIX_TIMESTAMP() - :uptime')->bindParams([
+        $startAt = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT UNIX_TIMESTAMP() - :uptime')->bindParams([
             'uptime' => $serverStatus['Uptime']
         ])->queryScalar();
         $queryStats = [];

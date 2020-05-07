@@ -85,10 +85,10 @@ class UserController extends Controller
                 $to_del_session = app()->request->request->get('session');
 
                 // expired it from Database first
-                app()->pdo->prepare('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([
                     'uid' => app()->auth->getCurUser()->getId(), 'sid' => $to_del_session
                 ])->execute();
-                $success = app()->pdo->getRowCount();
+                $success = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getRowCount();
 
                 if ($success > 0) {
                     \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zRem(app()->auth->getCurUser()->sessionSaveKey, $to_del_session);

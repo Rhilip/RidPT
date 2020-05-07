@@ -2,25 +2,17 @@
 
 namespace Rid\Database;
 
-use Rid\Base\Component;
+use League\Event\Emitter;
 
 /**
  * BasePdo组件
  */
-class BasePDOConnection extends Component
+class BasePDOConnection
 {
-
-    // 数据源格式
-    public string $dsn = '';
-
-    // 数据库用户名
-    public string $username = 'root';
-
-    // 数据库密码
-    public string $password = '';
-
-    // 驱动连接选项
-    public array $driverOptions = [];
+    protected string $dsn = '';  // 数据源格式
+    protected string $username = 'root';  // 数据库用户名
+    protected string $password = '';      // 数据库密码
+    protected array $options = [];      // 驱动连接选项
 
     // PDO Class
     protected ?\PDO $_pdo;
@@ -41,36 +33,17 @@ class BasePDOConnection extends Component
     // sql原始数据
     protected array $_sqlPrepareData = [];
 
-    protected bool $_recordData = true;
-    protected array $_sqlExecuteData = [];
+    protected Emitter $emitter;
 
-    // 默认驱动连接选项
-    protected array $_defaultDriverOptions = [
-        \PDO::ATTR_EMULATE_PREPARES   => false,
-        \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-    ];
-
-    // 驱动连接选项
-    protected array $_driverOptions = [];
-
-    // 初始化事件
-    public function onInitialize()
+    public function __construct(Emitter $emitter)
     {
-        parent::onInitialize();
-        $this->_driverOptions = $this->driverOptions + $this->_defaultDriverOptions;  // 设置驱动连接选项
-    }
-
-    public function onRequestBefore()
-    {
-        parent::onRequestBefore();
-        $this->_sqlExecuteData = [];
+        $this->emitter = $emitter;
     }
 
     // 创建连接
     protected function createConnection()
     {
-        return new \PDO($this->dsn, $this->username, $this->password, $this->_driverOptions);
+        return new \PDO($this->dsn, $this->username, $this->password, $this->options);
     }
 
     // 连接
@@ -158,9 +131,7 @@ class BasePDOConnection extends Component
     // 清扫预处理数据
     protected function clearPrepare()
     {
-        if ($this->_recordData) {
-            $this->_sqlExecuteData[] = $this->getRawSql();
-        }
+        $this->emitter->emit('database.commit', $this->getRawSql());
         $this->_sql    = '';
         $this->_params = [];
         $this->_values = [];
@@ -220,7 +191,7 @@ class BasePDOConnection extends Component
         $this->build();
         $this->_pdoStatement->execute();
         $this->clearPrepare();
-        return $this->_pdoStatement->fetch($this->_driverOptions[\PDO::ATTR_DEFAULT_FETCH_MODE]);
+        return $this->_pdoStatement->fetch($this->options[\PDO::ATTR_DEFAULT_FETCH_MODE]);
     }
 
     // 返回多行
@@ -417,18 +388,5 @@ class BasePDOConnection extends Component
             return $sql;
         }
         return array_shift($sqlPrepareData);
-    }
-
-    public function getExecuteData()
-    {
-        return $this->_sqlExecuteData;
-    }
-
-    /**
-     * @param bool $recordData
-     */
-    public function setRecordData(bool $recordData): void
-    {
-        $this->_recordData = $recordData;
     }
 }

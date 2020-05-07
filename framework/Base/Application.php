@@ -4,7 +4,6 @@ namespace Rid\Base;
 
 /**
  *
- * @property \Rid\Database\PDOConnection $pdo
  * @property \App\Components\Site $site
  */
 class Application extends BaseObject
@@ -14,8 +13,7 @@ class Application extends BaseObject
 
     // 组件配置
     public $components = [];
-    // 类库配置
-    public $libraries = [];
+
     // 组件容器
     protected $_components;
     // 组件命名空间

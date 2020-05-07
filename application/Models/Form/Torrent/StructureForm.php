@@ -15,7 +15,7 @@ class StructureForm extends DetailsForm
 {
     public function getTorrentFileContentDict()
     {
-        $file_loc = ContainerHelper::getContainer()->get('path.storage.torrents') . $this->id . '.torrent';
+        $file_loc = ContainerHelper::getContainer()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $this->id . '.torrent';
         return Bencode::load($file_loc);
     }
 }

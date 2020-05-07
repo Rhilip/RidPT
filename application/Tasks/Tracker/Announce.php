@@ -18,7 +18,7 @@ class Announce implements TaskHandlerInterface
 {
     public function handle(array $param, \Swoole\Server $server, int $taskId, int $workerId)
     {
-        app()->pdo->beginTransaction();
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->beginTransaction();
         try {
             /** We got data from Http Server Like
              * [
@@ -29,10 +29,10 @@ class Announce implements TaskHandlerInterface
              */
             $this->processAnnounceRequest($param['timestamp'], $param['queries'], $param['role'], $param['userInfo'], $param['torrentInfo']);
 
-            app()->pdo->commit();
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->commit();
         } catch (\Exception $e) {
             IoHelper::getIo()->note($e->getMessage());
-            app()->pdo->rollback();
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->rollback();
             // TODO deal with the items in backup_queue
         }
     }
@@ -57,7 +57,7 @@ class Announce implements TaskHandlerInterface
         $thisUploaded = $thisDownloaded = 0;
 
         // Try to fetch session from Table `peers`
-        $self = app()->pdo->prepare('SELECT `uploaded`, `downloaded`, UNIX_TIMESTAMP(`last_action_at`) as `last_action_at`
+        $self = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `uploaded`, `downloaded`, UNIX_TIMESTAMP(`last_action_at`) as `last_action_at`
         FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid LIMIT 1;')->bindParams([
             'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
         ])->queryOne();
@@ -67,14 +67,14 @@ class Announce implements TaskHandlerInterface
             if ($queries['event'] != 'stopped') {
                 // Then create new session in database
                 // Update `torrents`, if peer's role is a seeder ,so complete +1 , elseif  he is a leecher or partial seeder , so incomplete +1
-                app()->pdo->prepare("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` +1 WHERE id=:tid")->bindParams([
                     'tid' => $torrentInfo['id']
                 ])->execute();
 
                 $trueUploaded = max(0, $queries['uploaded']);
                 $trueDownloaded = max(0, $queries['downloaded']);
 
-                app()->pdo->prepare("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid,
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("INSERT INTO `peers` SET `user_id` =:uid, `torrent_id`= :tid, `peer_id`= :pid,
                         `ip` = :ip, `port` = :port, `endpoints` = :endpoints, `connect_type` = :connect_type,
                         `started_at`= FROM_UNIXTIME(:started_at), `last_action_at` = FROM_UNIXTIME(:last_action_at),
                         `agent`= :agent, `seeder` = :seeder,
@@ -91,13 +91,13 @@ class Announce implements TaskHandlerInterface
                 ])->execute();
 
                 // Search history record, and create new record if not exist.
-                $selfRecordCount = app()->pdo->prepare('SELECT COUNT(`id`) FROM snatched WHERE user_id = :uid AND torrent_id = :tid')->bindParams([
+                $selfRecordCount = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM snatched WHERE user_id = :uid AND torrent_id = :tid')->bindParams([
                     'uid' => $userInfo['id'],
                     'tid' => $torrentInfo['id']
                 ])->queryScalar();
 
                 if ($selfRecordCount == 0) {
-                    app()->pdo->prepare("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`ip`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`)
+                    \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("INSERT INTO snatched (`user_id`,`torrent_id`,`agent`,`ip`,`port`,`true_downloaded`,`true_uploaded`,`this_download`,`this_uploaded`,`to_go`,`{$timeKey}`,`create_at`,`last_action_at`)
                         VALUES (:uid,:tid,:agent,INET6_ATON(:ip),:port,:true_dl,:true_up,:this_dl,:this_up,:to_go,:time,FROM_UNIXTIME(:create_at),FROM_UNIXTIME(:last_action_at))")->bindParams([
                         'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
                         'agent' => $queries['user-agent'], 'ip' => $queries['ip'], 'port' => $queries['port'],
@@ -127,17 +127,17 @@ class Announce implements TaskHandlerInterface
             // Notice : there MUST have history record in Table `snatched` if session is exist !!!!!!!!
             if ($queries['event'] === 'stopped') {
                 // Update `torrents`, if peer's role is a seeder ,so complete -1 , elseif  he is a leecher , so incomplete -1
-                app()->pdo->prepare("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` -1 WHERE id=:tid")->bindParams([
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("UPDATE `torrents` SET `{$torrentUpdateKey}` = `{$torrentUpdateKey}` -1 WHERE id=:tid")->bindParams([
                     'tid' => $torrentInfo['id']
                 ])->execute();
 
                 // Peer stop seeding or leeching and should remove this peer from our peer list and update his data.
-                app()->pdo->prepare('DELETE FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id` = :pid')->bindParams([
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid AND `peer_id` = :pid')->bindParams([
                     'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
                 ])->execute();
             } else {
                 // if session is exist but event!=stopped , we should continue the old session
-                app()->pdo->prepare("UPDATE `peers` SET `agent`=:agent, `ip` = :ip, `port` = :port,
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("UPDATE `peers` SET `agent`=:agent, `ip` = :ip, `port` = :port,
                    `endpoints` = :endpoints, `connect_type` = :connect_type,
                    `seeder`=:seeder, `uploaded`=`uploaded` + :uploaded, `downloaded`= `downloaded` + :download, `to_go` = :left,
                    `last_action_at`= FROM_UNIXTIME(:last_action_at), `corrupt`= :corrupt, `key`= :key
@@ -152,8 +152,8 @@ class Announce implements TaskHandlerInterface
                     'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
                 ])->execute();
             }
-            if (app()->pdo->getRowCount() > 0) {   // It means that the delete or update query affected so we can safety update `snatched` table
-                app()->pdo->prepare("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
+            if (\Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getRowCount() > 0) {   // It means that the delete or update query affected so we can safety update `snatched` table
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("UPDATE `snatched` SET `true_uploaded` = `true_uploaded` + :true_up,`true_downloaded` = `true_downloaded` + :true_dl,
                     `this_uploaded` = `this_uploaded` + :this_up, `this_download` = `this_download` + :this_dl, `to_go` = :left, `{$timeKey}`=`{$timeKey}` + :duration,
                     `ip` = INET6_ATON(:ip),`port` = :port, `agent` = :agent WHERE `torrent_id` = :tid AND `user_id` = :uid")->bindParams([
                     'true_up' => $trueUploaded, 'true_dl' => $trueDownloaded, 'this_up' => $thisUploaded, 'this_dl' => $thisDownloaded,
@@ -166,18 +166,18 @@ class Announce implements TaskHandlerInterface
 
         // Deal with completed event
         if ($queries['event'] === 'completed') {
-            app()->pdo->prepare("UPDATE `snatched` SET `finished` = 'yes', finish_ip = INET6_ATON(:ip), finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("UPDATE `snatched` SET `finished` = 'yes', finish_ip = INET6_ATON(:ip), finish_at = NOW() WHERE user_id = :uid AND torrent_id = :tid")->bindParams([
                 'ip' => $queries['ip'],
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
             ]);
             // Update `torrents`, with complete +1  incomplete -1 downloaded +1
-            app()->pdo->prepare('UPDATE `torrents` SET `complete` = `complete` + 1, `incomplete` = `incomplete` -1 , `downloaded` = `downloaded` + 1 WHERE `id`=:tid')->bindParams([
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `torrents` SET `complete` = `complete` + 1, `incomplete` = `incomplete` -1 , `downloaded` = `downloaded` + 1 WHERE `id`=:tid')->bindParams([
                 'tid' => $torrentInfo['id']
             ])->execute();
         }
 
         // Update Table `users` , record his upload and download data and connect time information
-        app()->pdo->prepare('UPDATE `users` SET uploaded = uploaded + :upload, downloaded = downloaded + :download, '
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET uploaded = uploaded + :upload, downloaded = downloaded + :download, '
             . ($trueUploaded > 0 ? 'last_upload_at=NOW(), ' : '') . ($trueDownloaded > 0 ? 'last_download_at=NOW(), ' : '') .
             "`last_connect_at`=NOW() , `last_tracker_ip`= INET6_ATON(:ip) WHERE id = :uid")->bindParams([
             'upload' => $thisUploaded, 'download' => $thisDownloaded,
@@ -199,7 +199,7 @@ class Announce implements TaskHandlerInterface
     private function checkUpspeed($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration, $upspeed)
     {
         $logCheater = function ($commit) use ($userInfo, $torrentInfo, $trueUploaded, $trueDownloaded, $duration) {
-            app()->pdo->prepare("INSERT INTO `cheaters`(`added_at`,`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`)
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("INSERT INTO `cheaters`(`added_at`,`userid`, `torrentid`, `uploaded`, `downloaded`, `anctime`, `seeders`, `leechers`, `hit`, `commit`, `reviewed`, `reviewed_by`)
             VALUES (CURRENT_TIMESTAMP, :uid, :tid, :uploaded, :downloaded, :anctime, :seeders, :leechers, :hit, :msg, :reviewed, :reviewed_by)
             ON DUPLICATE KEY UPDATE `hit` = `hit` + 1, `reviewed` = 0,`reviewed_by` = '',`commit` = VALUES(`commit`)")->bindParams([
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'],
@@ -214,7 +214,7 @@ class Announce implements TaskHandlerInterface
         if ($trueUploaded > 1 * (1024 ** 3) && $upspeed > 100 * (1024 ** 2)) {
             $logCheater('User account was automatically disabled by system');
             // Disable users and Delete user content in cache , so that user cannot get any data when next announce.
-            app()->pdo->prepare("UPDATE `users` SET `status` = 'banned' WHERE `id` = :uid;")->bindParams([
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("UPDATE `users` SET `status` = 'banned' WHERE `id` = :uid;")->bindParams([
                 'uid' => $userInfo['id'],
             ])->execute();
 
@@ -241,7 +241,7 @@ class Announce implements TaskHandlerInterface
     {
         $buff = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get('TRACKER:buff:user_' . $userid . ':torrent_' . $torrentid);
         if ($buff === false) {
-            $buff = app()->pdo->prepare("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrent_buffs`
+            $buff = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("SELECT COALESCE(MAX(`upload_ratio`),1) as `up_ratio`, COALESCE(MIN(`download_ratio`),1) as `dl_ratio` FROM `torrent_buffs`
             WHERE start_at < NOW() AND NOW() < expired_at AND (torrent_id = :tid OR torrent_id = 0) AND (beneficiary_id = :bid OR beneficiary_id = 0);")->bindParams([
                 'tid' => $torrentid, 'bid' => $userid
             ])->queryOne();

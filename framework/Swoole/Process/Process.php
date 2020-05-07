@@ -51,7 +51,6 @@ class Process implements StaticInstanceInterface
     final public function start($config)
     {
         $this->_config = $config;
-        $this->disablePdoAndRedisRecord();
         $this->resetSleepTime();
 
         IoHelper::getIo()->text('New Custom process `' . static::class . '` added.');
@@ -60,13 +59,6 @@ class Process implements StaticInstanceInterface
         while (true) {
             $this->run();
             sleep($this->getSleepTime());
-        }
-    }
-
-    private function disablePdoAndRedisRecord()
-    {
-        if (in_array('pdo', $this->_config['components'])) {
-            app()->pdo->setRecordData(false);
         }
     }
 }

@@ -18,7 +18,7 @@ class DownloadForm extends Validator
 
     private function addDownloadHit()
     {
-        app()->pdo->prepare('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
             'sid' => $this->id
         ])->execute();
     }
@@ -36,7 +36,7 @@ class DownloadForm extends Validator
     protected function getSendFileContent()
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
-        $file_loc = ContainerHelper::getContainer()->get('path.storage.subs') . $filename;
+        $file_loc = ContainerHelper::getContainer()->get('path.storage.subs') . DIRECTORY_SEPARATOR . $filename;
         app()->response->setFile($file_loc);
     }
 }

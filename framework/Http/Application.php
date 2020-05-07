@@ -10,7 +10,6 @@ use Rid\Utils\Text;
  * App类
  *
  * @property \Rid\Http\Error $error
- * @property \Rid\Http\Session $session
  * @property \Rid\Http\Route $route
  * @property \Rid\Http\Message\Request $request
  * @property \Rid\Http\Message\Response $response

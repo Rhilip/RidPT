@@ -49,7 +49,7 @@ class UserConfirmForm extends Validator
      */
     protected function validConfirmSecret()
     {
-        $record = app()->pdo->prepare(
+        $record = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare(
             'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm`
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;'
@@ -71,7 +71,7 @@ class UserConfirmForm extends Validator
 
     private function update_confirm_status()
     {
-        app()->pdo->prepare('UPDATE `user_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `user_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
             'id' => $this->id
         ])->execute();
     }
@@ -82,7 +82,7 @@ class UserConfirmForm extends Validator
             return 'user status is not pending , they may already confirmed or banned';  // FIXME msg
         }
 
-        app()->pdo->prepare('UPDATE `users` SET `status` = :s WHERE `id` = :uid')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `status` = :s WHERE `id` = :uid')->bindParams([
             's' => UserStatus::CONFIRMED, 'uid' => $this->uid
         ])->execute();
         $this->update_confirm_status();
@@ -98,7 +98,7 @@ class UserConfirmForm extends Validator
 
         // generate new password
         $new_password = Random::alnum(10);
-        app()->pdo->prepare('UPDATE `users` SET `password` = :new_password WHERE `id` = :uid')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `password` = :new_password WHERE `id` = :uid')->bindParams([
             'new_password' => password_hash($new_password, PASSWORD_DEFAULT), 'uid' => $this->uid
         ])->execute();
         $this->update_confirm_status();

@@ -66,7 +66,7 @@ class UploadForm extends Validator
         $file = $this->getInput('file');
         $this->hashs = $file_md5 = md5_file($file->getPathname());
 
-        $exist_id = app()->pdo->prepare('SELECT id FROM `subtitles` WHERE `hashs` = :hashs LIMIT 1;')->bindParams([
+        $exist_id = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT id FROM `subtitles` WHERE `hashs` = :hashs LIMIT 1;')->bindParams([
             'hashs' => $file_md5
         ])->queryOne();
 
@@ -82,24 +82,24 @@ class UploadForm extends Validator
     {
         $title = $this->title ?: pathinfo($this->file->getClientOriginalName(), PATHINFO_FILENAME);
 
-        app()->pdo->beginTransaction();
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->beginTransaction();
         try {
             $ext = $this->file->getClientOriginalExtension();
-            app()->pdo->prepare('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`)
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`)
 VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)')->bindParams([
                 'tid' => $this->torrent_id, 'hashs' => $this->hashs,
                 'title' => $title, 'filename' => $this->file->getClientOriginalName(),
                 'size' => $this->file->getSize(), 'upper' => app()->auth->getCurUser()->getId(),
                 'anonymous' => $this->anonymous, 'ext' => $ext
             ])->execute();
-            $id = app()->pdo->getLastInsertId();
-            $this->file->move(ContainerHelper::getContainer()->get('path.storage.subs') . $id . '.' . $ext);
-            app()->pdo->commit();
+            $id = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getLastInsertId();
+            $this->file->move(ContainerHelper::getContainer()->get('path.storage.subs') . DIRECTORY_SEPARATOR . $id . '.' . $ext);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->commit();
         } catch (\Exception $e) {
             if (isset($file_loc)) {
                 unlink($file_loc);
             }
-            app()->pdo->rollback();
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->rollback();
             throw $e;
         }
         \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::siteSubtitleSize);

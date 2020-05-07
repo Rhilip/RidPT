@@ -76,7 +76,7 @@ class Logs extends Pagination
     protected function getRemoteTotal(): int
     {
         $search = $this->query;
-        return app()->pdo->prepare([
+        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
             ['SELECT COUNT(*) FROM `site_log` WHERE 1=1 '],
             ['AND `level` IN (:l) ', 'params' => ['l' => $this->getLevels()]],
             ['AND `msg` LIKE :search ', 'if' => strlen($search), 'params' => ['search' => "%$search%"]]
@@ -86,7 +86,7 @@ class Logs extends Pagination
     protected function getRemoteData(): array
     {
         $search = $this->query;
-        return app()->pdo->prepare([
+        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
             ['SELECT * FROM `site_log` WHERE 1=1 '],
             ['AND `level` IN (:l) ', 'params' => ['l' => $this->getLevels()]],
             ['AND `msg` LIKE :search ', 'if' => strlen($search), 'params' => ['search' => "%$search%"]],

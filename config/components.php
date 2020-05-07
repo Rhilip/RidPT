@@ -33,7 +33,15 @@ return [
         ->property('from', \DI\env('MAILER_FROM'))
         ->property('fromname', \DI\env('MAILER_FROMNAME')),
 
-    'config' => \DI\autowire(\Rid\Component\Config::class),
+    'pdo' => \DI\autowire(\Rid\Database\Persistent\PDOConnection::class)
+        ->property('dsn', \DI\env('DATABASE_DSN'))
+        ->property('username', \DI\env('DATABASE_USERNAME'))
+        ->property('password', \DI\env('DATABASE_PASSWORD'))
+        ->property('options', [
+            \PDO::ATTR_EMULATE_PREPARES => false,
+            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+        ]),
 
     'redis' => \DI\autowire(\Rid\Redis\BaseRedisConnection::class)
         ->property('host', \DI\env('REDIS_HOST'))
@@ -61,6 +69,8 @@ return [
         ->property('cookieSecure', false)      // 仅通过安全的 HTTPS 连接传给客户端
         ->property('cookieHttpOnly', false),   // 仅可通过 HTTP 协议访问
 
+    'config' => \DI\autowire(\Rid\Component\Config::class),
+
     'view' => \DI\autowire(\Rid\Component\View::class),
 
     'i18n' => \DI\autowire(\Rid\Component\I18n::class)
@@ -69,6 +79,7 @@ return [
 
     // 定义对象
     'captcha' => \DI\get(\Rid\Libraries\Captcha::class),
+    'jwt' => \DI\get(\Rid\Libraries\JWT::class),
     'emitter' => \DI\get(\League\Event\Emitter::class),
 
     // 定义组件依赖
@@ -114,5 +125,12 @@ return [
         ->property('wordNumber', 6)
         ->property('angleRand', [-20, 20])
         ->property('xSpacing', 0.82)
-        ->property('yRand', [5, 15])
+        ->property('yRand', [5, 15]),
+
+    \Rid\Libraries\JWT::class => \DI\create()
+        ->constructor(\DI\env('APP_SECRET_KEY'), ['HS256']),
+
+    \Rid\Libraries\Crypt::class => \DI\create()
+        ->constructor(\DI\env('APP_SECRET_KEY'), \DI\env('APP_SECRET_IV'), 'AES-256-CBC')
+
 ];

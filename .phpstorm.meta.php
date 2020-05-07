@@ -14,11 +14,16 @@ namespace PHPSTORM_META {
         'view' => \Rid\Component\View::class,
         'i18n' => \Rid\Component\I18n::class,
         'redis' => \Rid\Redis\BaseRedisConnection::class,
+        'pdo' => \Rid\Database\Persistent\PDOConnection::class,
         'session' => \Rid\Http\Session::class,
+        'logger' => \Monolog\Logger::class,
+
+
         // 对象
         'captcha' => \Rid\Libraries\Captcha::class,
+        'jwt' => \Rid\Libraries\JWT::class,
+        'crypt'=> \Rid\Libraries\Crypt::class,
 
-        'logger' => \Monolog\Logger::class,
         'emitter' => \League\Event\Emitter::class,
     ]));
 

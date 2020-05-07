@@ -61,7 +61,7 @@ class NewsController extends Controller
             $id = app()->request->query->get('id', 0);
             if (filter_var($id, FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check
-                $news = app()->pdo->prepare('SELECT * FROM news WHERE id= :id')->bindParams(['id' => $id])->queryOne();
+                $news = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM news WHERE id= :id')->bindParams(['id' => $id])->queryOne();
                 return $this->render('news/edit', ['news' => $news]);
             }
         }
@@ -74,7 +74,7 @@ class NewsController extends Controller
             $id = app()->request->query->get('id', 0);
             if (filter_var($id, FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check
-                app()->pdo->prepare('DELETE FROM news WHERE id= :id')->bindParams(['id'=>$id])->execute();
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM news WHERE id= :id')->bindParams(['id'=>$id])->execute();
             }
             return app()->response->setRedirect('/news');
         }

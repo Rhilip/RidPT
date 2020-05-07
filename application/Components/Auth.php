@@ -13,7 +13,7 @@ use App\Libraries\Constant;
 use App\Entity\User\UserStatus;
 
 use Rid\Base\Component;
-use Rid\Helpers\JWTHelper;
+use Rid\Helpers\ContainerHelper;
 
 class Auth extends Component
 {
@@ -83,7 +83,7 @@ class Auth extends Component
         }
 
         // quick return when decode JWT session failed
-        if (false === $payload = JWTHelper::decode($user_session)) {
+        if (false === $payload = ContainerHelper::getContainer()->get('jwt')->decode($user_session)) {
             return false;
         }
         if (!isset($payload['jti']) || !isset($payload['aud'])) {
@@ -150,12 +150,12 @@ class Auth extends Component
             $check = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->pfAdd('Site:hyperloglog:access_log_' . $grain_size, [$identify_key]);
             if ($check == 1) {
                 // Update Table `users`
-                app()->pdo->prepare('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
                     'ip' => $now_ip, 'id' => $uid
                 ])->execute();
 
                 // Insert Table `session_log`
-                app()->pdo->prepare('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
+                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
                     'jit' => $this->getCurUserJIT(), 'access_ip' => $now_ip, 'ua' => $ua
                 ])->execute();
             }

@@ -100,7 +100,7 @@ return [
         'crontab' => [
             'class' => App\Process\CronTabProcess::class,
             'title' => 'Crontab Worker',
-            'components' => ['pdo', 'site'],
+            'components' => ['site'],
             'sleep' => 60,
         ]
     ],

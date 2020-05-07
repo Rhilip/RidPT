@@ -9,10 +9,6 @@
  */
 
 return [
-
-    // 基础路径
-    'basePath' => dirname(__DIR__),
-
     // 控制器命名空间
     'controllerNamespace' => 'App\Controllers',
 
@@ -69,23 +65,6 @@ return [
             'class' => Rid\Http\Error::class
         ],
 
-        // 数据库
-        'pdo' => [
-            // 类路径
-            'class' => Rid\Database\Persistent\PDOConnection::class,
-            // 数据源格式
-            'dsn' => env('DATABASE_DSN'),
-            // 数据库用户名
-            'username' => env('DATABASE_USERNAME'),
-            // 数据库密码
-            'password' => env('DATABASE_PASSWORD'),
-            // 驱动连接选项: http://php.net/manual/zh/pdo.setattribute.php
-            'driverOptions' => [
-                // 设置默认的提取模式: \PDO::FETCH_OBJ | \PDO::FETCH_ASSOC
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            ],
-        ],
-
         'site' => [
             'class' => App\Components\Site::class
         ],
@@ -93,9 +72,5 @@ return [
         'auth' => [
             'class' => App\Components\Auth::class
         ],
-    ],
-
-    // 类库配置
-    'libraries' => [
     ],
 ];

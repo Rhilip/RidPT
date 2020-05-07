@@ -11,7 +11,7 @@ namespace App\Models\Form\Auth;
 use App\Entity\User\UserFactory;
 use App\Libraries\Constant;
 
-use Rid\Helpers\JWTHelper;
+use Rid\Helpers\ContainerHelper;
 use Rid\Validators\CsrfTrait;
 use Rid\Validators\Validator;
 
@@ -49,7 +49,7 @@ class UserLogoutForm extends Validator
             return;
         }
 
-        $payload = JWTHelper::decode($session);
+        $payload = ContainerHelper::getContainer()->get('jwt')->decode($session);
         if ($payload === false || !isset($payload['jti'])) {
             $this->buildCallbackFailMsg('jwt', 'Fail to get $jti information');
             return;
@@ -69,7 +69,7 @@ class UserLogoutForm extends Validator
         \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zAdd(UserFactory::mapUserSessionToId, 0, $this->sid);   // Quick Mark this invalid in cache
 
         // Set this session expired
-        app()->pdo->prepare('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
             'sid' => $this->sid
         ])->execute();
     }

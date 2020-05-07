@@ -2,8 +2,6 @@
 
 namespace Rid\Http;
 
-use Rid\Base\Component;
-
 use Rid\Redis\BaseRedisConnection;
 use Rid\Utils\Random;
 use Symfony\Component\HttpFoundation\Cookie;

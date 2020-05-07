@@ -203,11 +203,18 @@ use League\Event\Emitter;
  */
 class BaseRedisConnection
 {
-    protected string $host;
-    protected string $port;
-    protected string $password;
-    protected string $database;
-    protected array $options;
+    /**
+     * Config of \Redis Service
+     * Don't change every config here, do it in your `.env` file or `config/components.php`
+     */
+    protected ?string $host = '127.0.0.1';
+    protected ?string $port = '6379';
+    protected ?string $password = '';
+    protected ?string $database = '1';
+    protected ?array $options = [
+        \Redis::OPT_SERIALIZER => \Redis::SERIALIZER_PHP,
+        \Redis::OPT_PREFIX => ''
+    ];
 
     /** @var \Redis redis对象 */
     protected \Redis $_redis;

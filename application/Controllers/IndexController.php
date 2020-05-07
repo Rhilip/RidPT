@@ -13,7 +13,7 @@ class IndexController extends Controller
         // Get Last News from redis cache
         $news = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get('Site:recent_news');
         if ($news === false) { // Get news from Database and cache it in redis
-            $news = app()->pdo->prepare('SELECT * FROM news ORDER BY create_at DESC LIMIT :max')->bindParams([
+            $news = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM news ORDER BY create_at DESC LIMIT :max')->bindParams([
                 'max' => config('base.max_news_sum')
             ])->queryAll();
             \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set('Site:recent_news', $news, 86400);
@@ -22,7 +22,7 @@ class IndexController extends Controller
         // Get All Links from redis cache
         $links = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get('Site:links');
         if ($links === false) {
-            $links = app()->pdo->prepare("SELECT `name`,`title`,`url` FROM links WHERE `status` = 'enabled' ORDER BY id ASC")->queryAll();
+            $links = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("SELECT `name`,`title`,`url` FROM links WHERE `status` = 'enabled' ORDER BY id ASC")->queryAll();
             \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set('Site:links', $links, 86400);
         }
 

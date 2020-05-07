@@ -40,7 +40,7 @@ class ManageController extends Controller
             }
         }
 
-        $categories = app()->pdo->prepare('SELECT * FROM `categories` ORDER BY `full_path`')->queryAll();
+        $categories = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `categories` ORDER BY `full_path`')->queryAll();
 
         return $this->render('manage/categories', ['categories' => $categories]);
     }

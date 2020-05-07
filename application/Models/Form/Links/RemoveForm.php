@@ -29,7 +29,7 @@ class RemoveForm extends Validator
     /** @noinspection PhpUnused */
     protected function checkExistLinksById()
     {
-        $count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `links` WHERE id = :id')->bindParams([
+        $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `links` WHERE id = :id')->bindParams([
             'id' => $this->getInput('link_id')
         ])->queryScalar();
         if ($count == 0) {
@@ -39,7 +39,7 @@ class RemoveForm extends Validator
 
     public function flush()
     {
-        app()->pdo->prepare('DELETE FROM `links` WHERE id = :id')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM `links` WHERE id = :id')->bindParams([
             'id' => $this->link_id
         ])->execute();
         \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:links');

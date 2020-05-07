@@ -149,7 +149,7 @@ class UserRegisterForm extends Validator
             $client_ip = app()->request->getClientIp();
 
             $max_user_per_ip = config('register.per_ip_user') ?: 5;
-            $user_ip_count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
+            $user_ip_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
                 "ip" => $client_ip
             ])->queryScalar();
 
@@ -176,7 +176,7 @@ class UserRegisterForm extends Validator
         }
 
         // Check this username is exist in Table `users` or not
-        $count = app()->pdo->prepare('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
+        $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
             'username' => $username
         ])->queryScalar();
         if ($count > 0) {
@@ -208,7 +208,7 @@ class UserRegisterForm extends Validator
             return;
         }
 
-        $email_check = app()->pdo->prepare('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
+        $email_check = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
             "email" => $email
         ])->queryScalar();
         if ($email_check > 0) {
@@ -226,7 +226,7 @@ class UserRegisterForm extends Validator
                 $this->buildCallbackFailMsg('Invite', "This invite hash : `$invite_hash` is not valid");
                 return;
             } else {
-                $inviteInfo = app()->pdo->prepare('SELECT * FROM `invite` WHERE `hash`=:invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
+                $inviteInfo = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `invite` WHERE `hash`=:invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
                     'invite_hash' => $invite_hash
                 ])->queryOne();
                 if (false === $inviteInfo) {
@@ -280,7 +280,7 @@ class UserRegisterForm extends Validator
         }
 
         // Insert into `users` table and get insert id
-        app()->pdo->prepare("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`)
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`)
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus, :invites)")->bindParams(array(
             'name' => $this->username, 'passhash' => password_hash($this->password, PASSWORD_DEFAULT), 'email' => $this->email,
             'status' => $this->status, 'class' => $this->class, 'passkey' => $this->passkey,
@@ -290,7 +290,7 @@ class UserRegisterForm extends Validator
             'seedtime' => $this->seedtime, 'leechtime' => $this->leechtime,
             'bonus' => $this->bonus , 'invites' => $this->invites
         ))->execute();
-        $this->id = app()->pdo->getLastInsertId();
+        $this->id = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getLastInsertId();
 
         // TODO Newcomer exams
 
@@ -298,7 +298,7 @@ class UserRegisterForm extends Validator
 
         // Send Invite Success PM to invitee
         if ($this->type == 'invite') {
-            app()->pdo->prepare("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 
@@ -311,7 +311,7 @@ class UserRegisterForm extends Validator
         // Send Confirm Email
         if ($this->confirm_way == 'email') {
             $confirm_key = Random::alnum(32);
-            app()->pdo->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
                 'uid' => $this->id, 'secret' => $confirm_key, 'action' => $this->_action
             ])->execute();
             $confirm_url = app()->request->getSchemeAndHttpHost() . '/auth/confirm?' . http_build_query([

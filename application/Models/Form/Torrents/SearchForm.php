@@ -172,7 +172,7 @@ class SearchForm extends Pagination
 
     protected function getRemoteTotal(): int
     {
-        return app()->pdo->prepare(array_merge([
+        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare(array_merge([
             ['SELECT COUNT(`id`) FROM `torrents` WHERE 1=1 ']
         ], $this->getSearchField()))->queryScalar();
     }

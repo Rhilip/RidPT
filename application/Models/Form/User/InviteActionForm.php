@@ -78,7 +78,7 @@ class InviteActionForm extends Validator
     protected function checkConfirmInfo()
     {
         if ($this->getInput('action') == self::ACTION_CONFIRM) {
-            $this->confirm_info = app()->pdo->prepare('SELECT `status` FROM users WHERE id= :invitee_id')->bindParams([
+            $this->confirm_info = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `status` FROM users WHERE id= :invitee_id')->bindParams([
                 'invitee_id' => $this->getInput('invitee_id')
             ])->queryScalar();
             if ($this->confirm_info === false || $this->confirm_info !== UserStatus::PENDING) {
@@ -91,7 +91,7 @@ class InviteActionForm extends Validator
     {
         if ($this->getInput('action') == self::ACTION_RECYCLE) {
             // Get unused invite info
-            $this->invite_info = app()->pdo->prepare('SELECT * FROM `invite` WHERE `id` = :invite_id AND `inviter_id` = :inviter_id AND `used` = 0')->bindParams([
+            $this->invite_info = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `invite` WHERE `id` = :invite_id AND `inviter_id` = :inviter_id AND `used` = 0')->bindParams([
                 'invite_id' => $this->getInput('invite_id'), 'inviter_id' => $this->getInput('uid')
             ])->queryOne();
 
@@ -112,10 +112,10 @@ class InviteActionForm extends Validator
 
     private function flush_confirm()
     {
-        app()->pdo->prepare('UPDATE `users` SET `status` = :new_status WHERE `id` = :invitee_id')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `status` = :new_status WHERE `id` = :invitee_id')->bindParams([
             'new_status' => UserStatus::CONFIRMED, 'invitee_id' => $this->invitee_id
         ])->execute();
-        if (app()->pdo->getRowCount() > 1) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getRowCount() > 1) {
             return 'Confirm Pending User Success!';
         } else {
             return 'You can\'t confirm a confirmed user.';
@@ -124,10 +124,10 @@ class InviteActionForm extends Validator
 
     private function flush_recycle()
     {
-        app()->pdo->beginTransaction();
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->beginTransaction();
         try {
             // Set this invite record's status as recycled
-            app()->pdo->prepare('UPDATE `invite` SET `used` = -2 WHERE `id` = :id')->bindParams([
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `invite` SET `used` = -2 WHERE `id` = :id')->bindParams([
                 'id' => $this->invite_info['id'],
             ])->execute();
             $msg = 'Recycle invite success!';
@@ -135,12 +135,12 @@ class InviteActionForm extends Validator
             // Recycle or not ?
             if (config('invite.recycle_return_invite')) {
                 if ($this->invite_info['invite_type'] == InviteForm::INVITE_TYPE_PERMANENT) {
-                    app()->pdo->prepare('UPDATE `users` SET `invites` = `invites` + 1 WHERE id = :uid')->bindParams([
+                    \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `invites` = `invites` + 1 WHERE id = :uid')->bindParams([
                         'uid' => $this->invite_info['inviter_id']
                     ])->execute();
                     $msg .= ' And return you a permanent invite';
                 } elseif ($this->invite_info['invite_type'] == InviteForm::INVITE_TYPE_TEMPORARILY) {
-                    app()->pdo->prepare('INSERT INTO `user_invitations` (`user_id`,`total`,`create_at`,`expire_at`) VALUES (:uid,:total,CURRENT_TIMESTAMP,DATE_ADD(NOW(),INTERVAL :life_time SECOND ))')->bindParams([
+                    \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `user_invitations` (`user_id`,`total`,`create_at`,`expire_at`) VALUES (:uid,:total,CURRENT_TIMESTAMP,DATE_ADD(NOW(),INTERVAL :life_time SECOND ))')->bindParams([
                         'uid' => $this->invite_info['inviter_id'], 'total' => 1,
                         'life_time' => config('invite.recycle_invite_lifetime')
                     ])->execute();
@@ -148,10 +148,10 @@ class InviteActionForm extends Validator
                     \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hDel('User:' . $this->invite_info['inviter_id'] . ':base_content', 'temp_invite');
                 }
             }
-            app()->pdo->commit();
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->commit();
         } catch (\Exception $e) {
             $msg = '500 Error.....' . $e->getMessage();
-            app()->pdo->rollback();
+            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->rollback();
         }
         return $msg;
     }

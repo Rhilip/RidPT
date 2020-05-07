@@ -11,7 +11,7 @@ namespace App\Models\Form\Auth;
 use App\Libraries\Constant;
 use App\Entity\User\UserStatus;
 
-use Rid\Helpers\JWTHelper;
+use Rid\Helpers\ContainerHelper;
 use Rid\Utils\Random;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
@@ -59,7 +59,7 @@ class UserLoginForm extends Validator
     /** @noinspection PhpUnused */
     protected function loadUserFromPdo()
     {
-        $this->self = app()->pdo->prepare('SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1')->bindParams([
+        $this->self = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1')->bindParams([
             'uname' => $this->getInput('username'), 'email' => $this->getInput('username'),
         ])->queryOne();
 
@@ -107,7 +107,7 @@ class UserLoginForm extends Validator
     /** @noinspection PhpUnused */
     protected function isMaxUserSessionsReached()
     {
-        $exist_session_count = app()->pdo->prepare('SELECT COUNT(`id`) FROM sessions WHERE uid = :uid AND expired != 1')->bindParams([
+        $exist_session_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM sessions WHERE uid = :uid AND expired != 1')->bindParams([
             'uid' => $this->self['id']
         ])->queryScalar();
 
@@ -141,7 +141,7 @@ class UserLoginForm extends Validator
 
         do { // Generate unique JWT ID
             $jti = Random::alnum(64);
-            $count = app()->pdo->prepare('SELECT COUNT(`id`) FROM sessions WHERE session = :sid;')->bindParams([
+            $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM sessions WHERE session = :sid;')->bindParams([
                 'sid' => $jti
             ])->queryScalar();
         } while ($count != 0);
@@ -173,10 +173,10 @@ class UserLoginForm extends Validator
 
         // Generate JWT content
         $this->jwt_payload = $payload;
-        $jwt = JWTHelper::encode($payload);
+        $jwt = ContainerHelper::getContainer()->get('jwt')->encode($payload);
 
         // Store User Login Session Information in database
-        app()->pdo->prepare('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
             'VALUES (:uid, :sid, INET6_ATON(:login_ip), NOW(), :expired)')->bindParams([
             'uid' => $this->jwt_payload['aud'], 'sid' => $this->jwt_payload['jti'], 'login_ip' => $login_ip,
             'expired' => ($this->logout === 'yes') ? 0 : -1,  // -1 -> never expired , 0 -> auto_expire after 15 minutes, 1 -> expired
@@ -191,7 +191,7 @@ class UserLoginForm extends Validator
         $ip = app()->request->getClientIp();
 
         // Update User Tables
-        app()->pdo->prepare('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([
+        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([
             'ip' => $ip, 'id' => $this->self['id']
         ])->execute();
     }

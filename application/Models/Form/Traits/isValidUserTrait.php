@@ -31,7 +31,7 @@ trait isValidUserTrait
     protected function isExistUser()
     {
         $test_uid = $this->getInput('id');
-        $uid = app()->pdo->prepare('SELECT id FROM users WHERE id = :uid LIMIT 1')->bindParams([
+        $uid = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT id FROM users WHERE id = :uid LIMIT 1')->bindParams([
             'uid' => $test_uid
         ])->queryScalar();
         if ($uid === false) {
