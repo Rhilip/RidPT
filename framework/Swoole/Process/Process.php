@@ -8,14 +8,10 @@
 
 namespace Rid\Swoole\Process;
 
-use Rid\Base\StaticInstanceInterface;
-use Rid\Base\StaticInstanceTrait;
 use Rid\Helpers\IoHelper;
 
-class Process implements StaticInstanceInterface
+class Process
 {
-    use StaticInstanceTrait;
-
     private $sleep_time;
     protected $_config;
 

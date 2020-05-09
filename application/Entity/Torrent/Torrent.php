@@ -12,9 +12,8 @@ use App\Entity\User\User;
 use App\Libraries\Constant;
 
 use Rid\Utils\Traits\ClassValueCache;
-use Rid\Base\BaseObject;
 
-class Torrent extends BaseObject
+class Torrent
 {
     use ClassValueCache;
 
@@ -55,10 +54,17 @@ class Torrent extends BaseObject
 
     protected $comment_perpage = 10;  // FIXME
 
-    /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct($config)
     {
         $this->importAttributes($config);
+    }
+
+    // FIXME
+    protected function importAttributes($config)
+    {
+        foreach ($config as $name => $value) {
+            $this->$name = $value;
+        }
     }
 
     protected function getCacheNameSpace(): string
@@ -278,7 +284,7 @@ class Torrent extends BaseObject
         return $s;
     }
 
-
+    // FIXME It shouldn't be part of class Torrent
     public function getLastCommentsDetails()
     {
         return $this->getCacheValue('last_comments_details', function () {

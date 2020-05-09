@@ -205,7 +205,7 @@ class BaseRedisConnection
 {
     /**
      * Config of \Redis Service
-     * Don't change every config here, do it in your `.env` file or `config/components.php`
+     * Don't change every config here, do it in your `.env` file or `config/application.php`
      */
     protected ?string $host = '127.0.0.1';
     protected ?string $port = '6379';

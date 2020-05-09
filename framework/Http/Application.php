@@ -2,9 +2,7 @@
 
 namespace Rid\Http;
 
-use Rid\Base\Component;
 use Rid\Component\Runtime;
-use Rid\Helpers\ContainerHelper;
 use Rid\Utils\Text;
 
 /**
@@ -20,30 +18,36 @@ class Application extends \Rid\Base\Application
     // 全局中间件
     public $middleware = [];
 
+    public function __construct(array $config)
+    {
+        parent::__construct($config);
+        $this->controllerNamespace = $config['controllerNamespace'];  // FIXME
+        $this->middleware = $config['middleware'];
+    }
+
     // 执行功能
     public function run(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        ContainerHelper::getContainer()->get('request')->setRequester($request);
-        ContainerHelper::getContainer()->get('response')->setResponder($response);
-        $server = ContainerHelper::getContainer()->get('request')->server->all();
+        $this->container->get('request')->setRequester($request);
+        $this->container->get('response')->setResponder($response);
+        $server = $this->container->get('request')->server->all();
         $method = strtoupper($server['REQUEST_METHOD']);
         $action = empty($server['PATH_INFO']) ? '' : substr($server['PATH_INFO'], 1);
 
         // 执行控制器并返回结果
         $content = $this->runAction($method, $action);
         if (is_array($content)) {
-            ContainerHelper::getContainer()->get('response')->setJson($content);
+            $this->container->get('response')->setJson($content);
         } else {
-            ContainerHelper::getContainer()->get('response')->setContent($content);
+            $this->container->get('response')->setContent($content);
         }
 
         // 准备请求并发送
-        ContainerHelper::getContainer()->get('response')->prepare(ContainerHelper::getContainer()->get('request'));
-        ContainerHelper::getContainer()->get('response')->send();
+        $this->container->get('response')->prepare($this->container->get('request'));
+        $this->container->get('response')->send();
 
-        // 清扫组件容器
-        ContainerHelper::getContainer()->get(Runtime::class)->cleanContext();
-        $this->cleanComponents();
+        // 清扫Runtime组件容器
+        $this->container->get(Runtime::class)->cleanContext();
     }
 
     // 执行功能并返回
@@ -51,11 +55,12 @@ class Application extends \Rid\Base\Application
     {
         $action = "{$method} {$action}";
         // 路由匹配
-        $result = ContainerHelper::getContainer()->get('route')->match($action);
+        $result = $this->container->get('route')->match($action);
+        var_dump($result);
         foreach ($result as $item) {
             list($route, $queryParams) = $item;
             // 路由参数导入请求类
-            ContainerHelper::getContainer()->get('request')->attributes->set('route', $queryParams);
+            $this->container->get('request')->attributes->set('route', $queryParams);
             // 实例化控制器
             list($shortClass, $shortAction) = $route;
             $controllerDir    = \Rid\Helpers\FileSystemHelper::dirname($shortClass);
@@ -65,8 +70,9 @@ class Application extends \Rid\Base\Application
             $shortAction      = Text::toPascalName($shortAction);
             $controllerAction = "action{$shortAction}";
             // 判断类是否存在
+            var_dump($controllerClass);
             if (class_exists($controllerClass)) {
-                $controllerInstance = ContainerHelper::getContainer()->get($controllerClass);
+                $controllerInstance = $this->container->get($controllerClass);
                 // 判断方法是否存在
                 if (method_exists($controllerInstance, $controllerAction)) {
                     // 执行中间件
@@ -91,7 +97,7 @@ class Application extends \Rid\Base\Application
     {
         $item = array_shift($middleware);
         if (empty($item)) {
-            return ContainerHelper::getContainer()->call($callable);
+            return $this->container->call($callable);
         }
         return $item->handle($callable, function () use ($callable, $middleware) {
             return $this->runMiddleware($callable, $middleware);
@@ -103,65 +109,8 @@ class Application extends \Rid\Base\Application
     {
         $middleware = [];
         foreach (array_merge($this->middleware, $routeMiddleware) as $key => $class) {
-            $middleware[$key] = ContainerHelper::getContainer()->make($class);
+            $middleware[$key] = $this->container->make($class);
         }
         return $middleware;
-    }
-
-    // 获取组件
-    public function __get($name)
-    {
-        // 获取全名
-        if (!is_null($this->_componentPrefix)) {
-            $name = "{$this->_componentPrefix}.{$name}";
-        }
-        $this->setComponentPrefix(null);
-        /* 常驻模式 */
-        // 返回单例
-        if (isset($this->_components[$name])) {
-            // 触发请求前置事件
-            $this->triggerRequestBefore($this->_components[$name]);
-            // 返回对象
-            return $this->_components[$name];
-        }
-        return $this->_components[$name];
-    }
-
-    // 装载全部组件
-    public function loadAllComponents($components = null)
-    {
-        $components = $components ?? $this->components;
-        foreach (array_keys($components) as $name) {
-            $this->loadComponent($name);
-        }
-    }
-
-    // 清扫组件容器
-    public function cleanComponents()
-    {
-        // 触发请求后置事件
-        foreach ($this->_components as $component) {
-            $this->triggerRequestAfter($component);
-        }
-    }
-
-    /** 触发请求前置事件
-     * @param \Rid\Base\Component $component
-     */
-    protected function triggerRequestBefore($component)
-    {
-        if ($component->getStatus() == Component::STATUS_READY) {
-            $component->onRequestBefore();
-        }
-    }
-
-    /** 触发请求后置事件
-     * @param \Rid\Base\Component $component
-     */
-    protected function triggerRequestAfter($component)
-    {
-        if ($component->getStatus() == Component::STATUS_RUNNING) {
-            $component->onRequestAfter();
-        }
     }
 }

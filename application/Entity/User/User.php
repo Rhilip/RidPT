@@ -10,10 +10,9 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
-use Rid\Base\BaseObject;
 use Rid\Utils\Traits\ClassValueCache;
 
-class User extends BaseObject
+class User
 {
     use ClassValueCache;
 
@@ -25,8 +24,8 @@ class User extends BaseObject
     protected int $class = UserRole::ANONYMOUS;  // App\Entity\User\UserRole
     protected string $passkey;
 
-    protected bool $uploadpos;
-    protected bool $downloadpos;
+    protected int $uploadpos;
+    protected int $downloadpos;
 
     protected int $uploaded = 0;
     protected int $downloaded = 0;
@@ -35,8 +34,8 @@ class User extends BaseObject
 
     protected ?string $avatar = null;
 
-    protected float $bonus_seeding = 0;
-    protected float $bonus_other = 0;
+    protected string $bonus_seeding = '0';
+    protected string $bonus_other = '0';
 
     protected int $invites;
     protected string $lang;
@@ -66,7 +65,6 @@ class User extends BaseObject
         return $this->cache_key_extra;
     }
 
-    /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct($id = 0)
     {
         $this->id = $id;
@@ -81,6 +79,14 @@ class User extends BaseObject
             return; // It means this user id is invalid
         }
         $this->importAttributes($self);
+    }
+
+    // FIXME
+    protected function importAttributes($config)
+    {
+        foreach ($config as $name => $value) {
+            $this->$name = $value;
+        }
     }
 
     public function getId(): int
@@ -360,7 +366,7 @@ class User extends BaseObject
 
     public function getBonus(): float
     {
-        return $this->bonus_seeding + $this->bonus_other;
+        return (float)$this->bonus_seeding + (float)$this->bonus_other;
     }
 
     public function getTempInvitesSum(): int

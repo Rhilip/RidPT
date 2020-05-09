@@ -2,93 +2,37 @@
 
 namespace Rid\Base;
 
-/**
- *
- * @property \App\Components\Site $site
- */
-class Application extends BaseObject
+use DI\Container;
+use Rid\Helpers\ContainerHelper;
+
+class Application
 {
     // 初始化回调
-    public $initialize = [];
+    public array $config = [];
 
-    // 组件配置
-    public $components = [];
+    public array $initialize = [];
 
-    // 组件容器
-    protected $_components;
-    // 组件命名空间
-    protected $_componentPrefix;
+    protected ?Container $container;
 
-    // 初始化事件
-    public function onInitialize()
+    public function __construct(array $config)
     {
-        parent::onInitialize();
+        $this->config = $config;
         // 快捷引用
         \Rid::setApp($this);
         // 执行初始化回调
         foreach ($this->initialize as $callback) {
             call_user_func($callback);
         }
+
+        $this->buildContainer();
     }
 
-    // 设置组件命名空间
-    public function setComponentPrefix($prefix)
-    {
-        $this->_componentPrefix = $prefix;
-    }
+    protected function buildContainer() {
+        $builder = new \DI\ContainerBuilder();
+        $builder->addDefinitions($this->config['components']);
 
-    // 装载组件
-    public function loadComponent($name, $return = false)
-    {
-        // 已加载
-        if (!$return && isset($this->_components[$name])) {
-            return;
-        }
-        // 未注册
-        if (!isset($this->components[$name])) {
-            throw new \Rid\Exceptions\ComponentException("组件不存在：{$name}");
-        }
-        // 使用配置创建新对象
-        $object = \Rid::createObject($this->components[$name]);
-        // 组件效验
-        if (!($object instanceof ComponentInterface)) {
-            throw new \Rid\Exceptions\ComponentException("不是组件类型：{$this->components[$name]['class']}");
-        }
-        if ($return) {
-            return $object;
-        }
-        // 装入容器
-        $this->_components[$name] = $object;
-    }
-
-    // 获取配置
-    public function env($name)
-    {
-        $message = "Environment key {$name} does not exist.";
-        // 处理带前缀的名称
-        preg_match('/(\[[\w.]+\])/', $name, $matches);
-        $subname = array_pop($matches);
-        $name = str_replace($subname, str_replace('.', '|', $subname), $name);
-        $fragments = explode('.', $name);
-        foreach ($fragments as $key => $value) {
-            if (strpos($value, '[') !== false) {
-                $fragments[$key] = str_replace(['[', ']'], '', $value);
-                $fragments[$key] = str_replace('|', '.', $fragments[$key]);
-            }
-        }
-        // 判断一级配置是否存在
-        $first = array_shift($fragments);
-        if (!isset($this->$first)) {
-            throw new \Rid\Exceptions\ConfigException($message);
-        }
-        // 判断其他配置是否存在
-        $current = $this->$first;
-        foreach ($fragments as $key) {
-            if (!isset($current[$key])) {
-                throw new \Rid\Exceptions\ConfigException($message);
-            }
-            $current = $current[$key];
-        }
-        return $current;
+        $container = $builder->build();
+        ContainerHelper::setContainer($container);
+        $this->container = $container;
     }
 }

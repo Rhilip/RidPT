@@ -16,10 +16,8 @@ use Rid\Helpers\IoHelper;
  * Class Timer
  * @package Rid\Core
  */
-class Timer implements StaticInstanceInterface
+class Timer
 {
-    use StaticInstanceTrait;
-
     const AFTER = 'after';
     const TICK = 'tick';
 
@@ -65,6 +63,7 @@ class Timer implements StaticInstanceInterface
         // 返回
         return $timerId;
     }
+
     /**
      * 设置一个间隔时钟定时器
      * 持续触发
@@ -91,6 +90,7 @@ class Timer implements StaticInstanceInterface
         // 返回
         return $timerId;
     }
+
     /**
      * 清除旧定时器
      * @return bool

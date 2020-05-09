@@ -19,7 +19,7 @@ use ReflectionException;
  * Any CallbackRule function should be protected
  * Any Flush function should be private
  */
-class Validator extends BaseObject
+class Validator
 {
     /** @var array Input data */
     private array $_input = [];
@@ -30,7 +30,7 @@ class Validator extends BaseObject
 
     private bool $_success;
 
-    public function onConstruct()
+    public function __construct()
     {
         $this->_validator = new \Sirius\Validation\Validator;
     }
