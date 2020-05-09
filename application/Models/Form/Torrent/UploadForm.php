@@ -64,7 +64,7 @@ class UploadForm extends EditForm
 
         if (config('torrent_upload.enable_upload_nfo') &&  // Enable nfo upload
             \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file') &&  // This user can upload nfo
-            app()->request->request->get('nfo')  // Nfo file upload
+            \Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('nfo')  // Nfo file upload
         ) {
             $rules['nfo'] = [
                 ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],

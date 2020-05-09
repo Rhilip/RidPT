@@ -146,7 +146,7 @@ class UserRegisterForm extends Validator
     protected function isMaxRegisterIpReached()
     {
         if (config('register.check_max_ip')) {
-            $client_ip = app()->request->getClientIp();
+            $client_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
 
             $max_user_per_ip = config('register.per_ip_user') ?: 5;
             $user_ip_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
@@ -284,7 +284,7 @@ class UserRegisterForm extends Validator
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus, :invites)")->bindParams(array(
             'name' => $this->username, 'passhash' => password_hash($this->password, PASSWORD_DEFAULT), 'email' => $this->email,
             'status' => $this->status, 'class' => $this->class, 'passkey' => $this->passkey,
-            'invite_by' => $this->invite_by, 'ip' => app()->request->getClientIp(),
+            'invite_by' => $this->invite_by, 'ip' => \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp(),
             'uploadpos' => $this->uploadpos, 'downloadpos' => $this->downloadpos,
             'uploaded' => $this->uploaded, 'downloaded' => $this->downloaded,
             'seedtime' => $this->seedtime, 'leechtime' => $this->leechtime,
@@ -314,7 +314,7 @@ class UserRegisterForm extends Validator
             \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
                 'uid' => $this->id, 'secret' => $confirm_key, 'action' => $this->_action
             ])->execute();
-            $confirm_url = app()->request->getSchemeAndHttpHost() . '/auth/confirm?' . http_build_query([
+            $confirm_url = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getSchemeAndHttpHost() . '/auth/confirm?' . http_build_query([
                     'secret' => $confirm_key,
                     'action' => $this->_action
                 ]);

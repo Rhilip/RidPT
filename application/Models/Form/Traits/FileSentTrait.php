@@ -37,20 +37,20 @@ trait FileSentTrait
     final private function setRespHeaders()
     {
         if ('application/octet-stream' !== $fileContentType = $this->getSendFileContentType()) {
-            app()->response->headers->set('Content-Type', $fileContentType);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Content-Type', $fileContentType);
         }
 
         if (0 !== $fileSize = $this->getSendFileContentLength()) {
-            app()->response->headers->set('Content-Length', $fileSize);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Content-Length', $fileSize);
         }
 
         if ($this->getSendFileCacheControlStatus()) {
-            app()->response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
-            app()->response->headers->set('Pragma', 'no-cache');
-            app()->response->headers->set('Expires', '0');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Pragma', 'no-cache');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Expires', '0');
         }
 
-        app()->response->setContentDisposition(
+        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setContentDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $this->getSendFileName()
         );

@@ -22,10 +22,10 @@ class Error
             'trace'   => $e->getTraceAsString(),
         ];
 
-        if (app()->response->getResponderStatus() !== false) {  // 在Web环境，存在 \Swoole\Http\Response 对象
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('response')->getResponderStatus() !== false) {  // 在Web环境，存在 \Swoole\Http\Response 对象
             // debug处理 & exit处理
             if ($e instanceof \Rid\Exceptions\DebugException) {
-                \Rid::app()->response->setContent($e->getMessage());
+                \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setContent($e->getMessage());
             } else {
                 // 错误参数定义
                 $statusCode = $e instanceof \Rid\Exceptions\NotFoundException ? 404 : 500;
@@ -36,9 +36,9 @@ class Error
                     $message .= "[type] {$errors['type']} [code] {$errors['code']}" . PHP_EOL;
                     $message .= "[file] {$errors['file']} [line] {$errors['line']}" . PHP_EOL;
                     $message .= "[trace] {$errors['trace']}" . PHP_EOL;
-                    $message .= '$_SERVER' . substr(print_r(\Rid::app()->request->server->all() + \Rid::app()->request->headers->all(), true), 5);
-                    $message .= '$_GET' . substr(print_r(\Rid::app()->request->query->all(), true), 5);
-                    $message .= '$_POST' . substr(print_r(\Rid::app()->request->request->all(), true), 5, -1);
+                    $message .= '$_SERVER' . substr(print_r(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->server->all() + \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->all(), true), 5);
+                    $message .= '$_GET' . substr(print_r(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all(), true), 5);
+                    $message .= '$_POST' . substr(print_r(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all(), true), 5, -1);
                     $message .= 'Memory used: ' . memory_get_usage();
                     IoHelper::getIo()->error($message);
                     ContainerHelper::getContainer()->get('logger')->error($message);
@@ -46,12 +46,12 @@ class Error
                 // 清空系统错误
                 ob_get_contents() and ob_clean();
 
-                app()->response->setStatusCode($statusCode);
-                app()->response->setContent(ContainerHelper::getContainer()->get('view')->render('error', $errors));
+                \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setStatusCode($statusCode);
+                \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setContent(ContainerHelper::getContainer()->get('view')->render('error', $errors));
             }
 
-            \Rid::app()->response->prepare(\Rid::app()->request);
-            app()->response->send();
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->prepare(ContainerHelper::getContainer()->get('request'));
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->send();
         } else {  // 在Task或Timer环境 （使用 Console\Error的处理方法）
             if ($e instanceof \Rid\Exceptions\DebugException) {
                 $content = $e->getMessage();

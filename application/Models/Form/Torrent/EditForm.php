@@ -127,7 +127,7 @@ class EditForm extends Validator
             ];
 
             // Nfo file upload
-            if (app()->request->request->get('nfo_action', 'keep') == 'update') {
+            if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('nfo_action', 'keep') == 'update') {
                 $rules['nfo'] = [
                     ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],
                     ['Upload\Size', ['size' => config('upload.max_nfo_file_size') . 'B']]

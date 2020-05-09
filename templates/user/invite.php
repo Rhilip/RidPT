@@ -90,7 +90,7 @@ use App\Entity\User\UserStatus;
                         </thead>
                         <tbody>
                         <?php foreach ($user->getPendingInvites() as $pendingInvite): ?>
-                        <?php $invite_link = (app()->request->isSecure() ? 'https://' : 'http://') . config('base.site_url') . '/auth/register?type=invite&invite_hash=' . $pendingInvite['hash']; ?>
+                        <?php $invite_link = (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure() ? 'https://' : 'http://') . config('base.site_url') . '/auth/register?type=invite&invite_hash=' . $pendingInvite['hash']; ?>
                             <tr>
                                 <td class="text-center"><?= $pendingInvite['username'] ?></td>
                                 <td class="text-center"><a href="<?= $invite_link ?>" target="_blank" data-toggle="tooltip" data-placement="right" title="Right mouse button to copy"><?= $pendingInvite['hash'] ?></a></td>

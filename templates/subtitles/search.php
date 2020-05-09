@@ -64,7 +64,7 @@ $upload_mode = $upload_mode ?? false;
                                 <div class="form-group">
                                     <label for="torrent_id" class="col-sm-2 required">Torrent ID</label>
                                     <div class="col-md-2 col-sm-10">
-                                        <input type="text" class="form-control" id="tid" name="torrent_id" pattern="^\d+$" required value="<?= app()->request->query->get('tid') ?>">
+                                        <input type="text" class="form-control" id="tid" name="torrent_id" pattern="^\d+$" required value="<?= \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('tid') ?>">
                                     </div>
                                     <div class="help-block">The number in the address bar when you go to the details page of the torrent</div>
                                 </div>

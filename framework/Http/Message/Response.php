@@ -2,8 +2,6 @@
 
 namespace Rid\Http\Message;
 
-use Rid\Base;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
@@ -13,10 +11,8 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 /**
  * Response组件
  */
-class Response extends HttpFoundationResponse implements Base\StaticInstanceInterface, Base\ComponentInterface
+class Response extends HttpFoundationResponse
 {
-    use Base\StaticInstanceTrait, Base\ComponentTrait;
-
     /**
      * Class of Response From Swoole
      *
@@ -38,11 +34,6 @@ class Response extends HttpFoundationResponse implements Base\StaticInstanceInte
     protected bool $_isSent = false;
 
     protected static $trustXSendfileTypeHeader = false;
-
-    public function __construct(array $config = [])
-    {
-        parent::__construct();
-    }
 
     // 设置响应者
     public function setResponder(\Swoole\Http\Response $responder)

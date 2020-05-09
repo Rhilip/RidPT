@@ -16,10 +16,10 @@ class ManageController extends Controller
 {
     public function actionCategories()
     {
-        if (app()->request->isMethod(Request::METHOD_POST)) {
-            if (app()->request->request->get('action') == 'cat_edit') {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
+            if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'cat_edit') {
                 $edit_form = new Categories\EditForm();
-                $edit_form->setInput(app()->request->request->all());
+                $edit_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
@@ -27,9 +27,9 @@ class ManageController extends Controller
                 } else {
                     return $this->render('action/fail', ['msg' => $edit_form->getError()]);
                 }
-            } elseif (app()->request->request->get('action') == 'cat_delete') {
+            } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'cat_delete') {
                 $delete_form = new Categories\RemoveForm();
-                $delete_form->setInput(app()->request->request->all());
+                $delete_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();

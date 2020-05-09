@@ -28,9 +28,9 @@ class UserController extends Controller
     public function actionInvite()
     {
         $msg = '';
-        if (app()->request->isMethod(Request::METHOD_POST)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $form = new User\InviteForm();
-            $form->setInput(app()->request->request->all());
+            $form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
             $success = $form->validate();
             if ($success) {
                 $form->flush();
@@ -41,7 +41,7 @@ class UserController extends Controller
         }
 
         $user = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser();
-        $uid = app()->request->query->get('uid');
+        $uid = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('uid');
         if (!is_null($uid) && $uid != \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()) {
             if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('view_invite')) {
                 $user = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($uid);
@@ -51,9 +51,9 @@ class UserController extends Controller
         }
 
         // FIXME By using Form Class
-        if (!is_null(app()->request->query->get('action'))) {
+        if (!is_null(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('action'))) {
             $action_form = new User\InviteActionForm();
-            $action_form->setInput(app()->request->query->all());
+            $action_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
             $success = $action_form->validate();
             if ($success) {
                 $msg = $action_form->flush();
@@ -69,7 +69,7 @@ class UserController extends Controller
     public function actionDetails()
     {
         $panel = new User\UserDetailsForm();
-        $panel->setInput(app()->request->query->all());
+        $panel->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         if (!$panel->validate()) {
             return $this->render('action/fail', ['msg' => $panel->getError()]);
         }
@@ -79,10 +79,10 @@ class UserController extends Controller
 
     public function actionSessions()
     {
-        if (app()->request->isMethod(Request::METHOD_POST)) {
-            $action = app()->request->request->get('action');  // FIXME
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
+            $action = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action');  // FIXME
             if ($action == 'revoke') {
-                $to_del_session = app()->request->request->get('session');
+                $to_del_session = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('session');
 
                 // expired it from Database first
                 \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([
@@ -99,7 +99,7 @@ class UserController extends Controller
         }
 
         $session_list = new User\SessionsListForm();
-        $session_list->setInput(app()->request->query->all());
+        $session_list->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         if (false === $session_list->validate()) {
             return $this->render('action/fail', ['msg' => $session_list->getError()]);
         }

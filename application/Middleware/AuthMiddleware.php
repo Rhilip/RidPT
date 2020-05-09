@@ -43,14 +43,14 @@ class AuthMiddleware extends AbstractMiddleware
 
         // Check if Site in Maintenance status, and only let `bypass_maintenance` user access
         if (config('base.maintenance') && ($curuser === false || !$curuser->isPrivilege('bypass_maintenance'))) {
-            return app()->response->setRedirect('/maintenance');
+            return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/maintenance');
         }
 
         // Deal with Anonymous Visitor
         if ($curuser === false) {
             // Check if Site in Abnormal status
             if (config('base.prevent_anonymous')) {
-                return app()->response->setStatusCode(403);
+                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setStatusCode(403);
             }
 
             if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getGrant() == 'passkey') {
@@ -62,16 +62,16 @@ class AuthMiddleware extends AbstractMiddleware
                 }
 
                 // Prevent Other Route
-                app()->response->headers->clearCookie(Constant::cookie_name);  // Delete exist cookies
-                $this->container->get('session')->set('login_return_to', app()->request->getUri());  // Store the url which visitor want to hit
-                return app()->response->setRedirect('/auth/login');
+                \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->clearCookie(Constant::cookie_name);  // Delete exist cookies
+                $this->container->get('session')->set('login_return_to', \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getUri());  // Store the url which visitor want to hit
+                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/auth/login');
             }
         }
 
         // Don't allow Logged in user visit the auth/{login, register, confirm}
         if ($controllerName === Controllers\AuthController::class &&
             in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
-            return app()->response->setRedirect('/index');
+            return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/index');
         }
 
         /**
@@ -96,7 +96,7 @@ class AuthMiddleware extends AbstractMiddleware
 
         $required_class = config('route.' . $route) ?: 1;
         if ($curuser->getClass() < $required_class) {
-            return app()->response->setStatusCode(403);  // FIXME redirect to /error may better
+            return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setStatusCode(403);  // FIXME redirect to /error may better
         }
 
         return $next(); // 执行下一个中间件

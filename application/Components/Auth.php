@@ -24,24 +24,24 @@ class Auth
      */
     public function getCurUser($grant = 'cookies', $flush = false)
     {
-        $cur_user = app()->request->attributes->get('cur_user');
+        $cur_user = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('cur_user');
         if (is_null($cur_user) || $flush) {
-            app()->request->attributes->set('auth_by', $grant);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->set('auth_by', $grant);
             $cur_user = $this->loadCurUser($grant);
-            app()->request->attributes->set('cur_user', $cur_user);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->set('cur_user', $cur_user);
         }
         return $cur_user;
     }
 
     public function getCurUserJIT(): string
     {
-        $jwt = app()->request->attributes->get('jwt') ?? [];
+        $jwt = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('jwt') ?? [];
         return $jwt['jti'] ?? '';
     }
 
     public function getGrant(): string
     {
-        return app()->request->attributes->get('auth_by');
+        return \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('auth_by');
     }
 
     /**
@@ -70,7 +70,7 @@ class Auth
 
     protected function loadCurUserIdFromCookies()
     {
-        $user_session = app()->request->cookies->get(Constant::cookie_name);
+        $user_session = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->cookies->get(Constant::cookie_name);
         // quick return when cookies is not exist
         if (is_null($user_session)) {
             return false;
@@ -86,7 +86,7 @@ class Auth
 
         // Check if user lock access ip ?
         if (isset($payload['ip'])) {
-            $now_ip_crc = sprintf('%08x', crc32(app()->request->getClientIp()));
+            $now_ip_crc = sprintf('%08x', crc32(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp()));
             if (strcasecmp($payload['ip'], $now_ip_crc) !== 0) {
                 return false;
             }
@@ -99,17 +99,17 @@ class Auth
             return false;
         }
 
-        app()->request->attributes->set('jwt', $payload);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->set('jwt', $payload);
 
         // Check if user want secure access but his environment is not secure
-        if (!app()->request->isSecure() &&                        // if User requests is not secure , and
+        if (!\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure() &&                        // if User requests is not secure , and
             (
                 config('security.ssl_login') > 1       // if Our site FORCE enabled ssl feature
                 || (config('security.ssl_login') > 0 && isset($payload['ssl']) && $payload['ssl']) // if Our site support ssl feature and User want secure access
             )
         ) {
-            app()->response->setRedirect(str_replace('http://', 'https://', app()->request->getUri()));
-            app()->response->headers->set('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect(str_replace('http://', 'https://', \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getUri()));
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
         }
 
         return $payload['aud'];
@@ -117,7 +117,7 @@ class Auth
 
     protected function loadCurUserIdFromPasskey()
     {
-        $passkey = app()->request->query->get('passkey');
+        $passkey = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('passkey');
         if (is_null($passkey)) {
             return false;
         }
@@ -130,8 +130,8 @@ class Auth
     {
         if (!is_null($this->getCurUserJIT()) && $this->getCurUser()) {
             $uid = $this->getCurUser()->getId();
-            $now_ip = app()->request->getClientIp();
-            $ua = app()->request->headers->get('user-agent');
+            $now_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
+            $ua = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('user-agent');
 
             $identify_key = md5(implode('|', [
                 $this->getCurUserJIT(),  // `sessions`->session

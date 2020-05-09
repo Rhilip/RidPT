@@ -19,16 +19,5 @@ return [
 
     // 组件配置
     'components' => [
-        // 请求
-        'request' => [
-            'class' => Rid\Http\Message\Request::class,
-            'trustedProxies' => ['127.0.0.1', '::1'],
-            //'trustedHosts' => -1,
-        ],
-
-        // 响应
-        'response' => [
-            'class' => Rid\Http\Message\Response::class,
-        ],
     ],
 ];

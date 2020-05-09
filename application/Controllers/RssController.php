@@ -21,7 +21,7 @@ class RssController extends Controller
             return $this->render('action/fail', ['msg' => $feed->getError()]);
         }
 
-        app()->response->headers->set('Content-Type', 'text/xml');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Content-Type', 'text/xml');
         return $this->render('rss/feed', ['feed' => $feed]);
     }
 

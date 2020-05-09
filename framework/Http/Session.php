@@ -36,7 +36,7 @@ class Session
     // 获取SessionId
     public function getSessionId(): string
     {
-        $session_id = \Rid::app()->request->cookies->get($this->cookieName);
+        $session_id = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->cookies->get($this->cookieName);
         if (is_null($session_id)) {
             // Generate Unique Session Id
             do {
@@ -44,8 +44,8 @@ class Session
             } while ($this->redis->exists($this->saveKeyPrefix . $session_id));
 
             // Save it both to request and response
-            app()->request->cookies->set($this->cookieName, $session_id);
-            \Rid::app()->response->headers->setCookie(new Cookie($this->cookieName, $session_id, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly));
+            \Rid\Helpers\ContainerHelper::getContainer()->get('request')->cookies->set($this->cookieName, $session_id);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->setCookie(new Cookie($this->cookieName, $session_id, $this->cookieExpires, $this->cookiePath, $this->cookieDomain, $this->cookieSecure, $this->cookieHttpOnly));
         }
 
         return $session_id;

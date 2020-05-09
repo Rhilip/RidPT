@@ -23,7 +23,7 @@ class ApiController extends Controller
         }
 
         foreach ($methods as $method) {
-            if (strtolower(app()->request->getMethod()) == strtolower($method)) {
+            if (strtolower(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->getMethod()) == strtolower($method)) {
                 return true;
             }
         }
@@ -36,8 +36,8 @@ class ApiController extends Controller
             $want_methods = implode(',', $want_methods);
         }
 
-        app()->response->setStatusCode(405);
-        $method = app()->request->getMethod();
+        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setStatusCode(405);
+        $method = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getMethod();
 
         return [
             'error' => 'Method Not Allowed',

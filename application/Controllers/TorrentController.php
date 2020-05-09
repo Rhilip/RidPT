@@ -20,9 +20,9 @@ class TorrentController extends Controller
     public function actionUpload()
     {
         // TODO Check user upload pos
-        if (app()->request->isMethod(Request::METHOD_POST)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $uploadForm = new Torrent\UploadForm();
-            $uploadForm->setInput(app()->request->request->all() + app()->request->files->all());
+            $uploadForm->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all() + \Rid\Helpers\ContainerHelper::getContainer()->get('request')->files->all());
             $success = $uploadForm->validate();
             if (!$success) {
                 return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $uploadForm->getError()]);
@@ -33,7 +33,7 @@ class TorrentController extends Controller
                     return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $e->getMessage()]);
                 }
 
-                return app()->response->setRedirect('/torrent/details?id=' . $uploadForm->getId());
+                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/torrent/details?id=' . $uploadForm->getId());
             }
         } else {
             return $this->render('torrent/upload');
@@ -43,7 +43,7 @@ class TorrentController extends Controller
     public function actionDetails()
     {
         $details = new Torrent\DetailsForm();
-        $details->setInput(app()->request->query->all());
+        $details->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         $success = $details->validate();
         if (!$success) {
             return $this->render('action/fail', ['msg' => $details->getError()]);
@@ -56,17 +56,17 @@ class TorrentController extends Controller
     {
         $edit = new Torrent\EditForm();
 
-        if (app()->request->isMethod(Request::METHOD_POST)) {
-            $edit->setInput(app()->request->query->all() + app()->request->request->all());
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
+            $edit->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all() + \Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
             $success = $edit->validate();
             if (!$success) {
                 return $this->render('action/fail', ['msg' => $edit->getError()]);
             } else {
                 $edit->flush();
-                return app()->response->setRedirect('/torrent/details?id=' . $edit->getTorrent()->getId());
+                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/torrent/details?id=' . $edit->getTorrent()->getId());
             }
         } else {
-            $edit->setInput(app()->request->query->all());
+            $edit->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
             $permission_check = $edit->checkUserPermission();
             if ($permission_check === false) {
                 return $this->render('action/fail', ['msg' => $edit->getError()]);
@@ -79,7 +79,7 @@ class TorrentController extends Controller
     public function actionSnatch()
     {
         $snatch = new Torrent\SnatchForm();
-        $snatch->setInput(app()->request->query->all());
+        $snatch->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         $success = $snatch->validate();
         if (!$success) {
             return $this->render('action/fail');
@@ -91,7 +91,7 @@ class TorrentController extends Controller
     public function actionDownload()
     {
         $downloader = new Torrent\DownloadForm();
-        $downloader->setInput(app()->request->query->all());
+        $downloader->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         $success = $downloader->validate();
         if (!$success) {
             return $this->render('action/fail');
@@ -103,7 +103,7 @@ class TorrentController extends Controller
     public function actionComments()
     {
         $comments = new Torrent\CommentsForm();
-        $comments->setInput(app()->request->query->all());
+        $comments->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         $success = $comments->validate();
         if (!$success) {
             return $this->render('action/fail');
@@ -115,7 +115,7 @@ class TorrentController extends Controller
     public function actionStructure()
     {
         $structure = new Torrent\StructureForm();
-        $structure->setInput(app()->request->query->all());
+        $structure->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         $success = $structure->validate();
         if (!$success) {
             return $this->render('action/fail');

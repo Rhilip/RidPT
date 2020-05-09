@@ -25,6 +25,11 @@ return [
     'path.storage.subs' => \DI\string('{path.storage}' . DIRECTORY_SEPARATOR . 'subs'),
 
     // 定义组件
+    'request' => \DI\autowire(\Rid\Http\Message\Request::class)
+        ->method('setTrustedProxies', ['127.0.0.1', '::1'], \Rid\Http\Message\Request::HEADER_X_FORWARDED_ALL),
+
+    'response' => \DI\autowire(\Rid\Http\Message\Response::class),
+
     'logger' => \DI\autowire(Monolog\Logger::class)
         ->constructor(PROJECT_NAME)
         ->method('pushHandler', \DI\get(\Monolog\Handler\RotatingFileHandler::class)),

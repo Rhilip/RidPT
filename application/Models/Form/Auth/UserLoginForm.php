@@ -118,7 +118,7 @@ class UserLoginForm extends Validator
 
     public function loginFail()
     {
-        $user_ip = app()->request->getClientIp();
+        $user_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
         $test_attempts = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hIncrBy('Site:fail_login_ip_count', $user_ip, 1);
         if ($test_attempts >= config('security.max_login_attempts')) {
             \Rid\Helpers\ContainerHelper::getContainer()->get('site')->banIp($user_ip);
@@ -162,7 +162,7 @@ class UserLoginForm extends Validator
         $payload['exp'] = $cookieExpire;
 
         // Custom Payload key
-        $login_ip = app()->request->getClientIp();
+        $login_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
         if ($this->securelogin === 'yes' || config('security.secure_login') > 1) {
             $payload['ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
         }
@@ -183,12 +183,12 @@ class UserLoginForm extends Validator
         ])->execute();
 
         // Sent JWT content AS Cookie
-        app()->response->headers->setCookie(new Cookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true));
+        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->setCookie(new Cookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true));
     }
 
     private function updateUserLoginInfo()
     {
-        $ip = app()->request->getClientIp();
+        $ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
 
         // Update User Tables
         \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([

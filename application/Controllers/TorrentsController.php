@@ -22,7 +22,7 @@ class TorrentsController extends Controller
     public function actionSearch()
     {
         $search = new Torrents\SearchForm();
-        $search->setInput(app()->request->query->all());
+        $search->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         $success = $search->validate();
         if (!$success) {
             return $this->render('action/fail', ['msg' => $search->getError()]);
@@ -34,7 +34,7 @@ class TorrentsController extends Controller
     public function actionTags()
     {
         $pager = new Torrents\TagsForm();
-        $pager->setInput(app()->request->query->all());
+        $pager->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         $success = $pager->validate();
 
         if (!$success) {
@@ -42,7 +42,7 @@ class TorrentsController extends Controller
         } else {
             $tags = $pager->getPagerData();
             if (count($tags) == 1 && $tags[0]['tag'] == $pager->search) {  // If this search tag is unique and equal to the wanted, just redirect to search page
-                return app()->response->setRedirect('/torrents/search?tags=' . $pager->search);
+                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/torrents/search?tags=' . $pager->search);
             }
             return $this->render('torrents/tags', ['pager' => $pager]);
         }

@@ -16,14 +16,14 @@ class LinksController extends Controller
 {
     public function actionIndex()
     {
-        return app()->response->setRedirect('/links/manage', 301);
+        return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/links/manage', 301);
     }
 
     public function actionApply()
     {
-        if (app()->request->isMethod(Request::METHOD_POST)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $form = new Links\ApplyForm();
-            $form->setInput(app()->request->request->all());
+            $form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
             $success = $form->validate();
             if ($success) {
                 $form->flush();
@@ -38,10 +38,10 @@ class LinksController extends Controller
 
     public function actionManage()
     {
-        if (app()->request->isMethod(Request::METHOD_POST)) {
-            if (app()->request->request->get('action') == 'link_edit') {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
+            if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'link_edit') {
                 $edit_form = new Links\EditForm();
-                $edit_form->setInput(app()->request->request->all());
+                $edit_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
@@ -49,9 +49,9 @@ class LinksController extends Controller
                 } else {
                     return $this->render('action/fail', ['msg' => $edit_form->getError()]);
                 }
-            } elseif (app()->request->request->get('action') == 'link_delete') {
+            } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'link_delete') {
                 $delete_form = new Links\RemoveForm();
-                $delete_form->setInput(app()->request->request->all());
+                $delete_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();

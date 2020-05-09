@@ -53,9 +53,9 @@ class TrackerController
     public function actionIndex()
     {
         // Set Response Header ( Format, HTTP Cache )
-        app()->response->headers->set('Content-Type', 'text/plain; charset=utf-8');
-        app()->response->headers->set('Connection', 'close');
-        app()->response->headers->set('Pragma', 'no-cache');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Content-Type', 'text/plain; charset=utf-8');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Connection', 'close');
+        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Pragma', 'no-cache');
 
         $userInfo = null;
         $torrentInfo = null;
@@ -63,8 +63,8 @@ class TrackerController
 
         try {
             // Block NON-GET requests (Though non-GET request will not match this Route )
-            if (!app()->request->isMethod(Request::METHOD_GET)) {
-                throw new TrackerException(110, [':method' => app()->request->getMethod()]);
+            if (!\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_GET)) {
+                throw new TrackerException(110, [':method' => \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getMethod()]);
             }
 
             if (!config('base.enable_tracker_system')) {
@@ -73,7 +73,7 @@ class TrackerController
 
             $this->blockClient();
 
-            $action = strtolower(app()->request->attributes->get('route')['{tracker_action}']);
+            $action = strtolower(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('route')['{tracker_action}']);
             $this->checkUserAgent($action == 'scrape');
 
             $this->checkPasskey($userInfo);
@@ -177,8 +177,8 @@ class TrackerController
 
     protected function logException(\Exception $exception, $userInfo = null, $torrentInfo = null)
     {
-        $req_info = app()->request->getQueryString() . "\n\n";
-        $req_info .= (string)app()->request->headers;
+        $req_info = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getQueryString() . "\n\n";
+        $req_info .= (string)\Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers;
 
         \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`)
                 VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg)
@@ -187,8 +187,8 @@ class TrackerController
                                         `last_action_at` = NOW();')->bindParams([
             'tid' => $torrentInfo ? $torrentInfo['id'] : 0,
             'uid' => $userInfo ? $userInfo['id'] : 0,
-            'ua' => app()->request->headers->get('user-agent', ''),
-            'peer_id' => app()->request->query->get('peer_id', ''),
+            'ua' => \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('user-agent', ''),
+            'peer_id' => \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('peer_id', ''),
             'req_info' => $req_info,
             'msg' => $exception->getMessage()
         ])->execute();
@@ -200,13 +200,13 @@ class TrackerController
     private function blockClient()
     {
         // Miss Header User-Agent is not allowed.
-        if (!app()->request->headers->get('user-agent')) {
+        if (!\Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('user-agent')) {
             throw new TrackerException(120);
         }
 
         // Block Other Browser, Crawler (, May Cheater or Faker Client) by check Requests headers
-        if (app()->request->headers->get('accept-language') || app()->request->headers->get('referer')
-            || app()->request->headers->get('accept-charset')
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('accept-language') || \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('referer')
+            || \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('accept-charset')
 
             /**
              * This header check may block Non-bittorrent client `Aria2` to access tracker,
@@ -214,7 +214,7 @@ class TrackerController
              *
              * @see https://blog.rhilip.info/archives/1010/ ( in Chinese )
              */
-            || app()->request->headers->get('want-digest')
+            || \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('want-digest')
 
             /**
              * If your tracker is behind the Cloudflare or other CDN (proxy) Server,
@@ -230,12 +230,12 @@ class TrackerController
              * @see https://support.cloudflare.com/hc/en-us/articles/200170156
              *
              */
-            //|| app()->request->headers->get('cookie')
+            //|| \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('cookie')
         ) {
             throw new TrackerException(122);
         }
 
-        $ua = app()->request->headers->get('user-agent');
+        $ua = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('user-agent');
 
         // Should also Block those too long User-Agent. ( For Database reason
         if (strlen($ua) > 64) {
@@ -255,8 +255,8 @@ class TrackerController
     private function checkUserAgent(bool $onlyCheckUA = false)
     {
         // Start Check Client by `User-Agent` and `peer_id`
-        $userAgent = app()->request->headers->get('user-agent');
-        $peer_id = app()->request->query->get('peer_id', '');
+        $userAgent = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('user-agent');
+        $peer_id = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('peer_id', '');
         $client_identity = $userAgent . ($onlyCheckUA ? '' : ':' . $peer_id);
 
         // if this user-agent and peer_id already checked valid or not ?
@@ -409,7 +409,7 @@ class TrackerController
      */
     private function checkPasskey(&$userInfo)
     {
-        $passkey = app()->request->query->get('passkey');
+        $passkey = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('passkey');
 
         // First Check The param `passkey` is exist and valid
         if (is_null($passkey)) {
@@ -486,7 +486,7 @@ class TrackerController
      */
     private function checkScrapeFields(&$info_hash_array)
     {
-        preg_match_all('/info_hash=([^&]*)/i', urldecode(app()->request->getQueryString()), $info_hash_match);
+        preg_match_all('/info_hash=([^&]*)/i', urldecode(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->getQueryString()), $info_hash_match);
 
         $info_hash_array = $info_hash_match[1];
         if (count($info_hash_array) < 1) {
@@ -522,7 +522,7 @@ class TrackerController
         // Part.1 check Announce **Need** Fields
         // Notice: param `passkey` is not require in BEP , but is required in our private torrent tracker system
         foreach (['info_hash', 'peer_id', 'port', 'uploaded', 'downloaded', 'left', 'passkey'] as $item) {
-            $item_data = app()->request->query->get($item);
+            $item_data = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get($item);
             if (!is_null($item_data)) {
                 $queries[$item] = $item_data;
             } else {
@@ -548,7 +548,7 @@ class TrackerController
                      'event' => '', 'no_peer_id' => 1, 'compact' => 0,
                      'numwant' => 50, 'corrupt' => 0, 'key' => '',
                  ] as $item => $value) {
-            $queries[$item] = app()->request->query->get($item, $value);
+            $queries[$item] = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get($item, $value);
         }
 
         foreach (['numwant', 'corrupt', 'no_peer_id', 'compact'] as $item) {
@@ -561,7 +561,7 @@ class TrackerController
             throw new TrackerException(136, [":event" => strtolower($queries['event'])]);
         }
 
-        $queries['user-agent'] = app()->request->headers->get('user-agent');
+        $queries['user-agent'] = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('user-agent');
 
         /**
          * Part.3 check Announce *IP* Fields
@@ -578,12 +578,12 @@ class TrackerController
         $endpoints = [];
 
         // insert remote_ip:port
-        $queries['ip'] = $remote_ip = app()->request->getClientIp();  // IP address from Request Header (Which is NexusPHP used)
+        $queries['ip'] = $remote_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();  // IP address from Request Header (Which is NexusPHP used)
         $endpoints[$remote_ip] = (int)$queries['port'];
 
         // insert ip:port from `&ipv6=`, `&ipv4=`, `&ip=`
         foreach (['ip', 'ipv6', 'ipv4'] as $ip_type) {
-            if ($new_ip = app()->request->query->get($ip_type)) {
+            if ($new_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get($ip_type)) {
                 $new_port = (int)$queries['port'];
 
                 // Deal with ip in endpoint format
@@ -688,7 +688,7 @@ class TrackerController
      */
     private function isReAnnounce($queries)
     {
-        $query_string = urldecode(app()->request->getQueryString());
+        $query_string = urldecode(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->getQueryString());
         $identity = md5(str_replace($queries['key'], '', $query_string));
 
         $prev_lock_expire_at = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zScore(Constant::trackerAnnounceLockZset, $identity) ?: $this->timenow;

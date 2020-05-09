@@ -17,7 +17,7 @@ class NewsController extends Controller
     public function actionIndex()
     {
         $pager = new News\SearchForm();
-        $pager->setInput(app()->request->query->all());
+        $pager->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
 
         $success = $pager->validate();
         if (!$success) {
@@ -29,15 +29,15 @@ class NewsController extends Controller
 
     public function actionNew()
     {
-        if (app()->request->isMethod(Request::METHOD_POST)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $newform = new News\EditForm();
-            $newform->setInput(app()->request->request->all());
+            $newform->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
             $success = $newform->validate();
             if (!$success) {
                 return $this->render('action/fail', ['title' => 'new blog failed', 'msg' => $newform->getError()]);
             } else {
                 $newform->flush();  // Save the news
-                return app()->response->setRedirect('/news');
+                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/news');
             }
         } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_news')) {
             return $this->render('news/edit');
@@ -47,18 +47,18 @@ class NewsController extends Controller
 
     public function actionEdit()
     {
-        if (app()->request->isMethod(Request::METHOD_POST)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $newform = new News\EditForm();
-            $newform->setInput(app()->request->request->all());
+            $newform->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
             $success = $newform->validate();
             if (!$success) {
                 return $this->render('action/fail', ['title' => 'Upload Failed', 'msg' => $newform->getError()]);
             } else {
                 $newform->flush();  // Save the news
-                return app()->response->setRedirect('/news');
+                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/news');
             }
         } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_news')) {
-            $id = app()->request->query->get('id', 0);
+            $id = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('id', 0);
             if (filter_var($id, FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check
                 $news = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM news WHERE id= :id')->bindParams(['id' => $id])->queryOne();
@@ -71,12 +71,12 @@ class NewsController extends Controller
     public function actionDelete()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_news')) {
-            $id = app()->request->query->get('id', 0);
+            $id = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('id', 0);
             if (filter_var($id, FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check
                 \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM news WHERE id= :id')->bindParams(['id'=>$id])->execute();
             }
-            return app()->response->setRedirect('/news');
+            return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/news');
         }
         return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
     }

@@ -37,6 +37,6 @@ class DownloadForm extends Validator
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
         $file_loc = ContainerHelper::getContainer()->get('path.storage.subs') . DIRECTORY_SEPARATOR . $filename;
-        app()->response->setFile($file_loc);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setFile($file_loc);
     }
 }

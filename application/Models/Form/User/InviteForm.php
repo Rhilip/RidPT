@@ -113,7 +113,7 @@ class InviteForm extends UserRegisterForm
             ])->queryScalar();
         } while ($count != 0);
 
-        $this->invite_link = app()->request->getSchemeAndHttpHost() . '/auth/register?' . http_build_query([
+        $this->invite_link = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getSchemeAndHttpHost() . '/auth/register?' . http_build_query([
                 'type' => 'invite',
                 'invite_hash' => $invite_hash
             ]);

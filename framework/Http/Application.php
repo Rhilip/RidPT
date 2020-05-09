@@ -10,9 +10,6 @@ use Rid\Utils\Text;
 /**
  * App类
  *
- * @property \Rid\Http\Error $error
- * @property \Rid\Http\Message\Request $request
- * @property \Rid\Http\Message\Response $response
  */
 class Application extends \Rid\Base\Application
 {
@@ -26,23 +23,23 @@ class Application extends \Rid\Base\Application
     // 执行功能
     public function run(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        $this->request->setRequester($request);
-        $this->response->setResponder($response);
-        $server = $this->request->server->all();
+        ContainerHelper::getContainer()->get('request')->setRequester($request);
+        ContainerHelper::getContainer()->get('response')->setResponder($response);
+        $server = ContainerHelper::getContainer()->get('request')->server->all();
         $method = strtoupper($server['REQUEST_METHOD']);
         $action = empty($server['PATH_INFO']) ? '' : substr($server['PATH_INFO'], 1);
 
         // 执行控制器并返回结果
         $content = $this->runAction($method, $action);
         if (is_array($content)) {
-            $this->response->setJson($content);
+            ContainerHelper::getContainer()->get('response')->setJson($content);
         } else {
-            $this->response->setContent($content);
+            ContainerHelper::getContainer()->get('response')->setContent($content);
         }
 
         // 准备请求并发送
-        $this->response->prepare($this->request);
-        $this->response->send();
+        ContainerHelper::getContainer()->get('response')->prepare(ContainerHelper::getContainer()->get('request'));
+        ContainerHelper::getContainer()->get('response')->send();
 
         // 清扫组件容器
         ContainerHelper::getContainer()->get(Runtime::class)->cleanContext();
@@ -58,7 +55,7 @@ class Application extends \Rid\Base\Application
         foreach ($result as $item) {
             list($route, $queryParams) = $item;
             // 路由参数导入请求类
-            $this->request->attributes->set('route', $queryParams);
+            ContainerHelper::getContainer()->get('request')->attributes->set('route', $queryParams);
             // 实例化控制器
             list($shortClass, $shortAction) = $route;
             $controllerDir    = \Rid\Helpers\FileSystemHelper::dirname($shortClass);

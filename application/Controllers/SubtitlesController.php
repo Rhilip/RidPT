@@ -23,7 +23,7 @@ class SubtitlesController extends Controller
     public function actionSearch($upload = null)
     {
         $search = new Subtitles\SearchForm();
-        $search->setInput(app()->request->query->all());
+        $search->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         if (false === $success = $search->validate()) {
             return $this->render('action/fail', ['msg' => $search->getError()]);
         }
@@ -32,9 +32,9 @@ class SubtitlesController extends Controller
 
     public function actionUpload()
     {
-        if (app()->request->isMethod(Request::METHOD_POST)) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $upload = new Subtitles\UploadForm();
-            $upload->setInput(app()->request->request->all() + app()->request->files->all());
+            $upload->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all() + \Rid\Helpers\ContainerHelper::getContainer()->get('request')->files->all());
             if (false === $success = $upload->validate()) {
                 return $this->render('action/fail', ['msg' => $upload->getError()]);   // TODO add redirect
             } else {
@@ -49,7 +49,7 @@ class SubtitlesController extends Controller
     public function actionDownload()
     {
         $download = new Subtitles\DownloadForm();
-        $download->setInput(app()->request->query->all());
+        $download->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
         if (false === $success = $download->validate()) {
             return $this->render('action/fail', ['msg' => $download->getError()]);
         }
@@ -60,7 +60,7 @@ class SubtitlesController extends Controller
     public function actionDelete()
     {
         $delete = new Subtitles\DeleteForm();
-        $delete->setInput(app()->request->request->all());
+        $delete->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
         if (false === $success = $delete->validate()) {
             return $this->render('action/fail', ['msg' => $delete->getError()]);  // TODO add redirect
         } else {

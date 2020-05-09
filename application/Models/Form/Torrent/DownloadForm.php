@@ -52,7 +52,7 @@ class DownloadForm extends StructureForm
         $scheme = 'http://';
         if (isset($this->https)) {
             $scheme = filter_var($this->https, FILTER_VALIDATE_BOOLEAN) ? 'https://' : 'http://';
-        } elseif (app()->request->isSecure()) {
+        } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure()) {
             $scheme = 'https://';
         }
 
