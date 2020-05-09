@@ -15,13 +15,6 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
 
     protected \Swoole\Http\Request $_swoole_request;
 
-    /**
-     * Uploaded files from Swoole.
-     *
-     * @var array
-     */
-    public $raw_files;
-
     /** @noinspection PhpMissingParentConstructorInspection */
     public function __construct($config = [])
     {
@@ -60,7 +53,6 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
             $server,
             $request->rawContent()
         );
-        $this->raw_files = $request->files;
     }
 
     public function getSwooleRequest(): \Swoole\Http\Request
