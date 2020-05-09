@@ -34,7 +34,6 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
     // 设置请求对象
     public function setRequester(\Swoole\Http\Request $request)
     {
-        $start_at = microtime(true);
         $this->_swoole_request = $request;
 
         $server = \array_change_key_case($request->server, CASE_UPPER);
@@ -47,7 +46,7 @@ class Request extends HttpFoundationRequest implements Base\StaticInstanceInterf
         $this->initialize(
             $request->get ?? [],
             $request->post ?? [],
-            ['start_at' => $start_at],
+            [],
             $request->cookie ?? [],
             $request->files ?? [],
             $server,
