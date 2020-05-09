@@ -30,10 +30,5 @@ return [
         'response' => [
             'class' => Rid\Http\Message\Response::class,
         ],
-
-        // 错误
-        'error' => [
-            'class' => Rid\Http\Error::class
-        ],
     ],
 ];

@@ -57,7 +57,7 @@ class Timer implements StaticInstanceInterface
                 call_user_func($callback);
             } catch (\Throwable $e) {
                 // 输出错误
-                \Rid::app()->error->handleException($e);
+                \Rid\Helpers\ContainerHelper::getContainer()->get('error')->handleException($e);
             }
         });
         // 保存id
@@ -83,7 +83,7 @@ class Timer implements StaticInstanceInterface
                 call_user_func($callback);
             } catch (\Throwable $e) {
                 // 输出错误
-                \Rid::app()->error->handleException($e);
+                \Rid\Helpers\ContainerHelper::getContainer()->get('error')->handleException($e);
             }
         });
         // 保存id

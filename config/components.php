@@ -99,6 +99,8 @@ return [
 
     'view' => \DI\autowire(\Rid\Component\View::class),
 
+    'error' => \DI\autowire(\Rid\Http\Error::class),
+
     'i18n' => \DI\autowire(\Rid\Component\I18n::class)
         ->property('allowedLangSet', ['en', 'zh-CN'])
         ->property('forcedLang', null),

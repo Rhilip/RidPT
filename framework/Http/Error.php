@@ -2,14 +2,13 @@
 
 namespace Rid\Http;
 
-use Rid\Base\Component;
 use Rid\Helpers\ContainerHelper;
 use Rid\Helpers\IoHelper;
 
 /**
  * Error类
  */
-class Error extends Component
+class Error
 {
     // 异常处理
     public function handleException(\Throwable $e)
