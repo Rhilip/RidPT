@@ -63,8 +63,8 @@ class I18n
         }
 
         // 2rd highest priority: user setting for login user
-        if (app()->auth->getCurUser() && !is_null(app()->auth->getCurUser()->getLang())) {
-            $judged_langs[] = app()->auth->getCurUser()->getLang();
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser() && !is_null(\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getLang())) {
+            $judged_langs[] = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getLang();
         }
 
         // 3th highest priority: HTTP_ACCEPT_LANGUAGE

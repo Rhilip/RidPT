@@ -41,7 +41,7 @@ class EditForm extends Validator
 
     public function flush()
     {
-        $userid = app()->auth->getCurUser()->getId();
+        $userid = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId();
         if ((int) $this->id == 0) { // This is new news
             \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO news (user_id,create_at,title,body,notify,force_read) VALUES (:uid,CURRENT_TIMESTAMP,:title,:body,:notify,:fread);')->bindParams([
                 'uid' => $userid, 'title' => $this->title, 'body' => $this->body,

@@ -19,22 +19,22 @@ class TorrentsForm extends Validator
     public function updateRecord()
     {
         $bookmark_exist = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `id` FROM `bookmarks` WHERE `uid` = :uid AND `tid` = :tid ')->bindParams([
-            'uid' => app()->auth->getCurUser()->getId(),
+            'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId(),
             'tid' => $this->getInput('id')
         ])->queryScalar() ?: 0;
         if ($bookmark_exist > 0) {  // Delete the exist record
             \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM `bookmarks` WHERE `id` = :bid')->bindParams([
                 'bid' => $bookmark_exist
             ])->execute();
-            app()->auth->getCurUser()->updateBookmarkList();
+            \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->updateBookmarkList();
 
             return ['msg' => 'Delete Old Bookmark Success', 'result' => 'deleted'];
         } else {  // Add new record
             \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `bookmarks` (`uid`, `tid`) VALUES (:uid, :tid)')->bindParams([
-                'uid' => app()->auth->getCurUser()->getId(),
+                'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId(),
                 'tid' => $this->getInput('id')
             ])->execute();
-            app()->auth->getCurUser()->updateBookmarkList();
+            \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->updateBookmarkList();
 
             return ['msg' => 'Add New Bookmark Success', 'result' => 'added'];
         }

@@ -10,9 +10,9 @@
  */
 
 $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
-$extend_debug_info = app()->auth->getCurUser()  // Not Anonymous
+$extend_debug_info = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()  // Not Anonymous
     && config('base.enable_extend_debug')  // Enabled Extend Debug
-    && app()->auth->getCurUser()->isPrivilege('see_extend_debug_log');  // Privilege is enough
+    && \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_extend_debug_log');  // Privilege is enough
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +68,7 @@ $extend_debug_info = app()->auth->getCurUser()  // Not Anonymous
     </header>
     <div class="clearfix"></div>
 
-    <?php if (app()->auth->getCurUser() === false): ?>
+    <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser() === false): ?>
         <?= $this->insert('layout/nav_anonymous') ?>
     <?php else: ?>
         <?= $this->insert('layout/nav_user') ?>

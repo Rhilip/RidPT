@@ -57,7 +57,7 @@ $enabled_editor = $enabled_editor ?? false;
     <?php endif; ?>
     <footer>
         <div class="reply-form" id="commentReplyForm1">
-            <div class="avatar"><img src="<?= app()->auth->getCurUser()->getAvatar() ?>" alt=""></div>
+            <div class="avatar"><img src="<?= \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getAvatar() ?>" alt=""></div>
             <form class="form" method="post" action="/torrent/comments?id=<?= $torrent->getId() ?>">
                 <!-- FIXME commit point -->
                 <div class="form-group">

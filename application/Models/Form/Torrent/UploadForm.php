@@ -63,7 +63,7 @@ class UploadForm extends EditForm
         ];
 
         if (config('torrent_upload.enable_upload_nfo') &&  // Enable nfo upload
-            app()->auth->getCurUser()->isPrivilege('upload_nfo_file') &&  // This user can upload nfo
+            \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file') &&  // This user can upload nfo
             app()->request->request->get('nfo')  // Nfo file upload
         ) {
             $rules['nfo'] = [
@@ -83,7 +83,7 @@ class UploadForm extends EditForm
     /** @noinspection PhpUnused */
     protected function checkUploadPos()
     {
-        if (!app()->auth->getCurUser()->getUploadpos()) {
+        if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getUploadpos()) {
             $this->buildCallbackFailMsg('pos', 'your upload pos is disabled');
         }
     }
@@ -240,7 +240,7 @@ class UploadForm extends EditForm
 
             \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`tags`,`nfo`,`uplver`,`hr`)
 VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :category, :filename, :torrent_name, :type, :size, :structure,:team,:audio,:codec,:medium,:resolution,:descr, JSON_ARRAY(:tags), :nfo, :uplver, :hr)')->bindParams([
-                'owner_id' => app()->auth->getCurUser()->getId(),
+                'owner_id' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
                 'title' => $this->title, 'subtitle' => $this->subtitle,
@@ -281,7 +281,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
             throw $e;
         }
 
-        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : app()->auth->getCurUser()->getUsername()));
+        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getUsername()));
     }
 
     // TODO update torrent status based on user class or their owned torrents count

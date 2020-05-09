@@ -30,10 +30,10 @@
                         <select id="level" class="form-control" name="level">
                             <option value="all"<?= app()->request->query->get('level') == 'all' ? ' selected' : '' ?>>all</option>
                             <option value="normal"<?= app()->request->query->get('level') == 'normal' ? ' selected' : '' ?>>normal</option>
-                            <?php if (app()->auth->getCurUser()->isPrivilege('see_site_log_mod')): ?>
+                            <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_mod')): ?>
                                 <option value="mod"<?= app()->request->query->get('level') == 'mod' ? ' selected' : '' ?>>mod</option>
                             <?php endif; ?>
-                            <?php if (app()->auth->getCurUser()->isPrivilege('see_site_log_leader')): ?>
+                            <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_leader')): ?>
                                 <option value="leader"<?= app()->request->query->get('level') == 'leader' ? ' selected' : '' ?>>leader</option>
                             <?php endif; ?>
                         </select>

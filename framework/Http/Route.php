@@ -2,12 +2,10 @@
 
 namespace Rid\Http;
 
-use Rid\Base\Component;
-
 /**
  * Route组件
  */
-class Route extends Component
+class Route
 {
 
     // 默认变量规则
@@ -21,13 +19,6 @@ class Route extends Component
 
     // 转化后的路由规则
     protected $_rules = [];
-
-    // 初始化事件
-    public function onInitialize()
-    {
-        parent::onInitialize();
-        $this->initialize();         // 初始化
-    }
 
     // 初始化，生成路由数据，将路由规则转换为正则表达式，并提取路由参数名
     public function initialize()

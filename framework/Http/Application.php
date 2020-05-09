@@ -11,10 +11,8 @@ use Rid\Utils\Text;
  * App类
  *
  * @property \Rid\Http\Error $error
- * @property \Rid\Http\Route $route
  * @property \Rid\Http\Message\Request $request
  * @property \Rid\Http\Message\Response $response
- * @property \App\Components\Auth $auth
  */
 class Application extends \Rid\Base\Application
 {
@@ -56,7 +54,7 @@ class Application extends \Rid\Base\Application
     {
         $action = "{$method} {$action}";
         // 路由匹配
-        $result = $this->route->match($action);
+        $result = ContainerHelper::getContainer()->get('route')->match($action);
         foreach ($result as $item) {
             list($route, $queryParams) = $item;
             // 路由参数导入请求类

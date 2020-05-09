@@ -82,7 +82,7 @@ class EditForm extends Validator
         $team_id_list = [0];
         if (config('torrent_upload.enable_teams')) {
             foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam() as $team) {
-                if (app()->auth->getCurUser()->getClass() >= $team['class_require']) {
+                if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getClass() >= $team['class_require']) {
                     $team_id_list[] = $team['id'];
                 }
             }
@@ -119,7 +119,7 @@ class EditForm extends Validator
         $rules['id'] = 'Required | Integer';
 
         if (config('torrent_upload.enable_upload_nfo')   // Enable nfo upload
-            && app()->auth->getCurUser()->isPrivilege('upload_nfo_file') // This user can upload nfo
+            && \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file') // This user can upload nfo
         ) {
             $rules['nfo_action'] = [
                 ['required'],
@@ -135,7 +135,7 @@ class EditForm extends Validator
             }
         }
 
-        if (app()->auth->getCurUser()->isPrivilege('manage_torrents')) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_torrents')) {
             $rules['status'] = [
                 ['required'],
                 ['InList', ['list' => TorrentStatus::TORRENT_STATUSES]]
@@ -160,8 +160,8 @@ class EditForm extends Validator
             }
         }
 
-        if (app()->auth->getCurUser()->getId() != $this->torrent->getOwnerId()  // User is torrent owner
-            || !app()->auth->getCurUser()->isPrivilege('manage_torrents')  // User can manager torrents
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId() != $this->torrent->getOwnerId()  // User is torrent owner
+            || !\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_torrents')  // User can manager torrents
         ) {
             $this->buildCallbackFailMsg('owner', 'You can\'t edit torrent which is not belong to you.');
             return false;
@@ -216,7 +216,7 @@ class EditForm extends Validator
             } elseif ($config == 0) { // if global config disabled this flag
                 $this->$flag = 0;
             } else {  // check if user can use this flag
-                if (!app()->auth->getCurUser()->isPrivilege('upload_flag_' . $flag)) {
+                if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_flag_' . $flag)) {
                     $this->$flag = 0;
                 }
             }

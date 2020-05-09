@@ -32,7 +32,7 @@ class InviteActionForm extends Validator
     public static function defaultData(): array
     {
         return [
-            'uid' => app()->auth->getCurUser()->getId()
+            'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()
         ];
     }
 
@@ -64,12 +64,12 @@ class InviteActionForm extends Validator
     {
         $action = $this->getInput('action');
         if ($action == self::ACTION_CONFIRM) {
-            if (!app()->auth->getCurUser()->isPrivilege('invite_manual_confirm')) {
+            if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('invite_manual_confirm')) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to confirm pending user.');
             }
         } elseif ($action == self::ACTION_RECYCLE) {
-            $check_recycle_privilege_name = ($this->getInput('uid') == app()->auth->getCurUser()->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
-            if (!app()->auth->getCurUser()->isPrivilege($check_recycle_privilege_name)) {
+            $check_recycle_privilege_name = ($this->getInput('uid') == \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId() ? 'invite_recycle_self_pending' : 'invite_recycle_other_pending');
+            if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege($check_recycle_privilege_name)) {
                 $this->buildCallbackFailMsg('action:privilege', 'privilege is not enough to recycle user pending invites.');
             }
         }

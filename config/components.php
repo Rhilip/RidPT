@@ -54,6 +54,30 @@ return [
         ])
         ->method('connectRedis'),
 
+    'route' => \DI\autowire(\Rid\Http\Route::class)
+        ->property('defaultPattern', '[\w-]+')
+        ->property('patterns', [
+            'id' => '\d+'
+        ])
+        ->property('rules', [
+            'GET tracker/{tracker_action}' => ['tracker', 'index'],
+            'GET captcha' => ['captcha', 'index'],
+            'GET maintenance' => ['maintenance', 'index'],
+
+            // API version 1
+            'api/v1/{controller}/{action}' => ['Api/v1/{controller}', '{action}', 'middleware' => [
+                App\Middleware\ApiMiddleware::class,
+                App\Middleware\AuthMiddleware::class
+            ]],
+
+            // Web view
+            '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => [
+                App\Middleware\AuthMiddleware::class
+            ]],
+        ])
+        ->method('initialize'),
+
+
     'session' => \DI\autowire(\Rid\Http\Session::class)
         ->property('idLength', 26)  // SessionId长度
 
@@ -71,6 +95,7 @@ return [
 
     'config' => \DI\autowire(\Rid\Component\Config::class),
     'site' => \DI\autowire(\App\Components\Site::class),
+    'auth' => \DI\autowire(\App\Components\Auth::class),
 
     'view' => \DI\autowire(\Rid\Component\View::class),
 

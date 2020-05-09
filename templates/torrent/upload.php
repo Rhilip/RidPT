@@ -97,7 +97,7 @@
                             <select id="team" name="team" class="form-control">
                                 <option value="0" selected>[Choose One]</option>
                                 <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam() as $team) : ?>
-                                    <?php if (app()->auth->getCurUser()->getClass() >= $team['class_require']): ?>
+                                    <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getClass() >= $team['class_require']): ?>
                                         <option value="<?= $team['id'] ?>"><?= $team['name'] ?></option>
                                     <?php endif ?>
                                 <?php endforeach; ?>
@@ -107,7 +107,7 @@
                 </div>
             </td> <!-- FIXME link url -->
         </tr>
-        <?php if (config('torrent_upload.enable_upload_nfo') && app()->auth->getCurUser()->isPrivilege('upload_nfo_file')): ?>
+        <?php if (config('torrent_upload.enable_upload_nfo') && \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file')): ?>
         <tr>
             <td class="nowrap"><label for="nfo">NFO File</label></td>
             <td>
@@ -152,12 +152,12 @@
             <td>
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="switch<?= app()->auth->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
+                        <div class="switch<?= \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
                             <input type="checkbox" id="anonymous" name="anonymous" value="1"><label for="anonymous">Anonymous Upload</label>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="switch<?= app()->auth->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
+                        <div class="switch<?= \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
                             <input type="checkbox" id="hr" name="hr" value="1"><label for="hr">H&R</label>
                         </div>
                     </div>

@@ -8,8 +8,10 @@
 
 namespace App\Middleware;
 
+use App\Components\Auth;
 use App\Controllers;
 use App\Libraries\Constant;
+use DI\Container;
 use Rid\Http\Middleware\AbstractMiddleware;
 
 class AuthMiddleware extends AbstractMiddleware
@@ -26,14 +28,14 @@ class AuthMiddleware extends AbstractMiddleware
         $controllerName = get_class($controller);
 
         // Try auth by cookies first
-        $curuser = app()->auth->getCurUser('cookies', true);
+        $curuser = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser('cookies', true);
 
         // Try auth by passkey in special route and action if first cookies-check fails
         if ($curuser === false) {
             foreach (self::authByPasskeyAction as $value) {
                 list($_controller, $_action) = $value;
                 if ($controllerName == $_controller && $action == $_action) {
-                    $curuser = app()->auth->getCurUser('passkey', true);
+                    $curuser = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser('passkey', true);
                     break;
                 }
             }
@@ -51,9 +53,9 @@ class AuthMiddleware extends AbstractMiddleware
                 return app()->response->setStatusCode(403);
             }
 
-            if (app()->auth->getGrant() == 'passkey') {
+            if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getGrant() == 'passkey') {
                 return 'invalid Passkey';
-            } else {  // app()->auth->getGrant() == 'cookies'
+            } else {  // \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getGrant() == 'cookies'
                 // If visitor want to auth himself
                 if ($controllerName === Controllers\AuthController::class && $action !== 'actionLogout') {
                     return $next();

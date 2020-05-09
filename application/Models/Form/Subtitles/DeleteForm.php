@@ -36,7 +36,7 @@ class DeleteForm extends Validator
     /** @noinspection PhpUnused */
     protected function canCurUserManagerSubs()
     {
-        $curuser = app()->auth->getCurUser();
+        $curuser = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser();
         if (!$curuser->isPrivilege('manage_subtitles') ||  // not submanage_class
             $this->subtitle['uppd_by'] != $curuser->getId()  // not Subtitle 'owner'
         ) {
@@ -56,12 +56,12 @@ class DeleteForm extends Validator
 
         // TODO Delete uploader bonus
 
-        if ($this->subtitle['uppd_by'] != app()->auth->getCurUser()->getId()) {
+        if ($this->subtitle['uppd_by'] != \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()) {
             \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendPM(0, $this->subtitle['uppd_by'], 'msg_your_sub_deleted', 'msg_deleted_your_sub');
         }
 
         // TODO add user detail
-        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog('Subtitle \'' . $this->subtitle['title'] . '\'(' . $this->subtitle['id'] .') was deleted by ' . app()->auth->getCurUser()->getUsername());
+        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog('Subtitle \'' . $this->subtitle['title'] . '\'(' . $this->subtitle['id'] .') was deleted by ' . \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getUsername());
         \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::siteSubtitleSize);
     }
 }

@@ -12,18 +12,10 @@ use App\Entity;
 use App\Libraries\Constant;
 use App\Entity\User\UserStatus;
 
-use Rid\Base\Component;
 use Rid\Helpers\ContainerHelper;
 
-class Auth extends Component
+class Auth
 {
-    /*
-    public function onRequestAfter()
-    {
-        $this->logSessionInfo();
-        parent::onRequestAfter();
-    }
-    */
 
     /**
      * @param string $grant

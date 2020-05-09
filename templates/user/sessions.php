@@ -34,7 +34,7 @@
                     <td class="text-center"><time class="nowrap"><?= $s['login_at'] ?></time></td>
                     <td class="text-center"><?= inet_ntop($s['login_ip']) ?></td>
                     <td class="text-center">
-                        <?php if ($s['session'] == app()->auth->getCurUserJIT()): ?>
+                        <?php if ($s['session'] == \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUserJIT()): ?>
                             Current
                         <?php else: ?>
                             <form method="post">

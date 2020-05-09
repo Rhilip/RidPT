@@ -17,7 +17,7 @@
 
 <?php $this->start('container') ?>
 <div class="panel" id="news_panel">
-    <?php $can_manage_news = app()->auth->getCurUser()->isPrivilege('manage_news'); ?>
+    <?php $can_manage_news = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_news'); ?>
     <div class="panel-heading">Recent News - <small>[<a href="/news" target="_blank">All</a>]</small>
         <?= $can_manage_news ? '<small>[<a href="/news/new">New</a>]</small>' : '' ?>
     </div>
@@ -59,10 +59,10 @@
 <div class="panel" id="links_panel">
     <div class="panel-heading">
         Links
-        <?php if (app()->auth->getCurUser()->isPrivilege('apply_for_links')): ?>
+        <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('apply_for_links')): ?>
         - [<a href="/links/apply" target="_blank">Apply for Links</a>]
         <?php endif; ?>
-        <?php if (app()->auth->getCurUser()->isPrivilege('manage_links')): ?>
+        <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_links')): ?>
         [<a href="/links/manage" target="_blank">Manage Links</a>]
         <?php endif; ?>
     </div>

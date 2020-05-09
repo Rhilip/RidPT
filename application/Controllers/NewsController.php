@@ -39,7 +39,7 @@ class NewsController extends Controller
                 $newform->flush();  // Save the news
                 return app()->response->setRedirect('/news');
             }
-        } elseif (app()->auth->getCurUser()->isPrivilege('manage_news')) {
+        } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_news')) {
             return $this->render('news/edit');
         }
         return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
@@ -57,7 +57,7 @@ class NewsController extends Controller
                 $newform->flush();  // Save the news
                 return app()->response->setRedirect('/news');
             }
-        } elseif (app()->auth->getCurUser()->isPrivilege('manage_news')) {
+        } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_news')) {
             $id = app()->request->query->get('id', 0);
             if (filter_var($id, FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check
@@ -70,7 +70,7 @@ class NewsController extends Controller
 
     public function actionDelete()
     {
-        if (app()->auth->getCurUser()->isPrivilege('manage_news')) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_news')) {
             $id = app()->request->query->get('id', 0);
             if (filter_var($id, FILTER_VALIDATE_INT) && $id > 0) {
                 // TODO add other check

@@ -40,10 +40,10 @@ class UserController extends Controller
             }
         }
 
-        $user = app()->auth->getCurUser();
+        $user = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser();
         $uid = app()->request->query->get('uid');
-        if (!is_null($uid) && $uid != app()->auth->getCurUser()->getId()) {
-            if (app()->auth->getCurUser()->isPrivilege('view_invite')) {
+        if (!is_null($uid) && $uid != \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()) {
+            if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('view_invite')) {
                 $user = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($uid);
             } else {
                 return $this->render('action/fail', ['title' => 'Fail', 'msg' => 'Privilege is not enough to see other people\'s invite status.']);
@@ -86,12 +86,12 @@ class UserController extends Controller
 
                 // expired it from Database first
                 \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([
-                    'uid' => app()->auth->getCurUser()->getId(), 'sid' => $to_del_session
+                    'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId(), 'sid' => $to_del_session
                 ])->execute();
                 $success = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getRowCount();
 
                 if ($success > 0) {
-                    \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zRem(app()->auth->getCurUser()->sessionSaveKey, $to_del_session);
+                    \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zRem(\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->sessionSaveKey, $to_del_session);
                 } else {
                     return $this->render('action/fail', ['title' => 'Remove Session Failed', 'msg' => 'Remove Session Failed']);
                 }

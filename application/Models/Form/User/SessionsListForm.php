@@ -28,7 +28,7 @@ class SessionsListForm extends Pagination
     {
         return [
             'page' => static::getDefaultPage(), 'limit' => static::getDefaultLimit(),
-            'uid' => app()->auth->getCurUser()->getId()
+            'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()
         ];
     }
 
@@ -42,7 +42,7 @@ class SessionsListForm extends Pagination
         ];
 
         // TODO allow admin to see other people session log
-        $rules['uid'] = ['Integer', ['Equal', ['value' => app()->auth->getCurUser()->getId()]]];
+        $rules['uid'] = ['Integer', ['Equal', ['value' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()]]];
 
         return $rules;
     }

@@ -16,7 +16,7 @@ trait actionRateLimitCheckTrait
     protected static function getRateLimitRules(): array
     {
         /** @noinspection PhpUnusedLocalVariableInspection */
-        $pool = 'user_' . app()->auth->getCurUser()->getId();
+        $pool = 'user_' . \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId();
         return [
             /* ['key' => 'dl_60', 'period' => 60, 'max' => 5, 'pool' => $pool] */
         ];

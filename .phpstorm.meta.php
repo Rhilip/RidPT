@@ -18,6 +18,7 @@ namespace PHPSTORM_META {
         'session' => \Rid\Http\Session::class,
         'logger' => \Monolog\Logger::class,
         'site' => \App\Components\Site::class,
+        'auth' => \App\Components\Auth::class,
 
         // 对象
         'captcha' => \Rid\Libraries\Captcha::class,

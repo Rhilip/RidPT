@@ -14,7 +14,6 @@ use Rid\Component\Runtime;
 
 class UserFactory
 {
-
     public const mapUsernameToId = 'Map:hash:user_username_to_user_id';
     public const mapUserPasskeyToId = 'Map:zset:user_passkey_to_user_id';  // (double) 0 means invalid
     public const mapUserSessionToId = 'Map:zset:user_session_to_user_id';  // (double) 0 means invalid

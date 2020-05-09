@@ -118,9 +118,9 @@ class SearchForm extends Pagination
         // Favour
         $favour = $this->getInput('favour');
         if ($favour == 1) {  // bookmarked in favour
-            $fields[] = ['AND `id` IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => app()->auth->getCurUser()->getId()]];
+            $fields[] = ['AND `id` IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()]];
         } elseif ($favour == 2) {  // not bookmarked in favour
-            $fields[] = ['AND `id` NOT IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => app()->auth->getCurUser()->getId()]];
+            $fields[] = ['AND `id` NOT IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()]];
         }
 
         // TODO we may not use `&search_area=` to search in non-title/subtitle/descr field, Use sep `&ownerid=` , `&doubanid=` instead.

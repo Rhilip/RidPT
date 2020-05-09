@@ -210,7 +210,7 @@ class Site
         \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.ban_ips_list', $banips, 'json');
 
         if ($persistence === true) {  // Save it in table `ban_ips`
-            $add_by = app()->auth->getCurUser() ? app()->auth->getCurUser()->getId() : 0;  // 0 - system
+            $add_by = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser() ? \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId() : 0;  // 0 - system
             $commit = $commit ?? ($add_by == 0 ? 'Banned By System automatically' : '');
             \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `ban_ips`(`ip`, `add_by`, `add_at`, `commit`) VALUES (:ip, :add_by, NOW(), :commit)')->bindParams([
                 'ip' => $ip, 'add_by' => $add_by, 'commit' => $commit

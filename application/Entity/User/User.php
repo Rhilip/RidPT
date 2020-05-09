@@ -374,7 +374,7 @@ class User extends BaseObject
     {
         return $this->getCacheValue('temp_invites_details', function () {
             return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
-                    "uid" => app()->auth->getCurUser()->getId()
+                    "uid" => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()
                 ])->queryAll() ?: [];
         }) ?? [];
     }

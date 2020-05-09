@@ -35,10 +35,10 @@ class Logs extends Pagination
     public static function inputRules(): array
     {
         $level_list = ['all', 'normal'];
-        if (app()->auth->getCurUser()->isPrivilege('see_site_log_mod')) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_mod')) {
             $level_list[] = 'mod';
         }
-        if (app()->auth->getCurUser()->isPrivilege('see_site_log_leader')) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_leader')) {
             $level_list[] = 'leader';
         }
 
@@ -59,10 +59,10 @@ class Logs extends Pagination
 
         if ('all' == $input_level = $this->level) {
             $levels = ['normal'];
-            if (app()->auth->getCurUser()->isPrivilege('see_site_log_mod')) {
+            if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_mod')) {
                 $levels[] = 'mod';
             }
-            if (app()->auth->getCurUser()->isPrivilege('see_site_log_leader')) {
+            if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_leader')) {
                 $levels[] = 'leader';
             }
         } else {

@@ -18,7 +18,7 @@ class UserDetailsForm extends Validator
     public static function defaultData(): array
     {
         return [
-            'id' => app()->auth->getCurUser()->getId()
+            'id' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()
         ];
     }
 

@@ -27,6 +27,7 @@
 
 ### Perf
 - **Console:** Move HttpServer init to AbstractServerCommand (ce50f2d)
+- **Request:** Remove attr $start_at (85e0827)
 - **Request:** Remove attr $raw_files (8f08e3c)
 
 ### Style

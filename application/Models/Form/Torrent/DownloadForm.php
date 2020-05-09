@@ -40,7 +40,7 @@ class DownloadForm extends StructureForm
 
     protected function checkDownloadPos()
     {
-        if (!app()->auth->getCurUser()->getDownloadpos()) {
+        if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getDownloadpos()) {
             $this->buildCallbackFailMsg('pos', 'your download pos is disabled');
         }
     }
@@ -56,7 +56,7 @@ class DownloadForm extends StructureForm
             $scheme = 'https://';
         }
 
-        $announce_suffix = '/announce?passkey=' . app()->auth->getCurUser()->getPasskey();
+        $announce_suffix = '/announce?passkey=' . \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getPasskey();
         $dict['announce'] = $scheme . config('base.site_tracker_url') . $announce_suffix;
 
         /** BEP 0012 Multitracker Metadata Extension
