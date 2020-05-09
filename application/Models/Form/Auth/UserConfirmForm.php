@@ -104,7 +104,7 @@ class UserConfirmForm extends Validator
         $this->update_confirm_status();
 
         // Send user email to tell his new password.
-        app()->site->sendEmail(
+        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendEmail(
             [$this->email],
             'New Password',
             'email/user_new_password',

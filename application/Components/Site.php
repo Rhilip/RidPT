@@ -11,28 +11,20 @@ namespace App\Components;
 use App\Entity;
 use App\Libraries\Constant;
 
-use Rid\Base\Component;
 use Rid\Helpers\ContainerHelper;
 use Rid\Utils\Traits\ClassValueCache;
 
-class Site extends Component
+class Site
 {
     use ClassValueCache;
 
     protected Entity\User\UserFactory $user_factory;
     protected Entity\Torrent\TorrentFactory $torrent_factory;
 
-    public function __construct($config = [])
+    public function __construct(Entity\User\UserFactory $user_factory, Entity\Torrent\TorrentFactory $torrent_factory)
     {
-        parent::__construct($config);
-        $this->user_factory = new Entity\User\UserFactory();
-        $this->torrent_factory = new Entity\Torrent\TorrentFactory();
-    }
-
-    public function onRequestBefore()
-    {
-        parent::onRequestBefore();
-        $this->user_factory->cleanCache();
+        $this->user_factory = $user_factory;
+        $this->torrent_factory = $torrent_factory;
     }
 
     /**
@@ -185,7 +177,6 @@ class Site extends Component
     public function rulePinnedTags(): array
     {
         if (false === $data = config('runtime.pinned_tags')) {
-            /** @noinspection SqlResolve */
             $raw = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `tag`, `class_name` FROM `tags` WHERE `pinned` = 1;')->queryAll();
             $data = array_column($raw, 'class_name', 'tag');
             \Rid\Helpers\ContainerHelper::getContainer()->get('config')->set('runtime.pinned_tags', $data, 'json');
@@ -243,7 +234,7 @@ class Site extends Component
         }
     }
 
-    public static function fetchUserCount(): int
+    public function fetchUserCount(): int
     {
         return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users`')->queryScalar();
     }

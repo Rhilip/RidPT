@@ -70,6 +70,7 @@ return [
         ->property('cookieHttpOnly', false),   // 仅可通过 HTTP 协议访问
 
     'config' => \DI\autowire(\Rid\Component\Config::class),
+    'site' => \DI\autowire(\App\Components\Site::class),
 
     'view' => \DI\autowire(\Rid\Component\View::class),
 

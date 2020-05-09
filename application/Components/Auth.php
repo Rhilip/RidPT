@@ -17,11 +17,13 @@ use Rid\Helpers\ContainerHelper;
 
 class Auth extends Component
 {
+    /*
     public function onRequestAfter()
     {
         $this->logSessionInfo();
         parent::onRequestAfter();
     }
+    */
 
     /**
      * @param string $grant
@@ -65,7 +67,7 @@ class Auth extends Component
 
         if ($user_id !== false && is_int($user_id) && $user_id > 0) {
             $user_id = (int)$user_id;
-            $curuser = app()->site->getUser($user_id);
+            $curuser = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($user_id);
             if ($curuser->getStatus() !== UserStatus::DISABLED) {  // user status shouldn't be disabled
                 return $curuser;
             }
@@ -100,7 +102,7 @@ class Auth extends Component
 
         // Verity $payload['jti'] is force expired or not, And check if it same with $payload['aud']
         // And if not match, it means user logout this session or change password....
-        $uid = app()->site->getUserFactory()->getUserIdBySession($payload['jti']);
+        $uid = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUserFactory()->getUserIdBySession($payload['jti']);
         if ($uid != $payload['aud']) {
             return false;
         }
@@ -128,7 +130,7 @@ class Auth extends Component
             return false;
         }
 
-        $user_id = app()->site->getUserFactory()->getUserIdByPasskey($passkey);
+        $user_id = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUserFactory()->getUserIdByPasskey($passkey);
         return $user_id > 0 ? $user_id : false;
     }
 

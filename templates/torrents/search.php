@@ -29,13 +29,13 @@ $time_now = time();
                 <div class="row">
                     <div class="col-md-9">
                         <!-- TODO category -->
-                        <?php foreach (app()->site->getQualityTableList() as $quality => $title): ?>
+                        <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title): ?>
                             <?php if (config('torrent_upload.enable_quality_' . $quality)) : ?>
                             <div class="form-group" data-quality="<?= $quality ?>">
                                 <b><?= $title ?></b>
                                 <br />
                                 <div class="row" style="margin-left: 15px">
-                                <?php foreach (app()->site->ruleQuality($quality) as $q): ?>
+                                <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality) as $q): ?>
                                 <?php $req_quality = Arr::wrap(app()->request->query->get($quality)); ?>
                                     <label class="col-md-2">
                                         <input type="checkbox" name="<?= $quality ?>[]" value="<?= $q['id'] ?>"<?= in_array($q['id'], $req_quality) ? ' checked': '' ?>> <?= $q['name'] ?>
@@ -50,7 +50,7 @@ $time_now = time();
                                 <b>Group: </b>
                                 <br />
                                 <div class="row" style="margin-left: 15px">
-                                <?php foreach (app()->site->ruleTeam() as $team) : ?>
+                                <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam() as $team) : ?>
                                 <?php $req_team = Arr::wrap(app()->request->query->get('team')); ?>
                                     <label class="col-md-2">
                                         <input type="checkbox" name="team[]" value="<?= $team['id'] ?>"<?= in_array($team['id'], $req_team) ? ' checked': '' ?>> <?= $team['name'] ?>

@@ -16,7 +16,7 @@ class IpBanMiddleware extends AbstractMiddleware
     public function handle($callable, \Closure $next)
     {
         $ip = app()->request->getClientIp();
-        $ip_ban_list = app()->site->getBanIpsList();
+        $ip_ban_list = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getBanIpsList();
 
         if (count($ip_ban_list) > 0 && Ip::checkIp($ip, $ip_ban_list)) {
             return app()->response->setStatusCode(403);

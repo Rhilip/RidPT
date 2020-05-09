@@ -28,7 +28,7 @@
                     <div class="col-md-3">
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
-                            <?php foreach (app()->site->ruleCategory() as $category) : ?>
+                            <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleCategory() as $category) : ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -69,14 +69,14 @@
             <td class="nowrap"><label>Quality</label></td>
             <td>
                 <div class="row">
-                    <?php foreach (app()->site->getQualityTableList() as $quality => $title): ?>
+                    <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title): ?>
                     <?php if (config('torrent_upload.enable_quality_' . $quality)) : ?>
                     <div class="col-md-3">
                         <div class="input-group">
                             <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
                             <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
                                 <option value="0">[Choose One]</option>
-                                <?php foreach (app()->site->ruleQuality($quality) as $q): ?>
+                                <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality) as $q): ?>
                                     <option value="<?= $q['id']; ?>"><?= $q['name']; ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -96,7 +96,7 @@
                             <span class="input-group-addon"><label for="team">Group</label></span>
                             <select id="team" name="team" class="form-control">
                                 <option value="0" selected>[Choose One]</option>
-                                <?php foreach (app()->site->ruleTeam() as $team) : ?>
+                                <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam() as $team) : ?>
                                     <?php if (app()->auth->getCurUser()->getClass() >= $team['class_require']): ?>
                                         <option value="<?= $team['id'] ?>"><?= $team['name'] ?></option>
                                     <?php endif ?>
@@ -140,7 +140,7 @@
             <td><input id="tags" name="tags" class="form-control" type="text">
                 <div class="tag-help-block" style="margin-top: 4px">
                     Pinned Tags:
-                    <?php foreach (app()->site->rulePinnedTags() as $tag => $class_name): ?>
+                    <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->rulePinnedTags() as $tag => $class_name): ?>
                         <a href="javascript:" class="add-tag label label-outline <?= $class_name ?>"><?= $tag ?></a>
                     <?php endforeach; ?>
                 </div>

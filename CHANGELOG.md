@@ -7,12 +7,14 @@
 
 ### Feat
 - **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)
+- **DI:** Add path info in container (1569795)
+- **DI:** Prepare replace component by PHP-DI (already mailer, logger) (73cc3f6)
 - **DI:** Prepare replace component by PHP-DI (a287244)
 - **DI:** merge Component `i18n` into Container (591b052)
 - **DI:** merge Component `View` into Container (75f6edf)
-- **DI:** Add path info in container (1569795)
-- **DI:** Prepare replace component by PHP-DI (already mailer, logger) (73cc3f6)
 - **MemoryTable:** Use New `TableManager` to manager Swoole Table instead of hardcode (37cf209)
+- **Redis:** Move PDO,JWT,Crypt into DI (05d367d)
+- **Redis:** Move Config into DI (a4337b9)
 - **Redis:** Move Session into DI (09b4c3d)
 - **Redis:** Move Redis into DI (bd9c108)
 - **SwooleMemory:** Add `AtomicManager` (6190d60)
@@ -25,6 +27,7 @@
 
 ### Perf
 - **Console:** Move HttpServer init to AbstractServerCommand (ce50f2d)
+- **Request:** Remove attr $raw_files (8f08e3c)
 
 ### Style
 - **Utils:** Combine `NameHelper` and `StringHelper` (85f311b)

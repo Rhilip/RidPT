@@ -121,7 +121,7 @@ class UserLoginForm extends Validator
         $user_ip = app()->request->getClientIp();
         $test_attempts = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hIncrBy('Site:fail_login_ip_count', $user_ip, 1);
         if ($test_attempts >= config('security.max_login_attempts')) {
-            app()->site->banIp($user_ip);
+            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->banIp($user_ip);
         }
     }
 

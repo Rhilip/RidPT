@@ -55,19 +55,19 @@ class EditForm extends Validator
                     function ($cat) {
                         return $cat['id'];
                     },
-                    app()->site->ruleCanUsedCategory()
+                    \Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleCanUsedCategory()
                 )]]
             ],
             'descr' => 'required',
         ];
 
         // Add Quality Valid
-        foreach (app()->site->getQualityTableList() as $quality => $title) {
+        foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title) {
             $quality_id_list = [0];
             // IF enabled this quality field , then load it value list from setting
             // Else we just allow the default value 0 to prevent cheating
             if (config('torrent_upload.enable_quality_' . $quality)) {
-                foreach (app()->site->ruleQuality($quality) as $cat) {
+                foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality) as $cat) {
                     $quality_id_list[] = $cat['id'];
                 }
             }
@@ -81,7 +81,7 @@ class EditForm extends Validator
         // Add Team id Valid
         $team_id_list = [0];
         if (config('torrent_upload.enable_teams')) {
-            foreach (app()->site->ruleTeam() as $team) {
+            foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam() as $team) {
                 if (app()->auth->getCurUser()->getClass() >= $team['class_require']) {
                     $team_id_list[] = $team['id'];
                 }
@@ -232,7 +232,7 @@ class EditForm extends Validator
             $tags_list = array_slice($tags_list, 0, 10); // Get first 10 tags
 
             if (!config('torrent_upload.allow_new_custom_tags')) {
-                $rule_pinned_tags = array_keys(app()->site->rulePinnedTags());
+                $rule_pinned_tags = array_keys(\Rid\Helpers\ContainerHelper::getContainer()->get('site')->rulePinnedTags());
                 $tags_list = array_intersect($rule_pinned_tags, $tags_list);
             }
         }

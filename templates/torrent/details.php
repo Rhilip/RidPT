@@ -34,7 +34,7 @@ $torrent = $details->getTorrent();
                         <?php endif; ?>
 
                         <!-- Quality -->
-                        <?php foreach (app()->site->getQualityTableList() as $quality => $title): ?>
+                        <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title): ?>
                             <?php if (config('torrent_upload.enable_quality_' . $quality) && $torrent->getQuality($quality)) : ?>
                             <dt><?= $title ?></dt> <dd><?= $torrent->getQuality($quality)['name'] ?></dd>
                             <?php endif; ?>

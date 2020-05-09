@@ -228,10 +228,7 @@ abstract class AbstractServerCommand extends AbstractCommand
          */
         $this->server->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
             try {
-                // 执行请求
-                app()->request->setRequester($request);
-                app()->response->setResponder($response);
-                app()->run();
+                app()->run($request, $response);  // 执行请求
 
                 // 执行回调
                 $this->httpServerConfig['hook']['hook_request_success'] and call_user_func($this->httpServerConfig['hook']['hook_request_success'], $this->server, $request);
@@ -264,6 +261,10 @@ abstract class AbstractServerCommand extends AbstractCommand
             }
         }
 
+        /**
+         * Task Finish事件，
+         * 空调用，请使用 TaskHandlerInterface::finish() 方法覆写
+         */
         $this->server->on('finish', function (Server $server, int $taskID, $data) {
         });
     }

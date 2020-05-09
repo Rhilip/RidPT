@@ -65,10 +65,6 @@ return [
             'class' => Rid\Http\Error::class
         ],
 
-        'site' => [
-            'class' => App\Components\Site::class
-        ],
-
         'auth' => [
             'class' => App\Components\Auth::class
         ],

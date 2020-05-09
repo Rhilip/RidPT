@@ -3,27 +3,10 @@
 namespace Rid\Helpers;
 
 /**
- * PhpInfoHelper
+ * SystemInfoHelper
  */
 class SystemInfoHelper
 {
-
-    /** 是否为 CLI 模式
-     * @return bool
-     */
-    public static function isCli(): bool
-    {
-        return PHP_SAPI === 'cli';
-    }
-
-    /** 是否为 Win 系统
-     * @return bool
-     */
-    public static function isWin(): bool
-    {
-        return stripos(PHP_OS, 'WINNT') !== false;
-    }
-
     /**
      * 是否为 Mac 系统
      * @return bool

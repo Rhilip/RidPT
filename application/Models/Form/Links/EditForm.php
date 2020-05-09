@@ -79,11 +79,11 @@ class EditForm extends ApplyForm
     {
         if ((int) $this->link_id !== 0) {  // to edit exist links
             \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->update('links', $this->link_data_diff, [['id', '=', $this->link_id]])->execute();
-            app()->site->writeLog('The links data of ' . $this->link_old_data['name'] . '( ' . $this->link_old_data['url'] . ' ) is update by ' .
+            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog('The links data of ' . $this->link_old_data['name'] . '( ' . $this->link_old_data['url'] . ' ) is update by ' .
                 app()->auth->getCurUser()->getUsername() . '(' . app()->auth->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
         } else {  // to new a links
             \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->insert('links', $this->link_new_data)->execute();
-            app()->site->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
+            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
                 app()->auth->getCurUser()->getUsername() . '(' . app()->auth->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
         }
         \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:links');

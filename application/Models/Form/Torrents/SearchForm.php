@@ -30,12 +30,12 @@ class SearchForm extends Pagination
         $rules = ['page' => 'Integer', 'limit' => 'Integer'];
 
         // Quality
-        foreach (app()->site->getQualityTableList() as $quality => $title) {
+        foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title) {
             $quality_id_list = [];
             if (config('torrent_upload.enable_quality_' . $quality)) {
                 $quality_id_list = [0] + array_map(function ($cat) {
                     return $cat['id'];
-                }, app()->site->ruleQuality($quality));
+                }, \Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality));
             }
 
             $rules[$quality . '[*]'] = [
@@ -48,7 +48,7 @@ class SearchForm extends Pagination
         if (config('torrent_upload.enable_teams')) {
             $team_id_list = array_map(function ($team) {
                 return $team['id'];
-            }, app()->site->ruleTeam());
+            }, \Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam());
             $rules['team[*]'] = [
                 ['Integer'],
                 ['InList', ['list' => $team_id_list]]
@@ -98,7 +98,7 @@ class SearchForm extends Pagination
         $fields = [];
 
         // Quality
-        foreach (app()->site->getQualityTableList() as $quality => $title) {
+        foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title) {
             if (config('torrent_upload.enable_quality_' . $quality)) {
                 $value = $this->getInput($quality);
                 if (is_array($value)) {
@@ -179,6 +179,6 @@ class SearchForm extends Pagination
 
     protected function getRemoteData(): array
     {
-        return app()->site->getTorrentFactory()->getTorrentBySearch($this->getSearchField(), $this->offset, $this->limit);
+        return \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getTorrentFactory()->getTorrentBySearch($this->getSearchField(), $this->offset, $this->limit);
     }
 }

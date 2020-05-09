@@ -161,7 +161,7 @@ final class CronTabProcess extends Process
 
         foreach ($seeders as $seeder) {
             $bonus = $calculate->calculate($seeder);
-            app()->site->addBonus($seeder, $bonus, '+', 'seeding');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->addBonus($seeder, $bonus, '+', 'seeding');
         }
     }
 

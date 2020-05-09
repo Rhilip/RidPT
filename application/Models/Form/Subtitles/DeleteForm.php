@@ -57,11 +57,11 @@ class DeleteForm extends Validator
         // TODO Delete uploader bonus
 
         if ($this->subtitle['uppd_by'] != app()->auth->getCurUser()->getId()) {
-            app()->site->sendPM(0, $this->subtitle['uppd_by'], 'msg_your_sub_deleted', 'msg_deleted_your_sub');
+            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendPM(0, $this->subtitle['uppd_by'], 'msg_your_sub_deleted', 'msg_deleted_your_sub');
         }
 
         // TODO add user detail
-        app()->site->writeLog('Subtitle \'' . $this->subtitle['title'] . '\'(' . $this->subtitle['id'] .') was deleted by ' . app()->auth->getCurUser()->getUsername());
+        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog('Subtitle \'' . $this->subtitle['title'] . '\'(' . $this->subtitle['id'] .') was deleted by ' . app()->auth->getCurUser()->getUsername());
         \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::siteSubtitleSize);
     }
 }

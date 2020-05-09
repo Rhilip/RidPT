@@ -46,7 +46,7 @@ trait isValidTorrentTrait
             return;
         }
 
-        $this->torrent = app()->site->getTorrent($tid);
+        $this->torrent = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getTorrent($tid);
     }
 
     // TODO check user privilege to see deleted or banned torrent

@@ -83,9 +83,6 @@ class Response extends HttpFoundationResponse implements Base\StaticInstanceInte
         }
         $this->_isSent = true;
 
-        // 清扫组件容器
-        \Rid::app()->cleanComponents();
-
         // 设置Header和Cookies
         foreach ($this->headers->allPreserveCaseWithoutCookies() as $name => $values) {
             /** @var array $values */
@@ -108,7 +105,6 @@ class Response extends HttpFoundationResponse implements Base\StaticInstanceInte
         }
 
         $this->_responder->status($this->getStatusCode());
-
 
         if (!is_null($this->file)) {
             $this->_responder->sendFile($this->file->getRealPath());

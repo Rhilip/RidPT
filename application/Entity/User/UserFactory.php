@@ -10,26 +10,29 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
+use Rid\Component\Runtime;
+
 class UserFactory
 {
-    protected array $user_instances = [];
 
     public const mapUsernameToId = 'Map:hash:user_username_to_user_id';
     public const mapUserPasskeyToId = 'Map:zset:user_passkey_to_user_id';  // (double) 0 means invalid
     public const mapUserSessionToId = 'Map:zset:user_session_to_user_id';  // (double) 0 means invalid
 
-    public function cleanCache()
+    protected Runtime $runtime;
+
+    public function __construct(Runtime $runtime)
     {
-        $this->user_instances = [];
+        $this->runtime = $runtime;
     }
 
     public function getUserById($uid): User
     {
-        if (array_key_exists($uid, $this->user_instances)) {
-            $user = $this->user_instances[$uid];
+        if ($this->runtime->offsetExists('user_' . $uid)) {
+            $user = $this->runtime['user_' . $uid];
         } else {
             $user = new User($uid);
-            $this->user_instances[$uid] = $user;
+            $this->runtime->offsetSet('user_' . $uid, $user);
         }
         return $user;
     }

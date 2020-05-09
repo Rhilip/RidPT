@@ -138,7 +138,7 @@ class UserRegisterForm extends Validator
     protected function isMaxUserReached()
     {
         if (config('register.check_max_user') &&
-            app()->site::fetchUserCount() >= config('base.max_user')) {
+            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->fetchUserCount() >= config('base.max_user')) {
             $this->buildCallbackFailMsg('MaxUserReached', 'Max user limit Reached');
         }
     }
@@ -268,7 +268,7 @@ class UserRegisterForm extends Validator
          * so that He needn't email (or other way) to confirm his account ,
          * and can access the (super)admin panel to change site config .
          */
-        if (app()->site::fetchUserCount() == 0) {
+        if (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->fetchUserCount() == 0) {
             $this->status = UserStatus::CONFIRMED;
             $this->class = UserRole::STAFFLEADER;
             $this->confirm_way = 'auto';
@@ -302,10 +302,10 @@ class UserRegisterForm extends Validator
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 
-            $invitee = app()->site->getUser($this->invite_by);
+            $invitee = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($this->invite_by);
             $log_text .= '(Invite by ' . $invitee->getUsername() . '(' . $invitee->getId() . ')).';
 
-            app()->site->sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");
+            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");
         }
 
         // Send Confirm Email
@@ -319,7 +319,7 @@ class UserRegisterForm extends Validator
                     'action' => $this->_action
                 ]);
 
-            app()->site->sendEmail(
+            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendEmail(
                 [$this->email],
                 'Please confirm your accent',
                 'email/user_register',
@@ -331,6 +331,6 @@ class UserRegisterForm extends Validator
         }
 
         // Add Site log for user signup
-        app()->site->writeLog($log_text, LogLevel::LOG_LEVEL_MOD);
+        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog($log_text, LogLevel::LOG_LEVEL_MOD);
     }
 }

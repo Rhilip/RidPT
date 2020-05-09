@@ -17,7 +17,7 @@ namespace PHPSTORM_META {
         'pdo' => \Rid\Database\Persistent\PDOConnection::class,
         'session' => \Rid\Http\Session::class,
         'logger' => \Monolog\Logger::class,
-
+        'site' => \App\Components\Site::class,
 
         // 对象
         'captcha' => \Rid\Libraries\Captcha::class,

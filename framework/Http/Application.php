@@ -3,6 +3,7 @@
 namespace Rid\Http;
 
 use Rid\Base\Component;
+use Rid\Component\Runtime;
 use Rid\Helpers\ContainerHelper;
 use Rid\Utils\Text;
 
@@ -25,20 +26,29 @@ class Application extends \Rid\Base\Application
     public $middleware = [];
 
     // 执行功能
-    public function run()
+    public function run(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        $server = \Rid::app()->request->server->all();
+        $this->request->setRequester($request);
+        $this->response->setResponder($response);
+        $server = $this->request->server->all();
         $method = strtoupper($server['REQUEST_METHOD']);
         $action = empty($server['PATH_INFO']) ? '' : substr($server['PATH_INFO'], 1);
+
+        // 执行控制器并返回结果
         $content = $this->runAction($method, $action);
         if (is_array($content)) {
-            \Rid::app()->response->setJson($content);
+            $this->response->setJson($content);
         } else {
-            \Rid::app()->response->setContent($content);
+            $this->response->setContent($content);
         }
 
-        \Rid::app()->response->prepare(\Rid::app()->request);
-        \Rid::app()->response->send();
+        // 准备请求并发送
+        $this->response->prepare($this->request);
+        $this->response->send();
+
+        // 清扫组件容器
+        ContainerHelper::getContainer()->get(Runtime::class)->cleanContext();
+        $this->cleanComponents();
     }
 
     // 执行功能并返回
@@ -46,11 +56,11 @@ class Application extends \Rid\Base\Application
     {
         $action = "{$method} {$action}";
         // 路由匹配
-        $result = \Rid::app()->route->match($action);
+        $result = $this->route->match($action);
         foreach ($result as $item) {
             list($route, $queryParams) = $item;
             // 路由参数导入请求类
-            \Rid::app()->request->attributes->set('route', $queryParams);
+            $this->request->attributes->set('route', $queryParams);
             // 实例化控制器
             list($shortClass, $shortAction) = $route;
             $controllerDir    = \Rid\Helpers\FileSystemHelper::dirname($shortClass);
@@ -61,7 +71,7 @@ class Application extends \Rid\Base\Application
             $controllerAction = "action{$shortAction}";
             // 判断类是否存在
             if (class_exists($controllerClass)) {
-                $controllerInstance = ContainerHelper::getContainer()->make($controllerClass);
+                $controllerInstance = ContainerHelper::getContainer()->get($controllerClass);
                 // 判断方法是否存在
                 if (method_exists($controllerInstance, $controllerAction)) {
                     // 执行中间件
@@ -86,7 +96,7 @@ class Application extends \Rid\Base\Application
     {
         $item = array_shift($middleware);
         if (empty($item)) {
-            return call_user_func($callable);
+            return ContainerHelper::getContainer()->call($callable);
         }
         return $item->handle($callable, function () use ($callable, $middleware) {
             return $this->runMiddleware($callable, $middleware);

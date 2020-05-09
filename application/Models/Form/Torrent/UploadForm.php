@@ -281,7 +281,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
             throw $e;
         }
 
-        app()->site->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : app()->auth->getCurUser()->getUsername()));
+        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : app()->auth->getCurUser()->getUsername()));
     }
 
     // TODO update torrent status based on user class or their owned torrents count
