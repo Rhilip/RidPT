@@ -17,9 +17,9 @@ class Application
     public function __construct(array $config)
     {
         $this->config = $config;
-        // 快捷引用
-        \Rid::setApp($this);
+
         // 执行初始化回调
+        $this->initialize = $this->config['initialize'] ?? [];
         foreach ($this->initialize as $callback) {
             call_user_func($callback);
         }
@@ -34,5 +34,13 @@ class Application
         $container = $builder->build();
         ContainerHelper::setContainer($container);
         $this->container = $container;
+    }
+
+    /**
+     * @return Container|null
+     */
+    public function getContainer(): ?Container
+    {
+        return $this->container;
     }
 }

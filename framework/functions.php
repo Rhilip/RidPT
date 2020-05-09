@@ -6,12 +6,11 @@
 
 if (!function_exists('app')) {
     /** 返回当前 App 实例
-     * @param null $prefix
-     * @return \Rid\Http\Application
+     * @return \Rid\Base\Application
      */
-    function app($prefix = null)
+    function app()
     {
-        return \Rid::app($prefix);
+        return \Rid\Rid::getApp();
     }
 }
 
@@ -33,8 +32,7 @@ if (!function_exists('env')) {
 if (!function_exists('__')) {
     function __(string $string, array $avg = [], $domain = null, $lang = null)
     {
-        $i18n = \Rid\Helpers\ContainerHelper::getContainer()->get('i18n');
-        return $i18n->trans($string, $avg, $domain, $lang);
+        return \Rid\Helpers\ContainerHelper::getContainer()->get('i18n')->trans($string, $avg, $domain, $lang);
     }
 }
 

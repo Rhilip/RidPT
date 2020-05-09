@@ -56,7 +56,6 @@ class Application extends \Rid\Base\Application
         $action = "{$method} {$action}";
         // 路由匹配
         $result = $this->container->get('route')->match($action);
-        var_dump($result);
         foreach ($result as $item) {
             list($route, $queryParams) = $item;
             // 路由参数导入请求类
@@ -70,7 +69,6 @@ class Application extends \Rid\Base\Application
             $shortAction      = Text::toPascalName($shortAction);
             $controllerAction = "action{$shortAction}";
             // 判断类是否存在
-            var_dump($controllerClass);
             if (class_exists($controllerClass)) {
                 $controllerInstance = $this->container->get($controllerClass);
                 // 判断方法是否存在

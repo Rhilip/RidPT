@@ -62,7 +62,6 @@ class LinksController extends Controller
             }
         }
 
-
         $all_links = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("SELECT * FROM `links` ORDER BY FIELD(`status`,'enabled','pending','disabled'),`id` ASC")->queryAll();
 
         return $this->render('links/manage', ['links' => $all_links]);

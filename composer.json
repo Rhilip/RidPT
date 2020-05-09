@@ -48,7 +48,7 @@
     "symfony/translation": "^5.0"
   },
   "require-dev": {
-    "eaglewu/swoole-ide-helper": "dev-master"
+    "swoole/ide-helper": "@dev"
   },
   "config": {
     "preferred-install": "dist",
@@ -76,7 +76,6 @@
       "App\\": "application/"
     },
     "files": [
-      "framework/Rid.php",
       "framework/functions.php"
     ]
   },

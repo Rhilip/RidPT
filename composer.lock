@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2235b8a3f463d9d3e6093546303ed484",
+    "content-hash": "181098c39bec63a09e5080bbef08410e",
     "packages": [
         {
             "name": "adhocore/cron-expr",
@@ -1799,53 +1799,44 @@
     ],
     "packages-dev": [
         {
-            "name": "eaglewu/swoole-ide-helper",
-            "version": "dev-master",
+            "name": "swoole/ide-helper",
+            "version": "4.5.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/wudi/swoole-ide-helper.git",
-                "reference": "0f9ce52f83f9eba6ba00d5d17b964ab3e5e41e5a"
+                "url": "https://github.com/swoole/ide-helper.git",
+                "reference": "bfc9e789a6bf90775da9a3095e7877899deb6a2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wudi/swoole-ide-helper/zipball/0f9ce52f83f9eba6ba00d5d17b964ab3e5e41e5a",
-                "reference": "0f9ce52f83f9eba6ba00d5d17b964ab3e5e41e5a",
+                "url": "https://api.github.com/repos/swoole/ide-helper/zipball/bfc9e789a6bf90775da9a3095e7877899deb6a2d",
+                "reference": "bfc9e789a6bf90775da9a3095e7877899deb6a2d",
                 "shasum": ""
             },
-            "require": {
-                "php": ">=7.0"
+            "require-dev": {
+                "guzzlehttp/guzzle": "~6.5.0",
+                "squizlabs/php_codesniffer": "~3.5.0",
+                "symfony/filesystem": "~4.3.0",
+                "zendframework/zend-code": "~3.3.0"
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "MIT"
+                "Apache-2.0"
             ],
             "authors": [
                 {
-                    "name": "eagle",
-                    "email": "eaglewudi@gmail.com",
-                    "role": "lead"
+                    "name": "Team Swoole",
+                    "email": "team@swoole.com"
                 }
             ],
-            "description": "Swoole IDE Helper, to improve auto-completion",
-            "keywords": [
-                "autocomplete",
-                "codeintel",
-                "helper",
-                "ide",
-                "netbeans",
-                "phpdoc",
-                "phpstorm",
-                "sublime",
-                "swoole"
-            ],
-            "time": "2020-04-26T05:43:34+00:00"
+            "description": "IDE help files for Swoole.",
+            "time": "2020-04-26T18:12:57+00:00"
         }
     ],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "eaglewu/swoole-ide-helper": 20
+        "swoole/ide-helper": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

@@ -12,9 +12,9 @@ namespace App\Commands\Server;
 
 use App\Commands\AbstractCommand;
 
-use Rid\Helpers\ContainerHelper;
 use Rid\Http\Application;
 use Rid\Helpers\ProcessHelper;
+use Rid\Rid;
 use Rid\Swoole\Helper\ServerHelper;
 use Rid\Swoole\Memory;
 
@@ -29,6 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class AbstractServerCommand extends AbstractCommand
 {
     protected ?array $httpServerConfig = null;
+    protected ?array $applicationConfig = null;
 
     protected ?Server $server = null;
 
@@ -61,6 +62,7 @@ abstract class AbstractServerCommand extends AbstractCommand
     {
         $this->httpServerConfig = require RIDPT_ROOT . '/config/httpServer.php';
         $this->prepareServerRuntimeSetting($input);
+        $this->prepareApplicationConfig();
     }
 
     protected function prepareServerRuntimeSetting(InputInterface $input)
@@ -78,6 +80,11 @@ abstract class AbstractServerCommand extends AbstractCommand
         $this->httpServerConfig['settings']['daemonize'] = (int)$input->getOption('daemon');
     }
 
+    protected function prepareApplicationConfig()
+    {
+        $this->applicationConfig = require $this->httpServerConfig['configFile'];
+    }
+
     protected function prepareServer()
     {
         if ($pid = $this->getPid()) {
@@ -92,7 +99,7 @@ abstract class AbstractServerCommand extends AbstractCommand
         ServerHelper::setServer($this->server);
 
         // FIXME 增加自定义进程
-        $this->addCustomProcess();
+        $this->addUserProcess();
 
         Memory\TableManager::init($this->httpServerConfig['table']);  // 创建全局的 \Swoole\Table
         Memory\AtomicManager::init($this->httpServerConfig['atomic'] ?? []);  // 创建全局的 \Swoole\Atomic
@@ -181,7 +188,8 @@ abstract class AbstractServerCommand extends AbstractCommand
             }
 
             // 实例化App
-            $this->prepareApplication();
+            $app = new Application($this->applicationConfig);
+            Rid::setApp($app);
 
             if ($workerId == 0) {  // 将系统设置中的 Timer 添加到 worker #0 中
                 foreach ($this->httpServerConfig['timer'] as $timer_name => $timer_config) {
@@ -228,7 +236,7 @@ abstract class AbstractServerCommand extends AbstractCommand
          */
         $this->server->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
             try {
-                app()->run($request, $response);  // 执行请求
+                Rid::getApp()->run($request, $response);  // 执行请求
 
                 // 执行回调
                 $this->httpServerConfig['hook']['hook_request_success'] and call_user_func($this->httpServerConfig['hook']['hook_request_success'], $this->server, $request);
@@ -269,16 +277,7 @@ abstract class AbstractServerCommand extends AbstractCommand
         });
     }
 
-    protected function prepareApplication($components = null)
-    {
-        // FIXME 实例化App
-        $config = require $this->httpServerConfig['configFile'];
-        $app = new Application($config);
-
-
-    }
-
-    private function addCustomProcess()
+    private function addUserProcess()
     {
         foreach ($this->httpServerConfig['process'] as $process_name => $process_config) {
             $process_class = $process_config['class'];
@@ -289,7 +288,11 @@ abstract class AbstractServerCommand extends AbstractCommand
                         ProcessHelper::setTitle('rid-httpd: ' . $process_config['title']);
                     }
 
-                    $this->prepareApplication(array_flip($process_config['components']));
+                    // 实例化App
+                    $app = new Application($this->applicationConfig);
+                    Rid::setApp($app);
+
+                    // 启动userProcess
                     $custom_process->start($process_config);
                 });
 
