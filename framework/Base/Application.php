@@ -27,7 +27,8 @@ class Application
         $this->buildContainer();
     }
 
-    protected function buildContainer() {
+    protected function buildContainer()
+    {
         $builder = new \DI\ContainerBuilder();
         $builder->addDefinitions($this->config['components']);
 

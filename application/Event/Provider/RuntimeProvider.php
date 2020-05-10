@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Event\Provider;
 
-
 use App\Event\Listener\PDOListener;
 use App\Event\Listener\RedisListener;
 
@@ -20,15 +19,13 @@ use Rid\Swoole\Helper\ServerHelper;
 
 class RuntimeProvider implements ListenerProviderInterface
 {
-
     protected PDOListener $PDOListener;
     protected RedisListener $redisListener;
 
     public function __construct(
         PDOListener $PDOListener,
         RedisListener $redisListener
-    )
-    {
+    ) {
         $this->PDOListener = $PDOListener;
         $this->redisListener = $redisListener;
     }

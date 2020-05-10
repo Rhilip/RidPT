@@ -10,14 +10,12 @@ declare(strict_types=1);
 
 namespace App\Event\Listener;
 
-
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
 use Rid\Component\Runtime;
 
 class PDOListener extends AbstractListener
 {
-
     protected Runtime $runtime;
 
     public function __construct(Runtime $runtime)

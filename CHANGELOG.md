@@ -4,19 +4,25 @@
 ### Build
 - **Composer:** Switch dotenv library from `adhocore/cli` to `symfony/console` (bd1949a)
 - **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
+- **Swoole:** Change swoole-ide-helper library (430e41c)
 
 ### Feat
 - **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)
+- **DI:** Almost finish new DI with PHP-DI (c662b14)
+- **DI:** Move Error into DI (231cff7)
+- **DI:** Move Route,Site,Auth into DI (39945b4)
+- **DI:** Move Site Components into DI (e67b903)
+- **DI:** Move PDO,JWT,Crypt into DI (b8062b2)
+- **DI:** Move Config into DI (f837b48)
+- **DI:** Move Session into DI (4702ad3)
+- **DI:** Move Redis into DI (df04196)
+- **DI:** merge Component `i18n` into Container (591b052)
+- **DI:** merge Component `View` into Container (75f6edf)
 - **DI:** Add path info in container (1569795)
 - **DI:** Prepare replace component by PHP-DI (already mailer, logger) (73cc3f6)
 - **DI:** Prepare replace component by PHP-DI (a287244)
-- **DI:** merge Component `i18n` into Container (591b052)
-- **DI:** merge Component `View` into Container (75f6edf)
+- **DI:** Move Request，Response into DI (ebbdb8c)
 - **MemoryTable:** Use New `TableManager` to manager Swoole Table instead of hardcode (37cf209)
-- **Redis:** Move PDO,JWT,Crypt into DI (05d367d)
-- **Redis:** Move Config into DI (a4337b9)
-- **Redis:** Move Session into DI (09b4c3d)
-- **Redis:** Move Redis into DI (bd9c108)
 - **SwooleMemory:** Add `AtomicManager` (6190d60)
 
 ### Fix
@@ -27,8 +33,8 @@
 
 ### Perf
 - **Console:** Move HttpServer init to AbstractServerCommand (ce50f2d)
-- **Request:** Remove attr $start_at (85e0827)
-- **Request:** Remove attr $raw_files (8f08e3c)
+- **Request:** Remove attr $start_at (2086013)
+- **Request:** Remove attr $raw_files (1f749f3)
 
 ### Style
 - **Utils:** Combine `NameHelper` and `StringHelper` (85f311b)

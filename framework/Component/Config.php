@@ -9,7 +9,6 @@
 namespace Rid\Component;
 
 use Rid\Helpers\IoHelper;
-use Rid\Swoole\Helper\ServerHelper;
 use Rid\Swoole\Memory\TableManager;
 use Rid\Utils\Text;
 use Swoole\Table;
@@ -24,7 +23,7 @@ class Config
         // Get \Swoole\Table object From \Server, So that we can share same dynamic config
         $this->cacheTable = TableManager::get('config');
 
-        if ($this->cacheTable->count() == 0 && ServerHelper::getServer()->worker_id == 0) {
+        if ($this->cacheTable->count() == 0) {
             $configs = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `name`, `value`, `type` FROM `site_config`')->queryAll();
             foreach ($configs as $config) {
                 $this->load($config);

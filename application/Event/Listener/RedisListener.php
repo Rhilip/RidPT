@@ -10,14 +10,12 @@ declare(strict_types=1);
 
 namespace App\Event\Listener;
 
-
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
 use Rid\Component\Runtime;
 
 class RedisListener extends AbstractListener
 {
-
     protected Runtime $runtime;
 
     public function __construct(Runtime $runtime)
@@ -43,4 +41,3 @@ class RedisListener extends AbstractListener
         return implode(' ', $return);
     }
 }
-

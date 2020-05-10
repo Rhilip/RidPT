@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Request as HttpFoundationRequest;
  */
 class Request extends HttpFoundationRequest
 {
-
     protected \Swoole\Http\Request $_swoole_request;
 
     // 设置请求对象
