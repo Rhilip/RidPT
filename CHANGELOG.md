@@ -27,6 +27,7 @@
 
 ### Fix
 - **Captcha:** the captcha library's status not clean when re-generate (021212c)
+- **Config:** Table `config` not init value since construct may not in `worker [#0](https://github.com/Rhilip/ridpt/issues/0)` (ce87a51)
 - **Debug:** Add back debug info of Redis and PDO (ee28676)
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)

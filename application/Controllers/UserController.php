@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends Controller
 {
-
     public function details()
     {
         $panel = new User\UserDetailsForm();

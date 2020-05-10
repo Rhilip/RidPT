@@ -62,7 +62,7 @@ abstract class AbstractServerCommand extends AbstractCommand
     {
         $this->httpServerConfig = require RIDPT_ROOT . '/config/httpServer.php';
         $this->prepareServerRuntimeSetting($input);
-        $this->prepareApplicationConfig();
+        $this->applicationConfig = require $this->httpServerConfig['configFile'];
     }
 
     protected function prepareServerRuntimeSetting(InputInterface $input)
@@ -78,11 +78,6 @@ abstract class AbstractServerCommand extends AbstractCommand
             $this->httpServerConfig['settings']['max_request'] = 1;
         }
         $this->httpServerConfig['settings']['daemonize'] = (int)$input->getOption('daemon');
-    }
-
-    protected function prepareApplicationConfig()
-    {
-        $this->applicationConfig = require $this->httpServerConfig['configFile'];
     }
 
     protected function prepareServer()
@@ -119,7 +114,7 @@ abstract class AbstractServerCommand extends AbstractCommand
             ['[System]'],
             ['System      Name      ', defined('PHP_OS_FAMILY') ? PHP_OS_FAMILY : PHP_OS],
             ['CPU         Cores     ', swoole_cpu_num()],
-            ['Disk        (Free/Total)', round(@disk_free_space('.') / (1024*1024*1024), 3). ' GB / ' . round(@disk_total_space('.') / (1024*1024*1024), 3). ' GB'],
+            ['Disk        (Free/Total)', round(@disk_free_space('.') / (1024 * 1024 * 1024), 3) . ' GB / ' . round(@disk_total_space('.') / (1024 * 1024 * 1024), 3) . ' GB'],
             ['Network               ', implode(',', swoole_get_local_ip())],
             ['[Project]'],
             ['PHP         Version   ', PHP_VERSION],
@@ -241,6 +236,7 @@ abstract class AbstractServerCommand extends AbstractCommand
                 // 执行回调
                 $this->httpServerConfig['hook']['hook_request_success'] and call_user_func($this->httpServerConfig['hook']['hook_request_success'], $this->server, $request);
             } catch (\Throwable $e) {
+                // FIXME we should catch 404 or 405 inside of application->run()
                 \Rid\Helpers\ContainerHelper::getContainer()->get('error')->handleException($e);
                 // 执行回调
                 $this->httpServerConfig['hook']['hook_request_error'] and call_user_func($this->httpServerConfig['hook']['hook_request_error'], $this->server, $request);

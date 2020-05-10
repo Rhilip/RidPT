@@ -12,7 +12,6 @@ use FastRoute\Dispatcher;
  */
 class Application extends \Rid\Base\Application
 {
-
     protected Dispatcher $dispatcher;
 
     public function __construct(array $config)
@@ -23,9 +22,8 @@ class Application extends \Rid\Base\Application
 
     protected function createRouteDispatcher()
     {
-        $route = require RIDPT_ROOT . '/config/route.php';
         // TODO replace by cachedDispatcher
-        $this->dispatcher = \FastRoute\simpleDispatcher($route, [
+        $this->dispatcher = \FastRoute\simpleDispatcher($this->config['routes'], [
             'routeCollector' => \Rid\Http\Route\RouteCollector::class,
         ]);
     }
@@ -57,9 +55,7 @@ class Application extends \Rid\Base\Application
     public function runAction($method, $path)
     {
         // 路由匹配
-        var_dump($method, $path);
         $routeInfo = $this->dispatcher->dispatch($method, $path);
-        var_dump($routeInfo);
         switch ($routeInfo[0]) {
             case Dispatcher::FOUND:
                 $handler = $routeInfo[1];
@@ -68,11 +64,10 @@ class Application extends \Rid\Base\Application
                 $this->container->get('request')->attributes->set('route', $vars);
 
                 // 执行中间件和控制器，并返回结果
-                return $this->runMiddleware([$handler[0], $handler[1]], $handler['middlewares']);
-
+                return $this->runWithMiddleware([$handler[0], $handler[1]], $handler['middlewares']);
             case Dispatcher::METHOD_NOT_ALLOWED:
                 $allowedMethods = $routeInfo[1];
-                throw new \Rid\Exceptions\NotFoundException('Not Found (#404)');
+                throw new \Rid\Exceptions\NotFoundException('METHOD NOT ALLOWED (#405)');
                 break;
             case Dispatcher::NOT_FOUND:
             default:
@@ -82,7 +77,7 @@ class Application extends \Rid\Base\Application
     }
 
     // 执行中间件
-    protected function runMiddleware($callable, $middleware)
+    protected function runWithMiddleware($callable, $middleware)
     {
         $middleware_class = array_shift($middleware);
         if (null === $middleware_class) {
@@ -93,7 +88,7 @@ class Application extends \Rid\Base\Application
 
         $item = $this->container->make($middleware_class);
         return $item->handle($callable, function () use ($callable, $middleware) {
-            return $this->runMiddleware($callable, $middleware);
+            return $this->runWithMiddleware($callable, $middleware);
         });
     }
 }
