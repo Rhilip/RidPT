@@ -33,9 +33,9 @@ class Runtime implements \ArrayAccess
         return isset($this->context[$offset]);
     }
 
-    public function offsetGet($offset)
+    public function &offsetGet($offset)
     {
-        return isset($this->context[$offset]) ? $this->context[$offset] : null;
+        return $this->context[$offset];
     }
 
     public function offsetSet($offset, $value)

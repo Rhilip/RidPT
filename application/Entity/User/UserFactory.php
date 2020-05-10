@@ -27,13 +27,12 @@ class UserFactory
 
     public function getUserById($uid): User
     {
-        if ($this->runtime->offsetExists('user_' . $uid)) {
-            $user = $this->runtime['user_' . $uid];
-        } else {
+        if (!isset($this->runtime['user'][$uid])) {
             $user = new User($uid);
-            $this->runtime->offsetSet('user_' . $uid, $user);
+            $this->runtime['user'][$uid] = $user;
         }
-        return $user;
+
+        return $this->runtime['user'][$uid];
     }
 
     public function getUserIdBySession($session): int

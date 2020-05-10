@@ -23,6 +23,7 @@ namespace PHPSTORM_META {
         'route' => \Rid\Http\Route::class,
         'request' => \Rid\Http\Message\Request::class,
         'response' => \Rid\Http\Message\Response::class,
+        'runtime' => \Rid\Component\Runtime::class,
         // 对象
         'captcha' => \Rid\Libraries\Captcha::class,
         'jwt' => \Rid\Libraries\JWT::class,

@@ -375,7 +375,7 @@ jQuery(document).ready(function () {
             custom: function () {
                 let ret = '';
                 let parsed_sql_data = JSON.parse(_sql_data.replace(/\n/g, ' ').replace(/ {2,}/g, ' ') || '[]');
-                let parsed_redis_data = JSON.parse(_redis_data || '{}');
+                let parsed_redis_data = JSON.parse(_redis_data || '[]');
                 ret += '<b>SQL query list:</b><ul>';
                 $.each(parsed_sql_data, function (i, v) {
                     ret += `<li><code>${v}</code></li>`;
@@ -383,7 +383,7 @@ jQuery(document).ready(function () {
                 ret += '</ul>';
                 ret += '<b>Redis keys hit: (Some keys hit may not appear here)</b><ul>';
                 $.each(parsed_redis_data, function (k, v) {
-                    ret += '<li><code>' + k + "</code> : " + v + '</li>';
+                    ret += `<li><code>${v}</code></li>`;
                 });
                 ret += '</ul>';
                 return ret;

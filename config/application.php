@@ -125,8 +125,11 @@ return [
         'jwt' => \DI\get(\Rid\Libraries\JWT::class),
         'emitter' => \DI\get(\League\Event\Emitter::class),
 
+        'runtime' => \DI\get(\Rid\Component\Runtime::class),
+
         // 定义组件依赖
-        \League\Event\Emitter::class => \DI\create(),  // FIXME add listener
+        \League\Event\Emitter::class => \DI\create()
+            ->method('useListenerProvider', \DI\autowire(App\Event\Provider\RuntimeProvider::class)),
 
         \League\Plates\Engine::class => \DI\create()
             ->constructor(DI\get('path.templates'))
