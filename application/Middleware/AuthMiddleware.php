@@ -24,8 +24,7 @@ class AuthMiddleware extends AbstractMiddleware
     /** @noinspection PhpUnused */
     public function handle($callable, \Closure $next)
     {
-        list($controller, $action) = $callable;
-        $controllerName = get_class($controller);
+        list($controllerName, $action) = $callable;
 
         // Try auth by cookies first
         $curuser = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser('cookies', true);

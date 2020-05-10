@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ManageController extends Controller
 {
-    public function actionCategories()
+    public function categories()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'cat_edit') {

@@ -19,7 +19,7 @@ namespace Rid\Component;
  * Class Runtime
  * @package Rid\Component
  */
-class Runtime implements \ArrayAccess
+class Context implements \ArrayAccess
 {
     private array $context = [];
 

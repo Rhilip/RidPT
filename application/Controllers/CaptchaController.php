@@ -12,7 +12,7 @@ use Rid\Http\Controller;
 
 class CaptchaController extends Controller
 {
-    public function actionIndex()
+    public function index()
     {
         \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Content-Type', 'image/png');
         $captcha = $this->container->get('captcha');

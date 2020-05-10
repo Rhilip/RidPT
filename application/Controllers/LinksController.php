@@ -14,12 +14,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 class LinksController extends Controller
 {
-    public function actionIndex()
-    {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/links/manage', 301);
-    }
-
-    public function actionApply()
+    /** @noinspection PhpUnused */
+    public function apply()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $form = new Links\ApplyForm();
@@ -36,7 +32,8 @@ class LinksController extends Controller
         return $this->render('links/apply');
     }
 
-    public function actionManage()
+    /** @noinspection PhpUnused */
+    public function manager()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'link_edit') {

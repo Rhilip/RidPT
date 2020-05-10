@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
-use Rid\Component\Runtime;
+use Rid\Component\Context;
 
 class UserFactory
 {
@@ -18,9 +18,9 @@ class UserFactory
     public const mapUserPasskeyToId = 'Map:zset:user_passkey_to_user_id';  // (double) 0 means invalid
     public const mapUserSessionToId = 'Map:zset:user_session_to_user_id';  // (double) 0 means invalid
 
-    protected Runtime $runtime;
+    protected Context $runtime;
 
-    public function __construct(Runtime $runtime)
+    public function __construct(Context $runtime)
     {
         $this->runtime = $runtime;
     }

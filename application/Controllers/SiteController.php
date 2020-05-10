@@ -13,12 +13,12 @@ use Rid\Http\Controller;
 
 class SiteController extends Controller
 {
-    public function actionRules()
+    public function rules()
     {
         return $this->render('site/rules');
     }
 
-    public function actionLogs()
+    public function logs()
     {
         $logs = new Site\Logs();
         $logs->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());

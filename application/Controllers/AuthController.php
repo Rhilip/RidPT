@@ -18,7 +18,7 @@ class AuthController extends Controller
 {
 
     /** @noinspection PhpUnused */
-    public function actionRegister()
+    public function register()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $register_form = new Auth\UserRegisterForm();
@@ -47,7 +47,7 @@ class AuthController extends Controller
     }
 
     /** @noinspection PhpUnused */
-    public function actionConfirm()
+    public function confirm()
     {
         $confirm = new Auth\UserConfirmForm();
         $confirm->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -67,7 +67,7 @@ class AuthController extends Controller
     }
 
     /** @noinspection PhpUnused */
-    public function actionRecover()
+    public function recover()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $form = new Auth\UserRecoverForm();
@@ -95,7 +95,7 @@ class AuthController extends Controller
     }
 
     /** @noinspection PhpUnused */
-    public function actionLogin()
+    public function login()
     {
         $render_data = [];
 
@@ -104,7 +104,7 @@ class AuthController extends Controller
             $login->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
             if (false === $success = $login->validate()) {
                 $login->loginFail();
-                $render_data['error_msg'] =  $login->getError();
+                $render_data['error_msg'] = $login->getError();
             } else {
                 $login->flush();
 
@@ -118,7 +118,7 @@ class AuthController extends Controller
     }
 
     /** @noinspection PhpUnused */
-    public function actionLogout()
+    public function logout()
     {
         $logout = new Auth\UserLogoutForm();
         $logout->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());

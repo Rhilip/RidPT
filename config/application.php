@@ -19,7 +19,13 @@ return [
 
     // 组件配置
     'components' => [
-        // 定义路径
+        // 定义 应用状态
+        'app.env' => \DI\env('APP_ENV'),
+        'app.debug' => \DI\env('APP_DEBUG'),
+        'app.secret_key' => \DI\env('APP_SECRET_KEY'),
+        'app.secret_iv' => \DI\env('APP_SECRET_IV'),
+
+        // 定义 路径
         'path.root' => RIDPT_ROOT,
         'path.config' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'config'),
         'path.public' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'public'),
@@ -48,17 +54,10 @@ return [
             ->property('from', \DI\env('MAILER_FROM'))
             ->property('fromname', \DI\env('MAILER_FROMNAME')),
 
-        'pdo' => \DI\autowire(\Rid\Database\Persistent\PDOConnection::class)
-            ->property('dsn', \DI\env('DATABASE_DSN'))
-            ->property('username', \DI\env('DATABASE_USERNAME'))
-            ->property('password', \DI\env('DATABASE_PASSWORD'))
-            ->property('options', [
-                \PDO::ATTR_EMULATE_PREPARES => false,
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-            ]),
+        'pdo' => \DI\get(\Rid\Database\Persistent\PDOConnection::class),
+        'redis' => \DI\get(\Rid\Redis\BaseRedisConnection::class),
 
-        'redis' => \DI\autowire(\Rid\Redis\BaseRedisConnection::class)
+        \Rid\Redis\BaseRedisConnection::class => \DI\autowire()
             ->property('host', \DI\env('REDIS_HOST'))
             ->property('port', \DI\env('REDIS_PORT'))
             ->property('password', \DI\env('REDIS_PASSWORD'))
@@ -69,28 +68,15 @@ return [
             ])
             ->method('connectRedis'),
 
-        'route' => \DI\autowire(\Rid\Http\Route::class)
-            ->property('defaultPattern', '[\w-]+')
-            ->property('patterns', [
-                'id' => '\d+'
-            ])
-            ->property('rules', [
-                'GET tracker/{tracker_action}' => ['tracker', 'index'],
-                'GET captcha' => ['captcha', 'index'],
-                'GET maintenance' => ['maintenance', 'index'],
-
-                // API version 1
-                'api/v1/{controller}/{action}' => ['Api/v1/{controller}', '{action}', 'middleware' => [
-                    App\Middleware\ApiMiddleware::class,
-                    App\Middleware\AuthMiddleware::class
-                ]],
-
-                // Web view
-                '{controller}/{action}' => ['{controller}', '{action}', 'middleware' => [
-                    App\Middleware\AuthMiddleware::class
-                ]],
-            ])
-            ->method('initialize'),
+        \Rid\Database\Persistent\PDOConnection::class => \DI\autowire()
+            ->property('dsn', \DI\env('DATABASE_DSN'))
+            ->property('username', \DI\env('DATABASE_USERNAME'))
+            ->property('password', \DI\env('DATABASE_PASSWORD'))
+            ->property('options', [
+                \PDO::ATTR_EMULATE_PREPARES => false,
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+            ]),
 
 
         'session' => \DI\autowire(\Rid\Http\Session::class)
@@ -125,7 +111,7 @@ return [
         'jwt' => \DI\get(\Rid\Libraries\JWT::class),
         'emitter' => \DI\get(\League\Event\Emitter::class),
 
-        'runtime' => \DI\get(\Rid\Component\Runtime::class),
+        'runtime' => \DI\get(\Rid\Component\Context::class),
 
         // 定义组件依赖
         \League\Event\Emitter::class => \DI\create()
@@ -174,10 +160,10 @@ return [
             ->property('yRand', [5, 15]),
 
         \Rid\Libraries\JWT::class => \DI\create()
-            ->constructor(\DI\env('APP_SECRET_KEY'), ['HS256']),
+            ->constructor(\DI\get('app.secret_key'), ['HS256']),
 
         \Rid\Libraries\Crypt::class => \DI\create()
-            ->constructor(\DI\env('APP_SECRET_KEY'), \DI\env('APP_SECRET_IV'), 'AES-256-CBC')
+            ->constructor(\DI\get('app.secret_key'), \DI\get('app.secret_iv'), 'AES-256-CBC')
 
     ],
 ];

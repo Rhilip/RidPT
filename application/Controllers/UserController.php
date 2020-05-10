@@ -15,17 +15,24 @@ use Symfony\Component\HttpFoundation\Request;
 
 class UserController extends Controller
 {
-    public function actionIndex()
+
+    public function details()
     {
-        return $this->actionDetails();
+        $panel = new User\UserDetailsForm();
+        $panel->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
+        if (!$panel->validate()) {
+            return $this->render('action/fail', ['msg' => $panel->getError()]);
+        }
+
+        return $this->render('user/details', ['details' => $panel]);
     }
 
-    public function actionSetting()
+    public function setting()
     {
         return $this->render('user/setting');
     }
 
-    public function actionInvite()
+    public function invite()
     {
         $msg = '';
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
@@ -66,18 +73,7 @@ class UserController extends Controller
     }
 
 
-    public function actionDetails()
-    {
-        $panel = new User\UserDetailsForm();
-        $panel->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
-        if (!$panel->validate()) {
-            return $this->render('action/fail', ['msg' => $panel->getError()]);
-        }
-
-        return $this->render('user/details', ['details' => $panel]);
-    }
-
-    public function actionSessions()
+    public function sessions()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $action = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action');  // FIXME

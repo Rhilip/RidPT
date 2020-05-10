@@ -2,8 +2,9 @@
 
 namespace Rid\Http;
 
-use Rid\Component\Runtime;
-use Rid\Utils\Text;
+use Rid\Component\Context;
+
+use FastRoute\Dispatcher;
 
 /**
  * App类
@@ -12,17 +13,21 @@ use Rid\Utils\Text;
 class Application extends \Rid\Base\Application
 {
 
-    // 控制器命名空间
-    public $controllerNamespace = '';
-
-    // 全局中间件
-    public $middleware = [];
+    protected Dispatcher $dispatcher;
 
     public function __construct(array $config)
     {
         parent::__construct($config);
-        $this->controllerNamespace = $config['controllerNamespace'];  // FIXME
-        $this->middleware = $config['middleware'];
+        $this->createRouteDispatcher();
+    }
+
+    protected function createRouteDispatcher()
+    {
+        $route = require RIDPT_ROOT . '/config/route.php';
+        // TODO replace by cachedDispatcher
+        $this->dispatcher = \FastRoute\simpleDispatcher($route, [
+            'routeCollector' => \Rid\Http\Route\RouteCollector::class,
+        ]);
     }
 
     // 执行功能
@@ -31,11 +36,9 @@ class Application extends \Rid\Base\Application
         $this->container->get('request')->setRequester($request);
         $this->container->get('response')->setResponder($response);
         $server = $this->container->get('request')->server->all();
-        $method = strtoupper($server['REQUEST_METHOD']);
-        $action = empty($server['PATH_INFO']) ? '' : substr($server['PATH_INFO'], 1);
 
         // 执行控制器并返回结果
-        $content = $this->runAction($method, $action);
+        $content = $this->runAction(strtoupper($server['REQUEST_METHOD']), $server['PATH_INFO']);
         if (is_array($content)) {
             $this->container->get('response')->setJson($content);
         } else {
@@ -47,68 +50,50 @@ class Application extends \Rid\Base\Application
         $this->container->get('response')->send();
 
         // 清扫Runtime组件容器
-        $this->container->get(Runtime::class)->cleanContext();
+        $this->container->get(Context::class)->cleanContext();
     }
 
     // 执行功能并返回
-    public function runAction($method, $action)
+    public function runAction($method, $path)
     {
-        $action = "{$method} {$action}";
         // 路由匹配
-        $result = $this->container->get('route')->match($action);
-        foreach ($result as $item) {
-            list($route, $queryParams) = $item;
-            // 路由参数导入请求类
-            $this->container->get('request')->attributes->set('route', $queryParams);
-            // 实例化控制器
-            list($shortClass, $shortAction) = $route;
-            $controllerDir    = \Rid\Helpers\FileSystemHelper::dirname($shortClass);
-            $controllerDir    = $controllerDir == '.' ? '' : "$controllerDir\\";
-            $controllerName   = Text::toPascalName(\Rid\Helpers\FileSystemHelper::basename($shortClass));
-            $controllerClass  = "{$this->controllerNamespace}\\{$controllerDir}{$controllerName}Controller";
-            $shortAction      = Text::toPascalName($shortAction);
-            $controllerAction = "action{$shortAction}";
-            // 判断类是否存在
-            if (class_exists($controllerClass)) {
-                $controllerInstance = $this->container->get($controllerClass);
-                // 判断方法是否存在
-                if (method_exists($controllerInstance, $controllerAction)) {
-                    // 执行中间件
-                    $middleware = $this->newMiddlewareInstance($route['middleware']);
-                    if (!empty($middleware)) {
-                        return $this->runMiddleware([$controllerInstance, $controllerAction], $middleware);
-                    }
-                    // 直接返回执行结果
-                    return $controllerInstance->$controllerAction();
-                }
-            }
-            // 不带路由参数的路由规则找不到时，直接抛出错误
-            if (empty($queryParams)) {
+        var_dump($method, $path);
+        $routeInfo = $this->dispatcher->dispatch($method, $path);
+        var_dump($routeInfo);
+        switch ($routeInfo[0]) {
+            case Dispatcher::FOUND:
+                $handler = $routeInfo[1];
+                $vars = $routeInfo[2];
+
+                $this->container->get('request')->attributes->set('route', $vars);
+
+                // 执行中间件和控制器，并返回结果
+                return $this->runMiddleware([$handler[0], $handler[1]], $handler['middlewares']);
+
+            case Dispatcher::METHOD_NOT_ALLOWED:
+                $allowedMethods = $routeInfo[1];
+                throw new \Rid\Exceptions\NotFoundException('Not Found (#404)');
                 break;
-            }
+            case Dispatcher::NOT_FOUND:
+            default:
+                throw new \Rid\Exceptions\NotFoundException('Not Found (#404)');
+                break;
         }
-        throw new \Rid\Exceptions\NotFoundException('Not Found (#404)');
     }
 
     // 执行中间件
     protected function runMiddleware($callable, $middleware)
     {
-        $item = array_shift($middleware);
-        if (empty($item)) {
-            return $this->container->call($callable);
+        $middleware_class = array_shift($middleware);
+        if (null === $middleware_class) {
+            // Create the controller
+            $controllerObject = $this->container->make($callable[0]);
+            return $this->container->call([$controllerObject, $callable[1]]);
         }
+
+        $item = $this->container->make($middleware_class);
         return $item->handle($callable, function () use ($callable, $middleware) {
             return $this->runMiddleware($callable, $middleware);
         });
-    }
-
-    // 实例化中间件
-    protected function newMiddlewareInstance($routeMiddleware)
-    {
-        $middleware = [];
-        foreach (array_merge($this->middleware, $routeMiddleware) as $key => $class) {
-            $middleware[$key] = $this->container->make($class);
-        }
-        return $middleware;
     }
 }

@@ -12,25 +12,12 @@ use Rid\Http\Controller;
 
 class AdminController extends Controller
 {
-    public function actionIndex()
+    public function index()
     {
         return $this->render('admin/index');
     }
 
-    public function actionService()
-    {
-        $provider = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('provider');
-        switch (strtolower($provider)) {
-            case 'mysql':
-                return $this->infoMysql();
-            case 'redis':
-                return $this->infoRedis();
-            default:
-                return $this->render('action/fail', ['title' => 'Not Support Action', 'msg' => 'not support']);
-        }
-    }
-
-    private function infoRedis()
+    public function redis()
     {
         $info = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->info();
         $dbsize = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->dbSize();
@@ -46,7 +33,7 @@ class AdminController extends Controller
         return $this->render('admin/redis_status', ['info' => $info, 'dbsize' => $dbsize, 'cmdstat' => $cmdstat]);
     }
 
-    private function infoMysql()
+    public function mysql()
     {
         $res = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SHOW GLOBAL STATUS')->queryAll();
         $serverStatus = array_column($res, 'Value', 'Variable_name');

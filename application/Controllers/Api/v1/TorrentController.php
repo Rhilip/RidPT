@@ -10,74 +10,62 @@ namespace App\Controllers\Api\v1;
 
 use App\Models\Api\v1\Form\TorrentsForm;
 
-class TorrentController extends ApiController
+class TorrentController
 {
-    public function actionBookmark()
+    public function bookmark()
     {
-        if ($this->checkMethod('POST')) {
-            $bookmark = new TorrentsForm();
-            $bookmark->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
-            $success = $bookmark->validate();
-            if (!$success) {
-                return [
-                    'success' => false,
-                    'errors' => $bookmark->getErrors()
-                ];
-            } else {
-                $ret = $bookmark->updateRecord();
-                return array_merge(
-                    ['success' => true],
-                    $ret
-                );
-            }
+        $bookmark = new TorrentsForm();
+        $bookmark->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+        $success = $bookmark->validate();
+        if (!$success) {
+            return [
+                'success' => false,
+                'errors' => $bookmark->getErrors()
+            ];
         } else {
-            return $this->buildMethodFailMsg('POST');
+            $ret = $bookmark->updateRecord();
+            return array_merge(
+                ['success' => true],
+                $ret
+            );
         }
     }
 
-    public function actionFileList()
+    public function fileList()
     {
-        if ($this->checkMethod('GET')) {
-            $filelist = new TorrentsForm();
-            $filelist->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
-            $success = $filelist->validate();
-            if (!$success) {
-                return [
-                    'success' => false,
-                    'errors' => $filelist->getErrors()
-                ];
-            } else {
-                $ret = $filelist->getFileList();
-                return array_merge(
-                    ['success' => true],
-                    $ret
-                );
-            }
+        $filelist = new TorrentsForm();
+        $filelist->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
+        $success = $filelist->validate();
+        if (!$success) {
+            return [
+                'success' => false,
+                'errors' => $filelist->getErrors()
+            ];
         } else {
-            return $this->buildMethodFailMsg('GET');
+            $ret = $filelist->getFileList();
+            return array_merge(
+                ['success' => true],
+                $ret
+            );
         }
     }
 
-    public function actionNfoFileContent()
+    public function nfoFileContent()
     {
-        if ($this->checkMethod('GET')) {
-            $filelist = new TorrentsForm();
-            $filelist->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
-            $success = $filelist->validate();
-            if (!$success) {
-                return [
-                    'success' => false,
-                    'errors' => $filelist->getErrors()
-                ];
-            } else {
-                $ret = $filelist->getNfoFileContent();
-                return array_merge(
-                    ['success' => true],
-                    $ret
-                );
-            }
+        $filelist = new TorrentsForm();
+        $filelist->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
+        $success = $filelist->validate();
+        if (!$success) {
+            return [
+                'success' => false,
+                'errors' => $filelist->getErrors()
+            ];
         } else {
-            return $this->buildMethodFailMsg('GET');
+            $ret = $filelist->getNfoFileContent();
+            return array_merge(
+                ['success' => true],
+                $ret
+            );
         }
     }
 }

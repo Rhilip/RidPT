@@ -14,7 +14,7 @@ use Rid\Http\Controller;
 
 class RssController extends Controller
 {
-    public function actionIndex()
+    public function index()
     {
         $feed = new FeedForm();
         if (false === $feed->validate()) {
@@ -25,7 +25,7 @@ class RssController extends Controller
         return $this->render('rss/feed', ['feed' => $feed]);
     }
 
-    public function actionGenerate()
+    public function generate()
     {
         // TODO
     }

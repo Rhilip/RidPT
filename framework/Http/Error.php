@@ -39,7 +39,7 @@ class Error
                     $message .= '$_SERVER' . substr(print_r(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->server->all() + \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->all(), true), 5);
                     $message .= '$_GET' . substr(print_r(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all(), true), 5);
                     $message .= '$_POST' . substr(print_r(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all(), true), 5, -1);
-                    $message .= 'Memory used: ' . memory_get_usage();
+                    $message .= PHP_EOL . 'Memory used: ' . memory_get_usage();
                     IoHelper::getIo()->error($message);
                     ContainerHelper::getContainer()->get('logger')->error($message);
                 }

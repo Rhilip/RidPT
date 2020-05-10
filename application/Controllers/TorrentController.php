@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class TorrentController extends Controller
 {
-    public function actionUpload()
+    public function upload()
     {
         // TODO Check user upload pos
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
@@ -40,7 +40,7 @@ class TorrentController extends Controller
         }
     }
 
-    public function actionDetails()
+    public function details()
     {
         $details = new Torrent\DetailsForm();
         $details->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -52,7 +52,7 @@ class TorrentController extends Controller
         return $this->render('torrent/details', ['details' => $details]);
     }
 
-    public function actionEdit() // TODO
+    public function edit() // TODO
     {
         $edit = new Torrent\EditForm();
 
@@ -76,7 +76,7 @@ class TorrentController extends Controller
         }
     }
 
-    public function actionSnatch()
+    public function snatch()
     {
         $snatch = new Torrent\SnatchForm();
         $snatch->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -88,7 +88,7 @@ class TorrentController extends Controller
         return $this->render('torrent/snatch', ['snatch' => $snatch]);
     }
 
-    public function actionDownload()
+    public function download()
     {
         $downloader = new Torrent\DownloadForm();
         $downloader->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -100,7 +100,7 @@ class TorrentController extends Controller
         return $downloader->sendFileContentToClient();
     }
 
-    public function actionComments()
+    public function comments()
     {
         $comments = new Torrent\CommentsForm();
         $comments->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -112,7 +112,7 @@ class TorrentController extends Controller
         return $this->render('torrent/comments', ['comments' => $comments]);
     }
 
-    public function actionStructure()
+    public function structure()
     {
         $structure = new Torrent\StructureForm();
         $structure->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());

@@ -27,6 +27,7 @@
 
 ### Fix
 - **Captcha:** the captcha library's status not clean when re-generate (021212c)
+- **Debug:** Add back debug info of Redis and PDO (ee28676)
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)

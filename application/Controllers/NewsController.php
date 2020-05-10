@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class NewsController extends Controller
 {
-    public function actionIndex()
+    public function index()
     {
         $pager = new News\SearchForm();
         $pager->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -27,7 +27,7 @@ class NewsController extends Controller
         }
     }
 
-    public function actionNew()
+    public function new()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $newform = new News\EditForm();
@@ -45,7 +45,7 @@ class NewsController extends Controller
         return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
     }
 
-    public function actionEdit()
+    public function edit()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $newform = new News\EditForm();
@@ -68,7 +68,7 @@ class NewsController extends Controller
         return $this->render('action/fail', ['title' => 'Action Failed', 'msg' => 'action not allowed']);
     }
 
-    public function actionDelete()
+    public function delete()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_news')) {
             $id = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('id', 0);

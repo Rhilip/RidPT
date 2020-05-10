@@ -50,7 +50,7 @@ class TrackerController
     /**
      * @return string
      */
-    public function actionIndex()
+    public function index()
     {
         // Set Response Header ( Format, HTTP Cache )
         \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Content-Type', 'text/plain; charset=utf-8');
@@ -73,7 +73,7 @@ class TrackerController
 
             $this->blockClient();
 
-            $action = strtolower(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('route')['{tracker_action}']);
+            $action = strtolower(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('route')['action']);
             $this->checkUserAgent($action == 'scrape');
 
             $this->checkPasskey($userInfo);

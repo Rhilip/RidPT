@@ -12,7 +12,7 @@ use Rid\Http\Controller;
 
 class MaintenanceController extends Controller
 {
-    public function actionIndex()
+    public function index()
     {
         // Check if site is on maintenance status
         if (!config('base.maintenance')) {

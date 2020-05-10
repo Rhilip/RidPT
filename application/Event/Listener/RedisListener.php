@@ -12,13 +12,13 @@ namespace App\Event\Listener;
 
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
-use Rid\Component\Runtime;
+use Rid\Component\Context;
 
 class RedisListener extends AbstractListener
 {
-    protected Runtime $runtime;
+    protected Context $runtime;
 
-    public function __construct(Runtime $runtime)
+    public function __construct(Context $runtime)
     {
         $this->runtime = $runtime;
     }

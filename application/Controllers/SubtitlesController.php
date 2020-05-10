@@ -15,12 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class SubtitlesController extends Controller
 {
-    public function actionIndex()
-    {
-        return $this->actionSearch();
-    }
-
-    public function actionSearch($upload = null)
+    public function search($upload = null)
     {
         $search = new Subtitles\SearchForm();
         $search->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -30,7 +25,7 @@ class SubtitlesController extends Controller
         return $this->render('subtitles/search', ['search' => $search, 'upload_mode' => $upload]);
     }
 
-    public function actionUpload()
+    public function upload()
     {
         if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
             $upload = new Subtitles\UploadForm();
@@ -43,10 +38,10 @@ class SubtitlesController extends Controller
             }
         }
 
-        return $this->actionSearch(true);
+        return $this->search(true);
     }
 
-    public function actionDownload()
+    public function download()
     {
         $download = new Subtitles\DownloadForm();
         $download->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -57,7 +52,7 @@ class SubtitlesController extends Controller
         return $download->sendFileContentToClient();
     }
 
-    public function actionDelete()
+    public function delete()
     {
         $delete = new Subtitles\DeleteForm();
         $delete->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());

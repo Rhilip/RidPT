@@ -14,12 +14,7 @@ use Rid\Http\Controller;
 
 class TorrentsController extends Controller
 {
-    public function actionIndex()
-    {
-        return $this->actionSearch();
-    }
-
-    public function actionSearch()
+    public function search()
     {
         $search = new Torrents\SearchForm();
         $search->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
@@ -31,7 +26,7 @@ class TorrentsController extends Controller
         return $this->render('torrents/search', ['search' => $search]);
     }
 
-    public function actionTags()
+    public function tags()
     {
         $pager = new Torrents\TagsForm();
         $pager->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
