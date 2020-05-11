@@ -2,8 +2,6 @@
 
 namespace Rid\Validators;
 
-use Rid\Base\BaseObject;
-
 use ReflectionClass;
 use ReflectionProperty;
 use ReflectionException;

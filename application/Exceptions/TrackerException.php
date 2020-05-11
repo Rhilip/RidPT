@@ -12,11 +12,10 @@ use Throwable;
 
 class TrackerException extends \Exception
 {
-    protected $error_msg = [
+    protected array $error_msg = [
         // Error message of base Tracker system
         100 => 'This Tracker is not open now.',
-        101 => 'The Scrape extension for this tracker is not enabled.',
-        102 => 'The Announce extension for this tracker is not enabled.',
+        101 => 'The :extension extension for this tracker is not enabled.',
 
         // Error message about Requests ( Part.1 HTTP Method and Route )
         110 => 'Invalid request type: client request (:method) was not a HTTP GET.',
@@ -50,7 +49,6 @@ class TrackerException extends \Exception
         // Error message about Torrent
         150 => 'Torrent not registered with this tracker.',
         151 => 'You do not have permission to download a :status torrent.',
-        152 => 'The torrent status :status is not valid.',
 
         // Error message about Download Session
         160 => 'You cannot seed the same torrent from more than :count locations.',

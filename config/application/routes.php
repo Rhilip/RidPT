@@ -21,7 +21,10 @@ return function (RouteCollector $r) {
         $r->get('/maintenance', [\App\Controllers\MaintenanceController::class, 'index']);
 
         // FIXME Tracker部分
-        $r->get('/tracker/{action:(?:scrape|announce)}', [\App\Controllers\TrackerController::class, 'index']);
+        $r->addGroup('/tracker', function (RouteCollector $r) {
+            $r->get('/scrape', [\App\Controllers\Tracker\ScrapeController::class, 'index']);
+            $r->get('/announce', [\App\Controllers\Tracker\AnnounceController::class, 'index']);
+        });
 
         // Web访问部分
         $r->addMiddleware(\App\Middleware\AuthMiddleware::class, function (RouteCollector $r) {

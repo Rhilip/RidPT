@@ -43,7 +43,7 @@ Test Account Information:
         ```
     - Use `composer install` to install PHP dependency.
     - Use `bower install` to install our front-end dependency (like js,css,font)
-    - If you don't run RidPT apps in `root` user, you should give enough permission to `apps/{runtime,private}`.
+    - If you don't run RidPT apps in `root` user, you should give enough permission to `apps/{storage,var}`.
 
 3. Import Database Structure from our `migration/ridpt.sql`, and **disable Mysql strict mode `NO_ZERO_IN_DATE` and `NO_ZERO_DATE`**.
 
@@ -51,7 +51,7 @@ Test Account Information:
     mysql -u root -p < migration/ridpt.sql
     ```
  
-4. Then set your RidPT Project config (about APP, DATABASE, Redis, Mailer) in `.env`. The other config about site your can 
+4. Then set your RidPT Project config (about APP, DATABASE, Redis, Mailer) in `.env` (Or better `.env.local`). The other config about site your can 
 edit in Admin Panel.
 
     ```bash
@@ -89,11 +89,11 @@ edit in Admin Panel.
      ------------------------ ------------------------------------------------ 
     ```
 
-6. Then you can safely add Nginx reserve proxy config like `migration/nginx.conf`.And Notice : 
-If your service is behind the CDN like Cloudflare, You must follow [How do I restore original visitor IP with Nginx?](https://support.cloudflare.com/hc/en-us/articles/200170706-How-do-I-restore-original-visitor-IP-with-Nginx)
-So that tracker can record the peer's ip address.
+6. Then you can safely add Nginx reserve proxy config like `migration/nginx.conf`. And Notice : 
+If your service is behind the CDN like Cloudflare, You **MUST** follow [How do I restore original visitor IP with Nginx?](https://support.cloudflare.com/hc/en-us/articles/200170706-How-do-I-restore-original-visitor-IP-with-Nginx)
+So that tracker can correctly record the peer's ip address.
 
-7. Use the default `php bin/console server start -d` to let *RidPT* RUN in the background. Or you can use other daemon work like:
+7. Use the default `php bin/console server:start -d` to let *RidPT* RUN in the background. Or you can use other daemon work like:
     - Systemctl: [ridpt.service](migration/ridpt.service)
 
 ## Basie Environment Setting in `.env`
@@ -173,7 +173,7 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 
 | Library | Used As | Docs | 
 |:--|:--:|:--|
-| [MixPHP](https://github.com/mix-php/mix-framework/tree/v1) | Framework | <https://www.kancloud.cn/onanying/mixphp1/379324> ( Chinese Version ) |
+| [MixPHP v1](https://github.com/mix-php/mix-framework/tree/v1) | Framework | <https://www.kancloud.cn/onanying/mixphp1/379324> ( Chinese Version ) |
 | [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv) | phpdotenv | <https://github.com/vlucas/phpdotenv> |
 | [adhocore/cli](https://github.com/adhocore/php-cli) | Console Application | <https://github.com/adhocore/php-cli> |
 | [siriusphp/validation](https://github.com/siriusphp/validation) | Validator | <http://www.sirius.ro/php/sirius/validation/> |
@@ -182,7 +182,7 @@ Or you can join our chat group on Telegram -- [@ridpt](https://t.me/ridpt)
 
 ## Sponsor
 
-![](https://meihezi.cache.ejcdn.com/img/logos/header-light.png) [MeiHeZi](https://www.meihezi.com) For Demo Site Host Server
+![](https://meihezi.cache.ejcdn.com/img/logos/header-light0.png) [MeiHeZi](https://www.meihezi.com) For Demo Site Host Server
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FRhilip%2FRidPT.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FRhilip%2FRidPT?ref=badge_large)

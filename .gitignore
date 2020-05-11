@@ -1,6 +1,7 @@
 ### RidPT
 # Environment File
 .env
+.env.local
 !**/.gitkeep
 
 # Test File

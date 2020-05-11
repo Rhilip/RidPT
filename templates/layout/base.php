@@ -88,16 +88,20 @@ $extend_debug_info = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->
                 &copy; <a href="/" target="_self"><?= config('base.site_name') ?></a> 2019-2020 Powered by <a href="https://github.com/Rhilip/RidPT" target="_blank">RidPT</a>
             </p>
             <p class="debug-info">
+                <?php
+                $debug_pdo = \Rid\Helpers\ContainerHelper::getContainer()->get('runtime')['pdo'] ?? [];
+                $debug_redis = \Rid\Helpers\ContainerHelper::getContainer()->get('runtime')['redis'] ?? [];
+                ?>
                 [ Page created in <b><?= number_format(microtime(true) - \Rid\Helpers\ContainerHelper::getContainer()->get('request')->server->get('REQUEST_TIME_FLOAT'), 6) ?></b> sec
                 with <b><?= $this->e(memory_get_usage(), 'format_bytes') ?></b> ram used,
-                <b><?= count(\Rid\Helpers\ContainerHelper::getContainer()->get('runtime')['pdo']) ?></b> db queries,
-                <b><?= count(\Rid\Helpers\ContainerHelper::getContainer()->get('runtime')['redis']) ?></b> calls of Redis ]
+                <b><?= count($debug_pdo) ?></b> db queries,
+                <b><?= count($debug_redis) ?></b> calls of Redis ]
                 <?php if ($extend_debug_info): ?>
                     <a href="javascript:" id="extend_debug_info"><span class="label label-warning label-outline">Debug info</span></a>
                     <script>
                         const _extend_debug_info = true;
-                        const _sql_data = '<?= json_encode(\Rid\Helpers\ContainerHelper::getContainer()->get('runtime')['pdo'], JSON_HEX_APOS) ?>';
-                        const _redis_data = '<?= json_encode(\Rid\Helpers\ContainerHelper::getContainer()->get('runtime')['redis'], JSON_HEX_APOS) // FIXME?>';
+                        const _sql_data = '<?= json_encode($debug_pdo, JSON_HEX_APOS) ?>';
+                        const _redis_data = '<?= json_encode($debug_redis, JSON_HEX_APOS) ?>';
                     </script>
                 <?php endif; ?>
             </p>

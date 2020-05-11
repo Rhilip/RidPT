@@ -59,7 +59,7 @@ class Random
         $str = '';
         $chars_len = strlen($chars);
         for ($i = 0; $i < $length; $i++) {
-            $str .= $chars[mt_rand(0, $chars_len)];
+            $str .= $chars[mt_rand(0, $chars_len - 1)];
         }
         return $str;
     }
