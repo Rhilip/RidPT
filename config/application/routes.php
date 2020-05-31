@@ -43,7 +43,7 @@ return function (RouteCollector $r) {
             // 用户认证部分
             $r->addGroup('/auth', function (RouteCollector $r) {
                 $r->addRoute(['GET', 'POST'], '/login', [\App\Controllers\AuthController::class, 'login']);
-                $r->get( '/logout', [\App\Controllers\AuthController::class, 'logout']);
+                $r->get('/logout', [\App\Controllers\AuthController::class, 'logout']);
                 $r->addRoute(['GET', 'POST'], '/recover', [\App\Controllers\AuthController::class, 'recover']);
                 $r->get('/confirm', [\App\Controllers\AuthController::class, 'confirm']);
                 $r->addRoute(['GET', 'POST'], '/register', [\App\Controllers\AuthController::class, 'register']);

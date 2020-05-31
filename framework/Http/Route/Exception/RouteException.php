@@ -10,6 +10,6 @@ declare(strict_types=1);
 
 namespace Rid\Http\Route\Exception;
 
-class NotFoundException extends \RuntimeException
+class RouteException extends \RuntimeException
 {
 }

@@ -35,6 +35,7 @@
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
+- **Subtitles:** fix last commit which content function is not public (177a599)
 
 ### Perf
 - **Console:** Move HttpServer init to AbstractServerCommand (ce50f2d)
