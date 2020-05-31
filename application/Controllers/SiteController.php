@@ -21,7 +21,7 @@ class SiteController extends Controller
     public function logs()
     {
         $logs = new Site\Logs();
-        $logs->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
+        $logs->setInput(container()->get('request')->query->all());
         if (!$logs->validate()) {
             return $this->render('action/fail', ['msg'=>$logs->getError()]);
         }

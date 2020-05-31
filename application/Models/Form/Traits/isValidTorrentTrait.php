@@ -38,7 +38,7 @@ trait isValidTorrentTrait
     protected function isExistTorrent()
     {
         $tid = $this->getInput('torrent_id') ?? $this->getInput('tid') ?? $this->getInput('id');
-        $torrent_exist = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `torrents` WHERE `id` = :tid')->bindParams([
+        $torrent_exist = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `torrents` WHERE `id` = :tid')->bindParams([
             'tid' => $tid
         ])->queryScalar();
         if ($torrent_exist == 0) {
@@ -46,7 +46,7 @@ trait isValidTorrentTrait
             return;
         }
 
-        $this->torrent = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getTorrent($tid);
+        $this->torrent = container()->get('site')->getTorrent($tid);
     }
 
     // TODO check user privilege to see deleted or banned torrent

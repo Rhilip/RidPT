@@ -9,7 +9,7 @@
  */
 
 $user = $details->getUser();
-$i18n = \Rid\Helpers\ContainerHelper::getContainer()->get('i18n');
+$i18n = container()->get('i18n');
 ?>
 
 <?=  $this->layout('layout/base') ?>
@@ -58,9 +58,9 @@ $i18n = \Rid\Helpers\ContainerHelper::getContainer()->get('i18n');
                     <dt>BT Transport</dt>
                     <dd>
                         Ratio : <?= is_string($user->getRatio()) ? $user->getRatio() : round($user->getRatio(), 3) ?>
-                        ( uploaded : <?= $this->e(\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getUploaded(), 'format_bytes') ?> and downloaded : <?= $this->e(\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getDownloaded(), 'format_bytes') ?>) <br>
+                        ( uploaded : <?= $this->e(container()->get('auth')->getCurUser()->getUploaded(), 'format_bytes') ?> and downloaded : <?= $this->e(container()->get('auth')->getCurUser()->getDownloaded(), 'format_bytes') ?>) <br>
                         Real Ratio : <?= is_string($user->getRealRatio()) ? $user->getRealRatio() : round($user->getRealRatio(), 3) ?>
-                        ( uploaded : <?= $this->e(\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getRealUploaded(), 'format_bytes') ?> and downloaded : <?= $this->e(\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getRealDownloaded(), 'format_bytes') ?>) <br>
+                        ( uploaded : <?= $this->e(container()->get('auth')->getCurUser()->getRealUploaded(), 'format_bytes') ?> and downloaded : <?= $this->e(container()->get('auth')->getCurUser()->getRealDownloaded(), 'format_bytes') ?>) <br>
                     </dd>
                     <dt>BT Time</dt>
                     <dd>Ratio : <?= round($user->getTimeRatio(), 2) ?>  ( Seeding Time: <?= $user->getSeedtime() ?> , Leeching Time: <?= $user->getLeechTime() ?>)</dd>

@@ -8,7 +8,7 @@
  * @var League\Plates\Template\Template $this
  */
 
-$user = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser();
+$user = container()->get('auth')->getCurUser();
 
 use App\Entity\User\UserRole;
 

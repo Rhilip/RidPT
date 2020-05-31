@@ -31,13 +31,13 @@ trait isValidUserTrait
     protected function isExistUser()
     {
         $test_uid = $this->getInput('id');
-        $uid = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT id FROM users WHERE id = :uid LIMIT 1')->bindParams([
+        $uid = container()->get('pdo')->prepare('SELECT id FROM users WHERE id = :uid LIMIT 1')->bindParams([
             'uid' => $test_uid
         ])->queryScalar();
         if ($uid === false) {
             $this->buildCallbackFailMsg('User', 'The user id (' . $uid . ') is not exist in our database');
         }
-        $this->user = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($uid);
+        $this->user = container()->get('site')->getUser($uid);
     }
 
     public function getUser(): User

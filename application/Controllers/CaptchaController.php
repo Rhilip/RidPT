@@ -14,7 +14,7 @@ class CaptchaController extends Controller
 {
     public function index()
     {
-        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Content-Type', 'image/png');
+        container()->get('response')->headers->set('Content-Type', 'image/png');
         $captcha = $this->container->get('captcha');
         $captcha->generate();
         $this->container->get('session')->set('captchaText', $captcha->getText());

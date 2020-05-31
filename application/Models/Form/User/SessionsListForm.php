@@ -28,7 +28,7 @@ class SessionsListForm extends Pagination
     {
         return [
             'page' => static::getDefaultPage(), 'limit' => static::getDefaultLimit(),
-            'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()
+            'uid' => container()->get('auth')->getCurUser()->getId()
         ];
     }
 
@@ -42,14 +42,14 @@ class SessionsListForm extends Pagination
         ];
 
         // TODO allow admin to see other people session log
-        $rules['uid'] = ['Integer', ['Equal', ['value' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()]]];
+        $rules['uid'] = ['Integer', ['Equal', ['value' => container()->get('auth')->getCurUser()->getId()]]];
 
         return $rules;
     }
 
     protected function getRemoteTotal(): int
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT COUNT(`id`) FROM sessions WHERE uid = :uid ', 'params' => ['uid' => $this->uid]],
             ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->expired]],
         ])->queryScalar();
@@ -57,7 +57,7 @@ class SessionsListForm extends Pagination
 
     protected function getRemoteData(): array
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT `id`, session, `login_at`, `login_ip`, `expired` FROM sessions WHERE 1=1 '],
             ['AND `uid` = :uid ', 'params' => ['uid' => $this->uid]],
             ['AND `expired` IN (:expired)', 'params' => ['expired' => $this->expired]],

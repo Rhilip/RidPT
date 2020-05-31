@@ -38,7 +38,7 @@ use App\Entity\User\UserStatus;
                         <td class="text-right">Downloaded</td>
                         <td class="text-center">Ratio</td>
                         <td class="text-center">Status</td>
-                        <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
+                        <?php if (container()->get('auth')->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
                         <td class="text-center">Confirm</td>
                         <?php endif; ?>
                     </tr>
@@ -52,7 +52,7 @@ use App\Entity\User\UserStatus;
                         <td class="text-right"><?= $this->batch($invitee['downloaded'], 'format_bytes') ?></td>
                         <td class="text-center"><?= number_format($invitee['uploaded']/($invitee['downloaded'] + 1), 3) ?></td>
                         <td class="text-center"><?= $invitee['status'] ?></td>
-                        <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
+                        <?php if (container()->get('auth')->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
                         <td class="text-center">
                             <?php if ($invitee['status'] == UserStatus::PENDING): ?>
                             <a class="btn btn-info btn-sm" href="?action=confirm&uid=<?= $this->e($invitee['id']) ?>" onclick="return confirm('Really?')">Confirm</a>
@@ -73,9 +73,9 @@ use App\Entity\User\UserStatus;
             <div class="panel-heading">Pending Invite</div>
             <div class="panel-body">
                 <?php if ($user->getPendingInvites()): ?>
-                <?php $can_recyle = $user->getId() === \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId() ?
-                        \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('invite_recycle_self_pending') :
-                        \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('invite_recycle_other_pending'); ?>
+                <?php $can_recyle = $user->getId() === container()->get('auth')->getCurUser()->getId() ?
+                        container()->get('auth')->getCurUser()->isPrivilege('invite_recycle_self_pending') :
+                        container()->get('auth')->getCurUser()->isPrivilege('invite_recycle_other_pending'); ?>
                     <table class="table table-hover table-striped">
                         <thead>
                         <tr>
@@ -90,7 +90,7 @@ use App\Entity\User\UserStatus;
                         </thead>
                         <tbody>
                         <?php foreach ($user->getPendingInvites() as $pendingInvite): ?>
-                        <?php $invite_link = (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure() ? 'https://' : 'http://') . config('base.site_url') . '/auth/register?type=invite&invite_hash=' . $pendingInvite['hash']; ?>
+                        <?php $invite_link = (container()->get('request')->isSecure() ? 'https://' : 'http://') . config('base.site_url') . '/auth/register?type=invite&invite_hash=' . $pendingInvite['hash']; ?>
                             <tr>
                                 <td class="text-center"><?= $pendingInvite['username'] ?></td>
                                 <td class="text-center"><a href="<?= $invite_link ?>" target="_blank" data-toggle="tooltip" data-placement="right" title="Right mouse button to copy"><?= $pendingInvite['hash'] ?></a></td>
@@ -109,7 +109,7 @@ use App\Entity\User\UserStatus;
             </div>
         </div> <!-- User's Pending Invite -->
 
-        <?php if ($user->getId() === \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()): // Same User, use $user as quick call?>
+        <?php if ($user->getId() === container()->get('auth')->getCurUser()->getId()): // Same User, use $user as quick call?>
         <?php $can_invite = config('base.enable_invite_system') && ($user->getInvites() + $user->getTempInvitesSum() > 0); ?>
         <div class="panel">
             <div class="panel-heading"><span class="text-red">Invite Warning!!!</span></div>

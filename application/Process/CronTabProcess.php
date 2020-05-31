@@ -12,7 +12,7 @@ use Ahc\Cron\Expression;
 use App\Libraries\Bonus;
 use App\Libraries\Constant;
 
-use Rid\Helpers\ContainerHelper;
+
 use Rid\Helpers\IoHelper;
 use Rid\Swoole\Process\Process;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -37,7 +37,7 @@ final class CronTabProcess extends Process
         $this->_print_flag = $this->_print_flag ?? config('debug.print_crontab_log');
         $this->stopwatch = new Stopwatch();
         $this->expr = new Expression();
-        $this->jobs = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `site_crontab` WHERE `priority` > 0 ORDER BY priority;')->queryAll();
+        $this->jobs = container()->get('pdo')->prepare('SELECT * FROM `site_crontab` WHERE `priority` > 0 ORDER BY priority;')->queryAll();
     }
 
     private function print_log($log)
@@ -63,16 +63,16 @@ final class CronTabProcess extends Process
                 $hit++;
                 $this->stopwatch->start('cron_' . $job['job']);
 
-                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->beginTransaction();
+                container()->get('pdo')->beginTransaction();
                 $this->print_log('CronTab Worker Start To run job : ' . $job['job']);
                 try {
                     // Run this job
                     $this->{$job['job']}($job);
 
-                    \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->commit(); // Finish The Transaction and commit~
+                    container()->get('pdo')->commit(); // Finish The Transaction and commit~
                 } catch (\Exception $e) {
-                    \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->rollback();
-                    ContainerHelper::getContainer()->get('logger')->critical('The run job throw Exception : ' . $e->getMessage());
+                    container()->get('pdo')->rollback();
+                    container()->get('logger')->critical('The run job throw Exception : ' . $e->getMessage());
                 }
 
                 $job_event = $this->stopwatch->stop('cron_' . $job['job']);
@@ -80,12 +80,12 @@ final class CronTabProcess extends Process
                 // Update the run information
                 $last_run_at = time();
                 $this->jobs[$index]['last_run_at'] = $last_run_at;
-                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `site_crontab` set last_run_at = FROM_UNIXTIME(:last_run_at) WHERE id=:id')->bindParams([
+                container()->get('pdo')->prepare('UPDATE `site_crontab` set last_run_at = FROM_UNIXTIME(:last_run_at) WHERE id=:id')->bindParams([
                     'id' => $job['id'], 'last_run_at' => $last_run_at
                 ])->execute();
                 $this->print_log('The run job : ' . $job['job'] . ' Finished. ' . 'Cost: ' . (string)$job_event . '.');
             } else {
-                ContainerHelper::getContainer()->get('logger')->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
+                container()->get('logger')->critical('CronTab Worker Tries to run a none-exist job:' . $job['job']);
                 unset($this->jobs[$index]);
             }
         }
@@ -112,7 +112,7 @@ final class CronTabProcess extends Process
 
         foreach ($clean_list as $item) {
             [$field, $msg] = $item;
-            $clean_count = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zRemRangeByScore($field, 0, $timenow);
+            $clean_count = container()->get('redis')->zRemRangeByScore($field, 0, $timenow);
             if ($clean_count > 0) {
                 $this->print_log(sprintf($msg, $clean_count));
             }
@@ -123,10 +123,10 @@ final class CronTabProcess extends Process
     protected function clean_dead_peer()
     {
         $deadtime = floor(config('tracker.interval') * 1.8);
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM `peers` WHERE last_action_at < DATE_SUB(NOW(), interval :deadtime second )')->bindParams([
+        container()->get('pdo')->prepare('DELETE FROM `peers` WHERE last_action_at < DATE_SUB(NOW(), interval :deadtime second )')->bindParams([
             'deadtime' => $deadtime
         ])->execute();
-        $affect_peer_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getRowCount();
+        $affect_peer_count = container()->get('pdo')->getRowCount();
         $this->print_log('Success clean ' . $affect_peer_count . ' peers from our peer list');
     }
 
@@ -146,8 +146,8 @@ final class CronTabProcess extends Process
 
         foreach ($clean_sqls as $item) {
             [$clean_sql, $msg] = $item;
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare($clean_sql)->execute();
-            $clean_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getRowCount();
+            container()->get('pdo')->prepare($clean_sql)->execute();
+            $clean_count = container()->get('pdo')->getRowCount();
             if ($clean_count > 0) {
                 $this->print_log(sprintf($msg, $clean_count));
             }
@@ -157,11 +157,11 @@ final class CronTabProcess extends Process
     protected function calculate_seeding_bonus() // TODO
     {
         $calculate = new Bonus();
-        $seeders = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("SELECT DISTINCT user_id FROM peers WHERE seeder = 'yes'")->queryColumn();
+        $seeders = container()->get('pdo')->prepare("SELECT DISTINCT user_id FROM peers WHERE seeder = 'yes'")->queryColumn();
 
         foreach ($seeders as $seeder) {
             $bonus = $calculate->calculate($seeder);
-            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->addBonus($seeder, $bonus, '+', 'seeding');
+            container()->get('site')->addBonus($seeder, $bonus, '+', 'seeding');
         }
     }
 
@@ -173,7 +173,7 @@ final class CronTabProcess extends Process
     {
         $torrents_update = [];
 
-        $wrong_complete_records = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("
+        $wrong_complete_records = container()->get('pdo')->prepare("
             SELECT torrents.`id`, `complete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents`
               LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND `peers`.`seeder` = 'yes'
             GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
@@ -182,7 +182,7 @@ final class CronTabProcess extends Process
                 $torrents_update[$arr['id']]['complete'] = $arr['real'];
             }
         }
-        $wrong_incomplete_records = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("
+        $wrong_incomplete_records = container()->get('pdo')->prepare("
             SELECT torrents.`id`, `incomplete` AS `record`, COUNT(`peers`.id) AS `real` FROM `torrents`
               LEFT JOIN peers ON `peers`.torrent_id = `torrents`.id AND (`peers`.`seeder` = 'partial' OR `peers`.`seeder` = 'no')
             GROUP BY torrents.`id` HAVING `record` != `real`;")->queryAll();
@@ -192,7 +192,7 @@ final class CronTabProcess extends Process
             }
         }
 
-        $wrong_comment_records = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('
+        $wrong_comment_records = container()->get('pdo')->prepare('
             SELECT t.id, t.comments as `record`, COUNT(tc.id) as `real` FROM torrents t
               LEFT JOIN torrent_comments tc on t.id = tc.torrent_id
             GROUP BY t.id HAVING `record` != `real`')->queryAll();
@@ -204,8 +204,8 @@ final class CronTabProcess extends Process
 
         if ($torrents_update) {
             foreach ($torrents_update as $tid => $update) {
-                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->update('torrents', $update, [['id', '=', $tid]])->execute();
-                \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::torrentContent($tid));
+                container()->get('pdo')->update('torrents', $update, [['id', '=', $tid]])->execute();
+                container()->get('redis')->del(Constant::torrentContent($tid));
             }
             $this->print_log('Fix ' . count($torrents_update) . ' wrong torrents records about complete, incomplete, comments.');
         }
@@ -215,17 +215,17 @@ final class CronTabProcess extends Process
     protected function sync_ban_list()
     {
         // Sync Banned Emails list
-        $ban_email_list = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `email` from `ban_emails`')->queryColumn() ?: [];
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->sAddArray(Constant::siteBannedEmailSet, $ban_email_list);
+        $ban_email_list = container()->get('pdo')->prepare('SELECT `email` from `ban_emails`')->queryColumn() ?: [];
+        container()->get('redis')->sAddArray(Constant::siteBannedEmailSet, $ban_email_list);
 
         // Sync Banned Username list
-        $ban_username_list = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `username` from `ban_usernames`')->queryColumn() ?: [];
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->sAddArray(Constant::siteBannedUsernameSet, $ban_username_list);
+        $ban_username_list = container()->get('pdo')->prepare('SELECT `username` from `ban_usernames`')->queryColumn() ?: [];
+        container()->get('redis')->sAddArray(Constant::siteBannedUsernameSet, $ban_username_list);
     }
 
     protected function update_expired_external_link_info()
     {
-        $expired_links_res = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `source`,`sid` FROM `external_info` ORDER BY `update_at` ASC LIMIt 5')->queryAll();
+        $expired_links_res = container()->get('pdo')->prepare('SELECT `source`,`sid` FROM `external_info` ORDER BY `update_at` ASC LIMIt 5')->queryAll();
         if ($expired_links_res !== false) {
             foreach ($expired_links_res as $link_res) {
                 $source = $link_res['source'];

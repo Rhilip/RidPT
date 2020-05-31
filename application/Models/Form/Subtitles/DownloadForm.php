@@ -9,7 +9,7 @@
 namespace App\Models\Form\Subtitles;
 
 use App\Models\Form\Traits;
-use Rid\Helpers\ContainerHelper;
+
 use Rid\Validators\Validator;
 
 class DownloadForm extends Validator
@@ -18,7 +18,7 @@ class DownloadForm extends Validator
 
     private function addDownloadHit()
     {
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
+        container()->get('pdo')->prepare('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
             'sid' => $this->id
         ])->execute();
     }
@@ -36,7 +36,7 @@ class DownloadForm extends Validator
     protected function getSendFileContent()
     {
         $filename = $this->id . '.' . $this->subtitle['ext'];
-        $file_loc = ContainerHelper::getContainer()->get('path.storage.subs') . DIRECTORY_SEPARATOR . $filename;
-        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setFile($file_loc);
+        $file_loc = container()->get('path.storage.subs') . DIRECTORY_SEPARATOR . $filename;
+        container()->get('response')->setFile($file_loc);
     }
 }

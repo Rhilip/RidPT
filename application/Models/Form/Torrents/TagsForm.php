@@ -22,7 +22,7 @@ class TagsForm extends Pagination
     public function getRemoteTotal(): int
     {
         $search = $this->search;
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT COUNT(`id`) FROM tags '],
             ['WHERE `tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $search . '%']],
         ])->queryScalar();
@@ -31,7 +31,7 @@ class TagsForm extends Pagination
     public function getRemoteData(): array
     {
         $search = $this->search;
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT * FROM tags '],
             ['WHERE `tag` LIKE :tag', 'if' => !empty($search), 'params' => ['tag' => '%' . $search . '%']],
             ['ORDER BY `pinned`, `count` DESC, `id` '],

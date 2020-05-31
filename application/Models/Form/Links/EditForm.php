@@ -56,7 +56,7 @@ class EditForm extends ApplyForm
         ];
         $link_id = (int) $this->getInput('link_id');
         if ($link_id !== 0) {  // Check if old links should be update
-            $this->link_old_data = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `links` WHERE id = :id')->bindParams([
+            $this->link_old_data = container()->get('pdo')->prepare('SELECT * FROM `links` WHERE id = :id')->bindParams([
                 'id' => $link_id
             ])->queryOne();
             if (false === $this->link_old_data) {
@@ -78,14 +78,14 @@ class EditForm extends ApplyForm
     public function flush()
     {
         if ((int) $this->link_id !== 0) {  // to edit exist links
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->update('links', $this->link_data_diff, [['id', '=', $this->link_id]])->execute();
-            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog('The links data of ' . $this->link_old_data['name'] . '( ' . $this->link_old_data['url'] . ' ) is update by ' .
-                \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getUsername() . '(' . \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
+            container()->get('pdo')->update('links', $this->link_data_diff, [['id', '=', $this->link_id]])->execute();
+            container()->get('site')->writeLog('The links data of ' . $this->link_old_data['name'] . '( ' . $this->link_old_data['url'] . ' ) is update by ' .
+                container()->get('auth')->getCurUser()->getUsername() . '(' . container()->get('auth')->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
         } else {  // to new a links
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->insert('links', $this->link_new_data)->execute();
-            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
-                \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getUsername() . '(' . \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
+            container()->get('pdo')->insert('links', $this->link_new_data)->execute();
+            container()->get('site')->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
+                container()->get('auth')->getCurUser()->getUsername() . '(' . container()->get('auth')->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
         }
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:links');
+        container()->get('redis')->del('Site:links');
     }
 }

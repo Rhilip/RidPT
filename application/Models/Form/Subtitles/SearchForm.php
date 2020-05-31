@@ -35,7 +35,7 @@ class SearchForm extends Pagination
         $search = $this->search;
         $letter = $this->letter;
         $tid = $this->tid;
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT COUNT(`id`) FROM `subtitles` WHERE 1=1 '],
             ['AND torrent_id = :tid ', 'if' => !is_null($tid), 'params' => ['tid' => $tid]],
             ['AND title LIKE :search ', 'if' => !is_null($search) , 'params' => ['search' => "%$search%"]],
@@ -48,7 +48,7 @@ class SearchForm extends Pagination
         $search = $this->search;
         $letter = $this->letter;
         $tid = $this->tid;
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT * FROM `subtitles` WHERE 1=1 '],
             ['AND torrent_id = :tid ', 'if' => !is_null($tid), 'params' => ['tid' => $tid]],
             ['AND title LIKE :search ', 'if' => !is_null($search) , 'params' => ['search' => "%$search%"]],
@@ -60,9 +60,9 @@ class SearchForm extends Pagination
 
     public function getSubsSizeSum()
     {
-        if (false === $size = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->get(Constant::siteSubtitleSize)) {
-            $size = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT SUM(`size`) FROM `subtitles`')->queryScalar();
-            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->set(Constant::siteSubtitleSize, $size);
+        if (false === $size = container()->get('redis')->get(Constant::siteSubtitleSize)) {
+            $size = container()->get('pdo')->prepare('SELECT SUM(`size`) FROM `subtitles`')->queryScalar();
+            container()->get('redis')->set(Constant::siteSubtitleSize, $size);
         }
         return $size;
     }

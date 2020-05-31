@@ -84,7 +84,7 @@ class Torrent
 
     public function getOwner(): User
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($this->owner_id);
+        return container()->get('site')->getUser($this->owner_id);
     }
 
     public function getInfoHash($hex = true): string
@@ -139,7 +139,7 @@ class Torrent
 
     public function getCategory()
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('site')->CategoryDetail($this->category);
+        return container()->get('site')->CategoryDetail($this->category);
     }
 
     public function getTorrentSize(): int
@@ -157,7 +157,7 @@ class Torrent
         if ($this->team == 0) {
             return false;
         }
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam()[$this->team];
+        return container()->get('site')->ruleTeam()[$this->team];
     }
 
     public function getQualityId(string $quality): int
@@ -170,7 +170,7 @@ class Torrent
         if ($this->getQualityId($quality) == 0) {
             return false;
         }
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality)[$this->getQualityId($quality)];
+        return container()->get('site')->ruleQuality($quality)[$this->getQualityId($quality)];
     }
 
     public function getDescr(): string
@@ -196,7 +196,7 @@ class Torrent
     {
         $pinned_tags = [];
         $tags = $this->getTags();
-        $rule_pinned_tags = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->rulePinnedTags();
+        $rule_pinned_tags = container()->get('site')->rulePinnedTags();
         foreach ($rule_pinned_tags as $tag_name => $tag_class) {
             if (in_array($tag_name, $tags)) {
                 $pinned_tags[$tag_name] = $tag_class;
@@ -289,7 +289,7 @@ class Torrent
     {
         return $this->getCacheValue('last_comments_details', function () {
             $offset = $this->comments / $this->comment_perpage;
-            return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM torrent_comments WHERE torrent_id = :tid LIMIT :o, :l;')->bindParams([
+            return container()->get('pdo')->prepare('SELECT * FROM torrent_comments WHERE torrent_id = :tid LIMIT :o, :l;')->bindParams([
                 'tid' => $this->id, 'o' => (int)$offset, 'l' => $this->comment_perpage
             ])->queryAll();
         });

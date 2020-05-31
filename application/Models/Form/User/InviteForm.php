@@ -70,7 +70,7 @@ class InviteForm extends UserRegisterForm
     protected function canInvite()
     {
         // if user have enough invite number
-        $invite_sum = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getInvites() + \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getTempInvitesSum();
+        $invite_sum = container()->get('auth')->getCurUser()->getInvites() + container()->get('auth')->getCurUser()->getTempInvitesSum();
         if ($invite_sum <= 0) {
             $this->buildCallbackFailMsg('Invitation qualification', 'No enough invite qualification');
             return;
@@ -78,8 +78,8 @@ class InviteForm extends UserRegisterForm
 
         // If it is temporary invite
         if ($this->getInput('invite_type') == self::INVITE_TYPE_TEMPORARILY) {
-            $record = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `user_invitations` WHERE id = :id AND user_id = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW()')->bindParams([
-                'id' => $this->getInput('temp_id'), 'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()
+            $record = container()->get('pdo')->prepare('SELECT * FROM `user_invitations` WHERE id = :id AND user_id = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW()')->bindParams([
+                'id' => $this->getInput('temp_id'), 'uid' => container()->get('auth')->getCurUser()->getId()
             ])->queryOne();
             if (false === $record) {
                 $this->buildCallbackFailMsg('Temporary Invitation', 'Temporary Invitation is not exist, it may not belong to you or expired.');
@@ -92,8 +92,8 @@ class InviteForm extends UserRegisterForm
     /** @noinspection PhpUnused */
     protected function checkInviteInterval()
     {
-        if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('pass_invite_interval_check')) {
-            $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        if (!container()->get('auth')->getCurUser()->isPrivilege('pass_invite_interval_check')) {
+            $count = container()->get('pdo')->prepare([
                 ['SELECT COUNT(`id`) FROM `invite` WHERE `create_at` > DATE_SUB(NOW(),INTERVAL :wait_second SECOND) ', 'params' => ['wait_second' => config('invite.interval')]],
                 ['AND `used` = 0', 'if' => !config('invite.force_interval')]
             ])->queryScalar();
@@ -108,18 +108,18 @@ class InviteForm extends UserRegisterForm
         do { // To make sure this hash is unique !
             $invite_hash = Random::alnum(32);
 
-            $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `invite` WHERE `hash` = :hash')->bindParams([
+            $count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `invite` WHERE `hash` = :hash')->bindParams([
                 'hash' => $invite_hash
             ])->queryScalar();
         } while ($count != 0);
 
-        $this->invite_link = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getSchemeAndHttpHost() . '/auth/register?' . http_build_query([
+        $this->invite_link = container()->get('request')->getSchemeAndHttpHost() . '/auth/register?' . http_build_query([
                 'type' => 'invite',
                 'invite_hash' => $invite_hash
             ]);
 
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `invite` (`inviter_id`,`username`,`invite_type`, `hash`, `create_at`, `expire_at`) VALUES (:inviter_id,:username,:invite_type,:hash,NOW(),DATE_ADD(NOW(),INTERVAL :timeout SECOND))')->bindParams([
-            'inviter_id' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId(), 'username' => $this->username, 'invite_type' => $this->invite_type,
+        container()->get('pdo')->prepare('INSERT INTO `invite` (`inviter_id`,`username`,`invite_type`, `hash`, `create_at`, `expire_at`) VALUES (:inviter_id,:username,:invite_type,:hash,NOW(),DATE_ADD(NOW(),INTERVAL :timeout SECOND))')->bindParams([
+            'inviter_id' => container()->get('auth')->getCurUser()->getId(), 'username' => $this->username, 'invite_type' => $this->invite_type,
             'hash' => $invite_hash, 'timeout' => config('invite.timeout')
         ])->execute();
     }
@@ -127,30 +127,30 @@ class InviteForm extends UserRegisterForm
     public function flush()
     {
         // Consume the invite number
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->beginTransaction();
+        container()->get('pdo')->beginTransaction();
         try {
             if ($this->invite_type == self::INVITE_TYPE_TEMPORARILY) { // Consume the temp invite
-                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `user_invitations` SET `used` = `used` + 1 WHERE `id` = :id')->bindParams([
+                container()->get('pdo')->prepare('UPDATE `user_invitations` SET `used` = `used` + 1 WHERE `id` = :id')->bindParams([
                     'id' => $this->temp_id
                 ])->execute();
             } else {  // Consume user privilege invite
-                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `invites` = `invites` - 1 WHERE `id` = :uid')->bindParams([
-                    'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()
+                container()->get('pdo')->prepare('UPDATE `users` SET `invites` = `invites` - 1 WHERE `id` = :uid')->bindParams([
+                    'uid' => container()->get('auth')->getCurUser()->getId()
                 ])->execute();
             }
 
             $this->insertInviteRecord();
-            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('User:' . \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId() . ':base_content');  // flush it's cache
+            container()->get('redis')->del('User:' . container()->get('auth')->getCurUser()->getId() . ':base_content');  // flush it's cache
 
             $invite_status = true;
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->commit();
+            container()->get('pdo')->commit();
         } catch (\Exception $e) {
             $invite_status = $e->getMessage();
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->rollback();
+            container()->get('pdo')->rollback();
         }
 
         if ($invite_status === true) { // TODO use email queue
-            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendEmail(
+            container()->get('site')->sendEmail(
                 [$this->email],
                 'Invite To ' . config('base.site_name'),
                 'email/user_invite',

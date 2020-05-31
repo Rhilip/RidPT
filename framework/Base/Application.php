@@ -3,7 +3,6 @@
 namespace Rid\Base;
 
 use DI\Container;
-use Rid\Helpers\ContainerHelper;
 
 class Application
 {
@@ -31,10 +30,7 @@ class Application
     {
         $builder = new \DI\ContainerBuilder();
         $builder->addDefinitions($this->config['components']);
-
-        $container = $builder->build();
-        ContainerHelper::setContainer($container);
-        $this->container = $container;
+        $this->container = $builder->build();
     }
 
     /**

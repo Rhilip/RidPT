@@ -21,14 +21,14 @@ trait ClassValueCache
     {
         if (!isset($this->$key)) {
             /** @var array $key_from_cache */
-            $key_from_cache = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hGet($this->getCacheNameSpace(), $key);
+            $key_from_cache = container()->get('redis')->hGet($this->getCacheNameSpace(), $key);
             if (false === $key_from_cache || ($key_from_cache['expire'] ?? -1) > time()) {
                 $this->$key = $closure();
                 $cache = ['data' => $this->$key];
                 if (!is_null($ttl)) {
                     $cache['expire'] = time() + $ttl;
                 }
-                \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hSet($this->getCacheNameSpace(), $key, $cache);
+                container()->get('redis')->hSet($this->getCacheNameSpace(), $key, $cache);
             } else {
                 $this->$key = $key_from_cache['data'];
             }
@@ -39,6 +39,6 @@ trait ClassValueCache
     final protected function removeCacheValue($key)
     {
         unset($this->$key);
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hDel($this->getCacheNameSpace(), $key);
+        container()->get('redis')->hDel($this->getCacheNameSpace(), $key);
     }
 }

@@ -5,6 +5,7 @@
 - **Composer:** Switch dotenv library from `adhocore/cli` to `symfony/console` (bd1949a)
 - **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
 - **Swoole:** Change swoole-ide-helper library (430e41c)
+- **deps:** bump phpmailer/phpmailer from 6.1.5 to 6.1.6 (fc4c5bb)
 
 ### Feat
 - **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)
@@ -28,6 +29,7 @@
 ### Fix
 - **Captcha:** the captcha library's status not clean when re-generate (021212c)
 - **Config:** Table `config` not init value since construct may not in `worker [#0](https://github.com/Rhilip/ridpt/issues/0)` (ce87a51)
+- **DI:** parameters of controller resolve not work (538afe4)
 - **Debug:** Add back debug info of Redis and PDO (ee28676)
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
@@ -40,6 +42,7 @@
 
 ### Refactor
 - **Route:** use fast-route to replace our old route components (eca0db8)
+- **Tracker:** Separate TrackerController (c64688b)
 
 ### Style
 - **Utils:** Combine `NameHelper` and `StringHelper` (85f311b)

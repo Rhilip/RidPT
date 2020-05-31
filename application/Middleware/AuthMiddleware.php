@@ -27,14 +27,14 @@ class AuthMiddleware extends AbstractMiddleware
         list($controllerName, $action) = $callable;
 
         // Try auth by cookies first
-        $curuser = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser('cookies', true);
+        $curuser = container()->get('auth')->getCurUser('cookies', true);
 
         // Try auth by passkey in special route and action if first cookies-check fails
         if ($curuser === false) {
             foreach (self::authByPasskeyAction as $value) {
                 list($_controller, $_action) = $value;
                 if ($controllerName == $_controller && $action == $_action) {
-                    $curuser = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser('passkey', true);
+                    $curuser = container()->get('auth')->getCurUser('passkey', true);
                     break;
                 }
             }
@@ -42,35 +42,35 @@ class AuthMiddleware extends AbstractMiddleware
 
         // Check if Site in Maintenance status, and only let `bypass_maintenance` user access
         if (config('base.maintenance') && ($curuser === false || !$curuser->isPrivilege('bypass_maintenance'))) {
-            return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/maintenance');
+            return container()->get('response')->setRedirect('/maintenance');
         }
 
         // Deal with Anonymous Visitor
         if ($curuser === false) {
             // Check if Site in Abnormal status
             if (config('base.prevent_anonymous')) {
-                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setStatusCode(403);
+                return container()->get('response')->setStatusCode(403);
             }
 
-            if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getGrant() == 'passkey') {
+            if (container()->get('auth')->getGrant() == 'passkey') {
                 return 'invalid Passkey';
-            } else {  // \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getGrant() == 'cookies'
+            } else {  // container()->get('auth')->getGrant() == 'cookies'
                 // If visitor want to auth himself
                 if ($controllerName === Controllers\AuthController::class && $action !== 'actionLogout') {
                     return $next();
                 }
 
                 // Prevent Other Route
-                \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->clearCookie(Constant::cookie_name);  // Delete exist cookies
-                $this->container->get('session')->set('login_return_to', \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getUri());  // Store the url which visitor want to hit
-                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/auth/login');
+                container()->get('response')->headers->clearCookie(Constant::cookie_name);  // Delete exist cookies
+                $this->container->get('session')->set('login_return_to', container()->get('request')->getUri());  // Store the url which visitor want to hit
+                return container()->get('response')->setRedirect('/auth/login');
             }
         }
 
         // Don't allow Logged in user visit the auth/{login, register, confirm}
         if ($controllerName === Controllers\AuthController::class &&
             in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
-            return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/index');
+            return container()->get('response')->setRedirect('/index');
         }
 
         /**
@@ -95,7 +95,7 @@ class AuthMiddleware extends AbstractMiddleware
 
         $required_class = config('route.' . $route) ?: 1;
         if ($curuser->getClass() < $required_class) {
-            return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setStatusCode(403);  // FIXME redirect to /error may better
+            return container()->get('response')->setStatusCode(403);  // FIXME redirect to /error may better
         }
 
         return $next(); // 执行下一个中间件

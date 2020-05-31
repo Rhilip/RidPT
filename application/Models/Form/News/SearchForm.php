@@ -45,9 +45,9 @@ class SearchForm extends Pagination
         $search = $this->search;
         $field = $this->field;
         if (empty($search)) {
-            $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(*) FROM `news`;')->queryScalar();
+            $count = container()->get('pdo')->prepare('SELECT COUNT(*) FROM `news`;')->queryScalar();
         } else {
-            $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+            $count = container()->get('pdo')->prepare([
                 ['SELECT COUNT(*) FROM `news` WHERE 1=1 '],
                 ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($field == 'title' && !empty($search))],
                 ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($field == 'body' && !empty($search))],
@@ -62,7 +62,7 @@ class SearchForm extends Pagination
         $search = $this->search;
         $field = $this->field;
 
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT * FROM `news` WHERE 1=1 '],
             ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($field == 'title' && !empty($search))],
             ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($field == 'body' && !empty($search))],

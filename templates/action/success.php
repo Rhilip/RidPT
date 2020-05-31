@@ -12,7 +12,7 @@
  * @var string $redirect
  */
 
-$redirect = $redirect ?? \Rid\Helpers\ContainerHelper::getContainer()->get('session')->get('redirect') ?? \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getUri();
+$redirect = $redirect ?? container()->get('session')->get('redirect') ?? container()->get('request')->getUri();
 ?>
 
 <?= $this->layout('layout/base'); ?>

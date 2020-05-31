@@ -50,25 +50,25 @@ class I18n
     public function getUserLang()
     {
         // Return Cache value
-        if (!is_null(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('user_lang'))) {
-            return \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('user_lang');
+        if (!is_null(container()->get('request')->attributes->get('user_lang'))) {
+            return container()->get('request')->attributes->get('user_lang');
         }
 
         // Determine
         $judged_langs = array();
 
         // 1nd highest priority: GET parameter 'lang'
-        if (!is_null(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('lang'))) {
-            $judged_langs[] = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('lang');
+        if (!is_null(container()->get('request')->query->get('lang'))) {
+            $judged_langs[] = container()->get('request')->query->get('lang');
         }
 
         // 2rd highest priority: user setting for login user
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser() && !is_null(\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getLang())) {
-            $judged_langs[] = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getLang();
+        if (container()->get('auth')->getCurUser() && !is_null(container()->get('auth')->getCurUser()->getLang())) {
+            $judged_langs[] = container()->get('auth')->getCurUser()->getLang();
         }
 
         // 3th highest priority: HTTP_ACCEPT_LANGUAGE
-        if (!is_null(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('accept_language'))) {
+        if (!is_null(container()->get('request')->headers->get('accept_language'))) {
             /**
              * We get headers like this string 'en-US,en;q=0.8,uk;q=0.6'
              * And then sort to an array like this after sort
@@ -80,7 +80,7 @@ class I18n
              *
              */
             $prefLocales = array_reduce(
-                explode(',', \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('accept_language')),
+                explode(',', container()->get('request')->headers->get('accept_language')),
                 function ($res, $el) {
                     list($l, $q) = array_merge(explode(';q=', $el), [1]);
                     $res[$l] = (float)$q;
@@ -101,7 +101,7 @@ class I18n
         );
 
         foreach ($userLangs as $lang) {
-            \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->set('user_lang', $lang);  // Store it for last use if not in req mode
+            container()->get('request')->attributes->set('user_lang', $lang);  // Store it for last use if not in req mode
             return $lang;
         }
         return null;

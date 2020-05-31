@@ -22,7 +22,7 @@ trait CaptchaTrait
     /** @noinspection PhpUnused */
     protected function validateCaptcha()
     {
-        $captchaText = \Rid\Helpers\ContainerHelper::getContainer()->get('session')->get('captchaText');
+        $captchaText = container()->get('session')->get('captchaText');
         if (strcasecmp($this->captcha, $captchaText) != 0) {
             $this->buildCallbackFailMsg('CAPTCHA', 'CAPTCHA verification failed.');
             return;

@@ -12,8 +12,6 @@ use App\Entity;
 use App\Libraries\Constant;
 use App\Entity\User\UserStatus;
 
-use Rid\Helpers\ContainerHelper;
-
 class Auth
 {
 
@@ -24,24 +22,24 @@ class Auth
      */
     public function getCurUser($grant = 'cookies', $flush = false)
     {
-        $cur_user = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('cur_user');
+        $cur_user = container()->get('request')->attributes->get('cur_user');
         if (is_null($cur_user) || $flush) {
-            \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->set('auth_by', $grant);
+            container()->get('request')->attributes->set('auth_by', $grant);
             $cur_user = $this->loadCurUser($grant);
-            \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->set('cur_user', $cur_user);
+            container()->get('request')->attributes->set('cur_user', $cur_user);
         }
         return $cur_user;
     }
 
     public function getCurUserJIT(): string
     {
-        $jwt = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('jwt') ?? [];
+        $jwt = container()->get('request')->attributes->get('jwt') ?? [];
         return $jwt['jti'] ?? '';
     }
 
     public function getGrant(): string
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->get('auth_by');
+        return container()->get('request')->attributes->get('auth_by');
     }
 
     /**
@@ -59,7 +57,7 @@ class Auth
 
         if ($user_id !== false && is_int($user_id) && $user_id > 0) {
             $user_id = (int)$user_id;
-            $curuser = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($user_id);
+            $curuser = container()->get('site')->getUser($user_id);
             if ($curuser->getStatus() !== UserStatus::DISABLED) {  // user status shouldn't be disabled
                 return $curuser;
             }
@@ -70,14 +68,14 @@ class Auth
 
     protected function loadCurUserIdFromCookies()
     {
-        $user_session = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->cookies->get(Constant::cookie_name);
+        $user_session = container()->get('request')->cookies->get(Constant::cookie_name);
         // quick return when cookies is not exist
         if (is_null($user_session)) {
             return false;
         }
 
         // quick return when decode JWT session failed
-        if (false === $payload = ContainerHelper::getContainer()->get('jwt')->decode($user_session)) {
+        if (false === $payload = container()->get('jwt')->decode($user_session)) {
             return false;
         }
         if (!isset($payload['jti']) || !isset($payload['aud'])) {
@@ -86,7 +84,7 @@ class Auth
 
         // Check if user lock access ip ?
         if (isset($payload['ip'])) {
-            $now_ip_crc = sprintf('%08x', crc32(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp()));
+            $now_ip_crc = sprintf('%08x', crc32(container()->get('request')->getClientIp()));
             if (strcasecmp($payload['ip'], $now_ip_crc) !== 0) {
                 return false;
             }
@@ -94,22 +92,22 @@ class Auth
 
         // Verity $payload['jti'] is force expired or not, And check if it same with $payload['aud']
         // And if not match, it means user logout this session or change password....
-        $uid = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUserFactory()->getUserIdBySession($payload['jti']);
+        $uid = container()->get('site')->getUserFactory()->getUserIdBySession($payload['jti']);
         if ($uid != $payload['aud']) {
             return false;
         }
 
-        \Rid\Helpers\ContainerHelper::getContainer()->get('request')->attributes->set('jwt', $payload);
+        container()->get('request')->attributes->set('jwt', $payload);
 
         // Check if user want secure access but his environment is not secure
-        if (!\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure() &&                        // if User requests is not secure , and
+        if (!container()->get('request')->isSecure() &&                        // if User requests is not secure , and
             (
                 config('security.ssl_login') > 1       // if Our site FORCE enabled ssl feature
                 || (config('security.ssl_login') > 0 && isset($payload['ssl']) && $payload['ssl']) // if Our site support ssl feature and User want secure access
             )
         ) {
-            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect(str_replace('http://', 'https://', \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getUri()));
-            \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
+            container()->get('response')->setRedirect(str_replace('http://', 'https://', container()->get('request')->getUri()));
+            container()->get('response')->headers->set('Strict-Transport-Security', 'max-age=1296000; includeSubDomains');
         }
 
         return $payload['aud'];
@@ -117,12 +115,12 @@ class Auth
 
     protected function loadCurUserIdFromPasskey()
     {
-        $passkey = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('passkey');
+        $passkey = container()->get('request')->query->get('passkey');
         if (is_null($passkey)) {
             return false;
         }
 
-        $user_id = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUserFactory()->getUserIdByPasskey($passkey);
+        $user_id = container()->get('site')->getUserFactory()->getUserIdByPasskey($passkey);
         return $user_id > 0 ? $user_id : false;
     }
 
@@ -130,8 +128,8 @@ class Auth
     {
         if (!is_null($this->getCurUserJIT()) && $this->getCurUser()) {
             $uid = $this->getCurUser()->getId();
-            $now_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
-            $ua = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->headers->get('user-agent');
+            $now_ip = container()->get('request')->getClientIp();
+            $ua = container()->get('request')->headers->get('user-agent');
 
             $identify_key = md5(implode('|', [
                 $this->getCurUserJIT(),  // `sessions`->session
@@ -141,15 +139,15 @@ class Auth
             // Update User access info by HyperLogLog
             $grain_size = date('YmdH') ; // per hour
             // $grain_size = date('YmdH') . floor(date('i') / 15);  // per 15 minutes
-            $check = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->pfAdd('Site:hyperloglog:access_log_' . $grain_size, [$identify_key]);
+            $check = container()->get('redis')->pfAdd('Site:hyperloglog:access_log_' . $grain_size, [$identify_key]);
             if ($check == 1) {
                 // Update Table `users`
-                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
+                container()->get('pdo')->prepare('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
                     'ip' => $now_ip, 'id' => $uid
                 ])->execute();
 
                 // Insert Table `session_log`
-                \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
+                container()->get('pdo')->prepare('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
                     'jit' => $this->getCurUserJIT(), 'access_ip' => $now_ip, 'ua' => $ua
                 ])->execute();
             }

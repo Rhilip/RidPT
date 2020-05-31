@@ -1,5 +1,6 @@
 <?php
 /**
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  *
  * Created by PhpStorm.
  * User: Rhilip
@@ -43,6 +44,7 @@ return [
     'auth' => \DI\get(\App\Components\Auth::class),
     'view' => \DI\get(\Rid\Component\View::class),
     'error' => \DI\get(\Rid\Http\Error::class),
+    'validator' => \DI\get(Symfony\Component\Validator\Validator\ValidatorInterface::class),
 
     // 定义对象快捷引用
     'captcha' => \DI\get(\Rid\Libraries\Captcha::class),
@@ -99,6 +101,12 @@ return [
         ->property('cookieDomain', '')         // 有效域名/子域名
         ->property('cookieSecure', false)      // 仅通过安全的 HTTPS 连接传给客户端
         ->property('cookieHttpOnly', false),   // 仅可通过 HTTP 协议访问
+
+    Symfony\Component\Validator\Validator\ValidatorInterface::class => \DI\factory(function () {
+        return \Symfony\Component\Validator\Validation::createValidatorBuilder()
+            ->addMethodMapping('loadValidatorMetadata')
+            ->getValidator();
+    }),
 
     \Rid\Component\Config::class => \DI\autowire(),
     \App\Components\Site::class => \DI\autowire(),

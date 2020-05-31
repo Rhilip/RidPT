@@ -55,7 +55,7 @@ class Timer
                 call_user_func($callback);
             } catch (\Throwable $e) {
                 // 输出错误
-                \Rid\Helpers\ContainerHelper::getContainer()->get('error')->handleException($e);
+                container()->get('error')->handleException($e);
             }
         });
         // 保存id
@@ -82,7 +82,7 @@ class Timer
                 call_user_func($callback);
             } catch (\Throwable $e) {
                 // 输出错误
-                \Rid\Helpers\ContainerHelper::getContainer()->get('error')->handleException($e);
+                container()->get('error')->handleException($e);
             }
         });
         // 保存id

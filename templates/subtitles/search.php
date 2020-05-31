@@ -64,7 +64,7 @@ $upload_mode = $upload_mode ?? false;
                                 <div class="form-group">
                                     <label for="torrent_id" class="col-sm-2 required">Torrent ID</label>
                                     <div class="col-md-2 col-sm-10">
-                                        <input type="text" class="form-control" id="tid" name="torrent_id" pattern="^\d+$" required value="<?= \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('tid') ?>">
+                                        <input type="text" class="form-control" id="tid" name="torrent_id" pattern="^\d+$" required value="<?= container()->get('request')->query->get('tid') ?>">
                                     </div>
                                     <div class="help-block">The number in the address bar when you go to the details page of the torrent</div>
                                 </div>
@@ -143,7 +143,7 @@ $upload_mode = $upload_mode ?? false;
                         <tr>
                             <td>
                                 <div class="pull-right">
-                                    <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_subtitles')):?>
+                                    <?php if (container()->get('auth')->getCurUser()->isPrivilege('manage_subtitles')):?>
                                         <!--suppress HtmlUnknownTarget -->
                                         <a class="subs_delete" href="javascript:" data-id="<?= $datum['id'] ?>">[Delete]</a>
                                     <?php endif; ?>
@@ -156,7 +156,7 @@ $upload_mode = $upload_mode ?? false;
                             <td><time class="nowrap"><?= $this->e($datum['added_at']) ?></time></td>
                             <td><span class="nowrap"><?= $this->e($datum['size'], 'format_bytes') ?></span></td>
                             <td class="text-right"><span class="nowrap"><?= $this->e($datum['hits']) ?></span></td>
-                            <td class="text-center"><span class="nowrap"><?= $this->insert('helper/username', ['user' => \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($datum['uppd_by']), 'hide' => $datum['anonymous']]) ?></span>
+                            <td class="text-center"><span class="nowrap"><?= $this->insert('helper/username', ['user' => container()->get('site')->getUser($datum['uppd_by']), 'hide' => $datum['anonymous']]) ?></span>
                             </td>
                             <td><a class="nowrap" href="#">Report</a></td>
                         </tr>
@@ -178,7 +178,7 @@ $upload_mode = $upload_mode ?? false;
 </div>
 <?php $this->end(); ?>
 
-<?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_subtitles')):?>
+<?php if (container()->get('auth')->getCurUser()->isPrivilege('manage_subtitles')):?>
 <?php $this->push('body'); ?>
     <form method="post" action="/subtitles/delete" id="subs_delete_form" class="hidden">
         <label><input type="number" name="id" value=""></label>

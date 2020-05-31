@@ -20,9 +20,9 @@ class AuthController extends Controller
     /** @noinspection PhpUnused */
     public function register()
     {
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
+        if (container()->get('request')->isMethod(Request::METHOD_POST)) {
             $register_form = new Auth\UserRegisterForm();
-            $register_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+            $register_form->setInput(container()->get('request')->request->all());
             $success = $register_form->validate();
             if (!$success) {
                 return $this->render('action/fail', [
@@ -33,7 +33,7 @@ class AuthController extends Controller
                 $register_form->flush();  // Save this user in our database and do clean work~
 
                 if ($register_form->getStatus() == UserStatus::CONFIRMED) {
-                    return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/index');
+                    return container()->get('response')->setRedirect('/index');
                 } else {
                     return $this->render('auth/register_pending', [
                         'confirm_way' => $register_form->getConfirmWay(),
@@ -50,7 +50,7 @@ class AuthController extends Controller
     public function confirm()
     {
         $confirm = new Auth\UserConfirmForm();
-        $confirm->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
+        $confirm->setInput(container()->get('request')->query->all());
         $success = $confirm->validate();
         if (!$success) {
             return $this->render('action/fail', [
@@ -69,9 +69,9 @@ class AuthController extends Controller
     /** @noinspection PhpUnused */
     public function recover()
     {
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
+        if (container()->get('request')->isMethod(Request::METHOD_POST)) {
             $form = new Auth\UserRecoverForm();
-            $form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+            $form->setInput(container()->get('request')->request->all());
             $success = $form->validate();
             if (!$success) {
                 return $this->render('action/fail', [
@@ -99,9 +99,9 @@ class AuthController extends Controller
     {
         $render_data = [];
 
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
+        if (container()->get('request')->isMethod(Request::METHOD_POST)) {
             $login = new Auth\UserLoginForm();
-            $login->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+            $login->setInput(container()->get('request')->request->all());
             if (false === $success = $login->validate()) {
                 $login->loginFail();
                 $render_data['error_msg'] = $login->getError();
@@ -109,11 +109,11 @@ class AuthController extends Controller
                 $login->flush();
 
                 $return_to = $this->container->get('session')->pop('login_return_to') ?? '/index';
-                return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect($return_to);
+                return container()->get('response')->setRedirect($return_to);
             }
         }
 
-        $render_data['test_attempts'] = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hGet('Site:fail_login_ip_count', \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp()) ?: 0;
+        $render_data['test_attempts'] = container()->get('redis')->hGet('Site:fail_login_ip_count', container()->get('request')->getClientIp()) ?: 0;
         return $this->render('auth/login', $render_data);
     }
 
@@ -121,13 +121,13 @@ class AuthController extends Controller
     public function logout()
     {
         $logout = new Auth\UserLogoutForm();
-        $logout->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
+        $logout->setInput(container()->get('request')->query->all());
         if (false === $logout->validate()) {
             return $this->render('action/fail', ['msg' => $logout->getError()]);
         } else {
             $logout->flush();
         }
 
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('response')->setRedirect('/auth/login');
+        return container()->get('response')->setRedirect('/auth/login');
     }
 }

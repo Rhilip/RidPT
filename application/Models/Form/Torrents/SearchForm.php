@@ -30,12 +30,12 @@ class SearchForm extends Pagination
         $rules = ['page' => 'Integer', 'limit' => 'Integer'];
 
         // Quality
-        foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title) {
+        foreach (container()->get('site')->getQualityTableList() as $quality => $title) {
             $quality_id_list = [];
             if (config('torrent_upload.enable_quality_' . $quality)) {
                 $quality_id_list = [0] + array_map(function ($cat) {
                     return $cat['id'];
-                }, \Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality));
+                }, container()->get('site')->ruleQuality($quality));
             }
 
             $rules[$quality . '[*]'] = [
@@ -48,7 +48,7 @@ class SearchForm extends Pagination
         if (config('torrent_upload.enable_teams')) {
             $team_id_list = array_map(function ($team) {
                 return $team['id'];
-            }, \Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam());
+            }, container()->get('site')->ruleTeam());
             $rules['team[*]'] = [
                 ['Integer'],
                 ['InList', ['list' => $team_id_list]]
@@ -98,7 +98,7 @@ class SearchForm extends Pagination
         $fields = [];
 
         // Quality
-        foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title) {
+        foreach (container()->get('site')->getQualityTableList() as $quality => $title) {
             if (config('torrent_upload.enable_quality_' . $quality)) {
                 $value = $this->getInput($quality);
                 if (is_array($value)) {
@@ -118,9 +118,9 @@ class SearchForm extends Pagination
         // Favour
         $favour = $this->getInput('favour');
         if ($favour == 1) {  // bookmarked in favour
-            $fields[] = ['AND `id` IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()]];
+            $fields[] = ['AND `id` IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => container()->get('auth')->getCurUser()->getId()]];
         } elseif ($favour == 2) {  // not bookmarked in favour
-            $fields[] = ['AND `id` NOT IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId()]];
+            $fields[] = ['AND `id` NOT IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => container()->get('auth')->getCurUser()->getId()]];
         }
 
         // TODO we may not use `&search_area=` to search in non-title/subtitle/descr field, Use sep `&ownerid=` , `&doubanid=` instead.
@@ -172,13 +172,13 @@ class SearchForm extends Pagination
 
     protected function getRemoteTotal(): int
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare(array_merge([
+        return container()->get('pdo')->prepare(array_merge([
             ['SELECT COUNT(`id`) FROM `torrents` WHERE 1=1 ']
         ], $this->getSearchField()))->queryScalar();
     }
 
     protected function getRemoteData(): array
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getTorrentFactory()->getTorrentBySearch($this->getSearchField(), $this->offset, $this->limit);
+        return container()->get('site')->getTorrentFactory()->getTorrentBySearch($this->getSearchField(), $this->offset, $this->limit);
     }
 }

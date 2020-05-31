@@ -138,7 +138,7 @@ class UserRegisterForm extends Validator
     protected function isMaxUserReached()
     {
         if (config('register.check_max_user') &&
-            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->fetchUserCount() >= config('base.max_user')) {
+            container()->get('site')->fetchUserCount() >= config('base.max_user')) {
             $this->buildCallbackFailMsg('MaxUserReached', 'Max user limit Reached');
         }
     }
@@ -146,10 +146,10 @@ class UserRegisterForm extends Validator
     protected function isMaxRegisterIpReached()
     {
         if (config('register.check_max_ip')) {
-            $client_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
+            $client_ip = container()->get('request')->getClientIp();
 
             $max_user_per_ip = config('register.per_ip_user') ?: 5;
-            $user_ip_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
+            $user_ip_count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
                 "ip" => $client_ip
             ])->queryScalar();
 
@@ -170,13 +170,13 @@ class UserRegisterForm extends Validator
         }
 
         // Check if this username is in blacklist or not
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->sIsMember(Constant::siteBannedUsernameSet, $username)) {
+        if (container()->get('redis')->sIsMember(Constant::siteBannedUsernameSet, $username)) {
             $this->buildCallbackFailMsg('ValidUsername', 'This username is in our blacklist.');
             return;
         }
 
         // Check this username is exist in Table `users` or not
-        $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
+        $count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
             'username' => $username
         ])->queryScalar();
         if ($count > 0) {
@@ -203,12 +203,12 @@ class UserRegisterForm extends Validator
         }
 
         // Check $email is in blacklist or not
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('redis')->sIsMember(Constant::siteBannedEmailSet, $email)) {
+        if (container()->get('redis')->sIsMember(Constant::siteBannedEmailSet, $email)) {
             $this->buildCallbackFailMsg('ValidEmail', 'This email is in our blacklist.');
             return;
         }
 
-        $email_check = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
+        $email_check = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
             "email" => $email
         ])->queryScalar();
         if ($email_check > 0) {
@@ -226,7 +226,7 @@ class UserRegisterForm extends Validator
                 $this->buildCallbackFailMsg('Invite', "This invite hash : `$invite_hash` is not valid");
                 return;
             } else {
-                $inviteInfo = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `invite` WHERE `hash`=:invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
+                $inviteInfo = container()->get('pdo')->prepare('SELECT * FROM `invite` WHERE `hash`=:invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
                     'invite_hash' => $invite_hash
                 ])->queryOne();
                 if (false === $inviteInfo) {
@@ -268,7 +268,7 @@ class UserRegisterForm extends Validator
          * so that He needn't email (or other way) to confirm his account ,
          * and can access the (super)admin panel to change site config .
          */
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->fetchUserCount() == 0) {
+        if (container()->get('site')->fetchUserCount() == 0) {
             $this->status = UserStatus::CONFIRMED;
             $this->class = UserRole::STAFFLEADER;
             $this->confirm_way = 'auto';
@@ -280,17 +280,17 @@ class UserRegisterForm extends Validator
         }
 
         // Insert into `users` table and get insert id
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`)
+        container()->get('pdo')->prepare("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`)
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus, :invites)")->bindParams(array(
             'name' => $this->username, 'passhash' => password_hash($this->password, PASSWORD_DEFAULT), 'email' => $this->email,
             'status' => $this->status, 'class' => $this->class, 'passkey' => $this->passkey,
-            'invite_by' => $this->invite_by, 'ip' => \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp(),
+            'invite_by' => $this->invite_by, 'ip' => container()->get('request')->getClientIp(),
             'uploadpos' => $this->uploadpos, 'downloadpos' => $this->downloadpos,
             'uploaded' => $this->uploaded, 'downloaded' => $this->downloaded,
             'seedtime' => $this->seedtime, 'leechtime' => $this->leechtime,
             'bonus' => $this->bonus , 'invites' => $this->invites
         ))->execute();
-        $this->id = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getLastInsertId();
+        $this->id = container()->get('pdo')->getLastInsertId();
 
         // TODO Newcomer exams
 
@@ -298,28 +298,28 @@ class UserRegisterForm extends Validator
 
         // Send Invite Success PM to invitee
         if ($this->type == 'invite') {
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
+            container()->get('pdo')->prepare("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 
-            $invitee = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($this->invite_by);
+            $invitee = container()->get('site')->getUser($this->invite_by);
             $log_text .= '(Invite by ' . $invitee->getUsername() . '(' . $invitee->getId() . ')).';
 
-            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");
+            container()->get('site')->sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");
         }
 
         // Send Confirm Email
         if ($this->confirm_way == 'email') {
             $confirm_key = Random::alnum(32);
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
+            container()->get('pdo')->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
                 'uid' => $this->id, 'secret' => $confirm_key, 'action' => $this->_action
             ])->execute();
-            $confirm_url = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getSchemeAndHttpHost() . '/auth/confirm?' . http_build_query([
+            $confirm_url = container()->get('request')->getSchemeAndHttpHost() . '/auth/confirm?' . http_build_query([
                     'secret' => $confirm_key,
                     'action' => $this->_action
                 ]);
 
-            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendEmail(
+            container()->get('site')->sendEmail(
                 [$this->email],
                 'Please confirm your accent',
                 'email/user_register',
@@ -331,6 +331,6 @@ class UserRegisterForm extends Validator
         }
 
         // Add Site log for user signup
-        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog($log_text, LogLevel::LOG_LEVEL_MOD);
+        container()->get('site')->writeLog($log_text, LogLevel::LOG_LEVEL_MOD);
     }
 }

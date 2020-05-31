@@ -35,7 +35,7 @@ class RemoveForm extends Validator
     /** @noinspection PhpUnused */
     protected function getExistCategoryData()
     {
-        $this->category_data = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `categories` WHERE id = :id')->bindParams([
+        $this->category_data = container()->get('pdo')->prepare('SELECT * FROM `categories` WHERE id = :id')->bindParams([
             'id' => $this->cat_id
         ])->queryScalar();
         if ($this->category_data === false) {
@@ -46,7 +46,7 @@ class RemoveForm extends Validator
     /** @noinspection PhpUnused */
     protected function checkChildNode()
     {
-        $this->child_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
+        $this->child_count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
             'pid' => $this->cat_id
         ])->queryScalar();
         if ($this->child_count !== 0) {
@@ -57,27 +57,27 @@ class RemoveForm extends Validator
     public function flush()
     {
         // FIXME Move Category's torrent from this to it's parent
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `torrents` SET `category` = :new WHERE `category` = :old ')->bindParams([
+        container()->get('pdo')->prepare('UPDATE `torrents` SET `category` = :new WHERE `category` = :old ')->bindParams([
             'new' => $this->category_data['parent_id'], 'old' => $this->category_data['id']
         ])->execute();
 
         // Delete it~
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM `categories` WHERE id = :id')->bindParams([
+        container()->get('pdo')->prepare('DELETE FROM `categories` WHERE id = :id')->bindParams([
             'id' => $this->cat_id
         ])->execute();
 
         // Enabled parent category if no siblings
-        $siblings_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
+        $siblings_count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `categories` WHERE `parent_id` = :pid')->bindParams([
             'pid' => $this->category_data['parent_id']
         ])->queryScalar();
 
         if ($siblings_count == 0) {
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `categories` SET `enabled` = 1 WHERE `id` = :id')->bindParams([
+            container()->get('pdo')->prepare('UPDATE `categories` SET `enabled` = 1 WHERE `id` = :id')->bindParams([
                 'id' => $this->category_data['parent_id']
             ])->execute();
         }
 
         // TODO flush Redis cache
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('site:enabled_torrent_category');
+        container()->get('redis')->del('site:enabled_torrent_category');
     }
 }

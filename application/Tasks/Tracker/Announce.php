@@ -13,7 +13,7 @@ namespace App\Tasks\Tracker;
 use App\Libraries\Constant;
 
 use Rid\Database\Persistent\PDOConnection;
-use Rid\Helpers\ContainerHelper;
+
 use Rid\Helpers\IoHelper;
 use Rid\Redis\BaseRedisConnection;
 use Rid\Swoole\Task\Interfaces\TaskHandlerInterface;
@@ -25,7 +25,7 @@ class Announce implements TaskHandlerInterface
 
     public function __construct()
     {
-        $container = ContainerHelper::getContainer();
+        $container = container();
         $this->pdo = $container->get('pdo');
         $this->redis = $container->get('redis');
     }

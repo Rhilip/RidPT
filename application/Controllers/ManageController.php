@@ -16,10 +16,10 @@ class ManageController extends Controller
 {
     public function categories()
     {
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
-            if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'cat_edit') {
+        if (container()->get('request')->isMethod(Request::METHOD_POST)) {
+            if (container()->get('request')->request->get('action') == 'cat_edit') {
                 $edit_form = new Categories\EditForm();
-                $edit_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+                $edit_form->setInput(container()->get('request')->request->all());
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
@@ -27,9 +27,9 @@ class ManageController extends Controller
                 } else {
                     return $this->render('action/fail', ['msg' => $edit_form->getError()]);
                 }
-            } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'cat_delete') {
+            } elseif (container()->get('request')->request->get('action') == 'cat_delete') {
                 $delete_form = new Categories\RemoveForm();
-                $delete_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+                $delete_form->setInput(container()->get('request')->request->all());
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();
@@ -40,7 +40,7 @@ class ManageController extends Controller
             }
         }
 
-        $categories = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT * FROM `categories` ORDER BY `full_path`')->queryAll();
+        $categories = container()->get('pdo')->prepare('SELECT * FROM `categories` ORDER BY `full_path`')->queryAll();
 
         return $this->render('manage/categories', ['categories' => $categories]);
     }

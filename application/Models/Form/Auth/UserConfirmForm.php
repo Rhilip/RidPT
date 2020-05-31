@@ -49,7 +49,7 @@ class UserConfirmForm extends Validator
      */
     protected function validConfirmSecret()
     {
-        $record = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare(
+        $record = container()->get('pdo')->prepare(
             'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status`,`users`.`username`,`users`.`email` FROM `user_confirm`
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;'
@@ -71,7 +71,7 @@ class UserConfirmForm extends Validator
 
     private function update_confirm_status()
     {
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `user_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
+        container()->get('pdo')->prepare('UPDATE `user_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
             'id' => $this->id
         ])->execute();
     }
@@ -82,11 +82,11 @@ class UserConfirmForm extends Validator
             return 'user status is not pending , they may already confirmed or banned';  // FIXME msg
         }
 
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `status` = :s WHERE `id` = :uid')->bindParams([
+        container()->get('pdo')->prepare('UPDATE `users` SET `status` = :s WHERE `id` = :uid')->bindParams([
             's' => UserStatus::CONFIRMED, 'uid' => $this->uid
         ])->execute();
         $this->update_confirm_status();
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('User:content_' . $this->uid);
+        container()->get('redis')->del('User:content_' . $this->uid);
         return true;
     }
 
@@ -98,13 +98,13 @@ class UserConfirmForm extends Validator
 
         // generate new password
         $new_password = Random::alnum(10);
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `password` = :new_password WHERE `id` = :uid')->bindParams([
+        container()->get('pdo')->prepare('UPDATE `users` SET `password` = :new_password WHERE `id` = :uid')->bindParams([
             'new_password' => password_hash($new_password, PASSWORD_DEFAULT), 'uid' => $this->uid
         ])->execute();
         $this->update_confirm_status();
 
         // Send user email to tell his new password.
-        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->sendEmail(
+        container()->get('site')->sendEmail(
             [$this->email],
             'New Password',
             'email/user_new_password',

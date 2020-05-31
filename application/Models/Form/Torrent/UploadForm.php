@@ -14,7 +14,7 @@ use App\Entity\Torrent\TorrentType;
 use Rhilip\Bencode\Bencode;
 use Rhilip\Bencode\ParseErrorException;
 
-use Rid\Helpers\ContainerHelper;
+
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UploadForm extends EditForm
@@ -63,8 +63,8 @@ class UploadForm extends EditForm
         ];
 
         if (config('torrent_upload.enable_upload_nfo') &&  // Enable nfo upload
-            \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file') &&  // This user can upload nfo
-            \Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('nfo')  // Nfo file upload
+            container()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file') &&  // This user can upload nfo
+            container()->get('request')->request->get('nfo')  // Nfo file upload
         ) {
             $rules['nfo'] = [
                 ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],
@@ -83,7 +83,7 @@ class UploadForm extends EditForm
     /** @noinspection PhpUnused */
     protected function checkUploadPos()
     {
-        if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getUploadpos()) {
+        if (!container()->get('auth')->getCurUser()->getUploadpos()) {
             $this->buildCallbackFailMsg('pos', 'your upload pos is disabled');
         }
     }
@@ -153,7 +153,7 @@ class UploadForm extends EditForm
     protected function getFileNameCheckRules()
     {
         if (is_null($this->file_name_check_rules)) {
-            $rules = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `rules` FROM `file_defender` WHERE `category_id` = 0 OR `category_id` = :cat')->bindParams([
+            $rules = container()->get('pdo')->prepare('SELECT `rules` FROM `file_defender` WHERE `category_id` = 0 OR `category_id` = :cat')->bindParams([
                 'cat' => $this->getInput('category')  // Fix cat_id
             ])->queryColumn();
             $this->file_name_check_rules = '/' . implode('|', $rules) . '/iS';
@@ -212,7 +212,7 @@ class UploadForm extends EditForm
         $this->info_hash = pack('H*', sha1(Bencode::encode($this->torrent_dict['info'])));
 
         // Check if this torrent is exist or not before insert.
-        $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(*) FROM torrents WHERE info_hash = :info_hash')->bindParams([
+        $count = container()->get('pdo')->prepare('SELECT COUNT(*) FROM torrents WHERE info_hash = :info_hash')->bindParams([
             'info_hash' => $this->info_hash
         ])->queryScalar();
 
@@ -234,13 +234,13 @@ class UploadForm extends EditForm
 
         $this->rewriteFlags();
         $this->determineTorrentStatus();
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->beginTransaction();
+        container()->get('pdo')->beginTransaction();
         try {
             $tags = $this->getTags();
 
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`tags`,`nfo`,`uplver`,`hr`)
+            container()->get('pdo')->prepare('INSERT INTO `torrents` (`owner_id`,`info_hash`,`status`,`added_at`,`title`,`subtitle`,`category`,`filename`,`torrent_name`,`torrent_type`,`torrent_size`,`torrent_structure`,`team`,`quality_audio`,`quality_codec`,`quality_medium`,`quality_resolution`,`descr`,`tags`,`nfo`,`uplver`,`hr`)
 VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :category, :filename, :torrent_name, :type, :size, :structure,:team,:audio,:codec,:medium,:resolution,:descr, JSON_ARRAY(:tags), :nfo, :uplver, :hr)')->bindParams([
-                'owner_id' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId(),
+                'owner_id' => container()->get('auth')->getCurUser()->getId(),
                 'info_hash' => $this->info_hash,
                 'status' => $this->status,
                 'title' => $this->title, 'subtitle' => $this->subtitle,
@@ -255,7 +255,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
                 'nfo' => $nfo_blob,
                 'uplver' => $this->anonymous, 'hr' => $this->hr
             ])->execute();
-            $this->id = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->getLastInsertId();
+            $this->id = container()->get('pdo')->getLastInsertId();
 
             $this->updateTagsTable($tags);
 
@@ -263,25 +263,25 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
             $this->setBuff();
 
             // Save this torrent
-            $save_to = ContainerHelper::getContainer()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $this->id . '.torrent';
+            $save_to = container()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $this->id . '.torrent';
             $dump_status = Bencode::dump($save_to, $this->torrent_dict);
             if ($dump_status === false) {
                 throw new \Exception('std_torrent_cannot_save');
             }
 
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->commit();
+            container()->get('pdo')->commit();
         } catch (\Exception $e) {
             // Delete the saved torrent file when torrent save success but still get Exception on other side
             if (isset($dump_status) && $dump_status === true) {
-                unlink(ContainerHelper::getContainer()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $this->id . '.torrent');
+                unlink(container()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $this->id . '.torrent');
             }
 
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->rollback();
+            container()->get('pdo')->rollback();
 
             throw $e;
         }
 
-        \Rid\Helpers\ContainerHelper::getContainer()->get('site')->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getUsername()));
+        container()->get('site')->writeLog("Torrent {$this->id} ({$this->title}) was uploaded by " . ($this->anonymous ? 'Anonymous' : container()->get('auth')->getCurUser()->getUsername()));
     }
 
     // TODO update torrent status based on user class or their owned torrents count
@@ -299,7 +299,7 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
     private function getExternalLinkInfo()
     {
         if ($this->links) {
-            \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->lPush('queue:external_link_via_torrent_upload', ['tid' => $this->id, 'links' => $this->links]);
+            container()->get('redis')->lPush('queue:external_link_via_torrent_upload', ['tid' => $this->id, 'links' => $this->links]);
         }
     }
 
@@ -308,9 +308,9 @@ VALUES (:owner_id, :info_hash, :status, CURRENT_TIMESTAMP, :title, :subtitle, :c
         $operator_id = 0;  // The buff operator id when torrent upload will be system
         // Add Large Buff and Random Buff
         if (config("buff.enable_large") && $this->file->getSize() > config("buff.large_size")) {
-            // TODO \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->createCommand();
+            // TODO container()->get('pdo')->createCommand();
         } elseif (config("buff.enable_random")) {
-            // TODO \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->createCommand();
+            // TODO container()->get('pdo')->createCommand();
         }
 
         // TODO set uploader (or you can say torrents owner) buff

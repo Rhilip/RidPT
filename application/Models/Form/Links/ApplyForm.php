@@ -44,7 +44,7 @@ class ApplyForm extends Validator
 
     protected function checkExistLinksByUrl()
     {
-        $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `links` WHERE url = :url')->bindParams([
+        $count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `links` WHERE url = :url')->bindParams([
             'url' => $this->getInput('link_url')
         ])->queryScalar();
         if ($count > 0) {
@@ -54,12 +54,12 @@ class ApplyForm extends Validator
 
     public function flush()
     {
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `links`(`name`, `url`, `title`, `status`, `administrator`, `email`, `reason`) VALUES (:name,:url,:title,:status,:admin,:email,:reason)')->bindParams([
+        container()->get('pdo')->prepare('INSERT INTO `links`(`name`, `url`, `title`, `status`, `administrator`, `email`, `reason`) VALUES (:name,:url,:title,:status,:admin,:email,:reason)')->bindParams([
             'name' => $this->link_name, 'url' => $this->link_url, 'title' => $this->link_title,
             'status' => self::STATUS_PENDING, 'admin' => $this->link_admin, 'email' => $this->link_email,
             'reason' => $this->link_reason
         ])->execute();
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:links');
+        container()->get('redis')->del('Site:links');
         // TODO Send system PM to site group
     }
 }

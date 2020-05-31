@@ -19,11 +19,11 @@ class AdminController extends Controller
 
     public function redis()
     {
-        $info = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->info();
-        $dbsize = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->dbSize();
+        $info = container()->get('redis')->info();
+        $dbsize = container()->get('redis')->dbSize();
 
         /** @var array $cmdstat_raw */
-        $cmdstat_raw = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->info('commandstats');
+        $cmdstat_raw = container()->get('redis')->info('commandstats');
 
         $cmdstat = array_map(function ($v) {
             preg_match('/calls=(?P<calls>\d+),usec=(?P<usec>\d+),usec_per_call=(?P<usec_per_call>[\d\.]+)/', $v, $m);
@@ -35,9 +35,9 @@ class AdminController extends Controller
 
     public function mysql()
     {
-        $res = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SHOW GLOBAL STATUS')->queryAll();
+        $res = container()->get('pdo')->prepare('SHOW GLOBAL STATUS')->queryAll();
         $serverStatus = array_column($res, 'Value', 'Variable_name');
-        $startAt = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT UNIX_TIMESTAMP() - :uptime')->bindParams([
+        $startAt = container()->get('pdo')->prepare('SELECT UNIX_TIMESTAMP() - :uptime')->bindParams([
             'uptime' => $serverStatus['Uptime']
         ])->queryScalar();
         $queryStats = [];

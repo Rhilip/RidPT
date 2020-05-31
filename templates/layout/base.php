@@ -10,9 +10,9 @@
  */
 
 $css_tag = env('APP_DEBUG') ? time() : config('base.site_css_update_date');
-$extend_debug_info = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()  // Not Anonymous
+$extend_debug_info = container()->get('auth')->getCurUser()  // Not Anonymous
     && config('base.enable_extend_debug')  // Enabled Extend Debug
-    && \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_extend_debug_log');  // Privilege is enough
+    && container()->get('auth')->getCurUser()->isPrivilege('see_extend_debug_log');  // Privilege is enough
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,7 +68,7 @@ $extend_debug_info = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->
     </header>
     <div class="clearfix"></div>
 
-    <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser() === false): ?>
+    <?php if (container()->get('auth')->getCurUser() === false): ?>
         <?= $this->insert('layout/nav_anonymous') ?>
     <?php else: ?>
         <?= $this->insert('layout/nav_user') ?>
@@ -89,10 +89,10 @@ $extend_debug_info = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->
             </p>
             <p class="debug-info">
                 <?php
-                $debug_pdo = \Rid\Helpers\ContainerHelper::getContainer()->get('runtime')['pdo'] ?? [];
-                $debug_redis = \Rid\Helpers\ContainerHelper::getContainer()->get('runtime')['redis'] ?? [];
+                $debug_pdo = container()->get('runtime')['pdo'] ?? [];
+                $debug_redis = container()->get('runtime')['redis'] ?? [];
                 ?>
-                [ Page created in <b><?= number_format(microtime(true) - \Rid\Helpers\ContainerHelper::getContainer()->get('request')->server->get('REQUEST_TIME_FLOAT'), 6) ?></b> sec
+                [ Page created in <b><?= number_format(microtime(true) - container()->get('request')->server->get('REQUEST_TIME_FLOAT'), 6) ?></b> sec
                 with <b><?= $this->e(memory_get_usage(), 'format_bytes') ?></b> ram used,
                 <b><?= count($debug_pdo) ?></b> db queries,
                 <b><?= count($debug_redis) ?></b> calls of Redis ]

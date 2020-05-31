@@ -4,16 +4,6 @@
  * 助手函数
  */
 
-if (!function_exists('app')) {
-    /** 返回当前 App 实例
-     * @return \Rid\Base\Application
-     */
-    function app()
-    {
-        return \Rid\Rid::getApp();
-    }
-}
-
 if (!function_exists('env')) {
     /** 获取一个环境变量的值
      * @param null $name
@@ -29,17 +19,41 @@ if (!function_exists('env')) {
     }
 }
 
+if (!function_exists('app')) {
+    /** 返回当前 App 实例
+     * @return \Rid\Base\Application
+     */
+    function app()
+    {
+        return \Rid\Rid::getApp();
+    }
+}
+
+if (!function_exists('container')) {
+    function container()
+    {
+        return \Rid\Rid::getApp()->getContainer();
+    }
+}
+
+if (!function_exists('context')) {
+    function context()
+    {
+        return container()->get(\Rid\Component\Context::class);
+    }
+}
+
 if (!function_exists('__')) {
     function __(string $string, array $avg = [], $domain = null, $lang = null)
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('i18n')->trans($string, $avg, $domain, $lang);
+        return container()->get(\Rid\Component\I18n::class)->trans($string, $avg, $domain, $lang);
     }
 }
 
 if (!function_exists('config')) {
     function config(string $config)
     {
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('config')->get($config);
+        return container()->get(\Rid\Component\Config::class)->get($config);
     }
 }
 

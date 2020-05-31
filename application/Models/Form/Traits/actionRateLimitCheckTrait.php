@@ -16,7 +16,7 @@ trait actionRateLimitCheckTrait
     protected static function getRateLimitRules(): array
     {
         /** @noinspection PhpUnusedLocalVariableInspection */
-        $pool = 'user_' . \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId();
+        $pool = 'user_' . container()->get('auth')->getCurUser()->getId();
         return [
             /* ['key' => 'dl_60', 'period' => 60, 'max' => 5, 'pool' => $pool] */
         ];
@@ -31,7 +31,7 @@ trait actionRateLimitCheckTrait
         $period = $limit_status['period'] ?? 60;
 
         $now_ts = time();
-        $pipe = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->multi(Redis::PIPELINE);
+        $pipe = container()->get('redis')->multi(Redis::PIPELINE);
 
         $pipe->zAdd($key, $now_ts, $now_ts);
         $pipe->zRemRangeByScore($key, 0, $now_ts - $period);

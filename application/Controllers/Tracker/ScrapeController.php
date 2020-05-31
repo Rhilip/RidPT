@@ -66,9 +66,9 @@ class ScrapeController
     protected function generateTrackerResponse($rep_dict)
     {
         // Set Response Header ( Format, HTTP Cache )
-        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Content-Type', 'text/plain; charset=utf-8');
-        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Connection', 'close');
-        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->set('Pragma', 'no-cache');
+        container()->get('response')->headers->set('Content-Type', 'text/plain; charset=utf-8');
+        container()->get('response')->headers->set('Connection', 'close');
+        container()->get('response')->headers->set('Pragma', 'no-cache');
 
         return Bencode::encode($rep_dict);
     }

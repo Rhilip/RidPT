@@ -8,7 +8,7 @@
  * @var League\Plates\Template\Template $this
  */
 
-$schme = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure() ? 'https://' : 'http://';
+$schme = container()->get('request')->isSecure() ? 'https://' : 'http://';
 $site_url = $schme . config('base.site_url');
 $icon_img = $site_url . '/static/pic/logo.png';
 ?>
@@ -75,7 +75,7 @@ $icon_img = $site_url . '/static/pic/logo.png';
                             <div style="color:#555555;line-height:150%;padding: 15px 10px 10px;font-size: 14px; text-align: left; margin: 0;">
                                 <?= $this->section('body') ?>
                                 <hr>
-                                Action at <?= date('Y-m-d H:i:s'); ?> From IP: <?= \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp(); ?>
+                                Action at <?= date('Y-m-d H:i:s'); ?> From IP: <?= container()->get('request')->getClientIp(); ?>
                             </div>
                         </div>
                     </div>

@@ -32,7 +32,7 @@ use App\Entity\Torrent\TorrentStatus;
                     <div class="col-md-3">
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
-                            <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleCategory() as $category) : ?>
+                            <?php foreach (container()->get('site')->ruleCategory() as $category) : ?>
                                 <option value="<?= $category['id'] ?>" <?= $torrent->getCategoryId() == $category['id'] ? 'selected' : ''?>><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -58,14 +58,14 @@ use App\Entity\Torrent\TorrentStatus;
             <td class="nowrap"><label>Quality</label></td>
             <td>
                 <div class="row">
-                    <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title): ?>
+                    <?php foreach (container()->get('site')->getQualityTableList() as $quality => $title): ?>
                         <?php if (config('torrent_upload.enable_quality_' . $quality)) : ?>
                             <div class="col-md-3">
                                 <div class="input-group">
                                     <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
                                     <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
                                         <option value="0">[Choose One]</option>
-                                        <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality) as $q): ?>
+                                        <?php foreach (container()->get('site')->ruleQuality($quality) as $q): ?>
                                             <option value="<?= $q['id']; ?>"
                                                 <?= $torrent->getQualityId($quality) ==$q['id'] ? 'selected' : '' ?>
                                             ><?= $q['name']; ?></option>
@@ -87,8 +87,8 @@ use App\Entity\Torrent\TorrentStatus;
                             <span class="input-group-addon"><label for="team">Group</label></span>
                             <select id="team" name="team" class="form-control">
                                 <option value="0" selected>[Choose One]</option>
-                                <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam() as $team) : ?>
-                                    <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getClass() >= $team['class_require']): ?>
+                                <?php foreach (container()->get('site')->ruleTeam() as $team) : ?>
+                                    <?php if (container()->get('auth')->getCurUser()->getClass() >= $team['class_require']): ?>
                                         <option value="<?= $team['id'] ?>" <?= $torrent->getTeamId() == $team['id'] ? 'selected' : '' ?>><?= $team['name'] ?></option>
                                     <?php endif ?>
                                 <?php endforeach; ?>
@@ -100,7 +100,7 @@ use App\Entity\Torrent\TorrentStatus;
         </tr>
         <?php if (
             config('torrent_upload.enable_upload_nfo')
-            && \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file')
+            && container()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file')
         ): ?>
         <!-- TODO fix  -->
             <tr>
@@ -153,12 +153,12 @@ use App\Entity\Torrent\TorrentStatus;
             <td>
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="switch<?= \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
+                        <div class="switch<?= container()->get('auth')->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
                             <input type="checkbox" id="anonymous" name="anonymous" value="1" <?= $torrent->getUplver() ? ' checked' : '' ?>><label for="anonymous">Anonymous Upload</label>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="switch<?= \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
+                        <div class="switch<?= container()->get('auth')->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
                             <input type="checkbox" id="hr" name="hr" value="1" <?= $torrent->getHr() ? ' checked' : '' ?>><label for="hr">H&R</label>
                         </div>
                     </div>
@@ -166,7 +166,7 @@ use App\Entity\Torrent\TorrentStatus;
 
             </td>
         </tr>
-        <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_torrents')): ?>
+        <?php if (container()->get('auth')->getCurUser()->isPrivilege('manage_torrents')): ?>
         <tr>
             <td class="nowrap"><label>Manage</label></td>
             <td>

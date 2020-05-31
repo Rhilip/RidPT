@@ -35,10 +35,10 @@ class Logs extends Pagination
     public static function inputRules(): array
     {
         $level_list = ['all', 'normal'];
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_mod')) {
+        if (container()->get('auth')->getCurUser()->isPrivilege('see_site_log_mod')) {
             $level_list[] = 'mod';
         }
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_leader')) {
+        if (container()->get('auth')->getCurUser()->isPrivilege('see_site_log_leader')) {
             $level_list[] = 'leader';
         }
 
@@ -59,10 +59,10 @@ class Logs extends Pagination
 
         if ('all' == $input_level = $this->level) {
             $levels = ['normal'];
-            if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_mod')) {
+            if (container()->get('auth')->getCurUser()->isPrivilege('see_site_log_mod')) {
                 $levels[] = 'mod';
             }
-            if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_site_log_leader')) {
+            if (container()->get('auth')->getCurUser()->isPrivilege('see_site_log_leader')) {
                 $levels[] = 'leader';
             }
         } else {
@@ -76,7 +76,7 @@ class Logs extends Pagination
     protected function getRemoteTotal(): int
     {
         $search = $this->query;
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT COUNT(*) FROM `site_log` WHERE 1=1 '],
             ['AND `level` IN (:l) ', 'params' => ['l' => $this->getLevels()]],
             ['AND `msg` LIKE :search ', 'if' => strlen($search), 'params' => ['search' => "%$search%"]]
@@ -86,7 +86,7 @@ class Logs extends Pagination
     protected function getRemoteData(): array
     {
         $search = $this->query;
-        return \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare([
+        return container()->get('pdo')->prepare([
             ['SELECT * FROM `site_log` WHERE 1=1 '],
             ['AND `level` IN (:l) ', 'params' => ['l' => $this->getLevels()]],
             ['AND `msg` LIKE :search ', 'if' => strlen($search), 'params' => ['search' => "%$search%"]],

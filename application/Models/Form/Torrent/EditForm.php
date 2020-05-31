@@ -55,19 +55,19 @@ class EditForm extends Validator
                     function ($cat) {
                         return $cat['id'];
                     },
-                    \Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleCanUsedCategory()
+                    container()->get('site')->ruleCanUsedCategory()
                 )]]
             ],
             'descr' => 'required',
         ];
 
         // Add Quality Valid
-        foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title) {
+        foreach (container()->get('site')->getQualityTableList() as $quality => $title) {
             $quality_id_list = [0];
             // IF enabled this quality field , then load it value list from setting
             // Else we just allow the default value 0 to prevent cheating
             if (config('torrent_upload.enable_quality_' . $quality)) {
-                foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality) as $cat) {
+                foreach (container()->get('site')->ruleQuality($quality) as $cat) {
                     $quality_id_list[] = $cat['id'];
                 }
             }
@@ -81,8 +81,8 @@ class EditForm extends Validator
         // Add Team id Valid
         $team_id_list = [0];
         if (config('torrent_upload.enable_teams')) {
-            foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam() as $team) {
-                if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getClass() >= $team['class_require']) {
+            foreach (container()->get('site')->ruleTeam() as $team) {
+                if (container()->get('auth')->getCurUser()->getClass() >= $team['class_require']) {
                     $team_id_list[] = $team['id'];
                 }
             }
@@ -119,7 +119,7 @@ class EditForm extends Validator
         $rules['id'] = 'Required | Integer';
 
         if (config('torrent_upload.enable_upload_nfo')   // Enable nfo upload
-            && \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file') // This user can upload nfo
+            && container()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file') // This user can upload nfo
         ) {
             $rules['nfo_action'] = [
                 ['required'],
@@ -127,7 +127,7 @@ class EditForm extends Validator
             ];
 
             // Nfo file upload
-            if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('nfo_action', 'keep') == 'update') {
+            if (container()->get('request')->request->get('nfo_action', 'keep') == 'update') {
                 $rules['nfo'] = [
                     ['Upload\Extension', ['allowed' => ['nfo', 'txt']]],
                     ['Upload\Size', ['size' => config('upload.max_nfo_file_size') . 'B']]
@@ -135,7 +135,7 @@ class EditForm extends Validator
             }
         }
 
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_torrents')) {
+        if (container()->get('auth')->getCurUser()->isPrivilege('manage_torrents')) {
             $rules['status'] = [
                 ['required'],
                 ['InList', ['list' => TorrentStatus::TORRENT_STATUSES]]
@@ -160,8 +160,8 @@ class EditForm extends Validator
             }
         }
 
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId() != $this->torrent->getOwnerId()  // User is torrent owner
-            || !\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('manage_torrents')  // User can manager torrents
+        if (container()->get('auth')->getCurUser()->getId() != $this->torrent->getOwnerId()  // User is torrent owner
+            || !container()->get('auth')->getCurUser()->isPrivilege('manage_torrents')  // User can manager torrents
         ) {
             $this->buildCallbackFailMsg('owner', 'You can\'t edit torrent which is not belong to you.');
             return false;
@@ -176,7 +176,7 @@ class EditForm extends Validator
     {
         $this->rewriteFlags();
         $tags = $this->getTags();
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('
+        container()->get('pdo')->prepare('
             UPDATE `torrents` SET title = :title, subtitle = :subtitle,
                       category = :category, team = :team, quality_audio = :audio, quality_codec = :codec,
                       quality_medium = :medium, quality_resolution = :resolution,
@@ -190,7 +190,7 @@ class EditForm extends Validator
             'uplver' => $this->anonymous, 'hr' => $this->hr
         ])->execute();
 
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del(Constant::torrentContent($this->id));
+        container()->get('redis')->del(Constant::torrentContent($this->id));
         // Delete cache
     }
 
@@ -216,7 +216,7 @@ class EditForm extends Validator
             } elseif ($config == 0) { // if global config disabled this flag
                 $this->$flag = 0;
             } else {  // check if user can use this flag
-                if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_flag_' . $flag)) {
+                if (!container()->get('auth')->getCurUser()->isPrivilege('upload_flag_' . $flag)) {
                     $this->$flag = 0;
                 }
             }
@@ -232,7 +232,7 @@ class EditForm extends Validator
             $tags_list = array_slice($tags_list, 0, 10); // Get first 10 tags
 
             if (!config('torrent_upload.allow_new_custom_tags')) {
-                $rule_pinned_tags = array_keys(\Rid\Helpers\ContainerHelper::getContainer()->get('site')->rulePinnedTags());
+                $rule_pinned_tags = array_keys(container()->get('site')->rulePinnedTags());
                 $tags_list = array_intersect($rule_pinned_tags, $tags_list);
             }
         }
@@ -243,7 +243,7 @@ class EditForm extends Validator
     protected function updateTagsTable(array $tags)
     {
         foreach ($tags as $tag) {
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO tags (tag) VALUES (:tag) ON DUPLICATE KEY UPDATE `count` = `count` + 1;')->bindParams([
+            container()->get('pdo')->prepare('INSERT INTO tags (tag) VALUES (:tag) ON DUPLICATE KEY UPDATE `count` = `count` + 1;')->bindParams([
                 'tag' => $tag
             ])->execute();
         }

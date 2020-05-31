@@ -10,7 +10,7 @@
  * @var \App\Models\Form\Rss\FeedForm $feed
  */
 
-$url = (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure() ? 'https://' : 'http://') . config('base.site_url');
+$url = (container()->get('request')->isSecure() ? 'https://' : 'http://') . config('base.site_url');
 $site_name = config('base.site_name');
 $site_email = config('base.site_email');
 $yearfounded = 2019; // FIXME get it from dynamic config

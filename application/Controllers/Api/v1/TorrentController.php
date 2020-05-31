@@ -15,7 +15,7 @@ class TorrentController
     public function bookmark()
     {
         $bookmark = new TorrentsForm();
-        $bookmark->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+        $bookmark->setInput(container()->get('request')->request->all());
         $success = $bookmark->validate();
         if (!$success) {
             return [
@@ -34,7 +34,7 @@ class TorrentController
     public function fileList()
     {
         $filelist = new TorrentsForm();
-        $filelist->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
+        $filelist->setInput(container()->get('request')->query->all());
         $success = $filelist->validate();
         if (!$success) {
             return [
@@ -53,7 +53,7 @@ class TorrentController
     public function nfoFileContent()
     {
         $filelist = new TorrentsForm();
-        $filelist->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->all());
+        $filelist->setInput(container()->get('request')->query->all());
         $success = $filelist->validate();
         if (!$success) {
             return [

@@ -41,20 +41,20 @@ class EditForm extends Validator
 
     public function flush()
     {
-        $userid = \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId();
+        $userid = container()->get('auth')->getCurUser()->getId();
         if ((int) $this->id == 0) { // This is new news
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO news (user_id,create_at,title,body,notify,force_read) VALUES (:uid,CURRENT_TIMESTAMP,:title,:body,:notify,:fread);')->bindParams([
+            container()->get('pdo')->prepare('INSERT INTO news (user_id,create_at,title,body,notify,force_read) VALUES (:uid,CURRENT_TIMESTAMP,:title,:body,:notify,:fread);')->bindParams([
                 'uid' => $userid, 'title' => $this->title, 'body' => $this->body,
                 'notify' => $this->notify, 'fread' => $this->force_read
             ])->execute();
         } else {  // This is news edit
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE news SET user_id = :uid, title = :title, body = :body, notify = :notify, force_read = :fread WHERE id=:id')->bindParams([
+            container()->get('pdo')->prepare('UPDATE news SET user_id = :uid, title = :title, body = :body, notify = :notify, force_read = :fread WHERE id=:id')->bindParams([
                 'id' => $this->id, 'uid' => $userid,
                 'title' => $this->title, 'body' => $this->body,
                 'notify' => $this->notify, 'fread' => $this->force_read
             ])->execute();
         }
         // Clean News Cache
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->del('Site:recent_news');
+        container()->get('redis')->del('Site:recent_news');
     }
 }

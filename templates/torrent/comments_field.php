@@ -17,7 +17,7 @@ $enabled_editor = $enabled_editor ?? false;
         <section class="comments-list">
             <?php foreach ($comments as $commit): ?>
                 <?php
-                $commit_user = \Rid\Helpers\ContainerHelper::getContainer()->get('site')->getUser($commit['owner_id']);
+                $commit_user = container()->get('site')->getUser($commit['owner_id']);
 
                 // The details of commentator should be hide or not ?
                 $commentator_hide_flag = $torrent->getUplver() &&  // The torrent is uplver
@@ -57,7 +57,7 @@ $enabled_editor = $enabled_editor ?? false;
     <?php endif; ?>
     <footer>
         <div class="reply-form" id="commentReplyForm1">
-            <div class="avatar"><img src="<?= \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getAvatar() ?>" alt=""></div>
+            <div class="avatar"><img src="<?= container()->get('auth')->getCurUser()->getAvatar() ?>" alt=""></div>
             <form class="form" method="post" action="/torrent/comments?id=<?= $torrent->getId() ?>">
                 <!-- FIXME commit point -->
                 <div class="form-group">

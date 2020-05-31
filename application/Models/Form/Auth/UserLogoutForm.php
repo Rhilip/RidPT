@@ -11,7 +11,7 @@ namespace App\Models\Form\Auth;
 use App\Entity\User\UserFactory;
 use App\Libraries\Constant;
 
-use Rid\Helpers\ContainerHelper;
+
 use Rid\Validators\CsrfTrait;
 use Rid\Validators\Validator;
 
@@ -43,13 +43,13 @@ class UserLogoutForm extends Validator
     /** @noinspection PhpUnused */
     protected function getUserSessionId()
     {
-        $session = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->cookies->get(Constant::cookie_name);
+        $session = container()->get('request')->cookies->get(Constant::cookie_name);
         if (is_null($session)) {
             $this->buildCallbackFailMsg('session', 'How can you hit here without cookies?');
             return;
         }
 
-        $payload = ContainerHelper::getContainer()->get('jwt')->decode($session);
+        $payload = container()->get('jwt')->decode($session);
         if ($payload === false || !isset($payload['jti'])) {
             $this->buildCallbackFailMsg('jwt', 'Fail to get $jti information');
             return;
@@ -65,11 +65,11 @@ class UserLogoutForm extends Validator
 
     private function invalidSession()
     {
-        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->clearCookie(Constant::cookie_name);   // Clean cookie
-        \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->zAdd(UserFactory::mapUserSessionToId, 0, $this->sid);   // Quick Mark this invalid in cache
+        container()->get('response')->headers->clearCookie(Constant::cookie_name);   // Clean cookie
+        container()->get('redis')->zAdd(UserFactory::mapUserSessionToId, 0, $this->sid);   // Quick Mark this invalid in cache
 
         // Set this session expired
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
+        container()->get('pdo')->prepare('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
             'sid' => $this->sid
         ])->execute();
     }

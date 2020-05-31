@@ -36,7 +36,7 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fas fa-user-alt fa-fw"></span></span>
                             <input type="text" class="form-control" id="username" name="username" required
-                                   placeholder="" value="<?= $this->e(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('username', '')) ?>">
+                                   placeholder="" value="<?= $this->e(container()->get('request')->request->get('username', '')) ?>">
                         </div>
                     </div>
 
@@ -84,8 +84,8 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                                 </div>
                                 <div class="switch">
                                     <input type="checkbox" name="ssl" id="ssl" value="yes"
-                                           <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure() || config('security.ssl_login') > 0): ?>checked<?php endif; ?>
-                                           <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure() || in_array(config('security.ssl_login'), [-1, 2])): ?>disabled<?php endif; ?>
+                                           <?php if (container()->get('request')->isSecure() || config('security.ssl_login') > 0): ?>checked<?php endif; ?>
+                                           <?php if (container()->get('request')->isSecure() || in_array(config('security.ssl_login'), [-1, 2])): ?>disabled<?php endif; ?>
                                     >
                                     <label for="ssl">Enable SSL (HTTPS)</label>
                                 </div>

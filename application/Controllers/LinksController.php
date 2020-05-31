@@ -17,9 +17,9 @@ class LinksController extends Controller
     /** @noinspection PhpUnused */
     public function apply()
     {
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
+        if (container()->get('request')->isMethod(Request::METHOD_POST)) {
             $form = new Links\ApplyForm();
-            $form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+            $form->setInput(container()->get('request')->request->all());
             $success = $form->validate();
             if ($success) {
                 $form->flush();
@@ -35,10 +35,10 @@ class LinksController extends Controller
     /** @noinspection PhpUnused */
     public function manager()
     {
-        if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isMethod(Request::METHOD_POST)) {
-            if (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'link_edit') {
+        if (container()->get('request')->isMethod(Request::METHOD_POST)) {
+            if (container()->get('request')->request->get('action') == 'link_edit') {
                 $edit_form = new Links\EditForm();
-                $edit_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+                $edit_form->setInput(container()->get('request')->request->all());
                 $success = $edit_form->validate();
                 if ($success) {
                     $edit_form->flush();
@@ -46,9 +46,9 @@ class LinksController extends Controller
                 } else {
                     return $this->render('action/fail', ['msg' => $edit_form->getError()]);
                 }
-            } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->get('action') == 'link_delete') {
+            } elseif (container()->get('request')->request->get('action') == 'link_delete') {
                 $delete_form = new Links\RemoveForm();
-                $delete_form->setInput(\Rid\Helpers\ContainerHelper::getContainer()->get('request')->request->all());
+                $delete_form->setInput(container()->get('request')->request->all());
                 $success = $delete_form->validate();
                 if ($success) {
                     $delete_form->flush();
@@ -59,7 +59,7 @@ class LinksController extends Controller
             }
         }
 
-        $all_links = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare("SELECT * FROM `links` ORDER BY FIELD(`status`,'enabled','pending','disabled'),`id` ASC")->queryAll();
+        $all_links = container()->get('pdo')->prepare("SELECT * FROM `links` ORDER BY FIELD(`status`,'enabled','pending','disabled'),`id` ASC")->queryAll();
 
         return $this->render('links/manage', ['links' => $all_links]);
     }

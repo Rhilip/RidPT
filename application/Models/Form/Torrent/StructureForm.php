@@ -9,13 +9,12 @@
 namespace App\Models\Form\Torrent;
 
 use Rhilip\Bencode\Bencode;
-use Rid\Helpers\ContainerHelper;
 
 class StructureForm extends DetailsForm
 {
     public function getTorrentFileContentDict()
     {
-        $file_loc = ContainerHelper::getContainer()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $this->id . '.torrent';
+        $file_loc = container()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $this->id . '.torrent';
         return Bencode::load($file_loc);
     }
 }

@@ -237,7 +237,7 @@ abstract class AbstractServerCommand extends AbstractCommand
                 $this->httpServerConfig['hook']['hook_request_success'] and call_user_func($this->httpServerConfig['hook']['hook_request_success'], $this->server, $request);
             } catch (\Throwable $e) {
                 // FIXME we should catch 404 or 405 inside of application->run()
-                \Rid\Helpers\ContainerHelper::getContainer()->get('error')->handleException($e);
+                container()->get('error')->handleException($e);
                 // 执行回调
                 $this->httpServerConfig['hook']['hook_request_error'] and call_user_func($this->httpServerConfig['hook']['hook_request_error'], $this->server, $request);
             }

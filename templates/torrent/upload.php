@@ -28,7 +28,7 @@
                     <div class="col-md-3">
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
-                            <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleCategory() as $category) : ?>
+                            <?php foreach (container()->get('site')->ruleCategory() as $category) : ?>
                                 <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -69,14 +69,14 @@
             <td class="nowrap"><label>Quality</label></td>
             <td>
                 <div class="row">
-                    <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->getQualityTableList() as $quality => $title): ?>
+                    <?php foreach (container()->get('site')->getQualityTableList() as $quality => $title): ?>
                     <?php if (config('torrent_upload.enable_quality_' . $quality)) : ?>
                     <div class="col-md-3">
                         <div class="input-group">
                             <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
                             <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
                                 <option value="0">[Choose One]</option>
-                                <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleQuality($quality) as $q): ?>
+                                <?php foreach (container()->get('site')->ruleQuality($quality) as $q): ?>
                                     <option value="<?= $q['id']; ?>"><?= $q['name']; ?></option>
                                 <?php endforeach; ?>
                             </select>
@@ -96,8 +96,8 @@
                             <span class="input-group-addon"><label for="team">Group</label></span>
                             <select id="team" name="team" class="form-control">
                                 <option value="0" selected>[Choose One]</option>
-                                <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->ruleTeam() as $team) : ?>
-                                    <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getClass() >= $team['class_require']): ?>
+                                <?php foreach (container()->get('site')->ruleTeam() as $team) : ?>
+                                    <?php if (container()->get('auth')->getCurUser()->getClass() >= $team['class_require']): ?>
                                         <option value="<?= $team['id'] ?>"><?= $team['name'] ?></option>
                                     <?php endif ?>
                                 <?php endforeach; ?>
@@ -107,7 +107,7 @@
                 </div>
             </td> <!-- FIXME link url -->
         </tr>
-        <?php if (config('torrent_upload.enable_upload_nfo') && \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file')): ?>
+        <?php if (config('torrent_upload.enable_upload_nfo') && container()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file')): ?>
         <tr>
             <td class="nowrap"><label for="nfo">NFO File</label></td>
             <td>
@@ -140,7 +140,7 @@
             <td><input id="tags" name="tags" class="form-control" type="text">
                 <div class="tag-help-block" style="margin-top: 4px">
                     Pinned Tags:
-                    <?php foreach (\Rid\Helpers\ContainerHelper::getContainer()->get('site')->rulePinnedTags() as $tag => $class_name): ?>
+                    <?php foreach (container()->get('site')->rulePinnedTags() as $tag => $class_name): ?>
                         <a href="javascript:" class="add-tag label label-outline <?= $class_name ?>"><?= $tag ?></a>
                     <?php endforeach; ?>
                 </div>
@@ -152,12 +152,12 @@
             <td>
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="switch<?= \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
+                        <div class="switch<?= container()->get('auth')->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
                             <input type="checkbox" id="anonymous" name="anonymous" value="1"><label for="anonymous">Anonymous Upload</label>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="switch<?= \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
+                        <div class="switch<?= container()->get('auth')->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
                             <input type="checkbox" id="hr" name="hr" value="1"><label for="hr">H&R</label>
                         </div>
                     </div>

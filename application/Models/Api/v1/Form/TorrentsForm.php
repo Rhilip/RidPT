@@ -18,23 +18,23 @@ class TorrentsForm extends Validator
 
     public function updateRecord()
     {
-        $bookmark_exist = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `id` FROM `bookmarks` WHERE `uid` = :uid AND `tid` = :tid ')->bindParams([
-            'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId(),
+        $bookmark_exist = container()->get('pdo')->prepare('SELECT `id` FROM `bookmarks` WHERE `uid` = :uid AND `tid` = :tid ')->bindParams([
+            'uid' => container()->get('auth')->getCurUser()->getId(),
             'tid' => $this->getInput('id')
         ])->queryScalar() ?: 0;
         if ($bookmark_exist > 0) {  // Delete the exist record
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('DELETE FROM `bookmarks` WHERE `id` = :bid')->bindParams([
+            container()->get('pdo')->prepare('DELETE FROM `bookmarks` WHERE `id` = :bid')->bindParams([
                 'bid' => $bookmark_exist
             ])->execute();
-            \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->updateBookmarkList();
+            container()->get('auth')->getCurUser()->updateBookmarkList();
 
             return ['msg' => 'Delete Old Bookmark Success', 'result' => 'deleted'];
         } else {  // Add new record
-            \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO `bookmarks` (`uid`, `tid`) VALUES (:uid, :tid)')->bindParams([
-                'uid' => \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getId(),
+            container()->get('pdo')->prepare('INSERT INTO `bookmarks` (`uid`, `tid`) VALUES (:uid, :tid)')->bindParams([
+                'uid' => container()->get('auth')->getCurUser()->getId(),
                 'tid' => $this->getInput('id')
             ])->execute();
-            \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->updateBookmarkList();
+            container()->get('auth')->getCurUser()->updateBookmarkList();
 
             return ['msg' => 'Add New Bookmark Success', 'result' => 'added'];
         }

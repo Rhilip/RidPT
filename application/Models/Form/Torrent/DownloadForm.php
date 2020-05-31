@@ -40,7 +40,7 @@ class DownloadForm extends StructureForm
 
     protected function checkDownloadPos()
     {
-        if (!\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getDownloadpos()) {
+        if (!container()->get('auth')->getCurUser()->getDownloadpos()) {
             $this->buildCallbackFailMsg('pos', 'your download pos is disabled');
         }
     }
@@ -52,11 +52,11 @@ class DownloadForm extends StructureForm
         $scheme = 'http://';
         if (isset($this->https)) {
             $scheme = filter_var($this->https, FILTER_VALIDATE_BOOLEAN) ? 'https://' : 'http://';
-        } elseif (\Rid\Helpers\ContainerHelper::getContainer()->get('request')->isSecure()) {
+        } elseif (container()->get('request')->isSecure()) {
             $scheme = 'https://';
         }
 
-        $announce_suffix = '/announce?passkey=' . \Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->getPasskey();
+        $announce_suffix = '/announce?passkey=' . container()->get('auth')->getCurUser()->getPasskey();
         $dict['announce'] = $scheme . config('base.site_tracker_url') . $announce_suffix;
 
         /** BEP 0012 Multitracker Metadata Extension

@@ -8,7 +8,7 @@
  * @var League\Plates\Template\Template $this
  */
 
-$register_type = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('type', 'open')
+$register_type = container()->get('request')->query->get('type', 'open')
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -100,7 +100,7 @@ $register_type = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->q
                                 </div>
 
                                 <?php if ($register_type == 'invite') : ?>
-                                    <?php $invite_hash = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->query->get('invite_hash', '') ?>
+                                    <?php $invite_hash = container()->get('request')->query->get('invite_hash', '') ?>
                                 <div class="form-group">
                                     <label for="invite_hash">Invite Code</label>
                                     <div class="input-group">

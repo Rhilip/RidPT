@@ -16,7 +16,7 @@ $show_badge = $show_badge ?? false;
     <s>(orphaned)</s>
 <?php elseif ($hide): // User in hide status?>
     <i>Anonymous</i>
-    <?php if (\Rid\Helpers\ContainerHelper::getContainer()->get('auth')->getCurUser()->isPrivilege('see_anonymous_info')): ?>
+    <?php if (container()->get('auth')->getCurUser()->isPrivilege('see_anonymous_info')): ?>
         (<?= $this->insert('helper/username', ['user' => $user, 'hide' => false, 'user_badge' => $show_badge]) ?>)
     <?php endif; ?>
 <?php else: ?>

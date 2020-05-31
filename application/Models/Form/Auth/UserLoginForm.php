@@ -11,7 +11,7 @@ namespace App\Models\Form\Auth;
 use App\Libraries\Constant;
 use App\Entity\User\UserStatus;
 
-use Rid\Helpers\ContainerHelper;
+
 use Rid\Utils\Random;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
@@ -59,7 +59,7 @@ class UserLoginForm extends Validator
     /** @noinspection PhpUnused */
     protected function loadUserFromPdo()
     {
-        $this->self = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1')->bindParams([
+        $this->self = container()->get('pdo')->prepare('SELECT `id`,`username`,`password`,`status`,`opt`,`class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1')->bindParams([
             'uname' => $this->getInput('username'), 'email' => $this->getInput('username'),
         ])->queryOne();
 
@@ -107,7 +107,7 @@ class UserLoginForm extends Validator
     /** @noinspection PhpUnused */
     protected function isMaxUserSessionsReached()
     {
-        $exist_session_count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM sessions WHERE uid = :uid AND expired != 1')->bindParams([
+        $exist_session_count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM sessions WHERE uid = :uid AND expired != 1')->bindParams([
             'uid' => $this->self['id']
         ])->queryScalar();
 
@@ -118,10 +118,10 @@ class UserLoginForm extends Validator
 
     public function loginFail()
     {
-        $user_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
-        $test_attempts = \Rid\Helpers\ContainerHelper::getContainer()->get('redis')->hIncrBy('Site:fail_login_ip_count', $user_ip, 1);
+        $user_ip = container()->get('request')->getClientIp();
+        $test_attempts = container()->get('redis')->hIncrBy('Site:fail_login_ip_count', $user_ip, 1);
         if ($test_attempts >= config('security.max_login_attempts')) {
-            \Rid\Helpers\ContainerHelper::getContainer()->get('site')->banIp($user_ip);
+            container()->get('site')->banIp($user_ip);
         }
     }
 
@@ -141,7 +141,7 @@ class UserLoginForm extends Validator
 
         do { // Generate unique JWT ID
             $jti = Random::alnum(64);
-            $count = \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('SELECT COUNT(`id`) FROM sessions WHERE session = :sid;')->bindParams([
+            $count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM sessions WHERE session = :sid;')->bindParams([
                 'sid' => $jti
             ])->queryScalar();
         } while ($count != 0);
@@ -162,7 +162,7 @@ class UserLoginForm extends Validator
         $payload['exp'] = $cookieExpire;
 
         // Custom Payload key
-        $login_ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
+        $login_ip = container()->get('request')->getClientIp();
         if ($this->securelogin === 'yes' || config('security.secure_login') > 1) {
             $payload['ip'] = sprintf('%08x', crc32($login_ip));  // Store User Login IP ( in CRC32 format )
         }
@@ -173,25 +173,25 @@ class UserLoginForm extends Validator
 
         // Generate JWT content
         $this->jwt_payload = $payload;
-        $jwt = ContainerHelper::getContainer()->get('jwt')->encode($payload);
+        $jwt = container()->get('jwt')->encode($payload);
 
         // Store User Login Session Information in database
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
+        container()->get('pdo')->prepare('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
             'VALUES (:uid, :sid, INET6_ATON(:login_ip), NOW(), :expired)')->bindParams([
             'uid' => $this->jwt_payload['aud'], 'sid' => $this->jwt_payload['jti'], 'login_ip' => $login_ip,
             'expired' => ($this->logout === 'yes') ? 0 : -1,  // -1 -> never expired , 0 -> auto_expire after 15 minutes, 1 -> expired
         ])->execute();
 
         // Sent JWT content AS Cookie
-        \Rid\Helpers\ContainerHelper::getContainer()->get('response')->headers->setCookie(new Cookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true));
+        container()->get('response')->headers->setCookie(new Cookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true));
     }
 
     private function updateUserLoginInfo()
     {
-        $ip = \Rid\Helpers\ContainerHelper::getContainer()->get('request')->getClientIp();
+        $ip = container()->get('request')->getClientIp();
 
         // Update User Tables
-        \Rid\Helpers\ContainerHelper::getContainer()->get('pdo')->prepare('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([
+        container()->get('pdo')->prepare('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([
             'ip' => $ip, 'id' => $this->self['id']
         ])->execute();
     }
