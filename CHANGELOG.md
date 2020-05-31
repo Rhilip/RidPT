@@ -2,6 +2,7 @@
 ## [Unreleased]
 
 ### Build
+- **Composer:** Upgrade dependencies (69f4f61)
 - **Composer:** Switch dotenv library from `adhocore/cli` to `symfony/console` (bd1949a)
 - **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
 - **Swoole:** Change swoole-ide-helper library (430e41c)

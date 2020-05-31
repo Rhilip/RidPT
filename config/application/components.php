@@ -43,7 +43,6 @@ return [
     'site' => \DI\get(\App\Components\Site::class),
     'auth' => \DI\get(\App\Components\Auth::class),
     'view' => \DI\get(\Rid\Component\View::class),
-    'error' => \DI\get(\Rid\Http\Error::class),
     'validator' => \DI\get(Symfony\Component\Validator\Validator\ValidatorInterface::class),
 
     // 定义对象快捷引用

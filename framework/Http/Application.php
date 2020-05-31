@@ -5,6 +5,8 @@ namespace Rid\Http;
 use Rid\Component\Context;
 
 use FastRoute\Dispatcher;
+use Rid\Helpers\IoHelper;
+use Rid\Http\Route\Exception\NotFoundException;
 
 /**
  * App类
@@ -35,20 +37,27 @@ class Application extends \Rid\Base\Application
         $this->container->get('response')->setResponder($response);
         $server = $this->container->get('request')->server->all();
 
-        // 执行控制器并返回结果
-        $content = $this->runAction(strtoupper($server['REQUEST_METHOD']), $server['PATH_INFO']);
-        if (is_array($content)) {
-            $this->container->get('response')->setJson($content);
-        } else {
-            $this->container->get('response')->setContent($content);
+        try {
+            // 执行控制器并返回结果
+            $content = $this->runAction(strtoupper($server['REQUEST_METHOD']), $server['PATH_INFO']);
+        } catch (\Exception $e) {
+            $statusCode = $e instanceof NotFoundException ? 404 : 500;
+            container()->get('response')->setStatusCode($statusCode);
+            $content = $this->parseException($e);
+        } finally {
+            if (is_array($content)) {
+                $this->container->get('response')->setJson($content);
+            } else {
+                $this->container->get('response')->setContent($content);
+            }
+
+            // 准备请求并发送
+            $this->container->get('response')->prepare($this->container->get('request'));
+            $this->container->get('response')->send();
+
+            // 清扫Runtime组件容器
+            $this->container->get(Context::class)->cleanContext();
         }
-
-        // 准备请求并发送
-        $this->container->get('response')->prepare($this->container->get('request'));
-        $this->container->get('response')->send();
-
-        // 清扫Runtime组件容器
-        $this->container->get(Context::class)->cleanContext();
     }
 
     // 执行功能并返回
@@ -67,11 +76,11 @@ class Application extends \Rid\Base\Application
                 return $this->runWithMiddleware([$handler[0], $handler[1]], $handler['middlewares']);
             case Dispatcher::METHOD_NOT_ALLOWED:
                 $allowedMethods = $routeInfo[1];
-                throw new \Rid\Exceptions\NotFoundException('METHOD NOT ALLOWED (#405)');
+                throw new NotFoundException('METHOD NOT ALLOWED (#405)');
                 break;
             case Dispatcher::NOT_FOUND:
             default:
-                throw new \Rid\Exceptions\NotFoundException('Not Found (#404)');
+                throw new NotFoundException('Not Found (#404)');
                 break;
         }
     }
@@ -90,5 +99,34 @@ class Application extends \Rid\Base\Application
         return $item->handle($callable, function () use ($callable, $middleware) {
             return $this->runWithMiddleware($callable, $middleware);
         });
+    }
+
+    protected function parseException(\Throwable $e) {
+        $errors     = [
+            'code'    => $e->getCode(),
+            'message' => $e->getMessage(),
+            'file'    => $e->getFile(),
+            'line'    => $e->getLine(),
+            'type'    => get_class($e),
+            'trace'   => $e->getTraceAsString(),
+        ];
+
+        // 日志处理
+        if (!($e instanceof NotFoundException)) {
+            $message = "{$errors['message']}" . PHP_EOL;
+            $message .= "[type] {$errors['type']} [code] {$errors['code']}" . PHP_EOL;
+            $message .= "[file] {$errors['file']} [line] {$errors['line']}" . PHP_EOL;
+            $message .= "[trace] {$errors['trace']}" . PHP_EOL;
+            $message .= '$_SERVER' . substr(print_r(container()->get('request')->server->all() + container()->get('request')->headers->all(), true), 5);
+            $message .= '$_GET' . substr(print_r(container()->get('request')->query->all(), true), 5);
+            $message .= '$_POST' . substr(print_r(container()->get('request')->request->all(), true), 5, -1);
+            $message .= PHP_EOL . 'Memory used: ' . memory_get_usage();
+            IoHelper::getIo()->error($message);
+            container()->get('logger')->error($message);
+        }
+        // 清空系统错误
+        ob_get_contents() and ob_clean();
+
+        return container()->get('view')->render('error', $errors);
     }
 }

@@ -230,17 +230,11 @@ abstract class AbstractServerCommand extends AbstractCommand
          * 请求事件
          */
         $this->server->on('request', function (\Swoole\Http\Request $request, \Swoole\Http\Response $response) {
-            try {
-                Rid::getApp()->run($request, $response);  // 执行请求
+            // 执行请求
+            Rid::getApp()->run($request, $response);
 
-                // 执行回调
-                $this->httpServerConfig['hook']['hook_request_success'] and call_user_func($this->httpServerConfig['hook']['hook_request_success'], $this->server, $request);
-            } catch (\Throwable $e) {
-                // FIXME we should catch 404 or 405 inside of application->run()
-                container()->get('error')->handleException($e);
-                // 执行回调
-                $this->httpServerConfig['hook']['hook_request_error'] and call_user_func($this->httpServerConfig['hook']['hook_request_error'], $this->server, $request);
-            }
+            // 执行回调
+            $this->httpServerConfig['hook']['hook_request'] and call_user_func($this->httpServerConfig['hook']['hook_request'], $this->server, $request);
         });
 
         /**

@@ -70,13 +70,10 @@ return [
         'hook_worker_exit' => function (Server $server, int $workerId) {
         },
 
-        // 请求成功（onRequestSuccess）回调
-        'hook_request_success' => function (Server $server, Request $request) {
+        // 请求事件（onRequest）回调
+        'hook_request' => function (Server $server, Request $request) {
         },
 
-        // 请求错误（onRequestException）回调
-        'hook_request_error' => function (Server $server, Request $request) {
-        },
     ],
 
     // 高性能共享内存 Table 设置

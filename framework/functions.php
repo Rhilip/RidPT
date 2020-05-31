@@ -21,7 +21,7 @@ if (!function_exists('env')) {
 
 if (!function_exists('app')) {
     /** 返回当前 App 实例
-     * @return \Rid\Base\Application
+     * @return \Rid\Base\Application|\Rid\Http\Application
      */
     function app()
     {

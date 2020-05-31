@@ -19,7 +19,6 @@ namespace PHPSTORM_META {
         'logger' => \Monolog\Logger::class,
         'site' => \App\Components\Site::class,
         'auth' => \App\Components\Auth::class,
-        'error' => Rid\Http\Error::class,
         'route' => \Rid\Http\Route::class,
         'request' => \Rid\Http\Message\Request::class,
         'response' => \Rid\Http\Message\Response::class,
