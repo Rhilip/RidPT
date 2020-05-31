@@ -37,7 +37,7 @@ class DownloadForm extends StructureForm
     {
         $content = $this->getSelfTorrentContent();
         $filename = '[' . config('base.site_name') . '].' . $this->torrent->getTorrentName() . '.torrent';
-        container()->get('response')->setDynamicFile($content,'application/x-bittorrent',$filename,true);
+        container()->get('response')->setDynamicFile($content, 'application/x-bittorrent', $filename, true);
     }
 
     protected function getSelfTorrentContent()

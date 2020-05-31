@@ -24,7 +24,7 @@ class DownloadForm extends Validator
         ])->execute();
     }
 
-    protected function sendFileContentToClient()
+    public function sendFileContentToClient()
     {
         // FIXME
         $this->addDownloadHit();
