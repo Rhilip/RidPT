@@ -41,6 +41,7 @@
 - **Error:** handle request exception inside of Application (873b7f2)
 - **Request:** Remove attr $start_at (2086013)
 - **Request:** Remove attr $raw_files (1f749f3)
+- **Site:** simple Site component (750b564)
 
 ### Refactor
 - **Route:** use fast-route to replace our old route components (eca0db8)

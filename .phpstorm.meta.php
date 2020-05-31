@@ -24,10 +24,6 @@ namespace PHPSTORM_META {
         'response' => \Rid\Http\Message\Response::class,
         'runtime' => \Rid\Component\Context::class,
         // 对象
-        'captcha' => \Rid\Libraries\Captcha::class,
-        'jwt' => \Rid\Libraries\JWT::class,
-        'crypt'=> \Rid\Libraries\Crypt::class,
-
         'emitter' => \League\Event\Emitter::class,
     ]));
 

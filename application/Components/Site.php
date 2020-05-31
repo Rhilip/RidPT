@@ -11,18 +11,8 @@ namespace App\Components;
 use App\Entity;
 use App\Libraries\Constant;
 
-
-use Rid\Utils\Traits\ClassValueCache;
-
 class Site
 {
-    use ClassValueCache;
-
-    protected function getCacheNameSpace(): string
-    {
-        return 'Site:hash:runtime_value';
-    }
-
     public function writeLog($msg, $level = Entity\Site\LogLevel::LOG_LEVEL_NORMAL)
     {
         container()->get('pdo')->prepare('INSERT INTO `site_log`(`create_at`,`msg`, `level`) VALUES (CURRENT_TIMESTAMP, :msg, :level)')->bindParams([

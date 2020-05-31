@@ -43,9 +43,9 @@ return function (RouteCollector $r) {
             // 用户认证部分
             $r->addGroup('/auth', function (RouteCollector $r) {
                 $r->addRoute(['GET', 'POST'], '/login', [\App\Controllers\AuthController::class, 'login']);
-                $r->addRoute(['GET', 'POST'], '/logout', [\App\Controllers\AuthController::class, 'logout']);
+                $r->get( '/logout', [\App\Controllers\AuthController::class, 'logout']);
                 $r->addRoute(['GET', 'POST'], '/recover', [\App\Controllers\AuthController::class, 'recover']);
-                $r->addRoute(['GET', 'POST'], '/confirm', [\App\Controllers\AuthController::class, 'confirm']);
+                $r->get('/confirm', [\App\Controllers\AuthController::class, 'confirm']);
                 $r->addRoute(['GET', 'POST'], '/register', [\App\Controllers\AuthController::class, 'register']);
             });
 
@@ -87,7 +87,7 @@ return function (RouteCollector $r) {
 
             // 站点新闻部分
             $r->addGroup('/news', function (RouteCollector $r) {
-                $r->addRoute(['GET', 'POST'], '/', [\App\Controllers\NewsController::class, 'index']);
+                $r->get('/', [\App\Controllers\NewsController::class, 'index']);
                 $r->addRoute(['GET', 'POST'], '/new', [\App\Controllers\NewsController::class, 'new']);
                 $r->addRoute(['GET', 'POST'], '/edit', [\App\Controllers\NewsController::class, 'edit']);
                 $r->addRoute(['GET', 'POST'], '/delete', [\App\Controllers\NewsController::class, 'delete']);

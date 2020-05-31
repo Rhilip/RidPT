@@ -1,6 +1,6 @@
 <?php
 
-namespace Rid\Http;
+namespace Rid\Utils;
 
 /**
  * Image类

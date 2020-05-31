@@ -7,13 +7,11 @@ use Rid\Http\Controller;
 
 class IndexController extends Controller
 {
-    public function index(PDOConnection $PDOConnection)
+    public function index()
     {
-        var_dump($PDOConnection);
         // Get Last News from redis cache
         $news = container()->get('redis')->get('Site:recent_news');
         if ($news === false) { // Get news from Database and cache it in redis
-            var_dump(container()->get('pdo'));
             $news = container()->get('pdo')->prepare('SELECT * FROM `news` ORDER BY `create_at` DESC LIMIT :max')->bindParams([
                 'max' => config('base.max_news_sum')
             ])->queryAll();

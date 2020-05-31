@@ -46,8 +46,6 @@ return [
     'validator' => \DI\get(Symfony\Component\Validator\Validator\ValidatorInterface::class),
 
     // 定义对象快捷引用
-    'captcha' => \DI\get(\Rid\Libraries\Captcha::class),
-    'jwt' => \DI\get(\Rid\Libraries\JWT::class),
     'emitter' => \DI\get(\League\Event\Emitter::class),
     'runtime' => \DI\get(\Rid\Component\Context::class),
 
@@ -111,7 +109,6 @@ return [
     \App\Components\Site::class => \DI\autowire(),
     \App\Components\Auth::class => \DI\autowire(),
     \Rid\Component\View::class => \DI\autowire(),
-    \Rid\Http\Error::class => \DI\autowire(),
 
     // 定义组件依赖
     \League\Event\Emitter::class => \DI\create()

@@ -64,7 +64,7 @@ if (env('APP_DEBUG')) {
     $output_trace .= $file . ' Line ' . $line . PHP_EOL. PHP_EOL;
     $output_trace .= $trace;
 } else {
-    $output_trace = container()->get('crypt')->encrypt($this->data());
+    $output_trace = container()->get(\Rid\Libraries\Crypt::class)->encrypt($this->data());
 }
 ?>
 

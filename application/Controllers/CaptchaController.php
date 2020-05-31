@@ -9,13 +9,14 @@
 namespace App\Controllers;
 
 use Rid\Http\Controller;
+use Rid\Libraries\Captcha;
 
 class CaptchaController extends Controller
 {
     public function index()
     {
         container()->get('response')->headers->set('Content-Type', 'image/png');
-        $captcha = $this->container->get('captcha');
+        $captcha = $this->container->get(Captcha::class);
         $captcha->generate();
         $this->container->get('session')->set('captchaText', $captcha->getText());
         return $captcha->getContent();

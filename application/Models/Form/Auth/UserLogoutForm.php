@@ -12,6 +12,7 @@ use App\Entity\User\UserFactory;
 use App\Libraries\Constant;
 
 
+use Rid\Libraries\JWT;
 use Rid\Validators\CsrfTrait;
 use Rid\Validators\Validator;
 
@@ -49,7 +50,7 @@ class UserLogoutForm extends Validator
             return;
         }
 
-        $payload = container()->get('jwt')->decode($session);
+        $payload = container()->get(JWT::class)->decode($session);
         if ($payload === false || !isset($payload['jti'])) {
             $this->buildCallbackFailMsg('jwt', 'Fail to get $jti information');
             return;

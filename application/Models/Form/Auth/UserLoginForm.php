@@ -12,6 +12,7 @@ use App\Libraries\Constant;
 use App\Entity\User\UserStatus;
 
 
+use Rid\Libraries\JWT;
 use Rid\Utils\Random;
 use Rid\Validators\CaptchaTrait;
 use Rid\Validators\Validator;
@@ -173,7 +174,7 @@ class UserLoginForm extends Validator
 
         // Generate JWT content
         $this->jwt_payload = $payload;
-        $jwt = container()->get('jwt')->encode($payload);
+        $jwt = container()->get(JWT::class)->encode($payload);
 
         // Store User Login Session Information in database
         container()->get('pdo')->prepare('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .

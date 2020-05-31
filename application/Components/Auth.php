@@ -11,6 +11,7 @@ namespace App\Components;
 use App\Entity;
 use App\Libraries\Constant;
 use App\Entity\User\UserStatus;
+use Rid\Libraries\JWT;
 
 class Auth
 {
@@ -75,7 +76,7 @@ class Auth
         }
 
         // quick return when decode JWT session failed
-        if (false === $payload = container()->get('jwt')->decode($user_session)) {
+        if (false === $payload = container()->get(JWT::class)->decode($user_session)) {
             return false;
         }
         if (!isset($payload['jti']) || !isset($payload['aud'])) {
