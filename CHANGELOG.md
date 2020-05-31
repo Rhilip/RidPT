@@ -46,6 +46,7 @@
 - **Tracker:** Separate TrackerController (c64688b)
 
 ### Style
+- **Helper:** Use helper function to replace class ContainerHelper (eb3da65)
 - **Utils:** Combine `NameHelper` and `StringHelper` (85f311b)
 - **ValueCache:** trait `ClassValueCacheUtils` rename as `Rid\Utils\Traits\ClassValueCache` (2bea55f)
 

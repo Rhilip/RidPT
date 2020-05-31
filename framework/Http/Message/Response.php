@@ -33,8 +33,6 @@ class Response extends HttpFoundationResponse
      */
     protected bool $_isSent = false;
 
-    protected static $trustXSendfileTypeHeader = false;
-
     // 设置响应者
     public function setResponder(\Swoole\Http\Response $responder)
     {
@@ -194,6 +192,28 @@ class Response extends HttpFoundationResponse
         if ($contentDisposition) {
             $this->setContentDisposition($contentDisposition);
         }
+
+        return $this;
+    }
+
+    public function setDynamicFile($content, string $contentType = '', string $fileName = '', bool $noCache = false)
+    {
+        if ($contentType == '') {
+            $contentType = 'application/octet-stream';
+        }
+
+        $this->setContent($content);
+
+        $this->headers->set('Content-Type', $contentType);
+        $this->headers->set('Content-Length', strlen($content));
+
+        if (!$noCache) {
+            $this->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            $this->headers->set('Pragma', 'no-cache');
+            $this->headers->set('Expires', '0');
+        }
+
+        $this->setContentDisposition(ResponseHeaderBag::DISPOSITION_ATTACHMENT, $fileName);
 
         return $this;
     }

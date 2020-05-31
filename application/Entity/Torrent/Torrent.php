@@ -84,7 +84,7 @@ class Torrent
 
     public function getOwner(): User
     {
-        return container()->get('site')->getUser($this->owner_id);
+        return container()->get(\App\Entity\User\UserFactory::class)->getUserById($this->owner_id);
     }
 
     public function getInfoHash($hex = true): string

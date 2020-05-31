@@ -101,7 +101,8 @@ class Application extends \Rid\Base\Application
         });
     }
 
-    protected function parseException(\Throwable $e) {
+    protected function parseException(\Throwable $e)
+    {
         $errors     = [
             'code'    => $e->getCode(),
             'message' => $e->getMessage(),

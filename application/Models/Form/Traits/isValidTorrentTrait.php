@@ -9,6 +9,7 @@
 namespace App\Models\Form\Traits;
 
 use App\Entity\Torrent\Torrent;
+use App\Entity\Torrent\TorrentFactory;
 
 trait isValidTorrentTrait
 {
@@ -46,7 +47,7 @@ trait isValidTorrentTrait
             return;
         }
 
-        $this->torrent = container()->get('site')->getTorrent($tid);
+        $this->torrent = container()->get(TorrentFactory::class)->getTorrentById($tid);
     }
 
     // TODO check user privilege to see deleted or banned torrent

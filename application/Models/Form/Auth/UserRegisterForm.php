@@ -302,7 +302,7 @@ class UserRegisterForm extends Validator
                 "invite_hash" => $this->invite_hash,
             ])->execute();
 
-            $invitee = container()->get('site')->getUser($this->invite_by);
+            $invitee = container()->get(\App\Entity\User\UserFactory::class)->getUserById($this->invite_by);
             $log_text .= '(Invite by ' . $invitee->getUsername() . '(' . $invitee->getId() . ')).';
 
             container()->get('site')->sendPM(0, $this->invite_by, 'New Invitee Signup Successful', "New Invitee Signup Successful");

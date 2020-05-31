@@ -11,10 +11,11 @@ namespace App\Models\Form\Subtitles;
 use App\Models\Form\Traits;
 
 use Rid\Validators\Validator;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class DownloadForm extends Validator
 {
-    use Traits\FileSentTrait, Traits\isValidSubtitleTrait;
+    use Traits\isValidSubtitleTrait;
 
     private function addDownloadHit()
     {
@@ -23,20 +24,18 @@ class DownloadForm extends Validator
         ])->execute();
     }
 
-    protected function getSendFileName(): string
+    protected function sendFileContentToClient()
     {
-        return $this->subtitle['filename'];
-    }
-
-    protected function hookFileContentSend()
-    {
+        // FIXME
         $this->addDownloadHit();
-    }
 
-    protected function getSendFileContent()
-    {
         $filename = $this->id . '.' . $this->subtitle['ext'];
         $file_loc = container()->get('path.storage.subs') . DIRECTORY_SEPARATOR . $filename;
+
         container()->get('response')->setFile($file_loc);
+        container()->get('response')->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $this->subtitle['filename']
+        );
     }
 }

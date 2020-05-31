@@ -8,6 +8,7 @@
 
 namespace App\Models\Form\Torrents;
 
+use App\Entity\Torrent\TorrentFactory;
 use Rid\Validators\Pagination;
 
 class SearchForm extends Pagination
@@ -179,6 +180,6 @@ class SearchForm extends Pagination
 
     protected function getRemoteData(): array
     {
-        return container()->get('site')->getTorrentFactory()->getTorrentBySearch($this->getSearchField(), $this->offset, $this->limit);
+        return container()->get(TorrentFactory::class)->getTorrentBySearch($this->getSearchField(), $this->offset, $this->limit);
     }
 }

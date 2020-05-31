@@ -17,7 +17,7 @@ $enabled_editor = $enabled_editor ?? false;
         <section class="comments-list">
             <?php foreach ($comments as $commit): ?>
                 <?php
-                $commit_user = container()->get('site')->getUser($commit['owner_id']);
+                $commit_user = container()->get(\App\Entity\User\UserFactory::class)->getUserById($commit['owner_id']);
 
                 // The details of commentator should be hide or not ?
                 $commentator_hide_flag = $torrent->getUplver() &&  // The torrent is uplver

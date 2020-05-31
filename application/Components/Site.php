@@ -18,48 +18,9 @@ class Site
 {
     use ClassValueCache;
 
-    protected Entity\User\UserFactory $user_factory;
-    protected Entity\Torrent\TorrentFactory $torrent_factory;
-
-    public function __construct(Entity\User\UserFactory $user_factory, Entity\Torrent\TorrentFactory $torrent_factory)
-    {
-        $this->user_factory = $user_factory;
-        $this->torrent_factory = $torrent_factory;
-    }
-
-    /**
-     * @return Entity\User\UserFactory
-     */
-    public function getUserFactory(): Entity\User\UserFactory
-    {
-        return $this->user_factory;
-    }
-
-    /**
-     * @return Entity\Torrent\TorrentFactory
-     */
-    public function getTorrentFactory(): Entity\Torrent\TorrentFactory
-    {
-        return $this->torrent_factory;
-    }
-
     protected function getCacheNameSpace(): string
     {
         return 'Site:hash:runtime_value';
-    }
-
-    public function getTorrent($tid)
-    {
-        return $this->torrent_factory->getTorrentById($tid);
-    }
-
-    /**
-     * @param int $uid
-     * @return Entity\User\User|bool return False means this user is not exist
-     */
-    public function getUser($uid)
-    {
-        return $this->user_factory->getUserById($uid);
     }
 
     public function writeLog($msg, $level = Entity\Site\LogLevel::LOG_LEVEL_NORMAL)
@@ -85,10 +46,8 @@ class Site
 
     public function sendEmail($receivers, $subject, $template, $data = [])
     {
-        $container = container();
-        $mail_body = $container->get('view')->render($template, $data);
-        $mail_sender = $container->get('mailer');
-        $mail_sender->send($receivers, $subject, $mail_body);
+        $mail_body = container()->get('view')->render($template, $data);
+        container()->get('mailer')->send($receivers, $subject, $mail_body);
     }
 
     public function addBonus(int $user_id, float $point = 0, string $operators = '+', string $type = 'other')

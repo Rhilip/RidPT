@@ -37,7 +37,7 @@ trait isValidUserTrait
         if ($uid === false) {
             $this->buildCallbackFailMsg('User', 'The user id (' . $uid . ') is not exist in our database');
         }
-        $this->user = container()->get('site')->getUser($uid);
+        $this->user = container()->get(\App\Entity\User\UserFactory::class)->getUserById($uid);
     }
 
     public function getUser(): User

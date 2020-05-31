@@ -50,7 +50,7 @@ class UserController extends Controller
         $uid = container()->get('request')->query->get('uid');
         if (!is_null($uid) && $uid != container()->get('auth')->getCurUser()->getId()) {
             if (container()->get('auth')->getCurUser()->isPrivilege('view_invite')) {
-                $user = container()->get('site')->getUser($uid);
+                $user = container()->get(\App\Entity\User\UserFactory::class)->getUserById($uid);
             } else {
                 return $this->render('action/fail', ['title' => 'Fail', 'msg' => 'Privilege is not enough to see other people\'s invite status.']);
             }

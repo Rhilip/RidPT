@@ -8,27 +8,15 @@
 
 namespace App\Models\Form\Torrent;
 
-use App\Models\Form\Traits\FileSentTrait;
-
 use Rhilip\Bencode\Bencode;
 
 class DownloadForm extends StructureForm
 {
-    use FileSentTrait;
-
     public $https;
-
-    protected static $SEND_FILE_CONTENT_TYPE = 'application/x-bittorrent';
-    protected static $SEND_FILE_CACHE_CONTROL = true;
 
     public static function callbackRules(): array
     {
         return ['checkDownloadPos', 'isExistTorrent', 'rateLimitCheck'];
-    }
-
-    protected function getSendFileName(): string
-    {
-        return '[' . config('base.site_name') . '].' . $this->torrent->getTorrentName() . '.torrent';
     }
 
     protected function getRateLimitRules(): array
@@ -45,7 +33,14 @@ class DownloadForm extends StructureForm
         }
     }
 
-    public function getSendFileContent()
+    public function sendFileContentToClient()
+    {
+        $content = $this->getSelfTorrentContent();
+        $filename = '[' . config('base.site_name') . '].' . $this->torrent->getTorrentName() . '.torrent';
+        container()->get('response')->setDynamicFile($content,'application/x-bittorrent',$filename,true);
+    }
+
+    protected function getSelfTorrentContent()
     {
         $dict = $this->getTorrentFileContentDict();
 
@@ -59,7 +54,9 @@ class DownloadForm extends StructureForm
         $announce_suffix = '/announce?passkey=' . container()->get('auth')->getCurUser()->getPasskey();
         $dict['announce'] = $scheme . config('base.site_tracker_url') . $announce_suffix;
 
-        /** BEP 0012 Multitracker Metadata Extension
+        /**
+         * BEP 0012 Multitracker Metadata Extension
+         *
          * @see http://www.bittorrent.org/beps/bep_0012.html
          * @see https://web.archive.org/web/20190724110959/https://blog.rhilip.info/archives/1108/
          *      which discuss about multitracker behaviour on common bittorrent client ( Chinese Version )
