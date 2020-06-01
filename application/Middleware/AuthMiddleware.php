@@ -8,10 +8,8 @@
 
 namespace App\Middleware;
 
-use App\Components\Auth;
 use App\Controllers;
 use App\Libraries\Constant;
-use DI\Container;
 use Rid\Http\Middleware\AbstractMiddleware;
 
 class AuthMiddleware extends AbstractMiddleware
@@ -19,6 +17,13 @@ class AuthMiddleware extends AbstractMiddleware
     const authByPasskeyAction = [
         [Controllers\RssController::class, 'actionIndex'],  // `/rss?passkey=`
         [Controllers\TorrentController::class, 'actionDownload']  // `/torrent/download?passkey=`
+    ];
+
+    const preventUserController = [
+        Controllers\Auth\LoginController::class,
+        Controllers\Auth\RegisterController::class,
+        Controllers\Auth\RecoverController::class,
+        Controllers\Auth\ConfirmController::class
     ];
 
     /** @noinspection PhpUnused */
@@ -56,7 +61,7 @@ class AuthMiddleware extends AbstractMiddleware
                 return 'invalid Passkey';
             } else {  // container()->get('auth')->getGrant() == 'cookies'
                 // If visitor want to auth himself
-                if ($controllerName === Controllers\AuthController::class && $action !== 'actionLogout') {
+                if (in_array($controllerName, self::preventUserController)) {
                     return $next();
                 }
 
@@ -68,8 +73,7 @@ class AuthMiddleware extends AbstractMiddleware
         }
 
         // Don't allow Logged in user visit the auth/{login, register, confirm}
-        if ($controllerName === Controllers\AuthController::class &&
-            in_array($action, ['actionLogin', 'actionRegister', 'actionConfirm'])) {
+        if (in_array($controllerName, self::preventUserController)) {
             return container()->get('response')->setRedirect('/index');
         }
 

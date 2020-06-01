@@ -22,7 +22,7 @@ class Site
 
     public function sendPM($sender, $receiver, $subject, $msg, $save = 'no', $location = 1)
     {
-        container()->get('pdo')->prepare('INSERT INTO `messages` (`sender`,`receiver`,`add_at`, `subject`, `msg`, `saved`, `location`) VALUES (:sender,:receiver,`CURRENT_TIMESTAMP`,:subject,:msg,:save,:location)')->bindParams([
+        container()->get('pdo')->prepare('INSERT INTO `messages` (`sender`,`receiver`,`add_at`, `subject`, `msg`, `saved`, `location`) VALUES (:sender,:receiver,CURRENT_TIMESTAMP,:subject,:msg,:save,:location)')->bindParams([
             'sender' => $sender, 'receiver' => $receiver,
             'subject' => $subject, 'msg' => $msg,
             'save' => $save, 'location' => $location

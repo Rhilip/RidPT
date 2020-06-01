@@ -11,7 +11,7 @@ namespace App\Models\Form\User;
 use App\Models\Form\Auth\UserRegisterForm;
 
 use Rid\Utils\Random;
-use Rid\Validators\CaptchaTrait;
+use App\Forms\Traits\CaptchaTrait;
 
 class InviteForm extends UserRegisterForm
 {

@@ -45,7 +45,6 @@ return [
     'site' => \DI\get(\App\Components\Site::class),
     'auth' => \DI\get(\App\Components\Auth::class),
     'view' => \DI\get(\Rid\Component\View::class),
-    'validator' => \DI\get(Symfony\Component\Validator\Validator\ValidatorInterface::class),
 
     // 定义对象快捷引用
     'emitter' => \DI\get(\League\Event\Emitter::class),
@@ -111,9 +110,7 @@ return [
     }),
 
     Symfony\Component\Validator\Validator\ValidatorInterface::class => \DI\factory(function () {
-        return \Symfony\Component\Validator\Validation::createValidatorBuilder()
-            ->addMethodMapping('loadValidatorMetadata')
-            ->getValidator();
+        return \Symfony\Component\Validator\Validation::createValidator();
     }),
 
     \Rid\Component\Config::class => \DI\autowire(),

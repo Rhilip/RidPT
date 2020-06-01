@@ -27,13 +27,13 @@ class Mailer
         $this->_mailer = $mailer;
     }
 
-    public function send(array $receivers, string $subject, string $body)
+    public function send($receivers, string $subject, string $body)
     {
         $mail = clone $this->_mailer;
         try {
             //Recipients
             $mail->setFrom($this->from, $this->fromname);
-            foreach ($receivers as $receiver) {
+            foreach ((array)$receivers as $receiver) {
                 if (is_array($receiver)) {  // ['address','name']
                     $mail->addAddress($receiver[0], $receiver[1]);
                 } else {  // 'address'

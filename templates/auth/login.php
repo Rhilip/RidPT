@@ -69,21 +69,21 @@ $left_attempts = config('security.max_login_attempts') - ($test_attempts ?? 0);
                             <div class="form-group">
                                 <?php // -1 - disable -> 'disabled' ; 0 - option -> '' ; 1 - option but default checked -> 'checked' ; 2 - force -> 'checked disabled'?>
                                 <div class="switch">
-                                    <input type="checkbox" name="logout" id="logout" value="yes"
+                                    <input type="checkbox" name="logout" id="logout" value="1"
                                            <?php if (config('security.auto_logout') > 0): ?>checked<?php endif; ?>
                                            <?php if (in_array(config('security.auto_logout'), [-1, 2])): ?>disabled<?php endif; ?>
                                     >
                                     <label for="logout">Automatically Log me out after 15 minutes</label>
                                 </div>
                                 <div class="switch">
-                                    <input type="checkbox" name="securelogin" id="securelogin" value="yes"
+                                    <input type="checkbox" name="securelogin" id="securelogin" value="1"
                                            <?php if (config('security.secure_login') > 0): ?>checked<?php endif; ?>
                                            <?php if (in_array(config('security.secure_login'), [-1, 2])): ?>disabled<?php endif; ?>
                                     >
                                     <label for="securelogin">Restrict session to my login IP</label>
                                 </div>
                                 <div class="switch">
-                                    <input type="checkbox" name="ssl" id="ssl" value="yes"
+                                    <input type="checkbox" name="ssl" id="ssl" value="1"
                                            <?php if (container()->get('request')->isSecure() || config('security.ssl_login') > 0): ?>checked<?php endif; ?>
                                            <?php if (container()->get('request')->isSecure() || in_array(config('security.ssl_login'), [-1, 2])): ?>disabled<?php endif; ?>
                                     >

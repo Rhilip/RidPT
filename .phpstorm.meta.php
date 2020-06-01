@@ -10,7 +10,7 @@ namespace PHPSTORM_META {
 
     override(\DI\Container::get(0), map([
         // 组件
-        'mailer' => \App\Libraries\Mailer::class,
+        'mailer' => \App\Components\Mailer::class,
         'view' => \Rid\Component\View::class,
         'i18n' => \Rid\Component\I18n::class,
         'redis' => \Rid\Redis\BaseRedisConnection::class,

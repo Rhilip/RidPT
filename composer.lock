@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "541114bcb2aeb4323bf4a10c567cabcf",
+    "content-hash": "e0368f54b2c727ac814f52338aca0572",
     "packages": [
         {
             "name": "adhocore/cron-expr",

@@ -24,7 +24,7 @@ class Application extends \Rid\Base\Application
             // 判定异常是来自路由的还是控制器的，控制器（未能捕捉的）抛出500
             $statusCode = $e instanceof RouteException ? $e->getCode() : 500;
             container()->get('response')->setStatusCode($statusCode);
-            $content = $this->parseException($e);
+            $content = $this->parseException($statusCode, $e);
         } finally {
             if (is_array($content)) {
                 container()->get('response')->setJson($content);
@@ -80,9 +80,10 @@ class Application extends \Rid\Base\Application
         });
     }
 
-    protected function parseException(\Throwable $e)
+    protected function parseException($statusCode, \Throwable $e)
     {
         $errors = [
+            'status' => $statusCode,
             'code' => $e->getCode(),
             'message' => $e->getMessage(),
             'file' => $e->getFile(),

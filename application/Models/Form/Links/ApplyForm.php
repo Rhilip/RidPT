@@ -8,7 +8,7 @@
 
 namespace App\Models\Form\Links;
 
-use Rid\Validators\CaptchaTrait;
+use App\Forms\Traits\CaptchaTrait;
 use Rid\Validators\Validator;
 
 class ApplyForm extends Validator

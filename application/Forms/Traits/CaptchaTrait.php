@@ -2,11 +2,13 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 2019/2/8
- * Time: 18:58
+ * Date: 6/1/2020
+ * Time: 2020
  */
 
-namespace Rid\Validators;
+declare(strict_types=1);
+
+namespace App\Forms\Traits;
 
 /**
  * When use this Trait, Add input which name is `captcha` in your Form,
@@ -15,16 +17,16 @@ namespace Rid\Validators;
  *
  * Trait CaptchaTrait
  * @package Rid\Validators
- * @property-read string $captcha
  */
 trait CaptchaTrait
 {
     /** @noinspection PhpUnused */
     protected function validateCaptcha()
     {
+        // TODO captcha by config
         $captchaText = container()->get('session')->get('captchaText');
-        if (strcasecmp($this->captcha, $captchaText) != 0) {
-            $this->buildCallbackFailMsg('CAPTCHA', 'CAPTCHA verification failed.');
+        if (strcasecmp($this->getInput('captcha'), $captchaText) != 0) {
+            $this->buildCallbackFailMsg('CAPTCHA','verification failed.');
             return;
         }
     }

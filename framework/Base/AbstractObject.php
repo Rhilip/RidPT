@@ -12,4 +12,10 @@ namespace Rid\Base;
 
 abstract class AbstractObject
 {
+    public function importAttributes($config)
+    {
+        foreach ($config as $name => $value) {
+            $this->$name = $value;
+        }
+    }
 }
