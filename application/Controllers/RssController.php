@@ -10,9 +10,9 @@ namespace App\Controllers;
 
 use App\Models\Form\Rss\FeedForm;
 
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 
-class RssController extends Controller
+class RssController extends AbstractController
 {
     public function index()
     {

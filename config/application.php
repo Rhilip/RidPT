@@ -10,11 +10,9 @@ declare(strict_types=1);
 
 return [
     // 初始化回调
-    'initialize' => [],
+    'initialize' => [
+    ],
 
     // 组件
     'components' => require 'application/components.php',
-
-    // 路由
-    'routes' => require 'application/routes.php'
 ];

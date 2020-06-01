@@ -10,9 +10,9 @@ namespace App\Controllers;
 
 use App\Models\Form\Torrents;
 
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 
-class TorrentsController extends Controller
+class TorrentsController extends AbstractController
 {
     public function search()
     {

@@ -6,31 +6,27 @@ use DI\Container;
 
 class Application
 {
-    // 初始化回调
+    // Application配置
     public array $config = [];
-
-    public array $initialize = [];
 
     protected ?Container $container;
 
     public function __construct(array $config)
     {
         $this->config = $config;
+        $this->container = $this->buildContainer();
 
         // 执行初始化回调
-        $this->initialize = $this->config['initialize'] ?? [];
-        foreach ($this->initialize as $callback) {
-            call_user_func($callback);
+        foreach ($this->config['initialize'] ?? [] as $callback) {
+            call_user_func($callback, $this);
         }
-
-        $this->buildContainer();
     }
 
     protected function buildContainer()
     {
         $builder = new \DI\ContainerBuilder();
         $builder->addDefinitions($this->config['components']);
-        $this->container = $builder->build();
+        return $builder->build();
     }
 
     /**

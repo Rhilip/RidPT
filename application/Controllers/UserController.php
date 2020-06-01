@@ -10,10 +10,10 @@ namespace App\Controllers;
 
 use App\Models\Form\User;
 
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class UserController extends Controller
+class UserController extends AbstractController
 {
     public function details()
     {

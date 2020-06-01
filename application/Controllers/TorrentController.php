@@ -10,12 +10,12 @@ namespace App\Controllers;
 
 use App\Models\Form\Torrent;
 
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
-class TorrentController extends Controller
+class TorrentController extends AbstractController
 {
     public function upload()
     {

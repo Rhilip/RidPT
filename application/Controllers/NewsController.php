@@ -9,10 +9,10 @@
 namespace App\Controllers;
 
 use App\Models\Form\News;
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class NewsController extends Controller
+class NewsController extends AbstractController
 {
     public function index()
     {

@@ -11,10 +11,10 @@ namespace App\Controllers;
 use App\Models\Form\Auth;
 use App\Entity\User\UserStatus;
 
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class AuthController extends Controller
+class AuthController extends AbstractController
 {
 
     /** @noinspection PhpUnused */
@@ -108,7 +108,7 @@ class AuthController extends Controller
             } else {
                 $login->flush();
 
-                $return_to = $this->container->get('session')->pop('login_return_to') ?? '/index';
+                $return_to = container()->get('session')->pop('login_return_to') ?? '/index';
                 return container()->get('response')->setRedirect($return_to);
             }
         }

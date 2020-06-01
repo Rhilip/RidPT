@@ -7,10 +7,10 @@ use Rid\Base\AbstractObject;
 /**
  * Controller类
  */
-class Controller extends AbstractObject
+abstract class AbstractController extends AbstractObject
 {
     public function render($name, $data = [])
     {
-        return $this->container->get('view')->render($name, $data);
+        return container()->get('view')->render($name, $data);
     }
 }

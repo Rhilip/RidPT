@@ -8,11 +8,11 @@
 
 namespace App\Controllers;
 
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 use App\Models\Form\Manage\Categories;
 use Symfony\Component\HttpFoundation\Request;
 
-class ManageController extends Controller
+class ManageController extends AbstractController
 {
     public function categories()
     {

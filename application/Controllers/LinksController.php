@@ -9,10 +9,10 @@
 namespace App\Controllers;
 
 use App\Models\Form\Links;
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class LinksController extends Controller
+class LinksController extends AbstractController
 {
     /** @noinspection PhpUnused */
     public function apply()

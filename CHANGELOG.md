@@ -7,6 +7,7 @@
 - **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
 - **Swoole:** Change swoole-ide-helper library (430e41c)
 - **deps:** bump phpmailer/phpmailer from 6.1.5 to 6.1.6 (fc4c5bb)
+- **validator:** Prepare new validator from `symfony/validator` (3d97551)
 
 ### Feat
 - **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)

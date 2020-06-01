@@ -62,7 +62,7 @@ class AuthMiddleware extends AbstractMiddleware
 
                 // Prevent Other Route
                 container()->get('response')->headers->clearCookie(Constant::cookie_name);  // Delete exist cookies
-                $this->container->get('session')->set('login_return_to', container()->get('request')->getUri());  // Store the url which visitor want to hit
+                container()->get('session')->set('login_return_to', container()->get('request')->getUri());  // Store the url which visitor want to hit
                 return container()->get('response')->setRedirect('/auth/login');
             }
         }

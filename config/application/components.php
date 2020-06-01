@@ -17,10 +17,12 @@ return [
 
     // 定义 路径
     'path.root' => RIDPT_ROOT,
-    'path.config' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'config'),
     'path.public' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'public'),
     'path.templates' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'templates'),
     'path.translations' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'translations'),
+
+    'path.config' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'config'),
+    'path.config.application' => \DI\string('{path.config}' . DIRECTORY_SEPARATOR . 'application'),
 
     'path.runtime' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'var'),
     'path.runtime.logs' => \DI\string('{path.runtime}' . DIRECTORY_SEPARATOR . 'logs'),
@@ -98,6 +100,15 @@ return [
         ->property('cookieDomain', '')         // 有效域名/子域名
         ->property('cookieSecure', false)      // 仅通过安全的 HTTPS 连接传给客户端
         ->property('cookieHttpOnly', false),   // 仅可通过 HTTP 协议访问
+
+    FastRoute\Dispatcher::class => \DI\factory(function () {
+        $routes = require 'routes.php';
+
+        // TODO replace by cachedDispatcher
+        return \FastRoute\simpleDispatcher($routes, [
+            'routeCollector' => \Rid\Http\Route\RouteCollector::class,
+        ]);
+    }),
 
     Symfony\Component\Validator\Validator\ValidatorInterface::class => \DI\factory(function () {
         return \Symfony\Component\Validator\Validation::createValidatorBuilder()

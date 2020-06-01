@@ -10,10 +10,10 @@ namespace App\Controllers;
 
 use App\Models\Form\Subtitles;
 
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 
-class SubtitlesController extends Controller
+class SubtitlesController extends AbstractController
 {
     public function search($upload = null)
     {

@@ -10,14 +10,6 @@ declare(strict_types=1);
 
 namespace Rid\Base;
 
-use DI\Container;
-
 abstract class AbstractObject
 {
-    protected Container $container;
-
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
 }

@@ -9,9 +9,9 @@
 namespace App\Controllers;
 
 use App\Models\Form\Site;
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 
-class SiteController extends Controller
+class SiteController extends AbstractController
 {
     public function rules()
     {

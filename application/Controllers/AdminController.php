@@ -8,9 +8,9 @@
 
 namespace App\Controllers;
 
-use Rid\Http\Controller;
+use Rid\Http\AbstractController;
 
-class AdminController extends Controller
+class AdminController extends AbstractController
 {
     public function index()
     {
