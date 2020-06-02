@@ -8,9 +8,8 @@
 
 namespace App\Models\Form\Torrent;
 
-use App\Entity\Torrent\TorrentStatus;
-use App\Entity\Torrent\TorrentType;
-
+use App\Enums\Torrent\Status as TorrentStatus;
+use App\Enums\Torrent\Type as TorrentType;
 use Rhilip\Bencode\Bencode;
 use Rhilip\Bencode\ParseErrorException;
 

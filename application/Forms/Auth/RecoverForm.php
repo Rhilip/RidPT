@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace App\Forms\Auth;
 
-
-use App\Entity\User\UserStatus;
+use App\Enums\User\Status as UserStatus;
 use App\Forms\Traits\CaptchaTrait;
 use Rid\Utils\Random;
 use Rid\Validators\AbstractValidator;

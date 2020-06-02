@@ -10,18 +10,19 @@ declare(strict_types=1);
 
 namespace App\Controllers\Auth;
 
-
 use App\Forms\Auth\RecoverForm;
 use Rid\Http\AbstractController;
 
 class RecoverController extends AbstractController
 {
-    public function index() {
+    public function index()
+    {
         return $this->render('auth/recover');
     }
 
     /** @noinspection PhpUnused */
-    public function takeRecover() {
+    public function takeRecover()
+    {
         $form = new RecoverForm();
         $form->setInput(container()->get('request')->request->all());
         $success = $form->validate();

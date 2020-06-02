@@ -10,7 +10,7 @@
 
 $user = container()->get('auth')->getCurUser();
 
-use App\Entity\User\UserRole;
+use App\Enums\User\Role as UserRole;
 
 ?>
 

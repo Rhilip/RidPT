@@ -9,7 +9,7 @@
  * @var \App\Entity\User\User $user
  */
 
-use App\Entity\User\UserStatus;
+use App\Enums\User\Status as UserStatus;
 
 ?>
 

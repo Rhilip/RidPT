@@ -9,6 +9,7 @@
 namespace App\Entity\Torrent;
 
 use App\Entity\User\User;
+use App\Enums\Torrent\Status;
 use App\Libraries\Constant;
 
 use Rid\Utils\Traits\ClassValueCache;
@@ -21,7 +22,7 @@ class Torrent
     protected int $id;
     protected int $owner_id;
     protected string $info_hash;
-    protected string $status = TorrentStatus::PENDING;
+    protected string $status = Status::PENDING;
     protected string $added_at;
 
     protected int $complete = 0;

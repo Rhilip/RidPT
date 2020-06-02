@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Forms\Auth;
 
-
 use App\Entity\User\UserFactory;
 use App\Libraries\Constant;
 
@@ -20,7 +19,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class LogoutForm extends AbstractValidator
 {
-
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([]);
@@ -36,7 +34,8 @@ class LogoutForm extends AbstractValidator
         $this->revokeSession();
     }
 
-    private function revokeSession() {
+    private function revokeSession()
+    {
         // Get Session id
         $jwt = container()->get('request')->cookies->get(Constant::cookie_name);
         $payload = container()->get(JWT::class)->decode($jwt);

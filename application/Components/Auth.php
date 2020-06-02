@@ -10,7 +10,7 @@ namespace App\Components;
 
 use App\Entity;
 use App\Libraries\Constant;
-use App\Entity\User\UserStatus;
+use App\Enums\User\Status as UserStatus;
 use Rid\Libraries\JWT;
 
 class Auth

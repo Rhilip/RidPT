@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Controllers\Tracker;
 
-use App\Entity\User\UserRole;
+use App\Enums\User\Role as UserRole;
 use App\Exceptions\TrackerException;
 use App\Helper\SwitchHelper;
 use App\Libraries\Constant;

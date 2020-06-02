@@ -2,15 +2,15 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 1/11/2020
- * Time: 2020
+ * Date: 6/2/2020
+ * Time: 9:57 AM
  */
 
 declare(strict_types=1);
 
-namespace App\Entity\User;
+namespace App\Enums\User;
 
-class UserRole
+class Role
 {
     // Anonymous Visitor
     public const ANONYMOUS = -1;
@@ -43,31 +43,4 @@ class UserRole
     public const ADMINISTRATOR = 80;
     public const SYSOP = 90;
     public const STAFFLEADER = 100;
-
-    public const ROLE = [
-        self::PEASANT => 'PEASANT',
-        self::USER => 'USER',
-        self::POWER_USER => 'POWER_USER',
-        self::ELITE_USER => 'ELITE_USER',
-        self::CRAZY_USER => 'CRAZY_USER',
-        self::INSANE_USER => 'INSANE_USER',
-        self::VETERAN_USER => 'VETERAN_USER',
-        self::EXTREME_USER => 'EXTREME_USER',
-        self::ULTIMATE_USER => 'ULTIMATE_USER',
-        self::MASTER_USER => 'MASTER_USER',
-        self::TEMP_VIP => 'TEMP_VIP',
-
-        self::VIP => 'VIP',
-        self::HONORARY => 'HONORARY',
-        self::RETIREE => 'RETIREE',
-
-        self::UPLOADER => 'UPLOADER',
-        self::HELPER => 'HELPER',
-
-        self::FORUM_MODERATOR => 'FORUM_MODERATOR',
-        self::MODERATOR => 'MODERATOR',
-        self::ADMINISTRATOR => 'ADMINISTRATOR',
-        self::SYSOP => 'SYSOP',
-        self::STAFFLEADER => 'STAFFLEADER'
-    ];
 }

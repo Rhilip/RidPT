@@ -8,7 +8,7 @@
 
 namespace App\Models\Form\User;
 
-use App\Entity\User\UserStatus;
+use App\Enums\User\Status as UserStatus;
 
 use Rid\Validators\Validator;
 

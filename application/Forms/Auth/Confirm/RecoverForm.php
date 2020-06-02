@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Forms\Auth\Confirm;
 
-use App\Entity\User\UserStatus;
+use App\Enums\User\Status as UserStatus;
 use Rid\Utils\Random;
 
 class RecoverForm extends AbstractConfirmForm
@@ -43,5 +43,4 @@ class RecoverForm extends AbstractConfirmForm
         );
         $this->msg = 'Your password has been reset and new password has been send to your email, Please find it and login.';
     }
-
 }

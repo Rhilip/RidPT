@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Controllers\Auth;
 
-
 use App\Forms\Auth\Confirm\AbstractConfirmForm;
 use App\Forms\Auth\Confirm\RecoverForm;
 use App\Forms\Auth\Confirm\RegisterForm;
@@ -18,7 +17,8 @@ use Rid\Http\AbstractController;
 
 class ConfirmController extends AbstractController
 {
-    private function confirm(AbstractConfirmForm $form) {
+    private function confirm(AbstractConfirmForm $form)
+    {
         $success = $form->validate();
         if (!$success) {
             return $this->render('action/fail', [
@@ -34,13 +34,15 @@ class ConfirmController extends AbstractController
         }
     }
 
-    public function register() {
+    public function register()
+    {
         $confirm = new RegisterForm();
         $confirm->setInput(container()->get('request')->query->all());
         return $this->confirm($confirm);
     }
 
-    public function recover() {
+    public function recover()
+    {
         $confirm = new RecoverForm();
         $confirm->setInput(container()->get('request')->query->all());
         return $this->confirm($confirm);

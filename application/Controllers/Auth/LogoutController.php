@@ -10,13 +10,13 @@ declare(strict_types=1);
 
 namespace App\Controllers\Auth;
 
-
 use App\Forms\Auth\LogoutForm;
 use Rid\Http\AbstractController;
 
 class LogoutController extends AbstractController
 {
-    public function index() {
+    public function index()
+    {
         $logout = new LogoutForm();
         $logout->setInput(container()->get('request')->query->all());
         if (false === $logout->validate()) {

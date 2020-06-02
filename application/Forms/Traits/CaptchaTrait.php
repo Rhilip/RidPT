@@ -26,7 +26,7 @@ trait CaptchaTrait
         // TODO captcha by config
         $captchaText = container()->get('session')->get('captchaText');
         if (strcasecmp($this->getInput('captcha'), $captchaText) != 0) {
-            $this->buildCallbackFailMsg('CAPTCHA','verification failed.');
+            $this->buildCallbackFailMsg('CAPTCHA', 'verification failed.');
             return;
         }
     }

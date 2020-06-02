@@ -15,7 +15,6 @@ use Rid\Validators\AbstractValidator;
 
 abstract class AbstractConfirmForm extends AbstractValidator
 {
-
     protected string $action = '';
     protected string $msg = '';
 
@@ -63,7 +62,8 @@ abstract class AbstractConfirmForm extends AbstractValidator
         ])->execute();
     }
 
-    public function getConfirmMsg() {
+    public function getConfirmMsg()
+    {
         return $this->msg;
     }
 }

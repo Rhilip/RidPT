@@ -8,9 +8,9 @@
 
 namespace App\Models\Form\Torrent;
 
+use App\Enums\Torrent\Status;
 use App\Libraries\Constant;
 use App\Models\Form\Traits\isValidTorrentTrait;
-use App\Entity\Torrent\TorrentStatus;
 
 use Rid\Validators\Validator;
 
@@ -138,7 +138,7 @@ class EditForm extends Validator
         if (container()->get('auth')->getCurUser()->isPrivilege('manage_torrents')) {
             $rules['status'] = [
                 ['required'],
-                ['InList', ['list' => TorrentStatus::TORRENT_STATUSES]]
+                ['InList', ['list' => Status::values()]]
             ];
         }
 

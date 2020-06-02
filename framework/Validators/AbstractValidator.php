@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Rid\Validators;
 
-
 use Rid\Base\AbstractObject;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationInterface;
@@ -122,7 +121,8 @@ abstract class AbstractValidator extends AbstractObject
         return $this->_success;
     }
 
-    private function resetValidateStatus() {
+    private function resetValidateStatus()
+    {
         $this->_success = true;
         $this->_errors = [];
     }

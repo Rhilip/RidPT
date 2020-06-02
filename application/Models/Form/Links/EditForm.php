@@ -8,7 +8,7 @@
 
 namespace App\Models\Form\Links;
 
-use App\Entity\Site\LogLevel;
+use App\Enums\Site\LogLevel;
 
 class EditForm extends ApplyForm
 {
@@ -77,15 +77,14 @@ class EditForm extends ApplyForm
 
     public function flush()
     {
+        $cur_user = container()->get('auth')->getCurUser();
         if ((int) $this->link_id !== 0) {  // to edit exist links
             container()->get('pdo')->update('links', $this->link_data_diff, [['id', '=', $this->link_id]])->execute();
-            container()->get('site')->writeLog('The links data of ' . $this->link_old_data['name'] . '( ' . $this->link_old_data['url'] . ' ) is update by ' .
-                container()->get('auth')->getCurUser()->getUsername() . '(' . container()->get('auth')->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
         } else {  // to new a links
             container()->get('pdo')->insert('links', $this->link_new_data)->execute();
-            container()->get('site')->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
-                container()->get('auth')->getCurUser()->getUsername() . '(' . container()->get('auth')->getCurUser()->getId() . ').', LogLevel::LOG_LEVEL_MOD);
         }
+        container()->get('site')->writeLog('The links data of ' . $this->link_new_data['name'] . '( ' . $this->link_new_data['url'] . ' ) is update by ' .
+            $cur_user->getUsername() . '(' . $cur_user->getId() . ').', LogLevel::MOD);
         container()->get('redis')->del('Site:links');
     }
 }

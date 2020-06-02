@@ -34,45 +34,45 @@
             <div class="panel-body">
                 <form method="post" class="form-horizontal" data-toggle="validator" role="form">
                     <div class="form-group">
-                        <label for="link_name" class="col-sm-2 required">Site Name</label>
+                        <label for="name" class="col-sm-2 required">Site Name</label>
                         <div class="col-md-5 col-sm-10">
-                            <input type="text" class="form-control" id="link_name" name="link_name" required>
+                            <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="help-block">The name of your site. e.g. <i>RidPT</i></div>
                     </div>
                     <div class="form-group">
-                        <label for="link_url" class="col-sm-2 required">URL</label>
+                        <label for="url" class="col-sm-2 required">URL</label>
                         <div class="col-md-5 col-sm-10">
-                            <input type="url" class="form-control" id="link_url" name="link_url" required>
+                            <input type="url" class="form-control" id="url" name="url" required>
                         </div>
                         <div class="help-block">e.g. <i>https://ridpt.top/</i></div>
                     </div>
                     <div class="form-group">
-                        <label for="link_title" class="col-sm-2">Title</label>
+                        <label for="title" class="col-sm-2">Title</label>
                         <div class="col-md-5 col-sm-10">
-                            <input type="text" class="form-control" id="link_title" name="link_title">
+                            <input type="text" class="form-control" id="title" name="title">
                         </div>
                         <div class="help-block">Title is used to show tooltip at a link.</div>
                     </div>
                     <div class="form-group">
-                        <label for="link_admin" class="col-sm-2 required">Administrator</label>
+                        <label for="admin" class="col-sm-2 required">Administrator</label>
                         <div class="col-md-5 col-sm-10">
-                            <input type="text" class="form-control" id="link_admin" name="link_admin" required>
+                            <input type="text" class="form-control" id="admin" name="admin" required>
                         </div>
                         <div class="help-block">We required administrator's <b>TRUE NAME</b>.</div>
                     </div>
                     <div class="form-group">
-                        <label for="link_email" class="col-sm-2 required">Email</label>
+                        <label for="email" class="col-sm-2 required">Email</label>
                         <div class="col-md-5 col-sm-10">
-                            <input type="email" class="form-control" id="link_email" name="link_email" required>
+                            <input type="email" class="form-control" id="email" name="email" required>
                         </div>
                         <div class="help-block">The administrator's contact email address</div>
                     </div>
 
                     <div class="form-group">
-                        <label for="link_reason" class="col-sm-2 required">Reason</label>
+                        <label for="reason" class="col-sm-2 required">Reason</label>
                         <div class="col-md-10 col-sm-10">
-                            <textarea class="form-control" id="link_reason" name="link_reason" rows="10" placeholder="" required></textarea>
+                            <textarea class="form-control" id="reason" name="reason" rows="10" placeholder="" required></textarea>
                             <div class="help-block">Provide some evidence of your site.</div>
                         </div>
                     </div>

@@ -36,6 +36,7 @@
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
+- **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
 - **Subtitles:** fix last commit which content function is not public (177a599)
 
 ### Perf
@@ -50,6 +51,7 @@
 - **Tracker:** Separate TrackerController (c64688b)
 
 ### Style
+- **Framework:** Don't construct container inside AbstractObject (a194264)
 - **Helper:** Use helper function to replace class ContainerHelper (eb3da65)
 - **Utils:** Combine `NameHelper` and `StringHelper` (85f311b)
 - **ValueCache:** trait `ClassValueCacheUtils` rename as `Rid\Utils\Traits\ClassValueCache` (2bea55f)

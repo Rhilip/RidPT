@@ -10,8 +10,7 @@ declare(strict_types=1);
 
 namespace App\Forms\Auth\Confirm;
 
-
-use App\Entity\User\UserStatus;
+use App\Enums\User\Status as UserStatus;
 
 class RegisterForm extends AbstractConfirmForm
 {
@@ -31,6 +30,4 @@ class RegisterForm extends AbstractConfirmForm
         container()->get('redis')->del('User:content_' .  $this->record['uid']);
         $this->msg = 'Your account is success Confirmed.';
     }
-
-
 }

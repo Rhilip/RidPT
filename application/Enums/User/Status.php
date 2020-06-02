@@ -2,17 +2,16 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 1/11/2020
- * Time: 2020
+ * Date: 6/2/2020
+ * Time: 9:54 AM
  */
 
 declare(strict_types=1);
 
-namespace App\Entity\User;
+namespace App\Enums\User;
 
-class UserStatus
+class Status
 {
-    // User Status
     public const DISABLED = 'disabled';
     public const PENDING = 'pending';
     public const PARKED = 'parked';

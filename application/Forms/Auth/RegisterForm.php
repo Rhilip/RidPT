@@ -10,10 +10,9 @@ declare(strict_types=1);
 
 namespace App\Forms\Auth;
 
-
-use App\Entity\Site\LogLevel;
-use App\Entity\User\UserRole;
-use App\Entity\User\UserStatus;
+use App\Enums\Site\LogLevel;
+use App\Enums\User\Role as UserRole;
+use App\Enums\User\Status as UserStatus;
 use App\Forms\Traits\CaptchaTrait;
 use App\Forms\Traits\UserRegisterCheckTrait;
 use Rid\Utils\Random;
@@ -133,7 +132,7 @@ class RegisterForm extends AbstractValidator
         }
 
         // Add Site log for user signup
-        container()->get('site')->writeLog($log_text, LogLevel::LOG_LEVEL_MOD);
+        container()->get('site')->writeLog($log_text, LogLevel::MOD);
 
         // FIXME Set some value with used by Controller
         $this->status = $status;
@@ -165,16 +164,19 @@ class RegisterForm extends AbstractValidator
         $invitee = container()->get(\App\Entity\User\UserFactory::class)->getUserById($invitee_id);
         $log_text .= '(Invite by ' . $invitee->getUsername() . '(' . $invitee->getId() . ')).';
 
-        container()->get('site')->sendPM(0, $invitee_id,
+        container()->get('site')->sendPM(
+            0,
+            $invitee_id,
             'New Invitee Signup Successful',
             'New Invitee Signup Successful'
         );
-
     }
 
     private function sendNewerPM($newer_id)
     {
-        container()->get('site')->sendPM(0, $newer_id,
+        container()->get('site')->sendPM(
+            0,
+            $newer_id,
             'Welcome to Our Site',
             'Welcome to Our Site'
         );

@@ -9,11 +9,12 @@
 namespace App\Components;
 
 use App\Entity;
+use App\Enums\Site\LogLevel;
 use App\Libraries\Constant;
 
 class Site
 {
-    public function writeLog($msg, $level = Entity\Site\LogLevel::LOG_LEVEL_NORMAL)
+    public function writeLog($msg, $level = LogLevel::NORMAL)
     {
         container()->get('pdo')->prepare('INSERT INTO `site_log`(`create_at`,`msg`, `level`) VALUES (CURRENT_TIMESTAMP, :msg, :level)')->bindParams([
             'msg' => $msg, 'level' => $level

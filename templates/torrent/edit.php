@@ -11,8 +11,6 @@
 
 $torrent = $edit->getTorrent();
 
-use App\Entity\Torrent\TorrentStatus;
-
 ?>
 
 <?= $this->layout('layout/base') ?>
@@ -175,7 +173,7 @@ use App\Entity\Torrent\TorrentStatus;
                         <div class="input-group">
                             <span class="input-group-addon"><label for="status">Status</label></span>
                             <select id="status" name="status" class="form-control">
-                                <?php foreach (TorrentStatus::TORRENT_STATUSES as $status) : ?>
+                                <?php foreach (\App\Enums\Torrent\Status::values() as $status) : ?>
                                     <option value="<?= $status ?>" <?= $torrent->getStatus() == $status ? 'selected' : '' ?>><?= $status ?></option>
                                 <?php endforeach; ?>
                             </select>

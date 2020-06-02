@@ -10,19 +10,20 @@ declare(strict_types=1);
 
 namespace App\Controllers\Auth;
 
-
-use App\Entity\User\UserStatus;
+use App\Enums\User\Status as UserStatus;
 use App\Forms\Auth\RegisterForm;
 use Rid\Http\AbstractController;
 
 class RegisterController extends AbstractController
 {
-    public function index() {
+    public function index()
+    {
         return $this->render('auth/register');
     }
 
     /** @noinspection PhpUnused */
-    public function takeRegister() {
+    public function takeRegister()
+    {
         $register_form = new RegisterForm();
         $register_form->setInput(container()->get('request')->request->all());
         if (!$register_form->validate()) {

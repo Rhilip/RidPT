@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
+use App\Enums\User\Role;
+use App\Enums\User\Status;
 use Rid\Utils\Traits\ClassValueCache;
 
 class User
@@ -20,8 +22,8 @@ class User
     protected int $id = 0;
     protected ?string $username;
     protected ?string $email;
-    protected string $status = UserStatus::DISABLED;  // App\Entity\User\UserStatus
-    protected int $class = UserRole::ANONYMOUS;  // App\Entity\User\UserRole
+    protected string $status = Status::DISABLED;
+    protected int $class = Role::ANONYMOUS;
     protected string $passkey;
 
     protected int $uploadpos;
