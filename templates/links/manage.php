@@ -72,9 +72,8 @@
 
 
 <?php $this->start('body'); ?>
-<form method="post" id="link_remove_form" class="hidden">
-    <label><input type="text" name="action" value="link_delete"></label>
-    <label><input type="number" name="link_id" value=""></label>
+<form method="post" action="/links/remove" id="link_remove_form" class="hidden">
+    <label><input type="number" name="id" value=""></label>
 </form>
 
 <div class="modal fade" id="links_modal">
@@ -84,32 +83,32 @@
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
                 <h4 class="modal-title">Add/Edit Links</h4>
             </div>
-            <form method="post" class="form-horizontal" id="link_edit_form" data-toggle="validator" role="form">
+            <form method="post" action="/links/edit" class="form-horizontal" id="link_edit_form" data-toggle="validator" role="form">
             <div class="modal-body">
-                <label class="hidden"><input type="text" name="action" value="link_edit"></label>
-                <label class="hidden"><input type="number" id="link_id" name="link_id" value="0"></label>
+                <label class="hidden"><input type="text" name="action" value="edit"></label>
+                <label class="hidden"><input type="number" id="id" name="id" value="0"></label>
                 <div class="form-group">
-                    <label for="link_name" class="col-sm-2 required">Link Name</label>
+                    <label for="name" class="col-sm-2 required">Link Name</label>
                     <div class="col-md-8 col-sm-10">
-                        <input type="text" class="form-control" id="link_name" name="link_name" required>
+                        <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="link_url" class="col-sm-2 required">URL</label>
+                    <label for="url" class="col-sm-2 required">URL</label>
                     <div class="col-md-8 col-sm-10">
-                        <input type="url" class="form-control" id="link_url" name="link_url" required>
+                        <input type="url" class="form-control" id="url" name="url" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="link_title" class="col-sm-2">Title</label>
+                    <label for="title" class="col-sm-2">Title</label>
                     <div class="col-md-8 col-sm-10">
-                        <input type="text" class="form-control" id="link_title" name="link_title">
+                        <input type="text" class="form-control" id="title" name="title">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="link_status" class="col-sm-2 required">Status</label>
+                    <label for="status" class="col-sm-2 required">Status</label>
                     <div class="col-md-8 col-sm-10">
-                        <select class="form-control" id="link_status" name="link_status" required>
+                        <select class="form-control" id="status" name="status" required>
                             <option value="pending">Pending</option>
                             <option value="enabled" selected>Enabled</option>
                             <option value="disabled">Disabled</option>
@@ -117,22 +116,22 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="link_admin" class="col-sm-2">Administrator</label>
+                    <label for="admin" class="col-sm-2">Administrator</label>
                     <div class="col-md-8 col-sm-10">
-                        <input type="text" class="form-control" id="link_admin" name="link_admin">
+                        <input type="text" class="form-control" id="admin" name="admin">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="link_email" class="col-sm-2">Email</label>
+                    <label for="email" class="col-sm-2">Email</label>
                     <div class="col-md-8 col-sm-10">
-                        <input type="email" class="form-control" id="link_email" name="link_email">
+                        <input type="email" class="form-control" id="email" name="email">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="link_reason" class="col-sm-2">Reason</label>
+                    <label for="reason" class="col-sm-2">Reason</label>
                     <div class="col-md-10 col-sm-10">
-                        <textarea class="form-control" id="link_reason" name="link_reason" rows="10" placeholder=""></textarea>
+                        <textarea class="form-control" id="reason" name="reason" rows="10" placeholder=""></textarea>
                     </div>
                 </div>
 

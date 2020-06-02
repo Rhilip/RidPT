@@ -29,9 +29,9 @@ class Context
         return $value;
     }
 
-    public function get(string $id, $default = null)
+    public function &get(string $id)
     {
-        return $this->context[$id] ?? $default;
+        return $this->context[$id];
     }
 
     public function has(string $id)
@@ -44,19 +44,10 @@ class Context
         unset($this->context[$id]);
     }
 
-    public function getOrSet(string $id, $value)
-    {
-        if (!$this->has($id)) {
-            return $this->set($id, $value);
-        }
-        return $this->get($id);
-    }
-
     public function append(string $id, $value)
     {
         if (!$this->has($id)) {
             $this->context[$id] = [];
-            $this->set($id, []);
         }
         $this->context[$id][] = $value;
     }

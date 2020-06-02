@@ -38,8 +38,12 @@ return function (RouteCollector $r) {
 
             // 友情链接部分
             $r->addGroup('/links', function (RouteCollector $r) {
-                $r->addRoute(['GET', 'POST'], '/apply', [Controllers\LinksController::class, 'apply']);
-                $r->addRoute(['GET', 'POST'], '/manager', [Controllers\LinksController::class, 'manager']);
+                $r->get('/apply', [Controllers\Links\ApplyController::class, 'index']);
+                $r->post('/apply', [Controllers\Links\ApplyController::class, 'takeApply']);
+
+                $r->get('/manage', [Controllers\Links\ManagerController::class, 'index']);
+                $r->post('/edit', [Controllers\Links\ManagerController::class, 'takeEdit']);
+                $r->post('/remove', [Controllers\Links\ManagerController::class, 'takeRemove']);
             });
 
             // 用户认证部分

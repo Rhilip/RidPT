@@ -78,6 +78,7 @@ class AuthMiddleware extends AbstractMiddleware
         }
 
         /**
+         * FIXME it's not good enough since we separate Controller after route component change
          * Check User Permission to this route
          *
          * When user visit - /admin -> Controller : \src\controllers\AdminController  Action: actionIndex

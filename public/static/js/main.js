@@ -446,7 +446,7 @@ jQuery(document).ready(function () {
         let tr = $('#links_manager_table tr[data-id=' + that.data('id') + ']');
         let link_edit_form = $('#link_edit_form');
         for (let datum in tr.data()) {
-            link_edit_form.find('[name="link_' + datum + '"]').val(tr.data(datum));
+            link_edit_form.find('[name="' + datum + '"]').val(tr.data(datum));
         }
     });
 
@@ -454,7 +454,7 @@ jQuery(document).ready(function () {
         let that = $(this);
         if (confirm('Confirm to remove this links ?')) {
             let link_remove_form = $('#link_remove_form');
-            link_remove_form.find('input[name=link_id]').val(that.data('id'));
+            link_remove_form.find('input[name=id]').val(that.data('id'));
             link_remove_form.submit();
         }
     });
