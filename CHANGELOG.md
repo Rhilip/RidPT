@@ -47,6 +47,7 @@
 - **Site:** simple Site component (750b564)
 
 ### Refactor
+- **Auth:** Replace Auth Part by new Validator (2cb707f)
 - **Route:** use fast-route to replace our old route components (eca0db8)
 - **Tracker:** Separate TrackerController (c64688b)
 

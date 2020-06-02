@@ -9,12 +9,14 @@ class Application
     // Application配置
     public array $config = [];
 
+    protected Context $context;
     protected ?Container $container;
 
     public function __construct(array $config)
     {
         $this->config = $config;
         $this->container = $this->buildContainer();
+        $this->context = new Context();
 
         // 执行初始化回调
         foreach ($this->config['initialize'] ?? [] as $callback) {
@@ -35,5 +37,13 @@ class Application
     public function getContainer(): ?Container
     {
         return $this->container;
+    }
+
+    /**
+     * @return Context
+     */
+    public function getContext(): Context
+    {
+        return $this->context;
     }
 }

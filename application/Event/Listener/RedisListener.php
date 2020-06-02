@@ -12,24 +12,12 @@ namespace App\Event\Listener;
 
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
-use Rid\Component\Context;
 
 class RedisListener extends AbstractListener
 {
-    protected Context $runtime;
-
-    public function __construct(Context $runtime)
-    {
-        $this->runtime = $runtime;
-    }
-
     public function handle(EventInterface $event, $params = null)
     {
-        if (!isset($this->runtime['redis'])) {
-            $this->runtime['redis'] = [];
-        }
-
-        $this->runtime['redis'][] = $this->flattenRedisCommands($params);
+        context()->append('record.redis', $this->flattenRedisCommands($params));
     }
 
     private function flattenRedisCommands($params)

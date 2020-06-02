@@ -89,8 +89,8 @@ $extend_debug_info = container()->get('auth')->getCurUser()  // Not Anonymous
             </p>
             <p class="debug-info">
                 <?php
-                $debug_pdo = container()->get('runtime')['pdo'] ?? [];
-                $debug_redis = container()->get('runtime')['redis'] ?? [];
+                $debug_pdo = context()->get('record.pdo') ?? [];
+                $debug_redis = context()->get('record.redis') ?? [];
                 ?>
                 [ Page created in <b><?= number_format(microtime(true) - container()->get('request')->server->get('REQUEST_TIME_FLOAT'), 6) ?></b> sec
                 with <b><?= $this->e(memory_get_usage(), 'format_bytes') ?></b> ram used,

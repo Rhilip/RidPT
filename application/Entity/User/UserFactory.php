@@ -10,29 +10,19 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
-use Rid\Component\Context;
-
 class UserFactory
 {
     public const mapUsernameToId = 'Map:hash:user_username_to_user_id';
     public const mapUserPasskeyToId = 'Map:zset:user_passkey_to_user_id';  // (double) 0 means invalid
     public const mapUserSessionToId = 'Map:zset:user_session_to_user_id';  // (double) 0 means invalid
 
-    protected Context $runtime;
-
-    public function __construct(Context $runtime)
-    {
-        $this->runtime = $runtime;
-    }
-
     public function getUserById($uid): User
     {
-        if (!isset($this->runtime['user'][$uid])) {
+        if (!context()->has('user.' . $uid)) {
             $user = new User($uid);
-            $this->runtime['user'][$uid] = $user;
+            return context()->set('user.' . $uid, $user);
         }
-
-        return $this->runtime['user'][$uid];
+        return context()->get('user.' . $uid);
     }
 
     public function getUserIdBySession($session): int

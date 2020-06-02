@@ -48,7 +48,6 @@ return [
 
     // 定义对象快捷引用
     'emitter' => \DI\get(\League\Event\Emitter::class),
-    'runtime' => \DI\get(\Rid\Component\Context::class),
 
     // 定义组件实体
     \Rid\Http\Message\Request::class => \DI\autowire()

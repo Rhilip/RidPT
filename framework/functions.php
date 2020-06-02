@@ -39,7 +39,7 @@ if (!function_exists('container')) {
 if (!function_exists('context')) {
     function context()
     {
-        return container()->get(\Rid\Component\Context::class);
+        return \Rid\Rid::getApp()->getContext();
     }
 }
 

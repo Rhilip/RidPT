@@ -22,7 +22,6 @@ namespace PHPSTORM_META {
         'route' => \Rid\Http\Route::class,
         'request' => \Rid\Http\Message\Request::class,
         'response' => \Rid\Http\Message\Response::class,
-        'runtime' => \Rid\Component\Context::class,
         // 对象
         'emitter' => \League\Event\Emitter::class,
     ]));

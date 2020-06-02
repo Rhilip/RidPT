@@ -2,8 +2,6 @@
 
 namespace Rid\Http;
 
-use Rid\Component\Context;
-
 use FastRoute\Dispatcher;
 use Rid\Helpers\IoHelper;
 use Rid\Http\Route\Exception\RouteException;
@@ -13,6 +11,9 @@ class Application extends \Rid\Base\Application
     // 执行功能
     public function run(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
+        // 清扫Runtime组件容器
+        context()->cleanContext();
+
         container()->get('request')->setRequester($request);
         container()->get('response')->setResponder($response);
         $server = container()->get('request')->server->all();
@@ -35,9 +36,6 @@ class Application extends \Rid\Base\Application
             // 准备请求并发送
             container()->get('response')->prepare(container()->get('request'));
             container()->get('response')->send();
-
-            // 清扫Runtime组件容器
-            container()->get(Context::class)->cleanContext();
         }
     }
 
