@@ -49,16 +49,16 @@ class I18n
      */
     public function getUserLang()
     {
-        // Return Cache value
-        if (!is_null(container()->get('request')->attributes->get('user_lang'))) {
-            return container()->get('request')->attributes->get('user_lang');
+        // Return Cache value in context
+        if (context()->has('lang')) {
+            return context()->get('lang');
         }
 
         // Determine
-        $judged_langs = array();
+        $judged_langs = [];
 
         // 1nd highest priority: GET parameter 'lang'
-        if (!is_null(container()->get('request')->query->get('lang'))) {
+        if (container()->get('request')->query->has('lang')) {
             $judged_langs[] = container()->get('request')->query->get('lang');
         }
 
@@ -68,7 +68,7 @@ class I18n
         }
 
         // 3th highest priority: HTTP_ACCEPT_LANGUAGE
-        if (!is_null(container()->get('request')->headers->get('accept_language'))) {
+        if (container()->get('request')->headers->has('accept_language')) {
             /**
              * We get headers like this string 'en-US,en;q=0.8,uk;q=0.6'
              * And then sort to an array like this after sort

@@ -10,14 +10,12 @@ declare(strict_types=1);
 
 namespace App\Forms\Links;
 
-
 use App\Enums\Links\Status;
 use App\Enums\Site\LogLevel;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class EditForm extends ApplyForm
 {
-
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([

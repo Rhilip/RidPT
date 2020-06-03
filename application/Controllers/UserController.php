@@ -57,7 +57,7 @@ class UserController extends AbstractController
         }
 
         // FIXME By using Form Class
-        if (!is_null(container()->get('request')->query->get('action'))) {
+        if (container()->get('request')->query->has('action')) {
             $action_form = new User\InviteActionForm();
             $action_form->setInput(container()->get('request')->query->all());
             $success = $action_form->validate();

@@ -13,9 +13,13 @@ namespace App\Forms\Auth;
 use App\Enums\User\Status as UserStatus;
 use App\Forms\Traits\CaptchaTrait;
 use App\Libraries\Constant;
+
 use Rid\Libraries\JWT;
 use Rid\Utils\Random;
 use Rid\Validators\AbstractValidator;
+
+use PragmaRX\Google2FAQRCode\Google2FA;
+use PragmaRX\Google2FA\Exceptions\Google2FAException;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -53,19 +57,28 @@ class LoginForm extends AbstractValidator
 
         if (false === $user_record) {  // User is not exist
             /** Notice: We shouldn't tell `This User is not exist in this site.` for user information security. */
-            $this->buildCallbackFailMsg('Account', 'Invalid username/password');
+            $this->buildCallbackFailMsg('Account', 'Invalid username/password or 2fa code');
             return;
         }
 
         // User's password is not correct
         if (!password_verify($this->getInput('password'), $user_record['password'])) {
-            $this->buildCallbackFailMsg('Account', 'Invalid username/password');
+            $this->buildCallbackFailMsg('Account', 'Invalid username/password or 2fa code');
             return;
         }
 
         // User input 2FA code or opt field in User Record is not null
         if ($this->getInput('opt') || !is_null($user_record['opt'])) {
-            // TODO 2FA check
+            $google2fa = container()->get(Google2FA::class);
+            try {
+                if (false === $google2fa->verify($user_record['opt'], $this->getInput('opt'))) {
+                    $this->buildCallbackFailMsg('Account','Invalid username/password or 2fa code');
+                    return;
+                }
+            } catch (Google2FAException $exception) {
+                $this->buildCallbackFailMsg('2FA', '2fa check service error, please connect our sysop.');
+                return;
+            }
         }
 
         // User 's status is banned or pending~

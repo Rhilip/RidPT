@@ -112,6 +112,8 @@ return [
         return \Symfony\Component\Validator\Validation::createValidator();
     }),
 
+    PragmaRX\Google2FAQRCode\Google2FA::class => \DI\create(),
+
     \Rid\Component\Config::class => \DI\autowire(),
     \App\Components\Site::class => \DI\autowire(),
     \App\Components\Auth::class => \DI\autowire(),

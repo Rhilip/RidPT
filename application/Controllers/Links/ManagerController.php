@@ -15,7 +15,6 @@ use Rid\Http\AbstractController;
 
 class ManagerController extends AbstractController
 {
-
     public function index()
     {
         $all_links = container()->get('pdo')->prepare("SELECT * FROM `links`")->queryAll();

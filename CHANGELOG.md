@@ -49,6 +49,7 @@
 
 ### Refactor
 - **Auth:** Replace Auth Part by new Validator (2cb707f)
+- **Context:** clean Context at start of request (b2f4161)
 - **Route:** use fast-route to replace our old route components (eca0db8)
 - **Tracker:** Separate TrackerController (c64688b)
 
