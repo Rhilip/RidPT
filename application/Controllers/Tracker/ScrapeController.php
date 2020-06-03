@@ -44,7 +44,7 @@ class ScrapeController
 
             $info_hash_array = $this->checkScrapeFields($request);
             $rep_dict = $this->generateScrapeResponse($info_hash_array);
-        } catch (TrackerException $e) {
+        } catch (\Throwable $e) {
             $rep_dict = $this->generateTrackerFailResponseDict($e);
         } finally {
             return $this->generateTrackerResponse($rep_dict);
@@ -73,10 +73,16 @@ class ScrapeController
         return Bencode::encode($rep_dict);
     }
 
-    protected function generateTrackerFailResponseDict(TrackerException $exception)
+    protected function generateTrackerFailResponseDict(\Throwable $exception)
     {
+        if ($exception instanceof TrackerException) {
+            $reason = $exception->getMessage();
+        } else {
+            $reason = 'Internal Error';
+        }
+
         return [
-            'failure reason' => $exception->getMessage(),
+            'failure reason' => $reason,
             'min interval' => (int)config('tracker.min_interval')
             /**
              * BEP 31: Failure Retry Extension

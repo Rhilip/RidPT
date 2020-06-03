@@ -102,10 +102,11 @@ class AnnounceController extends ScrapeController
             }
 
             $rep_dict = $this->generateAnnounceResponse($queries, $role, $torrentInfo);
-        } catch (TrackerException $e) {
-            // Record agent deny log in Table `agent_deny_log`
-            if ($e->getCode() >= 124 && isset($userInfo) && isset($torrentInfo)) {
-                $this->logException($e, $request, $userInfo['id'], $torrentInfo['id']);
+        } catch (\Throwable $e) {
+            if ($e instanceof TrackerException && $e->getCode() >= 124 &&
+                isset($userInfo) && isset($torrentInfo)) {
+                // Record agent deny log in Table `agent_deny_log`
+                $this->logTrackerException($e, $request, $userInfo['id'], $torrentInfo['id']);
             }
             $rep_dict = $this->generateTrackerFailResponseDict($e);
         } finally {
@@ -113,7 +114,7 @@ class AnnounceController extends ScrapeController
         }
     }
 
-    protected function logException(\Exception $exception, Request $request, $uid, $tid)
+    protected function logTrackerException(\Exception $exception, Request $request, $uid, $tid)
     {
         $req_info = $request->getQueryString() . "\n\n";
         $req_info .= (string)$request->headers;
