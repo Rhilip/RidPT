@@ -67,17 +67,17 @@ abstract class AbstractServerCommand extends AbstractCommand
 
     protected function prepareServerRuntimeSetting(InputInterface $input)
     {
-        $this->serverSetting = array_merge(
-            $this->serverSetting,  // 默认设置
-            $this->httpServerConfig['settings'],   // 用户配置文件
-            ['enable_coroutine' => false] // FIXME 关闭默认协程，回调中有手动开启支持上下文的协程
-        );
-
         // 根据input更新设置
         if ($input->getOption('update')) {
             $this->httpServerConfig['settings']['max_request'] = 1;
         }
         $this->httpServerConfig['settings']['daemonize'] = (int)$input->getOption('daemon');
+
+        $this->serverSetting = array_merge(
+            $this->serverSetting,  // 默认设置
+            $this->httpServerConfig['settings'],   // 用户配置文件
+            ['enable_coroutine' => false] // FIXME 关闭默认协程，回调中有手动开启支持上下文的协程
+        );
     }
 
     protected function prepareServer()
