@@ -10,10 +10,8 @@ declare(strict_types=1);
 
 namespace App\Forms\Admin\Service;
 
-
 class MysqlForm
 {
-
     private array $server_status;
     private float $start_at;
     private array $query_stats;

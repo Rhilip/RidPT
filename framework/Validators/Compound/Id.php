@@ -15,7 +15,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class Id extends Compound
 {
-
     protected function getConstraints(array $options): array
     {
         return [

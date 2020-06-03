@@ -10,13 +10,13 @@ declare(strict_types=1);
 
 namespace App\Controllers\Admin\Service;
 
-
 use App\Forms\Admin\Service\RedisForm;
 use Rid\Http\AbstractController;
 
 class RedisController extends AbstractController
 {
-    public function index() {
+    public function index()
+    {
         return $this->render('admin/service/redis', ['redis' => new RedisForm()]);
     }
 }

@@ -40,6 +40,7 @@
 - **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
 - **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
+- **Server:** Fix Server runtime config not work (70b1d79)
 - **Subtitles:** fix last commit which content function is not public (177a599)
 
 ### Perf

@@ -28,7 +28,7 @@ return function (RouteCollector $r) {
             $r->get('/announce', [Controllers\Tracker\AnnounceController::class, 'index']);
         });
 
-        // Web访问部分
+        // Web访问部分，只使用 GET或POST 方法，不使用其他请求方法
         $r->addMiddleware(Middleware\AuthMiddleware::class, function (RouteCollector $r) {
             // 测试路由
             $r->get('/test', [Controllers\TestController::class, 'index']);

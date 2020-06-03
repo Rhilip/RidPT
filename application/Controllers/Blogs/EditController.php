@@ -16,7 +16,8 @@ use Rid\Http\AbstractController;
 
 class EditController extends AbstractController
 {
-    public function index() {
+    public function index()
+    {
         $form = new ExistForm();
         $form->setInput(container()->get('request')->query->all());
         if ($form->validate()) {
@@ -26,7 +27,8 @@ class EditController extends AbstractController
         }
     }
 
-    public function takeEdit() {
+    public function takeEdit()
+    {
         $form = new EditForm();
         $form->setInput(container()->get('request')->request->all());
         if ($form->validate()) {

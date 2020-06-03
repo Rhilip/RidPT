@@ -10,13 +10,13 @@ declare(strict_types=1);
 
 namespace App\Controllers\Blogs;
 
-
 use App\Forms\Blogs\DeleteForm;
 use Rid\Http\AbstractController;
 
 class DeleteController extends AbstractController
 {
-    public function takeDelete() {
+    public function takeDelete()
+    {
         $form = new DeleteForm();
         $form->setInput(container()->get('request')->query->all());
         if ($form->validate()) {

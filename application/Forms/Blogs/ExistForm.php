@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Forms\Blogs;
 
-
 use Rid\Validators\AbstractValidator;
 use Rid\Validators\Compound as AcmeAssert;
 use Symfony\Component\Validator\Constraints as Assert;

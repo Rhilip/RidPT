@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace App\Forms\Blogs;
 
-
 class DeleteForm extends ExistForm
 {
     public function flush()

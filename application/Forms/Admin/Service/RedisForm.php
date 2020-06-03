@@ -10,10 +10,8 @@ declare(strict_types=1);
 
 namespace App\Forms\Admin\Service;
 
-
 class RedisForm
 {
-
     private array $info;
     private int $db_size;
     private array $cmd_stat;
@@ -60,6 +58,4 @@ class RedisForm
     {
         return $this->cmd_stat;
     }
-
-
 }
