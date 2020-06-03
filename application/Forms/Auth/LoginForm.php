@@ -72,7 +72,7 @@ class LoginForm extends AbstractValidator
             $google2fa = container()->get(Google2FA::class);
             try {
                 if (false === $google2fa->verify($user_record['opt'], $this->getInput('opt'))) {
-                    $this->buildCallbackFailMsg('Account','Invalid username/password or 2fa code');
+                    $this->buildCallbackFailMsg('Account', 'Invalid username/password or 2fa code');
                     return;
                 }
             } catch (Google2FAException $exception) {

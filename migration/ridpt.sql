@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 2020-04-27 21:19:29
+-- Generation Time: Jun 03, 2020 at 07:14 PM
 -- Server version: 8.0.17
--- PHP Version: 7.3.1
+-- PHP Version: 7.4.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -183,6 +183,33 @@ CREATE TABLE IF NOT EXISTS `ban_usernames` (
 
 --
 -- RELATIONSHIPS FOR TABLE `ban_usernames`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `blogs`
+--
+
+DROP TABLE IF EXISTS `blogs`;
+CREATE TABLE IF NOT EXISTS `blogs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) UNSIGNED NOT NULL,
+  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `edit_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `title` varchar(255) NOT NULL DEFAULT '',
+  `body` text NOT NULL,
+  `notify` tinyint(1) NOT NULL DEFAULT '1',
+  `force_read` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `create_at` (`create_at`),
+  KEY `FK_news_users_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `blogs`:
+--   `user_id`
+--       `users` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -456,33 +483,6 @@ CREATE TABLE IF NOT EXISTS `messages` (
 
 --
 -- RELATIONSHIPS FOR TABLE `messages`:
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `news`
---
-
-DROP TABLE IF EXISTS `news`;
-CREATE TABLE IF NOT EXISTS `news` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) UNSIGNED NOT NULL,
-  `create_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `edit_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `title` varchar(255) NOT NULL DEFAULT '',
-  `body` text NOT NULL,
-  `notify` tinyint(1) NOT NULL DEFAULT '1',
-  `force_read` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `create_at` (`create_at`),
-  KEY `FK_news_users_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- RELATIONSHIPS FOR TABLE `news`:
---   `user_id`
---       `users` -> `id`
 --
 
 -- --------------------------------------------------------
@@ -915,14 +915,14 @@ TRUNCATE TABLE `site_crontab`;
 -- Dumping data for table `site_crontab`
 --
 
-INSERT INTO `site_crontab` (`id`, `job`, `priority`, `job_interval`) VALUES
-(1, 'clean_expired_zset_cache', 1, 60),
-(2, 'clean_dead_peer', 1, 600),
-(3, 'clean_expired_items_database', 3, 3600),
-(4, 'calculate_seeding_bonus', 2, 900),
-(5, 'sync_torrents_status', 4, 3600),
-(6, 'update_expired_external_link_info', 100, 1200),
-(7, 'sync_ban_list', 100, 86400);
+INSERT INTO `site_crontab` (`id`, `job`, `expr`, `priority`) VALUES
+(1, 'clean_expired_zset_cache', '@always', 1),
+(2, 'clean_dead_peer', '@10minutes', 1),
+(3, 'clean_expired_items_database', '@hourly', 3),
+(4, 'calculate_seeding_bonus', '@15minutes', 2),
+(5, 'sync_torrents_status', '@hourly', 4),
+(6, 'update_expired_external_link_info', '@30minutes', 100),
+(7, 'sync_ban_list', '@daily', 100);
 
 -- --------------------------------------------------------
 
@@ -1321,6 +1321,12 @@ ALTER TABLE `torrents` ADD FULLTEXT KEY `title` (`title`,`subtitle`);
 --
 
 --
+-- Constraints for table `blogs`
+--
+ALTER TABLE `blogs`
+  ADD CONSTRAINT `FK_news_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
+
+--
 -- Constraints for table `bookmarks`
 --
 ALTER TABLE `bookmarks`
@@ -1339,12 +1345,6 @@ ALTER TABLE `invite`
 ALTER TABLE `map_torrents_externalinfo`
   ADD CONSTRAINT `FK_map_tl_to_external_info` FOREIGN KEY (`info_id`) REFERENCES `external_info` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_map_tl_to_torrents` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `news`
---
-ALTER TABLE `news`
-  ADD CONSTRAINT `FK_news_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `sessions`

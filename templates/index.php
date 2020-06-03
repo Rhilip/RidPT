@@ -18,8 +18,8 @@
 <?php $this->start('container') ?>
 <div class="panel" id="news_panel">
     <?php $can_manage_news = container()->get('auth')->getCurUser()->isPrivilege('manage_news'); ?>
-    <div class="panel-heading">Recent News - <small>[<a href="/news" target="_blank">All</a>]</small>
-        <?= $can_manage_news ? '<small>[<a href="/news/new">New</a>]</small>' : '' ?>
+    <div class="panel-heading">Recent Blogs - <small>[<a href="/blogs" target="_blank">All</a>]</small>
+        <?= $can_manage_news ? '<small>[<a href="/blogs/create">New</a>]</small>' : '' ?>
     </div>
     <div class="panel-body">
         <?php if (empty($news)): ?>
@@ -31,8 +31,11 @@
                 <div class="item">
                     <div class="item-heading">
                         <div class="pull-right">
-                            <!-- TODO add delete Protect -->
-                            <?= $can_manage_news ? "<a href=\"/news/edit?id={$new['id']}\"><i class=\"icon-pencil\"></i> Edit</a> &nbsp;<a href=\"/news/delete?id={$new['id']}\"><i class=\"icon-remove\"></i> Delete</a> &nbsp;" : '' ?>
+                            <?php if ($can_manage_news): ?>
+                                <!-- TODO add delete Protect -->
+                                <a href="/blogs/edit?id=<?= $new['id'] ?>"><i class="icon-pencil"></i> Edit</a>
+                                <a href="/blogs/delete?id=<?= $new['id'] ?>"><i class="icon-remove"></i> Delete</a>
+                            <?php endif; ?>
                             <span class="text-muted"><?= $new['create_at'] ?></span>
                         </div>
                         <h4>

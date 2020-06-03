@@ -10,24 +10,26 @@
 - **validator:** Prepare new validator from `symfony/validator` (3d97551)
 
 ### Feat
+- **2FA:** use `pragmarx/google2fa-qrcode` as 2fa library (e029707)
 - **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)
-- **DI:** Move Config into DI (f837b48)
+- **DI:** Move PDO,JWT,Crypt into DI (b8062b2)
+- **DI:** Almost finish new DI with PHP-DI (c662b14)
 - **DI:** Move Request，Response into DI (ebbdb8c)
 - **DI:** Move Error into DI (231cff7)
 - **DI:** Move Route,Site,Auth into DI (39945b4)
 - **DI:** Move Site Components into DI (e67b903)
-- **DI:** Move PDO,JWT,Crypt into DI (b8062b2)
-- **DI:** Almost finish new DI with PHP-DI (c662b14)
+- **DI:** Prepare replace component by PHP-DI (already mailer, logger) (73cc3f6)
+- **DI:** Move Config into DI (f837b48)
 - **DI:** Move Session into DI (4702ad3)
 - **DI:** Move Redis into DI (df04196)
 - **DI:** merge Component `i18n` into Container (591b052)
 - **DI:** merge Component `View` into Container (75f6edf)
 - **DI:** Add path info in container (1569795)
-- **DI:** Prepare replace component by PHP-DI (already mailer, logger) (73cc3f6)
 - **DI:** Prepare replace component by PHP-DI (a287244)
 - **Enum:** Add class `Rid\Utils\Enum` (a771a52)
 - **MemoryTable:** Use New `TableManager` to manager Swoole Table instead of hardcode (37cf209)
 - **SwooleMemory:** Add `AtomicManager` (6190d60)
+- **Tracker:** non-TrackerException will make Tracker can't generate Response (a65fe97)
 
 ### Fix
 - **Captcha:** the captcha library's status not clean when re-generate (021212c)
@@ -50,6 +52,7 @@
 ### Refactor
 - **Auth:** Replace Auth Part by new Validator (2cb707f)
 - **Context:** clean Context at start of request (b2f4161)
+- **Links:** Finish Part of LinksController (f45a470)
 - **Route:** use fast-route to replace our old route components (eca0db8)
 - **Tracker:** Separate TrackerController (c64688b)
 

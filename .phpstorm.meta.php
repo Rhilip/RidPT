@@ -14,7 +14,7 @@ namespace PHPSTORM_META {
         'view' => \Rid\Component\View::class,
         'i18n' => \Rid\Component\I18n::class,
         'redis' => \Rid\Redis\BaseRedisConnection::class,
-        'pdo' => \Rid\Database\Persistent\PDOConnection::class,
+        'pdo' => \Rid\Database\BasePDOConnection::class,
         'session' => \Rid\Http\Session::class,
         'logger' => \Monolog\Logger::class,
         'site' => \App\Components\Site::class,

@@ -39,11 +39,11 @@ return function (RouteCollector $r) {
             // 友情链接部分
             $r->addGroup('/links', function (RouteCollector $r) {
                 $r->get('/apply', [Controllers\Links\ApplyController::class, 'index']);
-                $r->post('/apply', [Controllers\Links\ApplyController::class, 'takeApply']);
-
                 $r->get('/manage', [Controllers\Links\ManagerController::class, 'index']);
+
+                $r->post('/apply', [Controllers\Links\ApplyController::class, 'takeApply']);
                 $r->post('/edit', [Controllers\Links\ManagerController::class, 'takeEdit']);
-                $r->post('/remove', [Controllers\Links\ManagerController::class, 'takeRemove']);
+                $r->get('/delete', [Controllers\Links\ManagerController::class, 'takeDelete']); // FIXME it should be post method
             });
 
             // 用户认证部分
@@ -90,7 +90,7 @@ return function (RouteCollector $r) {
 
             // RSS部分
             $r->addGroup('/rss', function (RouteCollector $r) {
-                $r->get('/', [Controllers\RssController::class, 'index']);
+                $r->get('', [Controllers\RssController::class, 'index']);
             });
 
             // 字幕部分
@@ -102,11 +102,14 @@ return function (RouteCollector $r) {
             });
 
             // 站点新闻部分
-            $r->addGroup('/news', function (RouteCollector $r) {
-                $r->get('/', [Controllers\NewsController::class, 'index']);
-                $r->addRoute(['GET', 'POST'], '/new', [Controllers\NewsController::class, 'new']);
-                $r->addRoute(['GET', 'POST'], '/edit', [Controllers\NewsController::class, 'edit']);
-                $r->addRoute(['GET', 'POST'], '/delete', [Controllers\NewsController::class, 'delete']);
+            $r->addGroup('/blogs', function (RouteCollector $r) {
+                $r->get('[/search]', [Controllers\Blogs\SearchController::class, 'index']);
+                $r->get('/create', [Controllers\Blogs\CreateController::class, 'index']);
+                $r->get('/edit', [Controllers\Blogs\EditController::class, 'index']);
+
+                $r->post('/create', [Controllers\Blogs\CreateController::class, 'takeCreate']);
+                $r->post('/edit', [Controllers\Blogs\EditController::class, 'takeEdit']);
+                $r->post('/delete', [Controllers\Blogs\DeleteController::class, 'takeDelete']);
             });
 
             // 站点规则部分
@@ -120,20 +123,19 @@ return function (RouteCollector $r) {
                 $r->addRoute(['GET', 'POST'], '/categories', [Controllers\ManageController::class, 'categories']);
             });
 
-
             // 管理员部分
             $r->addGroup('/admin', function (RouteCollector $r) {
-                $r->get('/', [Controllers\AdminController::class, 'index']);
+                $r->get('', [Controllers\Admin\IndexController::class, 'index']);
                 $r->addGroup('/service', function (RouteCollector $r) {
-                    $r->get('/redis', [Controllers\AdminController::class, 'redis']);
-                    $r->get('/mysql', [Controllers\AdminController::class, 'mysql']);
+                    $r->get('/redis', [Controllers\Admin\Service\RedisController::class, 'index']);
+                    $r->get('/mysql', [Controllers\Admin\Service\MysqlController::class, 'index']);
                 });
             });
         });
 
         // API部分
         $r->addGroup('/api', function (RouteCollector $r) {
-            // v1 部分
+            // v1 部分路由不遵守Restful、Graphql等设计规范，给默认后端渲染页面提供ajax支持
             $r->addGroup('/v1', function (RouteCollector $r) {
                 $r->addMiddleware([
                     Middleware\AuthMiddleware::class,

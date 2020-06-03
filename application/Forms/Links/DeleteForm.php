@@ -12,13 +12,18 @@ namespace App\Forms\Links;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-class RemoveForm extends EditForm
+class DeleteForm extends EditForm
 {
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([
-            'id' => new Assert\Positive(),
+            'id' => [new Assert\Type('int'), new Assert\Positive()],
         ]);
+    }
+
+    protected function loadCallbackMetaData(): array
+    {
+        return ['isExistLinkId'];
     }
 
     public function flush()

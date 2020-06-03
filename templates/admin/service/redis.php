@@ -6,11 +6,11 @@
  * Time: 20:18
  *
  * @var League\Plates\Template\Template $this
+ * @var \App\Forms\Admin\Service\RedisForm $redis
  * @var array $info
- * @var array $cmdstat
- * @var int $dbsize
  */
 
+$info = $redis->getInfo();
 ?>
 
 <?= $this->layout('admin/layout') ?>
@@ -20,7 +20,7 @@
 <?php $this->start('panel') ?>
 <h1>Redis Server Status</h1>
 
-<p><strong><?= $dbsize ?> Keys available.</strong> Used Memory: <?= $info['used_memory_human'] ?> , peak: <?= $info['used_memory_peak_human'] ?></p>
+<p><strong><?= $redis->getDbSize() ?> Keys available.</strong> Used Memory: <?= $info['used_memory_human'] ?> , peak: <?= $info['used_memory_peak_human'] ?></p>
 
 <div class="panel-group">
     <div class="panel panel-info">
@@ -35,12 +35,10 @@
                 </thead>
                 <tbody>
                 <?php foreach ($info as $key => $value): ?>
-                    <?php if (strpos($key, 'cmdstat_') === false): ?>
-                        <tr>
-                            <td><?= $key ?></td>
-                            <td><code><?= $value ?></code></td>
-                        </tr>
-                    <?php endif ?>
+                    <tr>
+                        <td><?= $key ?></td>
+                        <td><code><?= $value ?></code></td>
+                    </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
@@ -60,7 +58,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <?php foreach ($cmdstat as $key => $value): ?>
+                <?php foreach ($redis->getCmdStat() as $key => $value): ?>
                     <tr>
                         <td><code><?= str_replace('cmdstat_', '', $key) ?> </code></td>
                         <td class="text-right"><?= $value['calls'] ?></td>

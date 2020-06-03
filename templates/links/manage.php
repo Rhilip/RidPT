@@ -72,7 +72,7 @@
 
 
 <?php $this->start('body'); ?>
-<form method="post" action="/links/remove" id="link_remove_form" class="hidden">
+<form method="post" action="/links/delete" id="link_remove_form" class="hidden">
     <label><input type="number" name="id" value=""></label>
 </form>
 

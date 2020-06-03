@@ -19,7 +19,7 @@ class EditForm extends ApplyForm
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([
-            'id' => new Assert\PositiveOrZero(),
+            'id' => [new Assert\Type('int'), new Assert\PositiveOrZero()],
             'name' => new Assert\NotBlank(),
             'url' => new Assert\Url(),
             'status' => new Assert\Choice(Status::values()),

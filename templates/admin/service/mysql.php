@@ -6,11 +6,11 @@
  * Time: 21:10
  *
  * @var League\Plates\Template\Template $this
- * @var array $serverStatus
- * @var array $queryStats
- * @var int $startAt
- * @var array $rows
+ * @var \App\Forms\Admin\Service\MysqlForm $mysql
  */
+
+$serverStatus = $mysql->getServerStatus();
+$queryStats = $mysql->getQueryStats();
 ?>
 
 <?= $this->layout('admin/layout') ?>
@@ -21,7 +21,7 @@
 <h1>Mysql Server Status</h1>
 <div>
     This MySQL server has been running for <code><?= $serverStatus['Uptime'] ?></code> Seconds.
-    It started up on <code><?= date("M d, Y \\a\\t h:i A", $startAt) ?></code>
+    It started up on <code><?= date("M d, Y \\a\\t h:i A", $mysql->getStartAt()) ?></code>
 </div>
 <br>
 <div class="panel-group">

@@ -6,7 +6,6 @@
  * Time: 22:37
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Entity\Torrent $torrent
  */
 ?>
 
@@ -21,10 +20,10 @@
         <nav class="admin-panel-nav-sysop" data-ride="menu">
             <ul id="admin-panel-menu-sysop" class="tree tree-menu" data-ride="tree">
                 <li class="open">
-                    <a href="#"><i class="icon icon-time"></i>Site Status</a>
+                    <a href="#"><i class="icon icon-time"></i>Service Status</a>
                     <ul>
-                        <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=mysql"><cite>Mysql Status</cite></a></li>
-                        <li><!--suppress HtmlUnknownTarget --><a href="/admin/service?provider=redis"><cite>Redis Service Status</cite></a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/admin/service/mysql"><cite>Mysql Server</cite></a></li>
+                        <li><!--suppress HtmlUnknownTarget --><a href="/admin/service/redis"><cite>Redis Server</cite></a></li>
                     </ul>
                 </li>
             </ul>
@@ -36,6 +35,4 @@
         </div>
     </div>
 </div>
-
 <?php $this->end();?>
-

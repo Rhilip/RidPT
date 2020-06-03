@@ -12,7 +12,7 @@ if (!String.prototype.format) {
 }
 
 // Declare Const
-const api_point = '/Api/v1';
+const api_point = '/api/v1';
 const _location_search = new URLSearchParams(window.location.search);  // Short and parse location.search
 
 const paswordStrengthText = {

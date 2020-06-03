@@ -37,7 +37,7 @@ return [
     'response' => \DI\get(\Rid\Http\Message\Response::class),
     'logger' => \DI\get(Monolog\Logger::class),
     'mailer' => \DI\get(\App\Components\Mailer::class),
-    'pdo' => \DI\get(\Rid\Database\Persistent\PDOConnection::class),
+    'pdo' => \DI\get(\Rid\Database\BasePDOConnection::class),
     'redis' => \DI\get(\Rid\Redis\BaseRedisConnection::class),
     'session' => \DI\get(\Rid\Http\Session::class),
     'i18n' => \DI\get(\Rid\Component\I18n::class),
@@ -74,7 +74,7 @@ return [
         ])
         ->method('connectRedis'),
 
-    \Rid\Database\Persistent\PDOConnection::class => \DI\autowire()
+    \Rid\Database\BasePDOConnection::class => \DI\autowire(\Rid\Database\Persistent\PDOConnection::class)
         ->property('dsn', \DI\env('DATABASE_DSN'))
         ->property('username', \DI\env('DATABASE_USERNAME'))
         ->property('password', \DI\env('DATABASE_PASSWORD'))

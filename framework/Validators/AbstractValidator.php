@@ -89,7 +89,7 @@ abstract class AbstractValidator extends AbstractObject
         return $this->getErrors()[0];
     }
 
-    final public function validate(): bool
+    final public function validate($group = null): bool
     {
         $this->resetValidateStatus();
 
@@ -99,7 +99,7 @@ abstract class AbstractValidator extends AbstractObject
         $rules = $this->loadInputMetadata();
         $rules->allowExtraFields = true;
 
-        $violations = $validator->validate($this->input, $rules);
+        $violations = $validator->validate($this->input, $rules, $group);
         if (count($violations) > 0) {
             $this->_success = false;
             foreach ($violations as $violation) {

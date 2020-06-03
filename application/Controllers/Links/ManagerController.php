@@ -21,6 +21,7 @@ class ManagerController extends AbstractController
         return $this->render('links/manage', ['links' => $all_links]);
     }
 
+    /** @noinspection PhpUnused */
     public function takeEdit()
     {
         $edit_form = new Links\EditForm();
@@ -33,9 +34,10 @@ class ManagerController extends AbstractController
         }
     }
 
-    public function takeRemove()
+    /** @noinspection PhpUnused */
+    public function takeDelete()
     {
-        $remove_form = new Links\RemoveForm();
+        $remove_form = new Links\DeleteForm();
         $remove_form->setInput(container()->get('request')->request->all());
         if ($remove_form->validate()) {
             $remove_form->flush();
