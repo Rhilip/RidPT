@@ -16,6 +16,5 @@ class LogLevel extends Enum
 {
     public const NORMAL = 'normal';
     public const MOD = 'mod';
-    public const SYSOP = 'sysop';
     public const LEADER = 'leader';
 }

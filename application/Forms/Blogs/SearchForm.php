@@ -32,7 +32,7 @@ class SearchForm extends AbstractValidator
             'page' => new Assert\PositiveOrZero(),
             'limit' => new Assert\Range(['min' => 0, 'max' => 50])
         ];
-        if ($this->getInput('search')) {
+        if ($this->hasInput('search')) {
             $rules['search'] = new Assert\NotBlank();
             $rules['field'] = new Assert\Choice(['title', 'body', 'both']);
         }
@@ -50,16 +50,21 @@ class SearchForm extends AbstractValidator
         $search = $this->getInput('search');
         $field = $this->getInput('field');
 
-        if (empty($search)) {
-            $count = container()->get('pdo')->prepare('SELECT COUNT(*) FROM blogs;')->queryScalar();
-        } else {
-            $count = container()->get('pdo')->prepare([
-                ['SELECT COUNT(*) FROM blogs WHERE 1=1 '],
-                ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($field == 'title' && !empty($search))],
-                ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($field == 'body' && !empty($search))],
-                ['AND `title` LIKE :st OR `body` LIKE :sb ', 'params' => ['st' => "%$search%",'sb' => "%$search%"], 'if' => ($field == 'both' && !empty($search))],
-            ])->queryScalar();
+        $where_pdo = [];
+        if ($search) {
+            if ($field == 'title') {
+                $where_pdo[] = ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"]];
+            } elseif ($field == 'body') {
+                $where_pdo[] = ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"]];
+            } elseif ($field == 'both') {
+                $where_pdo[] = ['AND `title` LIKE :st OR `body` LIKE :sb ', 'params' => ['st' => "%$search%", 'sb' => "%$search%"]];
+            }
         }
+
+        $count = container()->get('pdo')->prepare([
+            ['SELECT COUNT(*) FROM blogs WHERE 1=1 '],
+            ...$where_pdo
+        ])->queryScalar();
         $this->setPaginationTotal($count);
 
         $this->setPaginationLimit($this->getInput('limit'));
@@ -67,9 +72,7 @@ class SearchForm extends AbstractValidator
 
         $data = container()->get('pdo')->prepare([
             ['SELECT * FROM blogs WHERE 1=1 '],
-            ['AND `title` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($field == 'title' && !empty($search))],
-            ['AND `body` LIKE :search ', 'params' => ['search' => "%$search%"], 'if' => ($field == 'body' && !empty($search))],
-            ['AND `title` LIKE :st OR `body` LIKE :sb ', 'params' => ['st' => "%$search%",'sb' => "%$search%"], 'if' => ($field == 'both' && !empty($search))],
+            ...$where_pdo,
             ['ORDER BY create_at DESC '],
             ['LIMIT :offset, :rows', 'params' => ['offset' => $this->getPaginationOffset(), 'rows' => $this->getPaginationLimit()]],
         ])->queryAll();

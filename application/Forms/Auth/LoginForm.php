@@ -68,7 +68,7 @@ class LoginForm extends AbstractValidator
         }
 
         // User input 2FA code or opt field in User Record is not null
-        if ($this->getInput('opt') || !is_null($user_record['opt'])) {
+        if ($this->hasInput('opt') || !is_null($user_record['opt'])) {
             $google2fa = container()->get(Google2FA::class);
             try {
                 if (false === $google2fa->verify($user_record['opt'], $this->getInput('opt'))) {

@@ -49,6 +49,11 @@ abstract class AbstractValidator extends AbstractObject
         $this->input = array_merge($this->input, $input);
     }
 
+    final public function hasInput($input)
+    {
+        return isset($this->input[$input]);
+    }
+
     /**
      * @param $key
      * @param mixed $default

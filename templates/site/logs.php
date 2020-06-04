@@ -6,7 +6,7 @@
  * Time: 2019
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Models\Form\Site\Logs $logs
+ * @var \App\Forms\Site\LogsForm $logs
  */
 ?>
 
@@ -53,7 +53,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($logs->getPagerData() as $log) : ?>
+                    <?php foreach ($logs->getPaginationData() as $log) : ?>
                     <tr>
                         <td><span class="nowrap"><?= $log['create_at'] ?></span></td>
                         <td><?= $this->e($log['msg']) ?></td>
@@ -62,7 +62,7 @@
                     </tbody>
                 </table>
                 <div class="text-center">
-                    <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $logs->getTotal() ?>" data-rec-per-page="<?= $logs->getLimit() ?>"></ul>
+                    <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $logs->getPaginationTotal() ?>" data-rec-per-page="<?= $logs->getPaginationLimit() ?>"></ul>
                 </div>
             </div>
         </div>

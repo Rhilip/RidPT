@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Forms\Blogs;
 
 use Rid\Validators\AbstractValidator;
-use Rid\Validators\Compound as AcmeAssert;
+use Rid\Validators\Constraints as AcmeAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ExistForm extends AbstractValidator
@@ -21,7 +21,7 @@ class ExistForm extends AbstractValidator
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([
-            'id' => new AcmeAssert\Id(),
+            'id' => new AcmeAssert\PositiveInt(),
         ]);
     }
 

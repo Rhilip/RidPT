@@ -8,12 +8,11 @@
 
 declare(strict_types=1);
 
-namespace Rid\Validators\Compound;
+namespace Rid\Validators\Constraints;
 
-use Symfony\Component\Validator\Constraints\Compound;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class Id extends Compound
+class PositiveOrZeroInt extends Assert\Compound
 {
     protected function getConstraints(array $options): array
     {

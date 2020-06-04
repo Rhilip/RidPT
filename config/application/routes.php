@@ -114,8 +114,8 @@ return function (RouteCollector $r) {
 
             // 站点规则部分
             $r->addGroup('/site', function (RouteCollector $r) {
-                $r->get('/rules', [Controllers\SiteController::class, 'rules']);
-                $r->get('/logs', [Controllers\SiteController::class, 'logs']);
+                $r->get('/rules', [Controllers\Site\RulesController::class, 'index']);
+                $r->get('/logs', [Controllers\Site\LogsController::class, 'index']);
             });
 
             // 站点管理部分

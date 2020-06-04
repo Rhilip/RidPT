@@ -26,7 +26,7 @@
                             <input type="text" class="form-control" name="search" style="width:450px" value="<?= $pager->getInput('search') ?>">
                         </label>&nbsp;&nbsp;
                         <label> Range:
-                            <select name="query" class="form-control">
+                            <select name="field" class="form-control">
                                 <option value="title"<?= $pager->getInput('field') == 'title' ? ' selected': '' ?>>Title</option>
                                 <option value="body"<?= $pager->getInput('field') == 'body' ? ' selected': '' ?>>Body</option>
                                 <option value="both"<?= $pager->getInput('field') == 'both' ? ' selected': '' ?>>Both</option>
