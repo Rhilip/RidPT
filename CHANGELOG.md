@@ -63,6 +63,7 @@
 - **Helper:** Use helper function to replace class ContainerHelper (eb3da65)
 - **Utils:** Combine `NameHelper` and `StringHelper` (85f311b)
 - **ValueCache:** trait `ClassValueCacheUtils` rename as `Rid\Utils\Traits\ClassValueCache` (2bea55f)
+- **cs-fixer:** Add new Utils `Pagination` (42bde0d)
 
 
 <a name="v0.1.7-alpha"></a>
