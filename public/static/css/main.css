@@ -117,7 +117,7 @@ body{background-color:#f6f6f6}
 /* '/torrents/upload' */
 #torrent_upload_table > tbody > tr > td:first-child{vertical-align:middle;text-align:right}
 
-/* '/torrent/details' */
+/* '/torrent/detail' */
 .torrent-details-block{}
 .torrent-action-item{padding:3px}
 #torrent_extend_info_panel_group hr{margin:10px 0}

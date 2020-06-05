@@ -6,7 +6,7 @@
  * Time: 18:00
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Models\Form\Torrent\DetailsForm $details
+ * @var \App\Forms\Torrents\DetailsForm $details
  */
 
 $torrent = $details->getTorrent();
@@ -62,11 +62,11 @@ $torrent = $details->getTorrent();
             <div class="panel-heading">
                 <b>Last Torrent Commit</b>
                 <?php if ($torrent->getComments() > 0): ?>
-                    <div class="pull-right"><a href="/torrent/comments?id=<?= $torrent->getId() ?>">[See all comments]</a></div>
+                    <div class="pull-right"><a href="/torrents/comments?id=<?= $torrent->getId() ?>">[See all comments]</a></div>
                 <?php endif; ?>
             </div>
             <div class="panel-body" id="torrent_commit">
-                <?= $this->insert('torrent/comments_field', ['torrent' => $torrent, 'comments' => $torrent->getLastCommentsDetails()]) ?>
+                <?= $this->insert('torrents/comments_field', ['torrent' => $torrent, 'comments' => $torrent->getLastCommentsDetails()]) ?>
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@ $torrent = $details->getTorrent();
             <div class="panel-heading"><b>Torrent Action</b></div>
             <div class="panel-body" id="torrent_action">
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
-                    <a href="/torrent/download?id=<?= $torrent->getId() ?>" download><i class="fa fa-download fa-fw"></i>&nbsp;Download Torrent</a>
+                    <a href="/torrents/download?id=<?= $torrent->getId() ?>" download><i class="fa fa-download fa-fw"></i>&nbsp;Download Torrent</a>
                 </div><!-- Download Torrent -->
                 <div class="torrent-action-item">
                     <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= container()->get('auth')->getCurUser()->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i>&nbsp;Add to Favour</a>
@@ -101,7 +101,7 @@ $torrent = $details->getTorrent();
                 </div><!-- TODO Add to RSS Basket -->
                 <hr>
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
-                    <a class="torrent-edit" href="/torrent/edit?id=<?= $torrent->getId() ?>"><i class="fas fa-edit fa-fw"></i>&nbsp;Edit/Remove this Torrent</a>
+                    <a class="torrent-edit" href="/torrents/edit?id=<?= $torrent->getId() ?>"><i class="fas fa-edit fa-fw"></i>&nbsp;Edit/Remove this Torrent</a>
                 </div><!-- TODO Edit/Remove this Torrent -->
                 <div class="torrent-action-item">
                     <a class="torrent-subtitles" href="/subtitles/search?tid=<?= $torrent->getId() ?>"><i class="fas fa-closed-captioning fa-fw"></i>&nbsp;Add/View Torrent's Subtitles</a>
@@ -114,19 +114,19 @@ $torrent = $details->getTorrent();
                     <a class="torrent-files" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-file fa-fw"></i>&nbsp;View Torrent's Files</a>
                 </div><!-- View Torrent's Files -->
                 <?php if ($torrent->hasNfo()): // TODO add global config key of NFO?>
-                    <div class="torrent-action-item">
-                        <a class="torrent-nfo" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-info fa-fw"></i>&nbsp;View Torrent's Nfo file</a>
+                    <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
+                        <a class="torrent-nfo" href="/torrents/nfo?id=<?= $torrent->getId() ?>"><i class="fas fa-info fa-fw"></i>&nbsp;View Torrent's Nfo file</a>
                     </div><!-- View Torrent's Nfo -->
                 <?php endif;?>
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
-                    <a class="torrent-structure" href="/torrent/structure?id=<?= $torrent->getId() ?>"><i class="fas fa-folder-open fa-fw"></i>&nbsp;View Torrent's Structure</a>
+                    <a class="torrent-structure" href="/torrents/structure?id=<?= $torrent->getId() ?>"><i class="fas fa-folder-open fa-fw"></i>&nbsp;View Torrent's Structure</a>
                 </div><!-- View Torrent's Structure -->
                 <hr>
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
                     <a class="torrent-peers" href="javascript:"  data-tid="<?= $torrent->getId() ?>"><i class="fas fa-user-friends fa-fw"></i>&nbsp;See Current Peers</a>
                 </div><!-- View Torrent's Files -->
                 <div class="torrent-action-item"><!--suppress HtmlUnknownTarget -->
-                    <a class="torrent-snatch" href="/torrent/snatch?id=<?= $torrent->getId() ?>"><i class="fas fa-bars fa-fw"></i>&nbsp;See Snatched Record</a>
+                    <a class="torrent-snatch" href="/torrents/snatch?id=<?= $torrent->getId() ?>"><i class="fas fa-bars fa-fw"></i>&nbsp;See Snatched Record</a>
                 </div><!-- View Torrent's Structure -->
             </div>
         </div>

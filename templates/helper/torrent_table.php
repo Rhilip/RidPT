@@ -46,7 +46,7 @@ $time_now = time();
                             <div class="name-left">
                                 <div data-item="t-main-info">
                                     <span data-item="t-title" data-title="<?= $this->e($torrent->getTitle()) ?>">
-                                        <a href="/torrent/details?id=<?= $torrent->getId() ?>" target="_blank"><b><?= $torrent->getTitle() ?></b></a>
+                                        <a href="/torrents/detail?id=<?= $torrent->getId() ?>" target="_blank"><b><?= $torrent->getTitle() ?></b></a>
                                     </span>
                                 </div>
                                 <div data-item="t-extra-info">
@@ -65,7 +65,7 @@ $time_now = time();
                             </div>
                             <div class="name-right">
                                 <div class="text-right">
-                                    <!--suppress HtmlUnknownTarget --><a href="/torrent/download?id=<?= $torrent->getId() ?>" download><i class="fas fa-download fa-fw"></i></a>
+                                    <!--suppress HtmlUnknownTarget --><a href="/torrents/download?id=<?= $torrent->getId() ?>" download><i class="fas fa-download fa-fw"></i></a>
                                     <a class="torrent-favour" href="javascript:" data-tid="<?= $torrent->getId() ?>"><i class="<?= container()->get('auth')->getCurUser()->inBookmarkList($torrent->getId()) ? 'fas' : 'far' ?> fa-star fa-fw"></i></a>
                                 </div>
                             </div>
@@ -77,7 +77,7 @@ $time_now = time();
                     <td class="text-center" data-item="t-seeder" data-seeder="<?= $this->e($torrent->getComplete()) ?>"><?= number_format($torrent->getComplete()) ?></td>
                     <td class="text-center" data-item="t-leecher" data-leecher="<?= $this->e($torrent->getIncomplete()) ?>"><?= number_format($torrent->getIncomplete()) ?></td>
                     <td class="text-center" data-item="t-completed" data-completed="<?= $this->e($torrent->getDownloaded()) ?>">
-                        <?php if ($torrent->getDownloaded() > 0): ?><a href="/torrent/snatch?id=<?= $torrent->getId() ?>"><?php endif; ?>
+                        <?php if ($torrent->getDownloaded() > 0): ?><a href="/torrents/snatch?id=<?= $torrent->getId() ?>"><?php endif; ?>
                             <?= number_format($torrent->getDownloaded()) ?>
                             <?php if ($torrent->getDownloaded() > 0): ?></a><?php endif; ?>
                     </td>

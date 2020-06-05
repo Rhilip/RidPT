@@ -8,8 +8,8 @@
 
 namespace App\Models\Form\Subtitles;
 
+use App\Forms\Traits\isValidTorrentTrait;
 use App\Libraries\Constant;
-use App\Models\Form\Traits\isValidTorrentTrait;
 
 
 use Rid\Validators\Validator;
@@ -103,5 +103,10 @@ VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)
             throw $e;
         }
         container()->get('redis')->del(Constant::siteSubtitleSize);
+    }
+
+    public function getTorrentId()
+    {
+        return $this->torrent_id;
     }
 }

@@ -36,16 +36,6 @@ return function (RouteCollector $r) {
             // 主页服务
             $r->get('/[index]', [Controllers\IndexController::class, 'index']);
 
-            // 友情链接部分
-            $r->addGroup('/links', function (RouteCollector $r) {
-                $r->get('/apply', [Controllers\Links\ApplyController::class, 'index']);
-                $r->get('/manage', [Controllers\Links\ManagerController::class, 'index']);
-
-                $r->post('/apply', [Controllers\Links\ApplyController::class, 'takeApply']);
-                $r->post('/edit', [Controllers\Links\ManagerController::class, 'takeEdit']);
-                $r->get('/delete', [Controllers\Links\ManagerController::class, 'takeDelete']); // FIXME it should be post method
-            });
-
             // 用户认证部分
             $r->addGroup('/auth', function (RouteCollector $r) {
                 $r->get('/login', [Controllers\Auth\LoginController::class, 'index']);
@@ -65,40 +55,14 @@ return function (RouteCollector $r) {
                 $r->get('/logout', [Controllers\Auth\LogoutController::class, 'index']);
             });
 
-            // 用户管理部分
-            $r->addGroup('/user', function (RouteCollector $r) {
-                $r->get('[/details]', [Controllers\UserController::class, 'details']);
-                $r->get('/setting', [Controllers\UserController::class, 'setting']);
-                $r->get('/invite', [Controllers\UserController::class, 'invite']);
-                $r->get('/sessions', [Controllers\UserController::class, 'sessions']);
-            });
+            // 友情链接部分
+            $r->addGroup('/links', function (RouteCollector $r) {
+                $r->get('/apply', [Controllers\Links\ApplyController::class, 'index']);
+                $r->get('/manage', [Controllers\Links\ManagerController::class, 'index']);
 
-            // FIXME 种子部分
-            $r->addGroup('/torrent', function (RouteCollector $r) {
-                $r->addRoute(['GET', 'POST'], '/upload', [Controllers\TorrentController::class, 'upload']);
-                $r->get('/details', [Controllers\TorrentController::class, 'details']);
-                $r->addRoute(['GET', 'POST'], '/edit', [Controllers\TorrentController::class, 'edit']);
-                $r->get('/snatch', [Controllers\TorrentController::class, 'snatch']);
-                $r->get('/download', [Controllers\TorrentController::class, 'download']);
-                $r->get('/comments', [Controllers\TorrentController::class, 'comments']);
-                $r->get('/structure', [Controllers\TorrentController::class, 'structure']);
-            });
-            $r->addGroup('/torrents', function (RouteCollector $r) {
-                $r->get('[/search]', [Controllers\TorrentsController::class, 'search']);
-                $r->get('/tags', [Controllers\TorrentsController::class, 'tags']);
-            });
-
-            // RSS部分
-            $r->addGroup('/rss', function (RouteCollector $r) {
-                $r->get('', [Controllers\RssController::class, 'index']);
-            });
-
-            // 字幕部分
-            $r->addGroup('/subtitles', function (RouteCollector $r) {
-                $r->get('[/search]', [Controllers\SubtitlesController::class, 'search']);
-                $r->get('/upload', [Controllers\SubtitlesController::class, 'upload']);
-                $r->get('/download', [Controllers\SubtitlesController::class, 'download']);
-                $r->get('/delete', [Controllers\SubtitlesController::class, 'delete']);
+                $r->post('/apply', [Controllers\Links\ApplyController::class, 'takeApply']);
+                $r->post('/edit', [Controllers\Links\ManagerController::class, 'takeEdit']);
+                $r->get('/delete', [Controllers\Links\ManagerController::class, 'takeDelete']); // FIXME it should be post method
             });
 
             // 站点新闻部分
@@ -118,11 +82,6 @@ return function (RouteCollector $r) {
                 $r->get('/logs', [Controllers\Site\LogsController::class, 'index']);
             });
 
-            // 站点管理部分
-            $r->addGroup('/manager', function (RouteCollector $r) {
-                $r->addRoute(['GET', 'POST'], '/categories', [Controllers\ManageController::class, 'categories']);
-            });
-
             // 管理员部分
             $r->addGroup('/admin', function (RouteCollector $r) {
                 $r->get('', [Controllers\Admin\IndexController::class, 'index']);
@@ -130,6 +89,55 @@ return function (RouteCollector $r) {
                     $r->get('/redis', [Controllers\Admin\Service\RedisController::class, 'index']);
                     $r->get('/mysql', [Controllers\Admin\Service\MysqlController::class, 'index']);
                 });
+            });
+
+            // FIXME 待修改部分
+
+            // 用户管理部分
+            $r->addGroup('/user', function (RouteCollector $r) {
+                $r->get('[/details]', [Controllers\UserController::class, 'details']);
+                $r->get('/setting', [Controllers\UserController::class, 'setting']);
+                $r->get('/invite', [Controllers\UserController::class, 'invite']);
+                $r->get('/sessions', [Controllers\UserController::class, 'sessions']);
+            });
+
+            // 种子部分
+            $r->addGroup('/torrents', function (RouteCollector $r) {
+                // 对单个种子
+                $r->get('/upload', [Controllers\Torrents\UploadController::class, 'index']);
+                $r->get('/detail', [Controllers\Torrents\DetailController::class, 'index']);
+                $r->get('/edit', [Controllers\Torrents\EditController::class, 'index']);
+                $r->get('/structure', [Controllers\Torrents\StructureController::class, 'index']);
+                $r->get('/download', [Controllers\Torrents\DownloadController::class, 'index']);
+                $r->get('/snatch', [Controllers\Torrents\SnatchController::class, 'index']);
+                $r->get('/nfo', [Controllers\Torrents\NfoController::class, 'index']);
+
+                $r->post('/upload', [Controllers\Torrents\UploadController::class, 'takeUpload']);
+                $r->post('/edit', [Controllers\Torrents\EditController::class, 'takeEdit']);
+
+                // FIXME $r->get('/comments', [Controllers\TorrentController::class, 'comments']);
+
+                // FIXME 种子列表
+                $r->get('[/search]', [Controllers\TorrentsController::class, 'search']);  // FIXME
+                $r->get('/tags', [Controllers\Torrents\TagsController::class, 'index']);
+            });
+
+            // RSS部分
+            $r->addGroup('/rss', function (RouteCollector $r) {
+                $r->get('', [Controllers\RssController::class, 'index']);
+            });
+
+            // 字幕部分
+            $r->addGroup('/subtitles', function (RouteCollector $r) {
+                $r->get('[/search]', [Controllers\SubtitlesController::class, 'search']);
+                $r->get('/upload', [Controllers\SubtitlesController::class, 'upload']);
+                $r->get('/download', [Controllers\SubtitlesController::class, 'download']);
+                $r->get('/delete', [Controllers\SubtitlesController::class, 'delete']);
+            });
+
+            // 站点管理部分
+            $r->addGroup('/manager', function (RouteCollector $r) {
+                $r->addRoute(['GET', 'POST'], '/categories', [Controllers\ManageController::class, 'categories']);
             });
         });
 
@@ -144,10 +152,11 @@ return function (RouteCollector $r) {
                     $r->addGroup('/torrent', function (RouteCollector $r) {
                         $r->post('/bookmark', [Controllers\Api\v1\TorrentController::class, 'bookmark']);
                         $r->get('/filelist', [Controllers\Api\v1\TorrentController::class, 'fileList']);
-                        $r->get('/nfofilecontent', [Controllers\Api\v1\TorrentController::class, 'nfoFileContent']);
                     });
                 });
             });
+
+            // TODO v2 部分路由遵守Restful设计规范
         });
     });
 };

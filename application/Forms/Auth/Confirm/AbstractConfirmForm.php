@@ -23,7 +23,7 @@ abstract class AbstractConfirmForm extends AbstractValidator
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([
-            'secret' => new Assert\NotBlank(),
+            'secret' => new Assert\Length(32),
         ]);
     }
 

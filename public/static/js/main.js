@@ -315,36 +315,6 @@ jQuery(document).ready(function () {
         });
     });
 
-    $('.torrent-nfo').click(function () {
-        let that = $(this);
-        let tid = that.data('tid');
-
-        cache_torrent_nfo.getItem(tid, function (err, value) {
-            function build_nfo_modal(res) {
-                if (res.success) {
-                    (new $.zui.ModalTrigger({
-                        name: 'torrent_nfo_content_model',
-                        showHeader: false,
-                        size: 'lg',
-                        moveable: true,
-                        custom: `<pre>${res.result}</pre>`
-                    })).show();
-                } else {
-                    create_error_notice(res.errors.join(', '));
-                }
-            }
-
-            if (value !== null) {
-                build_nfo_modal(value);
-            } else {
-                $.getJSON(api_point + '/torrent/nfofilecontent', {'id': tid}, function (res) {
-                    cache_torrent_nfo.setItem(tid, res);
-                    build_nfo_modal(res);
-                });
-            }
-        });
-    });
-
     // User Invite
     $('.invite-btn').click(function () {
         $('.invite-btn').removeAttr('disabled');

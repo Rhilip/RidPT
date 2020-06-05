@@ -42,12 +42,12 @@ $copyright = "Copyright (c) " . $site_name . " " . (date("Y") != $yearfounded ? 
         <?php foreach ($feed->getPagerData() as $torrent): ?>
         <item>
             <title><![CDATA[<?= $torrent->getTitle() ?>]]></title>
-            <link><?= $url.'/torrent/details?id=' . $torrent->getId() ?></link>
+            <link><?= $url.'/torrents/detail?id=' . $torrent->getId() ?></link>
             <description><?= $torrent->getDescr() ?></description>
             <author><?= ($torrent->getUplver() ? 'Anonymous' : $torrent->getOwner()->getUsername()) . '@' . $site_name ?></author>
             <category domain="<?= $url . '/torrents?cat='.$torrent->getCategoryId()?>">Movie</category>
-            <comments><![CDATA[<?= $url. '/torrent/details?id=' . $torrent->getId() . '&cmtpage=0#startcomments' ?>]]></comments>
-            <enclosure url="<?= $url . '/torrent/download?id=' . $torrent->getId() . ('') ?>" length="<?= $torrent->getTorrentSize() ?>" type="application/x-bittorrent" />
+            <comments><![CDATA[<?= $url. '/torrents/detail?id=' . $torrent->getId() . '&cmtpage=0#startcomments' ?>]]></comments>
+            <enclosure url="<?= $url . '/torrents/download?id=' . $torrent->getId() . ('') ?>" length="<?= $torrent->getTorrentSize() ?>" type="application/x-bittorrent" />
             <guid isPermaLink="false"><?= $torrent->getInfoHash() ?></guid>
             <pubDate><?= date('r', strtotime($torrent->getAddedAt())) ?></pubDate>
         </item>

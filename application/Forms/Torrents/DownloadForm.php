@@ -2,28 +2,41 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 8/6/2019
- * Time: 11:35 PM
+ * Date: 6/5/2020
+ * Time: 8:15 AM
  */
 
-namespace App\Models\Form\Torrent;
+declare(strict_types=1);
 
+namespace App\Forms\Torrents;
+
+use App\Forms\Traits\sendFileTrait;
 use Rhilip\Bencode\Bencode;
+use Rid\Validators\Constraints as AcmeAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class DownloadForm extends StructureForm
 {
-    public $https;
+    use sendFileTrait;
 
-    public static function callbackRules(): array
+    protected function loadInputMetadata(): Assert\Collection
     {
-        return ['checkDownloadPos', 'isExistTorrent', 'rateLimitCheck'];
+        return new Assert\Collection([
+            'id' => new AcmeAssert\PositiveInt(),
+            'https' => new Assert\Optional(new Assert\AtLeastOneOf([
+                new Assert\IsTrue(), new Assert\IsFalse()
+            ]))
+        ]);
     }
 
-    protected function getRateLimitRules(): array
+    protected function loadCallbackMetaData(): array
     {
-        return [
-            /* ['key' => 'dl_60', 'period' => 60, 'max' => 1] */
-        ];
+        return ['isExistTorrent', 'checkDownloadPos'];
+    }
+
+    public function flush()
+    {
+        // TODO: Implement flush() method.
     }
 
     protected function checkDownloadPos()
@@ -33,20 +46,14 @@ class DownloadForm extends StructureForm
         }
     }
 
-    public function sendFileContentToClient()
-    {
-        $content = $this->getSelfTorrentContent();
-        $filename = '[' . config('base.site_name') . '].' . $this->torrent->getTorrentName() . '.torrent';
-        container()->get('response')->setDynamicFile($content, 'application/x-bittorrent', $filename, true);
-    }
 
-    protected function getSelfTorrentContent()
+    public function sendFileContentToClient()
     {
         $dict = $this->getTorrentFileContentDict();
 
         $scheme = 'http://';
-        if (isset($this->https)) {
-            $scheme = filter_var($this->https, FILTER_VALIDATE_BOOLEAN) ? 'https://' : 'http://';
+        if ($this->hasInput('https')) {
+            $scheme = $this->getInput('https') ? 'https://' : 'http://';
         } elseif (container()->get('request')->isSecure()) {
             $scheme = 'https://';
         }
@@ -80,6 +87,9 @@ class DownloadForm extends StructureForm
             }
         }
 
-        return Bencode::encode($dict);
+        $content = Bencode::encode($dict);
+
+        $filename = '[' . config('base.site_name') . '].' . $this->getTorrent()->getTorrentName() . '.torrent';
+        container()->get('response')->setDynamicFile($content, 'application/x-bittorrent', $filename, true);
     }
 }

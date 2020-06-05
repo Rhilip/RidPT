@@ -10,10 +10,17 @@ declare(strict_types=1);
 
 namespace App\Entity\Torrent;
 
-use Rid\Exceptions\NotFoundException;
+use App\Exceptions\NotExistException;
 
 class TorrentFactory
 {
+    /**
+     * @param $tid
+     * @return Torrent
+     * @throws NotExistException
+     * @throws \DI\DependencyException
+     * @throws \DI\NotFoundException
+     */
     public function getTorrentById($tid): Torrent
     {
         $self = container()->get('pdo')->prepare('SELECT * FROM `torrents` WHERE id=:id LIMIT 1;')->bindParams([
@@ -21,7 +28,7 @@ class TorrentFactory
         ])->queryOne();
 
         if (false === $self) {
-            throw new NotFoundException('Not Found');  // FIXME
+            throw new NotExistException('This Torrent is not exist');  // FIXME
         }
 
         return new Torrent($self);

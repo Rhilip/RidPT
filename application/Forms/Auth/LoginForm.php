@@ -18,7 +18,7 @@ use Rid\Libraries\JWT;
 use Rid\Utils\Random;
 use Rid\Validators\AbstractValidator;
 
-use PragmaRX\Google2FAQRCode\Google2FA;
+use PragmaRX\Google2FA\Google2FA;
 use PragmaRX\Google2FA\Exceptions\Google2FAException;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -68,7 +68,7 @@ class LoginForm extends AbstractValidator
         }
 
         // User input 2FA code or opt field in User Record is not null
-        if ($this->hasInput('opt') || !is_null($user_record['opt'])) {
+        if ($this->getInput('opt') || !is_null($user_record['opt'])) {
             $google2fa = container()->get(Google2FA::class);
             try {
                 if (false === $google2fa->verify($user_record['opt'], $this->getInput('opt'))) {

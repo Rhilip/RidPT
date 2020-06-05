@@ -14,8 +14,6 @@ trait PaginationTrait
 {
     private ?int $pagination_page;
     private ?int $pagination_limit;
-    private ?int $pagination_offset;
-
 
     private ?int $pagination_total;
     private ?array $pagination_data;
@@ -87,14 +85,8 @@ trait PaginationTrait
     /**
      * @return int|null
      */
-    public function getPaginationOffset(): ?int
+    public function getPaginationOffset(): int
     {
-        $this->calc();
-        return $this->pagination_offset;
-    }
-
-    private function calc()
-    {
-        $this->pagination_offset = max(($this->getPaginationPage() - 1) * $this->getPaginationLimit(), 0);
+        return (int)max(($this->getPaginationPage() - 1) * $this->getPaginationLimit(), 0);
     }
 }

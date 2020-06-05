@@ -49,23 +49,4 @@ class TorrentController
             );
         }
     }
-
-    public function nfoFileContent()
-    {
-        $filelist = new TorrentsForm();
-        $filelist->setInput(container()->get('request')->query->all());
-        $success = $filelist->validate();
-        if (!$success) {
-            return [
-                'success' => false,
-                'errors' => $filelist->getErrors()
-            ];
-        } else {
-            $ret = $filelist->getNfoFileContent();
-            return array_merge(
-                ['success' => true],
-                $ret
-            );
-        }
-    }
 }

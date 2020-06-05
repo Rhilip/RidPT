@@ -6,7 +6,7 @@
  * Time: 2019
  *
  * @var League\Plates\Template\Template $this
- * @var App\Models\Form\Torrent\EditForm $edit
+ * @var \App\Forms\Torrents\DetailsForm $edit
  */
 
 $torrent = $edit->getTorrent();
@@ -21,6 +21,7 @@ $torrent = $edit->getTorrent();
 <h3>Edit Torrent</h3>
 
 <form id="torrent_edit" class="form form-horizontal" method="post" enctype="multipart/form-data">
+    <label><input name="id" value="<?= $torrent->getId() ?>" class="hidden"></label>
     <table id="torrent_edit_table" class="table table-bordered table-striped">
         <tbody>
         <tr>
@@ -31,7 +32,8 @@ $torrent = $edit->getTorrent();
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
                             <?php foreach (container()->get('site')->ruleCategory() as $category) : ?>
-                                <option value="<?= $category['id'] ?>" <?= $torrent->getCategoryId() == $category['id'] ? 'selected' : ''?>><?= $category['full_path'] ?></option>
+                                <option
+                                    value="<?= $category['id'] ?>" <?= $torrent->getCategoryId() == $category['id'] ? 'selected' : '' ?>><?= $category['full_path'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -60,12 +62,13 @@ $torrent = $edit->getTorrent();
                         <?php if (config('torrent_upload.enable_quality_' . $quality)) : ?>
                             <div class="col-md-3">
                                 <div class="input-group">
-                                    <span class="input-group-addon"><label for="<?= $quality ?>"><?= $title ?></label></span>
+                                    <span class="input-group-addon"><label
+                                            for="<?= $quality ?>"><?= $title ?></label></span>
                                     <select class="form-control" id="<?= $quality ?>" name="<?= $quality ?>">
                                         <option value="0">[Choose One]</option>
                                         <?php foreach (container()->get('site')->ruleQuality($quality) as $q): ?>
                                             <option value="<?= $q['id']; ?>"
-                                                <?= $torrent->getQualityId($quality) ==$q['id'] ? 'selected' : '' ?>
+                                                <?= $torrent->getQualityId($quality) == $q['id'] ? 'selected' : '' ?>
                                             ><?= $q['name']; ?></option>
                                         <?php endforeach; ?>
                                     </select>
@@ -87,7 +90,8 @@ $torrent = $edit->getTorrent();
                                 <option value="0" selected>[Choose One]</option>
                                 <?php foreach (container()->get('site')->ruleTeam() as $team) : ?>
                                     <?php if (container()->get('auth')->getCurUser()->getClass() >= $team['class_require']): ?>
-                                        <option value="<?= $team['id'] ?>" <?= $torrent->getTeamId() == $team['id'] ? 'selected' : '' ?>><?= $team['name'] ?></option>
+                                        <option
+                                            value="<?= $team['id'] ?>" <?= $torrent->getTeamId() == $team['id'] ? 'selected' : '' ?>><?= $team['name'] ?></option>
                                     <?php endif ?>
                                 <?php endforeach; ?>
                             </select>
@@ -100,7 +104,7 @@ $torrent = $edit->getTorrent();
             config('torrent_upload.enable_upload_nfo')
             && container()->get('auth')->getCurUser()->isPrivilege('upload_nfo_file')
         ): ?>
-        <!-- TODO fix  -->
+            <!-- TODO fix  -->
             <tr>
                 <td class="nowrap"><label for="nfo">NFO File</label></td>
                 <td>
@@ -138,11 +142,12 @@ $torrent = $edit->getTorrent();
                           cols="100" rows="10"><?= $torrent->getDescr() ?></textarea>
             </td>
         </tr>
-        <?php if (config('torrent_upload.enable_tags')):?>
+        <?php if (config('torrent_upload.enable_tags')): ?>
             <tr>
                 <td class="nowrap"><label for="tags">Tags</label></td>
                 <td>
-                    <input id="tags" name="tags" class="form-control" type="text" value="<?= implode(' ', $torrent->getTags()) ?>">
+                    <input id="tags" name="tags" class="form-control" type="text"
+                           value="<?= implode(' ', $torrent->getTags()) ?>">
                 </td>
             </tr>
         <?php endif; ?>
@@ -151,13 +156,18 @@ $torrent = $edit->getTorrent();
             <td>
                 <div class="row">
                     <div class="col-md-3">
-                        <div class="switch<?= container()->get('auth')->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
-                            <input type="checkbox" id="anonymous" name="anonymous" value="1" <?= $torrent->getUplver() ? ' checked' : '' ?>><label for="anonymous">Anonymous Upload</label>
+                        <div
+                            class="switch<?= container()->get('auth')->getCurUser()->isPrivilege('upload_flag_anonymous') ? '' : ' disabled' ?>">
+                            <input type="checkbox" id="anonymous" name="anonymous"
+                                   value="1" <?= $torrent->getUplver() ? ' checked' : '' ?>><label for="anonymous">Anonymous
+                                Upload</label>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="switch<?= container()->get('auth')->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
-                            <input type="checkbox" id="hr" name="hr" value="1" <?= $torrent->getHr() ? ' checked' : '' ?>><label for="hr">H&R</label>
+                        <div
+                            class="switch<?= container()->get('auth')->getCurUser()->isPrivilege('upload_flag_hr') ? '' : ' disabled'  // FIXME Config key?>">
+                            <input type="checkbox" id="hr" name="hr"
+                                   value="1" <?= $torrent->getHr() ? ' checked' : '' ?>><label for="hr">H&R</label>
                         </div>
                     </div>
                 </div>
@@ -165,23 +175,24 @@ $torrent = $edit->getTorrent();
             </td>
         </tr>
         <?php if (container()->get('auth')->getCurUser()->isPrivilege('manage_torrents')): ?>
-        <tr>
-            <td class="nowrap"><label>Manage</label></td>
-            <td>
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="input-group">
-                            <span class="input-group-addon"><label for="status">Status</label></span>
-                            <select id="status" name="status" class="form-control">
-                                <?php foreach (\App\Enums\Torrent\Status::values() as $status) : ?>
-                                    <option value="<?= $status ?>" <?= $torrent->getStatus() == $status ? 'selected' : '' ?>><?= $status ?></option>
-                                <?php endforeach; ?>
-                            </select>
+            <tr>
+                <td class="nowrap"><label>Manage</label></td>
+                <td>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-addon"><label for="status">Status</label></span>
+                                <select id="status" name="status" class="form-control">
+                                    <?php foreach (\App\Enums\Torrent\Status::values() as $status) : ?>
+                                        <option
+                                            value="<?= $status ?>" <?= $torrent->getStatus() == $status ? 'selected' : '' ?>><?= $status ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </td> <!-- FIXME link url -->
-        </tr>
+                </td> <!-- FIXME link url -->
+            </tr>
         <?php endif; ?>
         </tbody>
     </table>
@@ -200,11 +211,11 @@ $torrent = $edit->getTorrent();
             console.log(val);
             if (val === 'update') {
                 $('#torrent_nfo').show()
-            }else {
+            } else {
                 $('#torrent_nfo').hide()
             }
         })
     });
 </script>
-<?php $this->end();?>
+<?php $this->end(); ?>
 

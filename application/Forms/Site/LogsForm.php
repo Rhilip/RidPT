@@ -13,7 +13,6 @@ namespace App\Forms\Site;
 use App\Enums\Site\LogLevel;
 use App\Forms\Traits\PaginationTrait;
 use Rid\Validators\AbstractValidator;
-use Rid\Validators\Constraints as AcmeAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class LogsForm extends AbstractValidator
@@ -24,14 +23,14 @@ class LogsForm extends AbstractValidator
     {
         $this->setInput([
             'level' => 'all',
-            'page' => 0, 'limit' => 100
+            'page' => 1, 'limit' => 100
         ]);
     }
 
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([
-            'page' => new AcmeAssert\PositiveOrZeroInt(),
+            'page' => new Assert\PositiveOrZero(),
             'limit' => new Assert\Range(['min' => 0, 'max' => 200]),
             'search' => new Assert\Optional(new Assert\NotBlank()),
             'level' => new Assert\Choice(['all'] + LogLevel::values())

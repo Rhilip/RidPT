@@ -152,7 +152,7 @@ $upload_mode = $upload_mode ?? false;
                                 </div>
                                 <?= $this->e($datum['title']) ?>
                             </td>
-                            <td class="text-center"><a class="nowrap" href="/torrent/details?id=<?= $datum['torrent_id'] ?>"><?= $this->e($datum['torrent_id']) ?></a></td>
+                            <td class="text-center"><a class="nowrap" href="/torrents/detail?id=<?= $datum['torrent_id'] ?>"><?= $this->e($datum['torrent_id']) ?></a></td>
                             <td><time class="nowrap"><?= $this->e($datum['added_at']) ?></time></td>
                             <td><span class="nowrap"><?= $this->e($datum['size'], 'format_bytes') ?></span></td>
                             <td class="text-right"><span class="nowrap"><?= $this->e($datum['hits']) ?></span></td>

@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace App\Forms\Links;
 
+use Rid\Validators\Constraints as AcmeAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class DeleteForm extends EditForm
@@ -17,7 +18,7 @@ class DeleteForm extends EditForm
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([
-            'id' => [new Assert\Type('int'), new Assert\Positive()],
+            'id' => new AcmeAssert\PositiveInt(),
         ]);
     }
 

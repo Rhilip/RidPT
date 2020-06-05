@@ -6,7 +6,7 @@
  * Time: 17:10
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Models\Form\Torrent\StructureForm $structure
+ * @var App\Forms\Torrents\StructureForm $structure
  */
 
 use Rhilip\Bencode\Bencode;

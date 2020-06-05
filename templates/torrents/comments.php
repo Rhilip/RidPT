@@ -27,7 +27,7 @@ $torrent = $comments->getTorrent();
             <div class="panel-heading"><b>Torrent Comments</b></div>
             <div class="panel-body" id="torrent_comment_details_body">
                 <div id="torrent_comment_details">
-                    <?= $this->insert('torrent/comments_field', ['torrent' => $torrent, 'comments' => $comments->getPagerData(),'enabled_editor' => true]) ?>
+                    <?= $this->insert('torrents/comments_field', ['torrent' => $torrent, 'comments' => $comments->getPagerData(),'enabled_editor' => true]) ?>
                 </div>
                 <div class="text-center">
                     <ul class="pager" data-ride="remote_pager" data-rec-total="<?= $comments->getTotal() ?>" data-rec-per-page="<?= $comments->getLimit() ?>"></ul>

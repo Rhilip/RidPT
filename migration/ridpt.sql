@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 03, 2020 at 07:14 PM
+-- Generation Time: Jun 05, 2020 at 06:26 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.4.1
 
@@ -1094,7 +1094,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `info_hash` varbinary(20) NOT NULL,
   `status` enum('deleted','banned','pending','confirmed') NOT NULL DEFAULT 'confirmed',
   `added_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `update_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `complete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have completed downloading.',
   `incomplete` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of active peers that have not completed downloading.',
   `downloaded` int(11) NOT NULL DEFAULT '0' COMMENT 'The number of peers that have ever completed downloading.',
@@ -1106,7 +1106,6 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `torrent_name` varchar(255) NOT NULL DEFAULT '',
   `torrent_type` enum('single','multi') NOT NULL DEFAULT 'multi',
   `torrent_size` bigint(20) NOT NULL DEFAULT '0',
-  `torrent_structure` json NOT NULL,
   `team` int(11) NOT NULL DEFAULT '0',
   `quality_audio` mediumint(3) NOT NULL DEFAULT '0',
   `quality_codec` mediumint(3) NOT NULL DEFAULT '0',
@@ -1114,7 +1113,7 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `quality_resolution` mediumint(3) NOT NULL DEFAULT '0',
   `descr` text,
   `tags` json NOT NULL,
-  `nfo` blob NOT NULL,
+  `has_nfo` tinyint(1) NOT NULL DEFAULT '0',
   `uplver` tinyint(1) NOT NULL DEFAULT '0',
   `hr` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
@@ -1201,6 +1200,40 @@ CREATE TABLE IF NOT EXISTS `torrent_comments` (
 --       `torrents` -> `id`
 --   `owner_id`
 --       `users` -> `id`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `torrent_nfos`
+--
+
+DROP TABLE IF EXISTS `torrent_nfos`;
+CREATE TABLE IF NOT EXISTS `torrent_nfos` (
+  `tid` int(11) NOT NULL,
+  `nfo` blob,
+  PRIMARY KEY (`tid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `torrent_nfos`:
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `torrent_structures`
+--
+
+DROP TABLE IF EXISTS `torrent_structures`;
+CREATE TABLE IF NOT EXISTS `torrent_structures` (
+  `tid` int(11) NOT NULL,
+  `structure` json NOT NULL,
+  PRIMARY KEY (`tid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- RELATIONSHIPS FOR TABLE `torrent_structures`:
 --
 
 -- --------------------------------------------------------

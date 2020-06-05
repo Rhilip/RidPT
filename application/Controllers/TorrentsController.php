@@ -25,21 +25,4 @@ class TorrentsController extends AbstractController
 
         return $this->render('torrents/search', ['search' => $search]);
     }
-
-    public function tags()
-    {
-        $pager = new Torrents\TagsForm();
-        $pager->setInput(container()->get('request')->query->all());
-        $success = $pager->validate();
-
-        if (!$success) {
-            return $this->render('action/fail');
-        } else {
-            $tags = $pager->getPagerData();
-            if (count($tags) == 1 && $tags[0]['tag'] == $pager->search) {  // If this search tag is unique and equal to the wanted, just redirect to search page
-                return container()->get('response')->setRedirect('/torrents/search?tags=' . $pager->search);
-            }
-            return $this->render('torrents/tags', ['pager' => $pager]);
-        }
-    }
 }

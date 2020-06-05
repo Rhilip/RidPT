@@ -12,6 +12,7 @@ namespace App\Forms\Links;
 
 use App\Enums\Links\Status;
 use App\Enums\Site\LogLevel;
+use Rid\Validators\Constraints as AcmeAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class EditForm extends ApplyForm
@@ -19,7 +20,7 @@ class EditForm extends ApplyForm
     protected function loadInputMetadata(): Assert\Collection
     {
         return new Assert\Collection([
-            'id' => [new Assert\Type('int'), new Assert\PositiveOrZero()],
+            'id' => new AcmeAssert\PositiveInt(),
             'name' => new Assert\NotBlank(),
             'url' => new Assert\Url(),
             'status' => new Assert\Choice(Status::values()),

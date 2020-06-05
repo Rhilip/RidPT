@@ -23,7 +23,7 @@ use App\Enums\User\Role as UserRole;
                 <li><a href="/forums"><?= __('nav.forums') ?></a></li> <!-- TODO  -->
                 <li><a href="/collections"><?= __('nav.collections') ?></a></li> <!-- TODO  -->
                 <li><a href="/torrents"><?= __('nav.torrents') ?></a></li>
-                <li><a href="/torrent/upload"><?= __('nav.upload') ?></a></li>
+                <li><a href="/torrents/upload"><?= __('nav.upload') ?></a></li>
                 <li><a href="/torrents/request"><?= __('nav.requests') ?></a></li> <!-- TODO  -->
                 <li><a href="/subtitles"><?= __('nav.subtitles') ?></a></li> <!-- TODO  -->
                 <li><a href="/site/rules"><?= __('nav.rules') ?></a></li> <!-- TODO  -->

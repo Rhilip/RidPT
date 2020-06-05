@@ -6,7 +6,7 @@
  * Time: 17:10
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Models\Form\Torrent\SnatchForm $snatch
+ * @var \App\Forms\Torrents\SnatchForm $snatch
  */
 
 $timenow = time();
@@ -29,7 +29,7 @@ $torrent = $snatch->getTorrent();
             <div class="panel-heading"><b>Torrent Snatched Details</b></div>
             <div class="panel-body" id="torrent_snatched_details_body">
                 <div id="torrent_snatched_details">
-                    <?php if ($snatch->getTotal()): ?>
+                    <?php if ($snatch->getPaginationTotal()): ?>
                     <table class="table table-hover table-condensed">
                         <thead>
                         <tr>
@@ -46,7 +46,7 @@ $torrent = $snatch->getTorrent();
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($snatch->getPagerData() as $snatchDetail): ?>
+                        <?php foreach ($snatch->getPaginationData() as $snatchDetail): ?>
                         <tr>
                             <td><?= $this->insert('helper/username', ['user' => container()->get(\App\Entity\User\UserFactory::class)->getUserById($snatchDetail['user_id'])]) ?></td> <!-- TODO hide username when user has Strong Privacy  -->
                             <td><?= inet_ntop($snatchDetail['ip']) ?></td>
@@ -76,7 +76,7 @@ $torrent = $snatch->getTorrent();
                         </tbody>
                     </table>
                         <div class="text-center">
-                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $snatch->getTotal() ?>" data-rec-per-page="<?= $snatch->getLimit() ?>"></ul>
+                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $snatch->getPaginationTotal() ?>" data-rec-per-page="<?= $snatch->getPaginationLimit() ?>"></ul>
                         </div>
                     <?php else: ?>
                     No Snatched Records exist.

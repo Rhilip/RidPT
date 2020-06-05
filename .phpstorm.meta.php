@@ -10,6 +10,7 @@ namespace PHPSTORM_META {
 
     override(\DI\Container::get(0), map([
         // 组件
+        'config' => \Rid\Component\Config::class,
         'mailer' => \App\Components\Mailer::class,
         'view' => \Rid\Component\View::class,
         'i18n' => \Rid\Component\I18n::class,

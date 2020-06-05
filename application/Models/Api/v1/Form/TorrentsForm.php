@@ -8,8 +8,7 @@
 
 namespace App\Models\Api\v1\Form;
 
-use App\Models\Form\Traits\isValidTorrentTrait;
-
+use App\Forms\Traits\isValidTorrentTrait;
 use Rid\Validators\Validator;
 
 class TorrentsForm extends Validator
@@ -46,8 +45,8 @@ class TorrentsForm extends Validator
         return ['msg' => 'Get Filelist success', 'result' => $filelist];
     }
 
-    public function getNfoFileContent()
+    public function getTorrentId()
     {
-        return ['msg' => 'Get Nfo File Content success', 'result' => $this->torrent->getNfo()];
+        return $this->getInput('id');
     }
 }
