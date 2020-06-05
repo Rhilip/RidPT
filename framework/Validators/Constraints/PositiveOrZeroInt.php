@@ -17,7 +17,7 @@ class PositiveOrZeroInt extends Assert\Compound
     protected function getConstraints(array $options): array
     {
         return [
-            new Assert\Regex('/^\d+$/'),
+            new Filter(FILTER_VALIDATE_INT),
             new Assert\PositiveOrZero(),
         ];
     }

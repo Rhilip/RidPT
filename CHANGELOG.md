@@ -11,6 +11,7 @@
 
 ### Feat
 - **2FA:** use `pragmarx/google2fa-qrcode` as 2fa library (e029707)
+- **Controller:** Separate Old SiteController (32248a1)
 - **Controller:** Separate Old {Admin,News}Controller (83a0a16)
 - **Cron:** Use `adhocore/cron-expr` and `symfony/stopwatch` to manager cron (2ae7c1e)
 - **DI:** Move Config into DI (f837b48)
@@ -40,6 +41,7 @@
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
+- **Route:** Middleware restore wrong when multi-add at same time (787893a)
 - **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
 - **Server:** Fix Server runtime config not work (70b1d79)
 - **Subtitles:** fix last commit which content function is not public (177a599)

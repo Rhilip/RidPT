@@ -12,6 +12,7 @@ namespace App\Forms\Blogs;
 
 use App\Forms\Traits\PaginationTrait;
 use Rid\Validators\AbstractValidator;
+use Rid\Validators\Constraints as AcmeAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SearchForm extends AbstractValidator
@@ -30,7 +31,7 @@ class SearchForm extends AbstractValidator
     {
         $rules = [
             'page' => new Assert\PositiveOrZero(),
-            'limit' => new Assert\Range(['min' => 0, 'max' => 50])
+            'limit' => new AcmeAssert\Filter(['filter' => FILTER_VALIDATE_INT, 'options' => ['min_range' => 0, 'max_range' => 50]])
         ];
         if ($this->hasInput('search')) {
             $rules['search'] = new Assert\NotBlank();

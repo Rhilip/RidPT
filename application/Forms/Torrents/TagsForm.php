@@ -12,6 +12,7 @@ namespace App\Forms\Torrents;
 
 use App\Forms\Traits\PaginationTrait;
 use Rid\Validators\AbstractValidator;
+use Rid\Validators\Constraints as AcmeAssert;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class TagsForm extends AbstractValidator
@@ -30,7 +31,7 @@ class TagsForm extends AbstractValidator
         return new Assert\Collection([
             'search' => new Assert\Optional(new Assert\NotBlank()),
             'page' => new Assert\PositiveOrZero(),
-            'limit' => new Assert\Range(['min' => 0, 'max' => 200])
+            'limit' => new AcmeAssert\Filter(['filter' => FILTER_VALIDATE_INT, 'options' => ['min_range' => 0, 'max_range' => 200]])
         ]);
     }
 
