@@ -51,7 +51,7 @@ abstract class AbstractValidator extends AbstractObject
 
     final public function hasInput($input)
     {
-        return isset($this->input[$input]);
+        return array_key_exists($input, $this->input);
     }
 
     /**

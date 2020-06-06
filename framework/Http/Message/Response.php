@@ -18,13 +18,12 @@ class Response extends HttpFoundationResponse
      *
      * @var \Swoole\Http\Response
      */
-    protected \Swoole\Http\Response $_responder;
+    protected ?\Swoole\Http\Response $_responder;
 
     /**
      * The file we want to send to client
      */
     protected ?File $file = null;
-    protected ?string $filename = null;
 
     /**
      * If this response have been sent to client
@@ -36,23 +35,19 @@ class Response extends HttpFoundationResponse
     // 设置响应者
     public function setResponder(\Swoole\Http\Response $responder)
     {
+        $this->cleanResponse();
         // 设置响应者
         $this->_responder = $responder;
         $this->_isSent = false;
-        $this->cleanResponse();
     }
 
     private function cleanResponse()
     {
         $this->headers = new ResponseHeaderBag([]);
+        $this->file = null;
         $this->setContent('');
         $this->setStatusCode(200);
         $this->setProtocolVersion('1.0');
-    }
-
-    public function getResponderStatus()
-    {
-        return isset($this->_responder);
     }
 
     public function prepare(Request $request)
@@ -127,7 +122,7 @@ class Response extends HttpFoundationResponse
             $pattern = '/^[$_\p{L}][$_\p{L}\p{Mn}\p{Mc}\p{Nd}\p{Pc}\x{200C}\x{200D}]*(?:\[(?:"(?:\\\.|[^"\\\])*"|\'(?:\\\.|[^\'\\\])*\'|\d+)\])*?$/u';
             $reserved = [
                 'break', 'do', 'instanceof', 'typeof', 'case', 'else', 'new', 'var', 'catch', 'finally', 'return', 'void', 'continue', 'for', 'switch', 'while',
-                'debugger', 'function', 'this', 'with', 'default', 'if', 'throw', 'delete', 'in', 'try', 'class', 'enum', 'extends', 'super',  'const', 'export',
+                'debugger', 'function', 'this', 'with', 'default', 'if', 'throw', 'delete', 'in', 'try', 'class', 'enum', 'extends', 'super', 'const', 'export',
                 'import', 'implements', 'let', 'private', 'public', 'yield', 'interface', 'package', 'protected', 'static', 'null', 'true', 'false',
             ];
             $parts = explode('.', $callback);
@@ -171,7 +166,7 @@ class Response extends HttpFoundationResponse
             if ($file instanceof \SplFileInfo) {
                 $file = new File($file->getPathname());
             } else {
-                $file = new File((string) $file);
+                $file = new File((string)$file);
             }
         }
 
@@ -221,8 +216,8 @@ class Response extends HttpFoundationResponse
     /**
      * Sets the Content-Disposition header with the given filename.
      *
-     * @param string $disposition      ResponseHeaderBag::DISPOSITION_INLINE or ResponseHeaderBag::DISPOSITION_ATTACHMENT
-     * @param string $filename         Optionally use this UTF-8 encoded filename instead of the real name of the file
+     * @param string $disposition ResponseHeaderBag::DISPOSITION_INLINE or ResponseHeaderBag::DISPOSITION_ATTACHMENT
+     * @param string $filename Optionally use this UTF-8 encoded filename instead of the real name of the file
      * @param string $filenameFallback A fallback filename, containing only ASCII characters. Defaults to an automatically encoded filename
      *
      * @return $this
