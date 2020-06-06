@@ -36,6 +36,15 @@ return function (RouteCollector $r) {
             // 主页服务
             $r->get('/[index]', [Controllers\IndexController::class, 'index']);
 
+            // 管理员部分
+            $r->addGroup('/admin', function (RouteCollector $r) {
+                $r->get('', [Controllers\Admin\IndexController::class, 'index']);
+                $r->addGroup('/service', function (RouteCollector $r) {
+                    $r->get('/redis', [Controllers\Admin\Service\RedisController::class, 'index']);
+                    $r->get('/mysql', [Controllers\Admin\Service\MysqlController::class, 'index']);
+                });
+            });
+
             // 用户认证部分
             $r->addGroup('/auth', function (RouteCollector $r) {
                 $r->get('/login', [Controllers\Auth\LoginController::class, 'index']);
@@ -55,6 +64,17 @@ return function (RouteCollector $r) {
                 $r->get('/logout', [Controllers\Auth\LogoutController::class, 'index']);
             });
 
+            // 站点新闻部分
+            $r->addGroup('/blogs', function (RouteCollector $r) {
+                $r->get('[/search]', [Controllers\Blogs\SearchController::class, 'index']);
+                $r->get('/create', [Controllers\Blogs\CreateController::class, 'index']);
+                $r->get('/edit', [Controllers\Blogs\EditController::class, 'index']);
+
+                $r->post('/create', [Controllers\Blogs\CreateController::class, 'takeCreate']);
+                $r->post('/edit', [Controllers\Blogs\EditController::class, 'takeEdit']);
+                $r->post('/delete', [Controllers\Blogs\DeleteController::class, 'takeDelete']);
+            });
+
             // 友情链接部分
             $r->addGroup('/links', function (RouteCollector $r) {
                 $r->get('/apply', [Controllers\Links\ApplyController::class, 'index']);
@@ -65,15 +85,15 @@ return function (RouteCollector $r) {
                 $r->get('/delete', [Controllers\Links\ManagerController::class, 'takeDelete']); // FIXME it should be post method
             });
 
-            // 站点新闻部分
-            $r->addGroup('/blogs', function (RouteCollector $r) {
-                $r->get('[/search]', [Controllers\Blogs\SearchController::class, 'index']);
-                $r->get('/create', [Controllers\Blogs\CreateController::class, 'index']);
-                $r->get('/edit', [Controllers\Blogs\EditController::class, 'index']);
+            // 站点管理部分
+            $r->addGroup('/manage', function (RouteCollector $r) {
+                // 分类板块部分
+                $r->addGroup('/categories', function (RouteCollector $r) {
+                    $r->get('', [Controllers\Manage\Categories\IndexController::class, 'index']);
 
-                $r->post('/create', [Controllers\Blogs\CreateController::class, 'takeCreate']);
-                $r->post('/edit', [Controllers\Blogs\EditController::class, 'takeEdit']);
-                $r->post('/delete', [Controllers\Blogs\DeleteController::class, 'takeDelete']);
+                    $r->post('/edit', [Controllers\Manage\Categories\EditController::class, 'takeEdit']);
+                    $r->post('/delete', [Controllers\Manage\Categories\DeleteController::class, 'takeDelete']);
+                });
             });
 
             // 站点规则部分
@@ -92,24 +112,9 @@ return function (RouteCollector $r) {
                 $r->post('/delete', [Controllers\Subtitles\DeleteController::class, 'takeDelete']);
             });
 
-
-            // 管理员部分
-            $r->addGroup('/admin', function (RouteCollector $r) {
-                $r->get('', [Controllers\Admin\IndexController::class, 'index']);
-                $r->addGroup('/service', function (RouteCollector $r) {
-                    $r->get('/redis', [Controllers\Admin\Service\RedisController::class, 'index']);
-                    $r->get('/mysql', [Controllers\Admin\Service\MysqlController::class, 'index']);
-                });
-            });
-
-            // FIXME 待修改部分
-
-            // 用户管理部分
-            $r->addGroup('/user', function (RouteCollector $r) {
-                $r->get('[/details]', [Controllers\UserController::class, 'details']);
-                $r->get('/setting', [Controllers\UserController::class, 'setting']);
-                $r->get('/invite', [Controllers\UserController::class, 'invite']);
-                $r->get('/sessions', [Controllers\UserController::class, 'sessions']);
+            // RSS部分
+            $r->addGroup('/rss', function (RouteCollector $r) {
+                $r->get('[/feed]', [Controllers\Rss\FeedController::class, 'index']);
             });
 
             // 种子部分
@@ -128,20 +133,20 @@ return function (RouteCollector $r) {
 
                 // FIXME $r->get('/comments', [Controllers\TorrentController::class, 'comments']);
 
-                // FIXME 种子列表
-                $r->get('[/search]', [Controllers\TorrentsController::class, 'search']);  // FIXME
+                // 种子列表
+                $r->get('[/search]', [Controllers\Torrents\SearchController::class, 'index']);
                 $r->get('/tags', [Controllers\Torrents\TagsController::class, 'index']);
             });
 
-            // RSS部分
-            $r->addGroup('/rss', function (RouteCollector $r) {
-                $r->get('', [Controllers\RssController::class, 'index']);
-            });
 
+            // FIXME 待修改部分
 
-            // 站点管理部分
-            $r->addGroup('/manager', function (RouteCollector $r) {
-                $r->addRoute(['GET', 'POST'], '/categories', [Controllers\ManageController::class, 'categories']);
+            // 用户管理部分
+            $r->addGroup('/user', function (RouteCollector $r) {
+                $r->get('[/details]', [Controllers\UserController::class, 'details']);
+                $r->get('/setting', [Controllers\UserController::class, 'setting']);
+                $r->get('/invite', [Controllers\UserController::class, 'invite']);
+                $r->get('/sessions', [Controllers\UserController::class, 'sessions']);
             });
         });
 

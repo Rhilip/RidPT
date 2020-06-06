@@ -137,7 +137,7 @@ $torrent = $details->getTorrent();
                 <?php if (count($tags) > 0) : ?>
                     <?php $pinned_tags = $torrent->getPinnedTags(); ?>
                     <?php foreach ($tags as $tag): ?>
-                        <a href="/torrents/search?tags=<?= $tag ?>" class="label label-outline <?= array_key_exists($tag, $pinned_tags) ? $pinned_tags[$tag] : '' ?>"><?= $tag ?></a>
+                        <a href="/torrents/search?tags[]=<?= $tag ?>" class="label label-outline <?= array_key_exists($tag, $pinned_tags) ? $pinned_tags[$tag] : '' ?>"><?= $tag ?></a>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <span class="text-muted">No tags for this torrent</span>

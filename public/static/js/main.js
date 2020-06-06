@@ -431,14 +431,13 @@ jQuery(document).ready(function () {
 
     $('.cat-edit').click(function () {
         let that = $(this);
-
-        $('#cat_modal').modal();
+        $('#cat_edit_modal').modal();
 
         // Get category data from <tr> and Fill data to Form
         let tr = $('#cat_manager_table tr[data-id=' + that.data('id') + ']');
         let cat_edit_form = $('#cat_edit_form');
         for (let datum in tr.data()) {
-            let input = cat_edit_form.find('[name="cat_' + datum + '"]');
+            let input = cat_edit_form.find('[name="' + datum + '"]');
             if (datum === 'enabled') {
                 input.prop('checked', tr.data(datum) ? 'checked' : '');
             } else {
@@ -449,11 +448,10 @@ jQuery(document).ready(function () {
 
     $('.cat-remove').click(function () {
         let that = $(this);
-        if (confirm('Confirm to remove this Category ?')) {
-            let cat_remove_form = $('#cat_remove_form');
-            cat_remove_form.find('input[name=cat_id]').val(that.data('id'));
-            cat_remove_form.submit();
-        }
+        $('#cat_delete_modal').modal();
+        let cat_remove_form = $('#cat_remove_form');
+        cat_remove_form.find('input[name=id]').val(that.data('id'));
+        cat_remove_form.find("select[name=move_to] option[value='"+ that.data('id') + "']").attr('disabled', true);
     });
 
     $('.subs_delete').click(function () {

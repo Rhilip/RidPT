@@ -39,7 +39,7 @@
     <div class="col-md-10 col-md-offset-1">
         <div id="tags_list">
             <?php foreach ($tags->getPaginationData() as $tag): ?>
-                <a class="btn" href="/torrents/search?tags=<?= $tag['tag'] ?>"><?= $tag['tag'] ?> <span class="label label-badge <?= $tag['class_name'] ?>"><?= $tag['count'] ?></span></a>
+                <a class="btn" href="/torrents/search?tags[]=<?= $tag['tag'] ?>"><?= $tag['tag'] ?> <span class="label label-badge <?= $tag['class_name'] ?>"><?= $tag['count'] ?></span></a>
             <?php endforeach; ?>
         </div>
         <div class="text-center">

@@ -7,7 +7,7 @@
  * Date: 2019/3/10
  * Time: 17:24
  *
- * @var \App\Models\Form\Rss\FeedForm $feed
+ * @var \App\Forms\Rss\FeedForm $feed
  */
 
 $url = (container()->get('request')->isSecure() ? 'https://' : 'http://') . config('base.site_url');

@@ -29,7 +29,7 @@
                         <select id="category" name="category" class="form-control">
                             <option value="0" selected>[Select a category]</option>
                             <?php foreach (container()->get('site')->ruleCategory() as $category) : ?>
-                                <option value="<?= $category['id'] ?>"><?= $category['full_path'] ?></option>
+                                <option value="<?= $category['id'] ?>"><?= $category['name'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

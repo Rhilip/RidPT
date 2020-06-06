@@ -66,7 +66,7 @@ class Site
     {
         if (false === $cats = config('runtime.enabled_torrent_category')) {
             $cats = [];
-            $cats_raw = container()->get('pdo')->prepare('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `full_path`')->queryAll();
+            $cats_raw = container()->get('pdo')->prepare('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `sort_index`')->queryAll();
 
             foreach ($cats_raw as $cat_raw) {
                 $cats[$cat_raw['id']] = $cat_raw;

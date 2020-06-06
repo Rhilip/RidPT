@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 05, 2020 at 06:26 PM
+-- Generation Time: Jun 06, 2020 at 10:36 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.4.1
 
@@ -245,15 +245,12 @@ CREATE TABLE IF NOT EXISTS `bookmarks` (
 DROP TABLE IF EXISTS `categories`;
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` mediumint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `parent_id` mediumint(5) NOT NULL DEFAULT '0',
   `name` varchar(30) NOT NULL,
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
   `image` varchar(255) NOT NULL DEFAULT '',
   `class_name` varchar(255) NOT NULL DEFAULT '',
-  `level` smallint(6) NOT NULL DEFAULT '0',
-  `full_path` varchar(255) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `full_path` (`full_path`)
+  `sort_index` smallint(5) UNSIGNED NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -269,14 +266,13 @@ TRUNCATE TABLE `categories`;
 -- Dumping data for table `categories`
 --
 
-INSERT INTO `categories` (`id`, `parent_id`, `name`, `enabled`, `image`, `class_name`, `level`, `full_path`) VALUES
-(0, 0, 'root', 0, '', '', -1, ''),
-(1, 0, 'Movies', 1, '', 'category-movie', 0, 'Movies'),
-(2, 0, 'TV', 1, '', 'category-tv', 0, 'TV'),
-(3, 0, 'Documentary', 1, '', 'category-documentary', 0, 'Documentary'),
-(4, 0, 'Animation', 1, '', 'category-animation', 0, 'Animation'),
-(5, 0, 'Sports', 1, '', 'category-sports', 0, 'Sports'),
-(6, 0, 'Music', 1, '', 'category-music', 0, 'Music');
+INSERT INTO `categories` (`id`, `name`, `enabled`, `image`, `class_name`, `sort_index`) VALUES
+(1, 'Movie', 1, '', 'category-movie', 0),
+(2, 'TV', 1, '', 'category-tv', 0),
+(3, 'Documentary', 1, '', 'category-documentary', 0),
+(4, 'Animation', 1, '', 'category-animation', 0),
+(5, 'Sports', 1, '', 'category-sports', 0),
+(6, 'Music', 1, '', 'category-music', 0);
 
 -- --------------------------------------------------------
 
@@ -790,7 +786,7 @@ INSERT INTO `site_config` (`name`, `type`, `value`) VALUES
 ('base.enable_tracker_system', 'bool', '1'),
 ('base.maintenance', 'bool', '0'),
 ('base.max_news_sum', 'int', '5'),
-('base.max_per_user_session', 'int', '10'),
+('base.max_per_user_session', 'int', '999999'),
 ('base.max_user', 'int', '5000'),
 ('base.prevent_anonymous', 'bool', '0'),
 ('base.site_author', 'string', 'Rhilip'),
@@ -1118,19 +1114,17 @@ CREATE TABLE IF NOT EXISTS `torrents` (
   `hr` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`),
-  KEY `FK_torrent_categories` (`category`),
   KEY `FK_torrent_owner` (`owner_id`),
   KEY `FK_torrent_team` (`team`),
   KEY `FK_torrent_quality_audio` (`quality_audio`),
   KEY `FK_torrent_quality_codec` (`quality_codec`),
   KEY `FK_torrent_quality_medium` (`quality_medium`),
-  KEY `FK_torrent_quality_resolution` (`quality_resolution`)
+  KEY `FK_torrent_quality_resolution` (`quality_resolution`),
+  KEY `category` (`category`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- RELATIONSHIPS FOR TABLE `torrents`:
---   `category`
---       `categories` -> `id`
 --   `owner_id`
 --       `users` -> `id`
 --   `quality_audio`
@@ -1402,7 +1396,6 @@ ALTER TABLE `snatched`
 -- Constraints for table `torrents`
 --
 ALTER TABLE `torrents`
-  ADD CONSTRAINT `FK_torrent_categories` FOREIGN KEY (`category`) REFERENCES `categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_owner` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_quality_audio` FOREIGN KEY (`quality_audio`) REFERENCES `quality_audio` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_torrent_quality_codec` FOREIGN KEY (`quality_codec`) REFERENCES `quality_codec` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

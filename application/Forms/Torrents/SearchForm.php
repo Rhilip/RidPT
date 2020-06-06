@@ -2,33 +2,39 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 8/6/2019
- * Time: 9:10 PM
+ * Date: 6/5/2020
+ * Time: 6:32 PM
  */
 
-namespace App\Models\Form\Torrents;
+declare(strict_types=1);
+
+namespace App\Forms\Torrents;
 
 use App\Entity\Torrent\TorrentFactory;
-use Rid\Validators\Pagination;
+use App\Forms\Traits\PaginationTrait;
+use Rid\Validators\AbstractValidator;
+use Rid\Validators\Constraints as AcmeAssert;
+use Symfony\Component\Validator\Constraints as Assert;
 
-class SearchForm extends Pagination
+class SearchForm extends AbstractValidator
 {
-    public static $MAX_LIMIT = 100;
+    use PaginationTrait;
 
-    private $_tags;
-    private $_field;
-
-    public static function defaultData(): array
+    public function __construct()
     {
-        return [
+        $this->setInput([
+            'page' => 1, 'limit' => 50,
             'search_mode' => 0,  // 0 - AND "Each words should appear"; 1 - OR "One of words appear"; 2 - exact
             'search_area' => 0,  // 0 - Search in `title` and `subtitle` ; 1 - Search in `descr`
-        ];
+        ]);
     }
 
-    public static function inputRules(): array
+    protected function loadInputMetadata(): Assert\Collection
     {
-        $rules = ['page' => 'Integer', 'limit' => 'Integer'];
+        $rules = [
+            'page' => new AcmeAssert\PositiveOrZeroInt(),
+            'limit' => new AcmeAssert\RangeInt(['min' => 0, 'max' => 100]),
+        ];
 
         // Quality
         foreach (container()->get('site')->getQualityTableList() as $quality => $title) {
@@ -39,10 +45,10 @@ class SearchForm extends Pagination
                 }, container()->get('site')->ruleQuality($quality));
             }
 
-            $rules[$quality . '[*]'] = [
-                ['Integer'],
-                ['InList', ['list' => $quality_id_list]]
-            ];
+            $rules[$quality] = new Assert\Optional(new AcmeAssert\looseChoice([
+                'choices' => $quality_id_list,
+                'multiple' => true
+            ]));
         }
 
         // Teams
@@ -50,73 +56,51 @@ class SearchForm extends Pagination
             $team_id_list = array_map(function ($team) {
                 return $team['id'];
             }, container()->get('site')->ruleTeam());
-            $rules['team[*]'] = [
-                ['Integer'],
-                ['InList', ['list' => $team_id_list]]
-            ];
+            $rules['team'] = new Assert\Optional(new AcmeAssert\looseChoice([
+                'choices' => $team_id_list,
+                'multiple' => true
+            ]));
         }
 
-        // Search key
-        $rules['search_mode'] = [
-            ['RequiredWith', ['item' => 'search']],
-            ['inList', ['list' => [0 /* AND */, 1 /* OR */, 2 /* exact */]]]
-        ];
-
-        $rules['search_area'] = [
-            ['RequiredWith', ['item' => 'search']],
-            ['inList', ['list' => [0 /* `title` and `subtitle` */, 1 /* `descr` */]]]
-        ];
-
-        return $rules;
-    }
-
-    /**
-     * user input may '&tags=<tag1>,<tag2>' (string)
-     *             or '&tags[]=<tag1>&tags[]=<tag2>' (array)
-     * We deal those with an `AND` operation -> 'AND JSON_CONTAINS(`tags`, JSON_ARRAY(:tags))'
-     *
-     */
-    private function getTagsArray()
-    {
-        if (is_null($this->_tags)) {
-            $tags = $this->getInput('tags') ?? [];
-
-            if (is_string($tags)) {
-                $tags = explode(',', $tags);
-            }
-            $this->_tags = array_map('trim', $tags);
+        if ($this->hasInput('search')) {
+            $rules['search_mode'] = new AcmeAssert\looseChoice([0 /* AND */, 1 /* OR */, 2 /* exact */]);
+            $rules['search_area'] = new AcmeAssert\looseChoice([0 /* `title` and `subtitle` */, 1 /* `descr` */]);
         }
 
-        return $this->_tags;
+        if ($this->hasInput('tags')) {
+            $rules['tags'] = new Assert\Type('array');
+        }
+
+        return new Assert\Collection($rules);
     }
 
-    private function getSearchField(): array
+    protected function loadCallbackMetaData(): array
     {
-        if (!is_null($this->_field)) {
-            return $this->_field;
-        }  // return cached search field
+        return [];
+    }
 
+    public function flush()
+    {
         $fields = [];
 
         // Quality
         foreach (container()->get('site')->getQualityTableList() as $quality => $title) {
-            if (config('torrent_upload.enable_quality_' . $quality)) {
-                $value = $this->getInput($quality);
-                if (is_array($value)) {
-                    $fields[] = ["AND `quality_$quality` IN (:quality) ", 'params' => ['quality' => array_map('intval', $value)]];
-                }
+            if (config('torrent_upload.enable_quality_' . $quality) &&
+                $this->hasInput($quality)
+            ) {
+                $fields[] = ["AND `quality_$quality` IN (:quality) ", 'params' => [
+                    'quality' => (array)$this->getInput($quality)
+                ]];
             }
         }
 
         // Teams
-        if (config('torrent_upload.enable_teams')) {
-            $value = $this->getInput('team');
-            if (is_array($value)) {
-                $fields[] = ['AND `team` IN (:team) ', 'params' => ['team' => array_map('intval', $value)]];
-            }
+        if (config('torrent_upload.enable_teams') && $this->hasInput('team')) {
+            $fields[] = ['AND `team` IN (:team) ', 'params' => [
+                'team' => (array) $this->getInput('team')
+            ]];
         }
 
-        // Favour
         $favour = $this->getInput('favour');
         if ($favour == 1) {  // bookmarked in favour
             $fields[] = ['AND `id` IN (SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid)', 'params' => ['uid' => container()->get('auth')->getCurUser()->getId()]];
@@ -125,9 +109,8 @@ class SearchForm extends Pagination
         }
 
         // TODO we may not use `&search_area=` to search in non-title/subtitle/descr field, Use sep `&ownerid=` , `&doubanid=` instead.
-
-        $searchstr = $this->getInput('search');
-        if (!is_null($searchstr)) {
+        if ($this->hasInput('search')) {
+            $searchstr = $this->getInput('search');
             $search_mode = $this->getInput('search_mode');
             $ANDOR = ($search_mode == 0 ? 'AND' : 'OR');    // only affects mode 0 and mode 1
             $searchstr_exploded = [];
@@ -152,7 +135,6 @@ class SearchForm extends Pagination
             }
 
             $search_area = $this->getInput('search_area');
-
             foreach ($searchstr_exploded as $i => $item) {
                 if ($search_area == 0) {
                     $fields[] = ["$ANDOR (`title` LIKE :title_$i OR `subtitle` LIKE :subtitle_$i) ", 'params' => ["title_$i" => "%$item%", "subtitle_$i" => "%$item%"]];
@@ -162,24 +144,22 @@ class SearchForm extends Pagination
             }
         }
 
-        // Tags
-        $tags = $this->getTagsArray();
-        $fields[] = ['AND JSON_CONTAINS(`tags`, JSON_ARRAY(:tags)) ', 'if' => count($tags), 'params' => ['tags' => $tags]];
+        if ($this->hasInput('tags')) {
+            $tags = $this->getInput('tags');
+            $fields[] = ['AND JSON_CONTAINS(`tags`, JSON_ARRAY(:tags)) ', 'if' => count($tags), 'params' => ['tags' => $tags]];
+        }
 
-        // Cache fields and return
-        $this->_field = $fields;
-        return $this->_field;
-    }
 
-    protected function getRemoteTotal(): int
-    {
-        return container()->get('pdo')->prepare(array_merge([
-            ['SELECT COUNT(`id`) FROM `torrents` WHERE 1=1 ']
-        ], $this->getSearchField()))->queryScalar();
-    }
+        $count = container()->get('pdo')->prepare([
+            ['SELECT COUNT(`id`) FROM `torrents` WHERE 1=1 '],
+            ...$fields
+        ])->queryScalar();
+        $this->setPaginationTotal($count);
 
-    protected function getRemoteData(): array
-    {
-        return container()->get(TorrentFactory::class)->getTorrentBySearch($this->getSearchField(), $this->offset, $this->limit);
+        $this->setPaginationLimit($this->getInput('limit'));
+        $this->setPaginationPage($this->getInput('page'));
+
+        $data = container()->get(TorrentFactory::class)->getTorrentBySearch($fields, $this->getPaginationOffset(), $this->getPaginationLimit());
+        $this->setPaginationData($data);
     }
 }

@@ -33,7 +33,7 @@ $torrent = $edit->getTorrent();
                             <option value="0" selected>[Select a category]</option>
                             <?php foreach (container()->get('site')->ruleCategory() as $category) : ?>
                                 <option
-                                    value="<?= $category['id'] ?>" <?= $torrent->getCategoryId() == $category['id'] ? 'selected' : '' ?>><?= $category['full_path'] ?></option>
+                                    value="<?= $category['id'] ?>" <?= $torrent->getCategoryId() == $category['id'] ? 'selected' : '' ?>><?= $category['name'] ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

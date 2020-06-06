@@ -6,7 +6,7 @@
  * Time: 20:40
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Models\Form\Torrents\SearchForm $search
+ * @var \App\Forms\Torrents\SearchForm $search
  */
 
 $time_now = time();
@@ -29,7 +29,7 @@ $time_now = time();
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($search->getPagerData() as $torrent): /** @var \App\Entity\Torrent\Torrent $torrent */ ?>
+            <?php foreach ($search->getPaginationData() as $torrent): /** @var \App\Entity\Torrent\Torrent $torrent */ ?>
                 <tr data-tid="<?= $torrent->getId() ?>">
                     <td class="text-center" data-item="category" style="margin: 0;padding: 0">
                         <?php $cat = $torrent->getCategory(); ?>
@@ -54,7 +54,7 @@ $time_now = time();
                                     <?php if (count($tags) > 0) : ?>
                                         <span data-item="t-tags">
                                             <?php foreach ($tags as $tag_name => $class_name): ?>
-                                                <a href="/torrents/search?tags=<?= $tag_name ?>" class="tag label label-outline <?= $class_name ?>"><?= $tag_name ?></a>
+                                                <a href="/torrents/search?tags[]=<?= $tag_name ?>" class="tag label label-outline <?= $class_name ?>"><?= $tag_name ?></a>
                                             <?php endforeach; ?>
                                         </span>&nbsp;
                                     <?php endif; ?>
@@ -87,7 +87,7 @@ $time_now = time();
             </tbody>
         </table>
         <div class="text-center">
-            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $search->getTotal() ?>" data-rec-per-page="<?= $search->getLimit() ?>"></ul>
+            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $search->getPaginationTotal() ?>" data-rec-per-page="<?= $search->getPaginationLimit() ?>"></ul>
         </div>
     </div>
 </div>

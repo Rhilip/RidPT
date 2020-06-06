@@ -42,6 +42,7 @@
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
+- **Response:** The Response component not clean sent file when set (5dcc524)
 - **Route:** Middleware restore wrong when multi-add at same time (787893a)
 - **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
 - **Server:** Fix Server runtime config not work (70b1d79)

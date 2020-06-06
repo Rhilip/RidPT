@@ -6,7 +6,7 @@
  * Time: 20:40
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Models\Form\Torrents\SearchForm $search
+ * @var \App\Forms\Torrents\SearchForm $search
  */
 
 use Rid\Utils\Arr;
