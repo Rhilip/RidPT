@@ -82,6 +82,17 @@ return function (RouteCollector $r) {
                 $r->get('/logs', [Controllers\Site\LogsController::class, 'index']);
             });
 
+            // 字幕部分
+            $r->addGroup('/subtitles', function (RouteCollector $r) {
+                $r->get('[/search]', [Controllers\Subtitles\SearchController::class, 'index']);
+                $r->get('/upload', [Controllers\Subtitles\UploadController::class, 'index']);
+                $r->get('/download', [Controllers\Subtitles\DownloadController::class, 'index']);
+
+                $r->post('/upload', [Controllers\Subtitles\UploadController::class, 'takeUpload']);
+                $r->post('/delete', [Controllers\Subtitles\DeleteController::class, 'takeDelete']);
+            });
+
+
             // 管理员部分
             $r->addGroup('/admin', function (RouteCollector $r) {
                 $r->get('', [Controllers\Admin\IndexController::class, 'index']);
@@ -127,13 +138,6 @@ return function (RouteCollector $r) {
                 $r->get('', [Controllers\RssController::class, 'index']);
             });
 
-            // 字幕部分
-            $r->addGroup('/subtitles', function (RouteCollector $r) {
-                $r->get('[/search]', [Controllers\SubtitlesController::class, 'search']);
-                $r->get('/upload', [Controllers\SubtitlesController::class, 'upload']);
-                $r->get('/download', [Controllers\SubtitlesController::class, 'download']);
-                $r->get('/delete', [Controllers\SubtitlesController::class, 'delete']);
-            });
 
             // 站点管理部分
             $r->addGroup('/manager', function (RouteCollector $r) {

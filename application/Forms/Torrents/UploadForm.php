@@ -15,6 +15,7 @@ use App\Enums\Torrent\Type as TorrentType;
 use Rhilip\Bencode\Bencode;
 use Rhilip\Bencode\ParseErrorException;
 use Rid\Utils\Arr;
+use Rid\Validators\Constraints as AcmeAssert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -33,8 +34,8 @@ class UploadForm extends EditForm
     {
         var_dump($this->getInput());
         $rules = $this->loadBaseTorrentInputMetadata();
-        $rules['file'] = new Assert\File([
-            'mimeTypes' => 'application/x-bittorrent', // .torrent
+        $rules['file'] = new AcmeAssert\File([
+            'extension' => 'torrent', // 'application/x-bittorrent'
             'maxSize' => config('upload.max_torrent_file_size'),
         ]);
 
@@ -50,7 +51,6 @@ class UploadForm extends EditForm
             ]);
         }
 
-        var_dump($rules);
         return new Assert\Collection($rules);
     }
 

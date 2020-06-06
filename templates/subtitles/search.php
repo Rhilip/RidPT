@@ -6,7 +6,7 @@
  * Time: 9:36 PM
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Models\Form\Subtitles\SearchForm $search
+ * @var \App\Forms\Subtitles\SearchForm $search
  * @var bool $upload_mode
  */
 
@@ -53,9 +53,9 @@ $upload_mode = $upload_mode ?? false;
                                 <div class="form-group">
                                     <label for="file" class="col-sm-2 required">Subs File</label>
                                     <div class="col-md-5 col-sm-10">
-                                        <?php  $allow_extension = array_map(function ($ext) {
+                                        <?php $allow_extension = array_map(function ($ext) {
     return '.' . $ext;
-}, \App\Models\Form\Subtitles\UploadForm::SubtitleExtension) ?>
+}, \App\Forms\Subtitles\UploadForm::SubtitleExtension) ?>
                                         <input type="file" class="form-control" id="file" name="file" required
                                                accept="<?= implode(', ', $allow_extension) ?>"> <!-- TODO accept -->
                                     </div>
@@ -124,7 +124,7 @@ $upload_mode = $upload_mode ?? false;
                     </div>
                 </div>
                 <div class="" id="subs_list">
-                    <?php if ($search->getTotal()): ?>
+                    <?php if ($search->getPaginationTotal()): ?>
                     <table class="table table-striped table-hover">
                         <thead>
                         <tr>
@@ -139,7 +139,7 @@ $upload_mode = $upload_mode ?? false;
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($search->getPagerData() as $datum): ?>
+                        <?php foreach ($search->getPaginationData() as $datum): ?>
                         <tr>
                             <td>
                                 <div class="pull-right">
@@ -165,7 +165,7 @@ $upload_mode = $upload_mode ?? false;
                         </tbody>
                     </table>
                         <div class="text-center">
-                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $search->getTotal() ?>"  data-rec-per-page="<?= $search->getLimit() ?>"></ul>
+                            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $search->getPaginationTotal() ?>"  data-rec-per-page="<?= $search->getPaginationLimit() ?>"></ul>
                         </div>
                     <?php else: ?>
                     No exist upload subtitles

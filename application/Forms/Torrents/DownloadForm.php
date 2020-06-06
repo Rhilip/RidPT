@@ -45,8 +45,7 @@ class DownloadForm extends StructureForm
             $this->buildCallbackFailMsg('pos', 'your download pos is disabled');
         }
     }
-
-
+    
     public function sendFileContentToClient()
     {
         $dict = $this->getTorrentFileContentDict();

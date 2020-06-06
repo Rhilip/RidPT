@@ -33,7 +33,7 @@ class CommentsForm extends AbstractValidator
         return new Assert\Collection([
             'id' => new AcmeAssert\PositiveInt(),
             'page' => new Assert\PositiveOrZero(),
-            'limit' => new AcmeAssert\Filter(['filter' => FILTER_VALIDATE_INT, 'options' => ['min_range' => 0, 'max_range' => 50]])
+            'limit' => new AcmeAssert\RangeInt(['min' =>  0, 'max' => 50])
         ]);
     }
 

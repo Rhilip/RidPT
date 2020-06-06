@@ -331,12 +331,12 @@ class ScrapeController
      */
     protected function checkPasskey(Request $request): array
     {
-        $passkey = $request->query->get('passkey');
-
         // First Check The param `passkey` is exist and valid
-        if (is_null($passkey)) {
+        if (!$request->query->has('passkey')) {
             throw new TrackerException(130, [':attribute' => 'passkey']);
         }
+
+        $passkey = $request->query->get('passkey');
         if (strlen($passkey) != 32) {
             throw new TrackerException(132, [':attribute' => 'passkey', ':rule' => 32]);
         }

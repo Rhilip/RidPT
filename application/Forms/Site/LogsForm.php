@@ -32,7 +32,7 @@ class LogsForm extends AbstractValidator
     {
         return new Assert\Collection([
             'page' => new Assert\PositiveOrZero(),
-            'limit' => new AcmeAssert\Filter(['filter' => FILTER_VALIDATE_INT, 'options' => ['min_range' => 0, 'max_range' => 200]]),
+            'limit' => new AcmeAssert\RangeInt(['min' =>  0, 'max' => 200]),
             'search' => new Assert\Optional(new Assert\NotBlank()),
             'level' => new Assert\Choice(['all'] + LogLevel::values())
         ]);
