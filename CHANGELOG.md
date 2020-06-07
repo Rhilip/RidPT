@@ -41,10 +41,11 @@
 - **Debug:** Add back debug info of Redis and PDO (ee28676)
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
+- **PDO:** fix Persistent\PDOConnection::queryColumn() not work (9056424)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
 - **Response:** The Response component not clean sent file when set (ca4e83b)
-- **Route:** Middleware restore wrong when multi-add at same time (787893a)
 - **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
+- **Route:** Middleware restore wrong when multi-add at same time (787893a)
 - **Server:** Fix Server runtime config not work (70b1d79)
 - **Subtitles:** fix last commit which content function is not public (177a599)
 

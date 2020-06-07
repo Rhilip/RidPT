@@ -5,7 +5,7 @@
  * Date: 2019/2/22
  * Time: 17:13
  *
- * @var \App\Models\Form\User\UserDetailsForm $details
+ * @var \App\Forms\User\DetailsFrom $details
  */
 
 $user = $details->getUser();

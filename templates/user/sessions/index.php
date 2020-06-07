@@ -5,7 +5,7 @@
  * Date: 2019/2/22
  * Time: 17:46
  *
- * @var \App\Models\Form\User\SessionsListForm $session_list
+ * @var \App\Forms\User\Sessions\ListForm $form
  */
 ?>
 
@@ -28,7 +28,7 @@
             </tr>
             </thead>
             <tbody>
-            <?php foreach ($session_list->getPagerData() as $s): ?>
+            <?php foreach ($form->getPaginationData() as $s): ?>
                 <tr<?php if ($s['expired'] == 0):?> class="warning" data-toggle="tooltip" data-placement="bottom" title="This session will expired automatically."<?php endif;?>>
                     <td><?= $s['id'] ?></td>
                     <td class="text-center"><time class="nowrap"><?= $s['login_at'] ?></time></td>
@@ -37,9 +37,8 @@
                         <?php if ($s['session'] == container()->get('auth')->getCurUserJIT()): ?>
                             Current
                         <?php else: ?>
-                            <form method="post">
-                                <input type="hidden" name="action" value="revoke"/>
-                                <input type="hidden" name="session" value="<?= $s['session'] ?>"/>
+                            <form method="post" action="/user/sessions/revoke">
+                                <input type="hidden" name="id" value="<?= $s['session'] ?>"/>
                                 <button class="btn btn-default" type="submit"
                                         onclick="return confirm('Are you sure you want to delete this session?');">
                                     <i class="far fa-trash-alt"></i>
@@ -53,7 +52,7 @@
         </table>
 
         <div class="text-center">
-            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $session_list->getTotal() ?>" data-rec-per-page="<?= $session_list->getLimit() ?>"></ul>
+            <ul class="pager pager-unset-margin" data-ride="remote_pager" data-rec-total="<?= $form->getPaginationTotal() ?>" data-rec-per-page="<?= $form->getPaginationLimit() ?>"></ul>
         </div>
     </div>
 </div>

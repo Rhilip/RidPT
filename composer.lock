@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "63b396b6d9374c2d91bf5aabd6188860",
+    "content-hash": "8c33cc40ec2982e6212b5fb64b5527c2",
     "packages": [
         {
             "name": "adhocore/cron-expr",
@@ -1213,52 +1213,6 @@
                 "torrent"
             ],
             "time": "2020-02-27T10:47:16+00:00"
-        },
-        {
-            "name": "siriusphp/validation",
-            "version": "2.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/siriusphp/validation.git",
-                "reference": "fa93b302802616b1dcf7e38244a70e324c121fb4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/siriusphp/validation/zipball/fa93b302802616b1dcf7e38244a70e324c121fb4",
-                "reference": "fa93b302802616b1dcf7e38244a70e324c121fb4",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Sirius\\Validation\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Adrian Miu",
-                    "email": "adrian@adrianmiu.ro"
-                }
-            ],
-            "description": "Data validation library. Validate arrays, array objects, domain models etc using a simple API. Easily add your own validators on top of the already dozens built-in validation rules",
-            "keywords": [
-                "form",
-                "modeling",
-                "sanitization",
-                "security",
-                "validation"
-            ],
-            "time": "2019-08-11T13:55:53+00:00"
         },
         {
             "name": "soundasleep/html2text",

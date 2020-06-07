@@ -17,6 +17,7 @@ class Auth
 {
 
     /**
+     * FIXME
      * @param string $grant
      * @param string|bool $flush
      * @return Entity\User\User|bool return False means this user is anonymous

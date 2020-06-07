@@ -37,8 +37,6 @@ class FilterValidator extends ConstraintValidator
             }
         }
 
-        var_dump($value, $constraint->filter, $options);
-
         $value = filter_var($value, $constraint->filter, $options);
         if (false === $value) {
             $this->context->buildViolation($constraint->message)

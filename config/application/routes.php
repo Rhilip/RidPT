@@ -147,14 +147,15 @@ return function (RouteCollector $r) {
                 $r->get('/tags', [Controllers\Torrents\TagsController::class, 'index']);
             });
 
-
-            // FIXME 待修改部分
-
             // 用户管理部分
             $r->addGroup('/user', function (RouteCollector $r) {
-                $r->get('[/details]', [Controllers\UserController::class, 'details']);
-                $r->get('/setting', [Controllers\UserController::class, 'setting']);
-                $r->get('/sessions', [Controllers\UserController::class, 'sessions']);
+                $r->get('[/details]', [Controllers\User\DetailsController::class, 'index']);
+                $r->get('/setting', [Controllers\User\SettingController::class, 'index']);
+
+                $r->addGroup('/sessions', function (RouteCollector $r) {
+                    $r->get('', [Controllers\User\Sessions\ListController::class, 'index']);
+                    $r->post('/revoke', [Controllers\User\Sessions\RevokeController::class, 'takeRevoke']);
+                });
             });
         });
 
