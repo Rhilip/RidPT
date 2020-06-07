@@ -53,9 +53,10 @@ final class CronTabProcess extends Process
     public function run()
     {
         $hit = 0;
+        $timenow = time();
         $this->stopwatch->start('cron_all');
         foreach ($this->jobs as $index => $job) {
-            if (!$this->expr->isCronDue($job['expr'], $job['last_run_at'])) {
+            if (!$this->expr->isCronDue($job['expr'], $timenow)) {
                 continue;
             };
 

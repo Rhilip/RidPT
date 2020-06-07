@@ -59,6 +59,7 @@
 ### Refactor
 - **Auth:** Replace Auth Part by new Validator (2cb707f)
 - **Context:** clean Context at start of request (b2f4161)
+- **Invite:** Move invite part out of route `/user` (3a9660d)
 - **Links:** Finish Part of LinksController (f45a470)
 - **Manager/Categories:** Finish Manger/Categories part refactor (750e35c)
 - **Route:** use fast-route to replace our old route components (eca0db8)
