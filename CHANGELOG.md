@@ -42,7 +42,7 @@
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
 - **Namespace:** Some class namespace changed (7cde451)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
-- **Response:** The Response component not clean sent file when set (5dcc524)
+- **Response:** The Response component not clean sent file when set (ca4e83b)
 - **Route:** Middleware restore wrong when multi-add at same time (787893a)
 - **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
 - **Server:** Fix Server runtime config not work (70b1d79)
@@ -59,7 +59,9 @@
 - **Auth:** Replace Auth Part by new Validator (2cb707f)
 - **Context:** clean Context at start of request (b2f4161)
 - **Links:** Finish Part of LinksController (f45a470)
+- **Manager/Categories:** Finish Manger/Categories part refactor (750e35c)
 - **Route:** use fast-route to replace our old route components (eca0db8)
+- **Subtitle:** Finish Subtitle part refactor (07e9987)
 - **TorrentController:** separate TorrentController (b21763d)
 - **Tracker:** Separate TrackerController (c64688b)
 

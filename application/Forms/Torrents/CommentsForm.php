@@ -42,7 +42,7 @@ class CommentsForm extends AbstractValidator
         return ['isExistTorrent'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->setPaginationTotal($this->getTorrent()->getComments());
         $this->setPaginationLimit($this->getInput('limit'));

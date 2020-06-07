@@ -17,7 +17,7 @@ class RecoverForm extends AbstractConfirmForm
 {
     protected string $action = 'recover';
 
-    public function flush()
+    public function flush(): void
     {
         if ($this->record['user_status'] !== UserStatus::CONFIRMED) {
             $this->msg =  'user status is not confirmed , they may in pending or banned';  // FIXME msg

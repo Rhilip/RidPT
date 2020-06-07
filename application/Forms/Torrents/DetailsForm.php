@@ -34,7 +34,7 @@ class DetailsForm extends AbstractValidator
         return ['isExistTorrent'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         if ($this->getInput('hit')) {
             // TODO

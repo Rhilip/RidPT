@@ -12,6 +12,7 @@ namespace App\Entity\User;
 
 use App\Enums\User\Role;
 use App\Enums\User\Status;
+use App\Exceptions\NotExistException;
 use Rid\Utils\Traits\ClassValueCache;
 
 class User
@@ -40,6 +41,7 @@ class User
     protected string $bonus_other = '0';
 
     protected int $invites;
+    protected int $temp_invites;
     protected string $lang;
 
     //-- Start User Extended Info --//
@@ -73,12 +75,12 @@ class User
         $this->cache_key_extended = 'user:' . $id . ':extended_content';
         $this->cache_key_extra = 'user:' . $id . ':extra_content';
 
-        $self = container()->get('pdo')->prepare('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_other, lang, invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
+        $self = container()->get('pdo')->prepare('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_other, lang, invites, temp_invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
             'id' => $id
         ])->queryOne();
 
         if (false === $self) {
-            return; // It means this user id is invalid
+            throw new NotExistException('User not exist');  // It means this user id is invalid
         }
         $this->importAttributes($self);
     }
@@ -181,6 +183,16 @@ class User
     public function getInvites(): int
     {
         return $this->invites ?? 0;
+    }
+
+    public function getTempInvites(): int
+    {
+        return $this->temp_invites ?? 0;
+    }
+
+    public function getTotalInvites(): int
+    {
+        return $this->getInvites() + $this->getTempInvites();
     }
 
     public function getLang(): string
@@ -369,40 +381,6 @@ class User
     public function getBonus(): float
     {
         return (float)$this->bonus_seeding + (float)$this->bonus_other;
-    }
-
-    public function getTempInvitesSum(): int
-    {
-        return array_sum(array_map(function ($d) {
-            return $d['total'] - $d['used'];
-        }, $this->getTempInviteDetails()));
-    }
-
-    public function getTempInviteDetails(): array
-    {
-        return $this->getCacheValue('temp_invites_details', function () {
-            return container()->get('pdo')->prepare('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
-                    "uid" => container()->get('auth')->getCurUser()->getId()
-                ])->queryAll() ?: [];
-        }) ?? [];
-    }
-
-    public function getPendingInvites()
-    {
-        return $this->getCacheValue('pending_invites', function () {
-            return container()->get('pdo')->prepare('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
-                'uid' => $this->id
-            ])->queryAll();
-        });
-    }
-
-    public function getInvitees()
-    {
-        return $this->getCacheValue('invitees', function () {
-            return container()->get('pdo')->prepare('SELECT id,username,email,status,class,uploaded,downloaded FROM `users` WHERE `invite_by` = :uid')->bindParams([
-                'uid' => $this->id
-            ])->queryAll();
-        });
     }
 
     public function updateBookmarkList()

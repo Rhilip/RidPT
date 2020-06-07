@@ -42,7 +42,7 @@ class UploadForm extends AbstractValidator
         return ['isExistTorrent'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $file = $this->getInput('file');
         $title = $this->getInput('title') ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);

@@ -46,7 +46,7 @@ class SearchForm extends AbstractValidator
         return [];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $search = $this->getInput('search');
         $field = $this->getInput('field');

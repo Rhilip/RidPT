@@ -42,7 +42,7 @@ class SnatchForm extends AbstractValidator
         return ['isExistTorrent'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $pdo_where = [
             ['AND `torrent_id` = :tid ', 'params' => ['tid' => $this->getTorrentId()]]

@@ -31,7 +31,7 @@ class DownloadForm extends ExistForm
         return ['isValidSubtitle'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->addDownloadHit();
     }

@@ -51,10 +51,10 @@ use App\Enums\User\Role as UserRole;
             <span><!--suppress HtmlUnknownTarget -->[<a href="/admin">Admin Panel</a>]</span>
         <?php endif; ?>
         <span data-item="favour"><!--suppress HtmlUnknownTarget -->[<a href="/torrents?favour=1">Favour</a>]</span>
-        <span data-item="invite" data-invite="<?= $user->getInvites() ?>" data-temp-invite="<?= $user->getTempInvitesSum() ?>">
-            <span class="color-invite">Invite [<a href="/user/invite">Send</a>]: </span> <?= $user->getInvites() ?>
-            <?php if ($user->getTempInvitesSum() > 0): ?>
-                <span data-toggle="tooltip" data-placement="bottom" title="Temporarily Invites" class="text-primary">(+<?= $user->getTempInvitesSum() ?>)</span>
+        <span data-item="invite" data-invite="<?= $user->getInvites() ?>" data-temp-invite="<?= $user->getTempInvites() ?>">
+            <span class="color-invite">Invite [<a href="/invite">Send</a>]: </span> <?= $user->getInvites() ?>
+            <?php if ($user->getTempInvites() > 0): ?>
+                <span data-toggle="tooltip" data-placement="bottom" title="Temporarily Invites" class="text-primary">(+<?= $user->getTempInvites() ?>)</span>
             <?php endif; ?>
         </span>
         <span data-item="bonus" data-bonus="<?= $this->e($user->getBonus()); ?>">

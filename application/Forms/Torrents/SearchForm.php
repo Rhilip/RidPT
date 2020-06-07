@@ -79,7 +79,7 @@ class SearchForm extends AbstractValidator
         return [];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $fields = [];
 

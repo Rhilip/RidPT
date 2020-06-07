@@ -62,7 +62,7 @@ class RegisterForm extends AbstractValidator
         ];
     }
 
-    public function flush()
+    public function flush(): void
     {
         // Build Some default UserData
         $status = config('register.user_default_status') ?? UserStatus::PENDING;
@@ -253,5 +253,10 @@ class RegisterForm extends AbstractValidator
             $this->buildCallbackFailMsg('Green', "The Green way to register in this site is not Implemented.");
             return;
         }
+    }
+
+    protected function getRegisterType()
+    {
+        return $this->getInput('type');
     }
 }

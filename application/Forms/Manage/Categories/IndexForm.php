@@ -27,7 +27,7 @@ class IndexForm extends AbstractValidator
         return [];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->categories = container()->get('pdo')->prepare('SELECT * FROM categories ORDER BY `sort_index`,`id`')->queryAll();
     }

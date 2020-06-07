@@ -36,7 +36,7 @@ class ApplyForm extends AbstractValidator
         return ['validateCaptcha', 'checkExistLinksByUrl'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         container()->get('pdo')->prepare('INSERT INTO `links`(`name`, `url`, `title`, `status`, `administrator`, `email`, `reason`) VALUES (:name,:url,:title,:status,:admin,:email,:reason)')->bindParams([
             'name' => $this->getInput('name'), 'url' => $this->getInput('url'), 'title' => $this->getInput('title'),

@@ -41,7 +41,7 @@ class NfoForm extends AbstractValidator
         return ['isExistTorrent', 'torrentHasNfo'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->nfo = container()->get('pdo')->prepare('SELECT nfo FROM `torrent_nfos` WHERE tid = :id')->bindParams([
             'id' => $this->getTorrentId()

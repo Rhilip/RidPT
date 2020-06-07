@@ -40,7 +40,7 @@ class DeleteForm extends ExistForm
         }
     }
 
-    public function flush()
+    public function flush(): void
     {
         $subtitle = $this->getSubtitle();
 

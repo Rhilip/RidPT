@@ -18,6 +18,7 @@ trait isValidTorrentTrait
 {
     protected ?Torrent $torrent;
 
+    /** @noinspection PhpUnused */
     protected function isExistTorrent()
     {
         try {

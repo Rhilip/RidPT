@@ -75,6 +75,15 @@ return function (RouteCollector $r) {
                 $r->post('/delete', [Controllers\Blogs\DeleteController::class, 'takeDelete']);
             });
 
+            // 邀请部分
+            $r->addGroup('/invite', function (RouteCollector $r) {
+                $r->get('', [Controllers\Invite\IndexController::class, 'index']);
+                $r->post('', [Controllers\Invite\IndexController::class, 'takeInvite']);
+
+                $r->post('/confirm', [Controllers\Invite\ConfirmController::class, 'takeConfirm']);
+                $r->post('/recycle', [Controllers\Invite\RecycleController::class, 'takeRecycle']);
+            });
+
             // 友情链接部分
             $r->addGroup('/links', function (RouteCollector $r) {
                 $r->get('/apply', [Controllers\Links\ApplyController::class, 'index']);
@@ -145,22 +154,21 @@ return function (RouteCollector $r) {
             $r->addGroup('/user', function (RouteCollector $r) {
                 $r->get('[/details]', [Controllers\UserController::class, 'details']);
                 $r->get('/setting', [Controllers\UserController::class, 'setting']);
-                $r->get('/invite', [Controllers\UserController::class, 'invite']);
                 $r->get('/sessions', [Controllers\UserController::class, 'sessions']);
             });
         });
 
         // API部分
         $r->addGroup('/api', function (RouteCollector $r) {
-            // v1 部分路由不遵守Restful、Graphql等设计规范，给默认后端渲染页面提供ajax支持
+            // v1 部分路由不遵守Restful、Graphql等设计规范，同样仅使用 GET和POST 方法，给默认后端渲染页面提供ajax支持
             $r->addGroup('/v1', function (RouteCollector $r) {
                 $r->addMiddleware([
                     Middleware\AuthMiddleware::class,
                     Middleware\ApiMiddleware::class
                 ], function (RouteCollector $r) {
                     $r->addGroup('/torrent', function (RouteCollector $r) {
-                        $r->post('/bookmark', [Controllers\Api\v1\TorrentController::class, 'bookmark']);
-                        $r->get('/filelist', [Controllers\Api\v1\TorrentController::class, 'fileList']);
+                        $r->get('/filelist', [Controllers\Api\v1\Torrent\FileListController::class, 'index']);
+                        $r->post('/bookmark', [Controllers\Api\v1\Torrent\BookmarkController::class, 'takeBookmark']);
                     });
                 });
             });

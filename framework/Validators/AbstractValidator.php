@@ -40,9 +40,9 @@ abstract class AbstractValidator extends AbstractObject
      * Which action should we do after validator success,
      * Call it in Controller
      *
-     * @return mixed
+     * @return void
      */
-    abstract public function flush();
+    abstract public function flush(): void;
 
     final public function setInput($input)
     {

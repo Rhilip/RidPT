@@ -34,7 +34,7 @@ class DownloadForm extends StructureForm
         return ['isExistTorrent', 'checkDownloadPos'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         // TODO: Implement flush() method.
     }
@@ -45,7 +45,7 @@ class DownloadForm extends StructureForm
             $this->buildCallbackFailMsg('pos', 'your download pos is disabled');
         }
     }
-    
+
     public function sendFileContentToClient()
     {
         $dict = $this->getTorrentFileContentDict();

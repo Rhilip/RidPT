@@ -43,7 +43,7 @@ class LogsForm extends AbstractValidator
         return [];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $where_pdo = [
             ['AND `level` IN (:level) ', 'params' => ['level' => $this->getLevels()]],

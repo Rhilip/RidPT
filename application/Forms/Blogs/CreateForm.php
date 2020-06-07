@@ -30,7 +30,7 @@ class CreateForm extends AbstractValidator
         return [];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $userid = container()->get('auth')->getCurUser()->getId();
         container()->get('pdo')->prepare('INSERT INTO blogs (user_id, create_at, title, body, notify, force_read) VALUES (:uid, CURRENT_TIMESTAMP, :title, :body, :notify, :fread);')->bindParams([

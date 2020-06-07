@@ -40,7 +40,7 @@ class TagsForm extends AbstractValidator
         return [];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $pdo_where = [];
 

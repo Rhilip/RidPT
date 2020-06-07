@@ -29,7 +29,7 @@ class LogoutForm extends AbstractValidator
         return [];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->revokeSession();
     }

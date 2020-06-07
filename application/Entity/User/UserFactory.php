@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace App\Entity\User;
 
+use App\Exceptions\NotExistException;
+
 class UserFactory
 {
     public const mapUsernameToId = 'Map:hash:user_username_to_user_id';
@@ -19,7 +21,11 @@ class UserFactory
     public function getUserById($uid): User
     {
         if (!context()->has('user.' . $uid)) {
-            $user = new User($uid);
+            try {
+                $user = new User($uid);
+            } catch (NotExistException $e) {
+                $user = false;
+            }
             return context()->set('user.' . $uid, $user);
         }
         return context()->get('user.' . $uid);

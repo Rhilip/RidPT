@@ -16,7 +16,7 @@ class RegisterForm extends AbstractConfirmForm
 {
     protected string $action = 'register';
 
-    public function flush()
+    public function flush(): void
     {
         if ($this->record['user_status'] !== UserStatus::PENDING) {
             $this->msg = 'user status is not pending, they may already confirmed or banned';

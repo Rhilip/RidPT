@@ -39,7 +39,7 @@ class EditForm extends AbstractValidator
         return [];
     }
 
-    public function flush()
+    public function flush(): void
     {
         if ($this->getInput('id') > 0) {
             $exist = container()->get('pdo')->prepare('SELECT COUNT(id) FROM categories WHERE id = :id')->bindParams([

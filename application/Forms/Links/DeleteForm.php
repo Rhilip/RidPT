@@ -27,7 +27,7 @@ class DeleteForm extends EditForm
         return ['isExistLinkId'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         container()->get('pdo')->prepare('DELETE FROM `links` WHERE id = :id')->bindParams([
             'id' => $this->getInput('id')

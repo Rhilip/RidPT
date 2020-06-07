@@ -30,7 +30,7 @@ class ExistForm extends AbstractValidator
         return ['isExistBlog'];
     }
 
-    public function flush()
+    public function flush(): void
     {
     }
 

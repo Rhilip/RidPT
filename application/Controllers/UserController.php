@@ -68,7 +68,7 @@ class UserController extends AbstractController
             }
         }
 
-        return $this->render('user/invite', ['user' => $user, 'msg' => $msg]);
+        return $this->render('invite/index', ['user' => $user, 'msg' => $msg]);
     }
 
 

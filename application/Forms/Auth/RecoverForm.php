@@ -34,7 +34,7 @@ class RecoverForm extends AbstractValidator
         return ['validateCaptcha'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         // Check this email is in our database or not?
         $user_info = container()->get('pdo')->prepare('SELECT `id`,`username`,`status` FROM `users` WHERE `email` = :email;')->bindParams([

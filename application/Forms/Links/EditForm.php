@@ -40,7 +40,7 @@ class EditForm extends ApplyForm
         return $rules;
     }
 
-    public function flush()
+    public function flush(): void
     {
         if ($this->getInput('id') == 0) {  // Create new links by edit method
             parent::flush();

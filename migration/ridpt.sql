@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 06, 2020 at 10:36 PM
+-- Generation Time: Jun 07, 2020 at 10:01 PM
 -- Server version: 8.0.17
 -- PHP Version: 7.4.1
 
@@ -763,8 +763,7 @@ INSERT INTO `site_config` (`name`, `type`, `value`) VALUES
 ('authority.apply_for_links', 'int', '5'),
 ('authority.bypass_maintenance', 'int', '90'),
 ('authority.invite_manual_confirm', 'int', '70'),
-('authority.invite_recycle_other_pending', 'int', '90'),
-('authority.invite_recycle_self_pending', 'int', '70'),
+('authority.invite_recycle_pending', 'int', '70'),
 ('authority.manage_links', 'int', '80'),
 ('authority.manage_news', 'int', '80'),
 ('authority.manage_subtitles', 'int', '80'),
@@ -1268,6 +1267,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `bonus_other` decimal(20,2) NOT NULL DEFAULT '0.00',
   `lang` varchar(10) NOT NULL DEFAULT 'en',
   `invites` smallint(5) NOT NULL DEFAULT '0' COMMENT 'The invites which never expire',
+  `temp_invites` smallint(5) DEFAULT '0' COMMENT 'The Temp invites count',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),

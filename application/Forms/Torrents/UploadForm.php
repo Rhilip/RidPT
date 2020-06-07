@@ -32,7 +32,6 @@ class UploadForm extends EditForm
 
     protected function loadInputMetadata(): Assert\Collection
     {
-        var_dump($this->getInput());
         $rules = $this->loadBaseTorrentInputMetadata();
         $rules['file'] = new AcmeAssert\File([
             'extension' => 'torrent', // 'application/x-bittorrent'
@@ -59,7 +58,7 @@ class UploadForm extends EditForm
         return ['checkUploadPos', 'isValidTorrentFile', 'makePrivateTorrent'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         container()->get('pdo')->beginTransaction();
         try {

@@ -60,7 +60,7 @@ class EditForm extends AbstractValidator
         return ['isExistTorrent', 'checkUserPermission'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         $nfo_action = $this->getInput('nfo_action', 'keep');
         if ($nfo_action == 'remove') {

@@ -104,7 +104,7 @@ class LoginForm extends AbstractValidator
         }
     }
 
-    public function flush()
+    public function flush(): void
     {
         $this->createUserSession();
         $this->updateUserLoginInfo();

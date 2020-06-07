@@ -6,9 +6,10 @@
  * Time: 16:33
  *
  * @var League\Plates\Template\Template $this
- * @var \App\Entity\User\User $user
+ * @var \App\Forms\Invite\IndexForm $form
  */
 
+use App\Entity\User\User;
 use App\Enums\User\Status as UserStatus;
 
 ?>
@@ -19,16 +20,13 @@ use App\Enums\User\Status as UserStatus;
 <div class="row">
     <div class="col-md-10 col-md-offset-1">
         <div class="text-center">
-            <h2><?= $user->getUsername() ?>'s Invite System</h2>
-            <?php if (isset($msg)): ?>
-            <small class="text-red"><?= $msg ?></small>
-            <?php endif; ?>
+            <h2><?= $form->getUser()->getUsername() ?>'s Invite System</h2>
         </div>
 
         <div class="panel">
             <div class="panel-heading">Invitee Status</div>
             <div class="panel-body">
-                <?php if ($user->getInvitees()): ?>
+                <?php if ($form->getInvitees()): ?>
                 <table class="table table-hover table-striped">
                     <thead>
                     <tr>
@@ -44,18 +42,23 @@ use App\Enums\User\Status as UserStatus;
                     </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ($user->getInvitees() as $invitee): ?>
+                    <?php foreach ($form->getInvitees() as $invitee): /** @var User $invitee */ ?>
                     <tr>
-                        <td class="text-center"><?= $invitee['username'] ?></td>
-                        <td class="text-center"><?= $invitee['email'] ?></td>
-                        <td class="text-right"><?= $this->batch($invitee['uploaded'], 'format_bytes') ?></td>
-                        <td class="text-right"><?= $this->batch($invitee['downloaded'], 'format_bytes') ?></td>
-                        <td class="text-center"><?= number_format($invitee['uploaded']/($invitee['downloaded'] + 1), 3) ?></td>
-                        <td class="text-center"><?= $invitee['status'] ?></td>
+                        <td class="text-center"><?= $invitee->getUsername() ?></td>
+                        <td class="text-center"><?= $invitee->getEmail() ?></td>
+                        <td class="text-right"><?= $this->batch($invitee->getUploaded(), 'format_bytes') ?></td>
+                        <td class="text-right"><?= $this->batch($invitee->getDownloaded(), 'format_bytes') ?></td>
+                        <td class="text-center"><?= number_format($invitee->getUploaded()/($invitee->getDownloaded() + 1), 3) ?></td>
+                        <td class="text-center"><?= $invitee->getStatus() ?></td>
                         <?php if (container()->get('auth')->getCurUser()->isPrivilege('invite_manual_confirm')): ?>
                         <td class="text-center">
-                            <?php if ($invitee['status'] == UserStatus::PENDING): ?>
-                            <a class="btn btn-info btn-sm" href="?action=confirm&uid=<?= $this->e($invitee['id']) ?>" onclick="return confirm('Really?')">Confirm</a>
+                            <?php if ($invitee->getStatus() == UserStatus::PENDING): ?>
+                                <form action="/invite/confirm" method="post" id="invite_confirm_form">
+                                    <label class="hidden">
+                                        <input name="user_id" value="<?= $this->e($invitee->getId()) ?>"/>
+                                    </label>
+                                    <button class="btn btn-info btn-sm" type="submit">Confirm</button>
+                                </form>
                             <?php endif ?>
                         </td>
                         <?php endif; ?>
@@ -72,10 +75,8 @@ use App\Enums\User\Status as UserStatus;
         <div class="panel">
             <div class="panel-heading">Pending Invite</div>
             <div class="panel-body">
-                <?php if ($user->getPendingInvites()): ?>
-                <?php $can_recyle = $user->getId() === container()->get('auth')->getCurUser()->getId() ?
-                        container()->get('auth')->getCurUser()->isPrivilege('invite_recycle_self_pending') :
-                        container()->get('auth')->getCurUser()->isPrivilege('invite_recycle_other_pending'); ?>
+                <?php if ($form->getPendingInvites()): ?>
+                <?php $can_recyle = container()->get('auth')->getCurUser()->isPrivilege('invite_recycle_pending'); ?>
                     <table class="table table-hover table-striped">
                         <thead>
                         <tr>
@@ -89,7 +90,7 @@ use App\Enums\User\Status as UserStatus;
                         </tr>
                         </thead>
                         <tbody>
-                        <?php foreach ($user->getPendingInvites() as $pendingInvite): ?>
+                        <?php foreach ($form->getPendingInvites() as $pendingInvite): ?>
                         <?php $invite_link = (container()->get('request')->isSecure() ? 'https://' : 'http://') . config('base.site_url') . '/auth/register?type=invite&invite_hash=' . $pendingInvite['hash']; ?>
                             <tr>
                                 <td class="text-center"><?= $pendingInvite['username'] ?></td>
@@ -97,7 +98,14 @@ use App\Enums\User\Status as UserStatus;
                                 <td class="text-center"><nobr><?= $pendingInvite['create_at'] ?></nobr></td>
                                 <td class="text-center"><nobr><?= $pendingInvite['expire_at'] ?></nobr></td>
                                 <?php if ($can_recyle): ?>
-                                    <td class="text-center"><a class="btn btn-warning btn-sm" href="?action=recycle&invite_id=<?= $this->e($pendingInvite['id']) ?>" onclick="return confirm('Really?')">Recycle</a></td>
+                                    <td class="text-center">
+                                        <form action="/invite/recycle" method="post" id="invite_recycle_form">
+                                            <label class="hidden">
+                                                <input name="id" value="<?= $pendingInvite['id'] ?>"/>
+                                            </label>
+                                            <button class="btn btn-warning btn-sm invite_recycle" type="submit" <?= $pendingInvite['invite_type'] == \App\Enums\Invite\Type::TEMPORARILY ? 'disabled' : '' ?>>Recycle</button>
+                                        </form>
+                                    </td>
                                 <?php endif; ?>
                             </tr>
                         <?php endforeach;?>
@@ -109,8 +117,8 @@ use App\Enums\User\Status as UserStatus;
             </div>
         </div> <!-- User's Pending Invite -->
 
-        <?php if ($user->getId() === container()->get('auth')->getCurUser()->getId()): // Same User, use $user as quick call?>
-        <?php $can_invite = config('base.enable_invite_system') && ($user->getInvites() + $user->getTempInvitesSum() > 0); ?>
+        <?php if ($form->getUserId() === container()->get('auth')->getCurUser()->getId()): // Same User, use $user as quick call?>
+        <?php $can_invite = config('base.enable_invite_system') && ($form->getUser()->getTotalInvites() > 0); ?>
         <div class="panel">
             <div class="panel-heading"><span class="text-red">Invite Warning!!!</span></div>
             <div class="panel-body">
@@ -123,9 +131,9 @@ use App\Enums\User\Status as UserStatus;
                 </ul>
                 <hr />
                 <div class="text-center">
-                    At now, You have <span id="user_permanent_invite"<?= $user->getInvites() > 0 ? ' class="text-red"' : '' ?>><?= $user->getInvites() ?></span> permanent invites.
-                    <?php if ($user->getTempInvitesSum() > 0): ?>
-                        And <span id="user_temporarily_invite"<?= $user->getTempInvitesSum() > 0 ? ' class="text-red"' : '' ?>><?= $user->getTempInvitesSum() ?></span> temporarily invites, which details are list below:
+                    At now, You have <span id="user_permanent_invite"<?= $form->getUser()->getInvites() > 0 ? ' class="text-red"' : '' ?>><?= $form->getUser()->getInvites() ?></span> permanent invites.
+                    <?php if ($form->getUser()->getTempInvites() > 0): ?>
+                        And <span id="user_temporarily_invite"<?= $form->getUser()->getTempInvites() > 0 ? ' class="text-red"' : '' ?>><?= $form->getUser()->getTempInvites() ?></span> temporarily invites, which details are list below:
                         <div id="user_temp_invite_details" class="text-center row">
                             <div class="col-md-6 col-md-offset-3">
                                 <table class="table table-striped table-hover">
@@ -140,7 +148,7 @@ use App\Enums\User\Status as UserStatus;
                                     </thead>
                                     <tbody>
                                     <?php $i = 1; ?>
-                                    <?php foreach ($user->getTempInviteDetails() as $tempInviteDetail): ?>
+                                    <?php foreach ($form->getTemporaryInvitations() as $tempInviteDetail): ?>
                                         <?php $left = $tempInviteDetail['total'] - $tempInviteDetail['used']; ?>
                                         <tr <?= strtotime($tempInviteDetail['expire_at']) - time() < 86400 ? ' class="warning"' : ''; ?>>
                                             <td><?= $i ?></td>
@@ -156,7 +164,7 @@ use App\Enums\User\Status as UserStatus;
                             </div>
                         </div>
                     <?php endif; ?>
-                    <?php if ($user->getInvites() > 0): ?>
+                    <?php if ($form->getUser()->getInvites() > 0): ?>
                         <button class="btn btn-primary invite-btn" type="button" data-type="permanent">Use Permanent Invite!</button>
                     <?php endif; ?>
                 </div>
@@ -192,7 +200,7 @@ use App\Enums\User\Status as UserStatus;
                                 <span class="input-group-addon"><span class="fas fa-envelope fa-fw"></span></span>
                                 <input type="email" class="form-control" id="email" name="email" required>
                             </div>
-                            <div class="help-block">We only allow those Email: <code><?= config('register.email_white_list') ?></code></div>
+                            <div class="help-block">We only allow those Email: <code><?= implode(',', config('register.email_white_list')) ?></code></div>
                         </div>
                     </div>
                     <div class="form-group">

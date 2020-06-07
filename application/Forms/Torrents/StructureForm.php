@@ -32,7 +32,7 @@ class StructureForm extends AbstractValidator
         return ['isExistTorrent'];
     }
 
-    public function flush()
+    public function flush(): void
     {
     }
 

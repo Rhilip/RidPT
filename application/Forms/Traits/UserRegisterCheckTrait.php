@@ -18,6 +18,7 @@ use App\Libraries\Constant;
  */
 trait UserRegisterCheckTrait
 {
+    abstract protected function getRegisterType();
 
     /** @noinspection PhpUnused */
     protected function isRegisterSystemOpen()
@@ -27,7 +28,8 @@ trait UserRegisterCheckTrait
             return;
         }
 
-        if (config('register.by_' . $this->getInput('type')) != true) {
+        $register_type = $this->getRegisterType();
+        if (config('register.by_' . $register_type) != true) {
             $this->buildCallbackFailMsg('RegisterSystemOpen', "The register by {$this->getInput('type')} ways isn't open in this site.");
             return;
         }

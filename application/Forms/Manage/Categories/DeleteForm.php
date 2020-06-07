@@ -29,7 +29,7 @@ class DeleteForm extends AbstractValidator
         return ['isExistCategoryId'];
     }
 
-    public function flush()
+    public function flush(): void
     {
         // Move Category's torrent from this to it's parent
         container()->get('pdo')->prepare('UPDATE `torrents` SET `category` = :new WHERE `category` = :old ')->bindParams([
