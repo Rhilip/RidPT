@@ -56,7 +56,7 @@ class BasePDOConnection
     public function disconnect()
     {
         $this->_pdoStatement = null;
-        $this->_pdo          = null;
+        $this->_pdo = null;
     }
 
     // 查询构建
@@ -76,7 +76,7 @@ class BasePDOConnection
     public function prepare($sql = null)
     {
         // 清扫数据
-        $this->_sql    = '';
+        $this->_sql = '';
         $this->_params = [];
         $this->_values = [];
         // 字符串构建
@@ -132,7 +132,7 @@ class BasePDOConnection
     protected function clearPrepare()
     {
         $this->emitter->emit('database.commit', $this->getRawSql());
-        $this->_sql    = '';
+        $this->_sql = '';
         $this->_params = [];
         $this->_values = [];
     }
@@ -154,21 +154,21 @@ class BasePDOConnection
         if (!empty($this->_params)) {
             // 有参数
             list($sql, $params) = self::bindArrayParams($this->_sql, $this->_params);
-            $this->_pdoStatement   = $this->_pdo->prepare($sql);
+            $this->_pdoStatement = $this->_pdo->prepare($sql);
             $this->_sqlPrepareData = [$sql, $params, []]; // 必须在 bindParam 前，才能避免类型被转换
             foreach ($params as $key => &$value) {
                 $this->_pdoStatement->bindParam($key, $value);
             }
         } elseif (!empty($this->_values)) {
             // 批量插入
-            $this->_pdoStatement   = $this->_pdo->prepare($this->_sql);
+            $this->_pdoStatement = $this->_pdo->prepare($this->_sql);
             $this->_sqlPrepareData = [$this->_sql, [], $this->_values];
             foreach ($this->_values as $key => $value) {
                 $this->_pdoStatement->bindValue($key + 1, $value);
             }
         } else {
             // 无参数
-            $this->_pdoStatement   = $this->_pdo->prepare($this->_sql);
+            $this->_pdoStatement = $this->_pdo->prepare($this->_sql);
             $this->_sqlPrepareData = [$this->_sql];
         }
     }
@@ -179,36 +179,28 @@ class BasePDOConnection
      */
     public function query()
     {
-        $this->build();
-        $this->_pdoStatement->execute();
-        $this->clearPrepare();
+        $this->execute();
         return $this->_pdoStatement;
     }
 
     // 返回一行
     public function queryOne()
     {
-        $this->build();
-        $this->_pdoStatement->execute();
-        $this->clearPrepare();
+        $this->execute();
         return $this->_pdoStatement->fetch($this->options[\PDO::ATTR_DEFAULT_FETCH_MODE]);
     }
 
     // 返回多行
     public function queryAll()
     {
-        $this->build();
-        $this->_pdoStatement->execute();
-        $this->clearPrepare();
+        $this->execute();
         return $this->_pdoStatement->fetchAll();
     }
 
     // 返回一列 (第一列)
     public function queryColumn($columnNumber = 0)
     {
-        $this->build();
-        $this->_pdoStatement->execute();
-        $this->clearPrepare();
+        $this->execute();
         $column = [];
         while ($row = $this->_pdoStatement->fetchColumn($columnNumber)) {
             $column[] = $row;
@@ -219,9 +211,7 @@ class BasePDOConnection
     // 返回一个标量值
     public function queryScalar()
     {
-        $this->build();
-        $this->_pdoStatement->execute();
-        $this->clearPrepare();
+        $this->execute();
         return $this->_pdoStatement->fetchColumn();
     }
 
@@ -249,11 +239,11 @@ class BasePDOConnection
     // 插入
     public function insert($table, $data)
     {
-        $keys   = array_keys($data);
+        $keys = array_keys($data);
         $fields = array_map(function ($key) {
             return ":{$key}";
         }, $keys);
-        $sql    = "INSERT INTO `{$table}` (`" . implode('`, `', $keys) . "`) VALUES (" . implode(', ', $fields) . ")";
+        $sql = "INSERT INTO `{$table}` (`" . implode('`, `', $keys) . "`) VALUES (" . implode(', ', $fields) . ")";
         $this->prepare($sql);
         $this->bindParams($data);
         return $this;
@@ -262,13 +252,13 @@ class BasePDOConnection
     // 批量插入
     public function batchInsert($table, $data)
     {
-        $keys   = array_keys($data[0]);
-        $sql    = "INSERT INTO `{$table}` (`" . implode('`, `', $keys) . "`) VALUES ";
+        $keys = array_keys($data[0]);
+        $sql = "INSERT INTO `{$table}` (`" . implode('`, `', $keys) . "`) VALUES ";
         $fields = [];
         for ($i = 0; $i < count($keys); $i++) {
             $fields[] = '?';
         }
-        $values    = [];
+        $values = [];
         $valuesSql = [];
         foreach ($data as $item) {
             foreach ($item as $value) {
@@ -289,16 +279,16 @@ class BasePDOConnection
         foreach ($data as $key => $item) {
             if (is_array($item)) {
                 list($operator, $value) = $item;
-                $setSql[]   = "`{$key}` =  `{$key}` {$operator} :{$key}";
+                $setSql[] = "`{$key}` =  `{$key}` {$operator} :{$key}";
                 $data[$key] = $value;
                 continue;
             }
             $setSql[] = "`{$key}` = :{$key}";
         }
-        $whereSql    = [];
+        $whereSql = [];
         $whereParams = [];
         foreach ($where as $key => $value) {
-            $whereSql[$key]                   = "`{$value[0]}` {$value[1]} :where_{$value[0]}";
+            $whereSql[$key] = "`{$value[0]}` {$value[1]} :where_{$value[0]}";
             $whereParams["where_{$value[0]}"] = $value[2];
         }
         $sql = "UPDATE `{$table}` SET " . implode(', ', $setSql) . " WHERE " . implode(' AND ', $whereSql);
@@ -313,7 +303,7 @@ class BasePDOConnection
     {
         $whereParams = [];
         foreach ($where as $key => $value) {
-            $where[$key]                = "`{$value[0]}` {$value[1]} :{$value[0]}";
+            $where[$key] = "`{$value[0]}` {$value[1]} :{$value[0]}";
             $whereParams["{$value[0]}"] = $value[2];
         }
         $sql = "DELETE FROM `{$table}` WHERE " . implode(' AND ', $where);

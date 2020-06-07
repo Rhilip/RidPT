@@ -74,7 +74,7 @@ class PDOConnection extends BasePDOConnection
     {
         try {
             // 执行父类方法
-            return parent::$name($arguments);
+            return parent::$name(...$arguments);
         } catch (\Throwable $e) {
             if (self::isDisconnectException($e)) {
                 // 断开连接异常处理
