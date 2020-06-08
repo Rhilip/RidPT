@@ -92,10 +92,7 @@ $extend_debug_info = container()->get('auth')->getCurUser()  // Not Anonymous
                 $debug_pdo = context()->get('record.pdo') ?? [];
                 $debug_redis = context()->get('record.redis') ?? [];
                 ?>
-                [ Page created in <b><?= number_format(microtime(true) - container()->get('request')->server->get('REQUEST_TIME_FLOAT'), 6) ?></b> sec
-                with <b><?= $this->e(memory_get_usage(), 'format_bytes') ?></b> ram used,
-                <b><?= count($debug_pdo) ?></b> db queries,
-                <b><?= count($debug_redis) ?></b> calls of Redis ]
+                [ Page created in <b><?= number_format(microtime(true) - container()->get('request')->server->get('REQUEST_TIME_FLOAT'), 6) ?></b> sec with <b><?= $this->e(memory_get_usage(), 'format_bytes') ?></b> ram used, <b><?= count($debug_pdo) ?></b> db queries, <b><?= count($debug_redis) ?></b> calls of Redis ]
                 <?php if ($extend_debug_info): ?>
                     <a href="javascript:" id="extend_debug_info"><span class="label label-warning label-outline">Debug info</span></a>
                     <script>

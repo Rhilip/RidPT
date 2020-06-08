@@ -54,18 +54,18 @@ class InviteForm extends AbstractValidator
     {
         $is_temporarily_invite = $this->getInput('invite_type') == InviteType::TEMPORARILY;
 
-        container()->get('pdo')->beginTransaction();
+        container()->get('dbal')->beginTransaction();
         try {
             // Consume the invite number
             if ($is_temporarily_invite) {
-                container()->get('pdo')->prepare('UPDATE `user_invitations` SET `used` = `used` + 1 WHERE `id` = :id')->bindParams([
+                container()->get('dbal')->prepare('UPDATE `user_invitations` SET `used` = `used` + 1 WHERE `id` = :id')->bindParams([
                     'id' => $this->getInput('temp_id')
                 ])->execute();
-                container()->get('pdo')->prepare('UPDATE `users` SET temp_invites = temp_invites - 1 WHERE id = :id')->bindParams([
+                container()->get('dbal')->prepare('UPDATE `users` SET temp_invites = temp_invites - 1 WHERE id = :id')->bindParams([
                     'id' => container()->get('auth')->getCurUser()->getId()
                 ])->execute();
             } else {  // Consume user privilege invite
-                container()->get('pdo')->prepare('UPDATE `users` SET `invites` = `invites` - 1 WHERE `id` = :uid')->bindParams([
+                container()->get('dbal')->prepare('UPDATE `users` SET `invites` = `invites` - 1 WHERE `id` = :uid')->bindParams([
                     'uid' => container()->get('auth')->getCurUser()->getId()
                 ])->execute();
             }
@@ -73,7 +73,7 @@ class InviteForm extends AbstractValidator
             $invite_hash = $this->insertInviteRecord();
             container()->get('redis')->del('User:' . container()->get('auth')->getCurUser()->getId() . ':base_content');  // flush it's cache
 
-            container()->get('pdo')->commit();
+            container()->get('dbal')->commit();
 
             $invite_link = container()->get('request')->getSchemeAndHttpHost() . '/auth/register?' . http_build_query([
                     'type' => 'invite',
@@ -90,7 +90,7 @@ class InviteForm extends AbstractValidator
             );
         } catch (\Exception $e) {
             //$invite_status = $e->getMessage();
-            container()->get('pdo')->rollback();
+            container()->get('dbal')->rollback();
         }
     }
 
@@ -99,13 +99,13 @@ class InviteForm extends AbstractValidator
         do { // To make sure this hash is unique !
             $invite_hash = Random::alnum(32);
 
-            $count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `invite` WHERE `hash` = :hash')->bindParams([
+            $count = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `invite` WHERE `hash` = :hash')->bindParams([
                 'hash' => $invite_hash
-            ])->queryScalar();
+            ])->fetchScalar();
         } while ($count != 0);
 
 
-        container()->get('pdo')->prepare('INSERT INTO `invite` (`inviter_id`,`username`,`invite_type`, `hash`, `create_at`, `expire_at`) VALUES (:inviter_id,:username,:invite_type,:hash,NOW(),DATE_ADD(NOW(),INTERVAL :timeout SECOND))')->bindParams([
+        container()->get('dbal')->prepare('INSERT INTO `invite` (`inviter_id`, `username`, `invite_type`, `hash`, `create_at`, `expire_at`) VALUES (:inviter_id,:username,:invite_type,:hash,NOW(),DATE_ADD(NOW(),INTERVAL :timeout SECOND))')->bindParams([
             'inviter_id' => container()->get('auth')->getCurUser()->getId(), 'username' => $this->getInput('username'), 'invite_type' => $this->getInput('invite_type'),
             'hash' => $invite_hash, 'timeout' => config('invite.timeout')
         ])->execute();

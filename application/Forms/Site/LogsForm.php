@@ -53,21 +53,21 @@ class LogsForm extends AbstractValidator
             $where_pdo[] = ['AND `msg` LIKE :search ', 'if' => strlen($search), 'params' => ['search' => "%$search%"]];
         }
 
-        $count = container()->get('pdo')->prepare([
+        $count = container()->get('dbal')->prepare([
             ['SELECT COUNT(*) FROM `site_log` WHERE 1=1 '],
             ...$where_pdo
-        ])->queryScalar();
+        ])->fetchScalar();
         $this->setPaginationTotal($count);
 
         $this->setPaginationLimit($this->getInput('limit'));
         $this->setPaginationPage($this->getInput('page'));
 
-        $data = container()->get('pdo')->prepare([
+        $data = container()->get('dbal')->prepare([
             ['SELECT * FROM `site_log` WHERE 1=1 '],
             ...$where_pdo,
             ['ORDER BY create_at DESC '],
             ['LIMIT :offset, :rows', 'params' => ['offset' => $this->getPaginationOffset(), 'rows' => $this->getPaginationLimit()]],
-        ])->queryAll();
+        ])->fetchAll();
         $this->setPaginationData($data);
     }
 

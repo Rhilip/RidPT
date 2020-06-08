@@ -38,29 +38,29 @@ class IndexForm extends AbstractValidator
     public function flush(): void
     {
         // Get Invitees Information
-        $invitees = container()->get('pdo')->prepare('SELECT id FROM `users` WHERE invite_by = :id')->bindParams([
+        $invitees = container()->get('dbal')->prepare('SELECT id FROM `users` WHERE invite_by = :id')->bindParams([
             'id' => $this->getUserId()
-        ])->queryColumn();
+        ])->fetchColumn();
         foreach ($invitees as $invitee) {
             $this->invitees[] = container()->get(UserFactory::class)->getUserById($invitee);
         }
 
         // Get Pending Information
-        $this->pending_invites = container()->get('pdo')->prepare('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
+        $this->pending_invites = container()->get('dbal')->prepare('SELECT * FROM `invite` WHERE inviter_id = :uid AND expire_at > NOW() AND used = 0')->bindParams([
             'uid' => $this->getUserId()
-        ])->queryAll();
+        ])->fetchAll();
 
         // Get Temporary Invitations Information
-        $this->temporary_invitations = container()->get('pdo')->prepare('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
+        $this->temporary_invitations = container()->get('dbal')->prepare('SELECT * FROM `user_invitations` WHERE `user_id` = :uid AND (`total`-`used`) > 0 AND `expire_at` > NOW() ORDER BY `expire_at` ASC')->bindParams([
             "uid" => $this->getUserId()
-        ])->queryAll() ?: [];
+        ])->fetchAll() ?: [];
 
         $temp_invitations_count = array_sum(array_map(function ($d) {
             return $d['total'] - $d['used'];
         }, $this->temporary_invitations));
 
         if ($temp_invitations_count != $this->getUser()->getTempInvites()) {
-            container()->get('pdo')->prepare('UPDATE `users` SET temp_invites = :temp_invites WHERE id = :id')->bindParams([
+            container()->get('dbal')->prepare('UPDATE `users` SET temp_invites = :temp_invites WHERE id = :id')->bindParams([
                 'id' => $this->getUserId(), 'temp_invites' => $temp_invitations_count
             ])->execute();
         }

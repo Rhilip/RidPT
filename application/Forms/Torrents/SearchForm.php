@@ -150,10 +150,10 @@ class SearchForm extends AbstractValidator
         }
 
 
-        $count = container()->get('pdo')->prepare([
+        $count = container()->get('dbal')->prepare([
             ['SELECT COUNT(`id`) FROM `torrents` WHERE 1=1 '],
             ...$fields
-        ])->queryScalar();
+        ])->fetchScalar();
         $this->setPaginationTotal($count);
 
         $this->setPaginationLimit($this->getInput('limit'));

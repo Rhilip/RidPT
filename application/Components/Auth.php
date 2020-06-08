@@ -144,12 +144,12 @@ class Auth
             $check = container()->get('redis')->pfAdd('Site:hyperloglog:access_log_' . $grain_size, [$identify_key]);
             if ($check == 1) {
                 // Update Table `users`
-                container()->get('pdo')->prepare('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
+                container()->get('dbal')->prepare('UPDATE `users` SET last_access_at = NOW(), last_access_ip = INET6_ATON(:ip) WHERE id = :id;')->bindParams([
                     'ip' => $now_ip, 'id' => $uid
                 ])->execute();
 
                 // Insert Table `session_log`
-                container()->get('pdo')->prepare('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
+                container()->get('dbal')->prepare('INSERT INTO `session_log` (`sid`, `access_at`, `access_ip`, `user_agent`) VALUES ((SELECT `id` FROM `sessions` WHERE `session` = :jit), NOW(), INET6_ATON(:access_ip), :ua)')->bindParams([
                     'jit' => $this->getCurUserJIT(), 'access_ip' => $now_ip, 'ua' => $ua
                 ])->execute();
             }

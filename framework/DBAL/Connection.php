@@ -1,13 +1,11 @@
 <?php
 
-namespace Rid\Database\Persistent;
-
-use Rid\Database\BasePDOConnection;
+namespace Rid\DBAL;
 
 /**
- * PdoPersistent组件
+ * Persistent PDO Connection
  */
-class PDOConnection extends BasePDOConnection
+class Connection extends AbstractConnection
 {
 
     // 重新连接
@@ -21,31 +19,31 @@ class PDOConnection extends BasePDOConnection
      * 返回结果集
      * @return \PDOStatement
      */
-    public function query()
+    public function fetch()
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
     // 返回一行
-    public function queryOne()
+    public function fetchOne()
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
     // 返回多行
-    public function queryAll()
+    public function fetchAll()
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
     // 返回一列 (第一列)
-    public function queryColumn($columnNumber = 0)
+    public function fetchColumn($columnNumber = 0)
     {
         return $this->call(__FUNCTION__, func_get_args());
     }
 
     // 返回一个标量值
-    public function queryScalar()
+    public function fetchScalar()
     {
         return $this->call(__FUNCTION__, func_get_args());
     }

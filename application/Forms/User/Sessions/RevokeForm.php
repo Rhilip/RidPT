@@ -32,7 +32,7 @@ class RevokeForm extends AbstractValidator
 
     public function flush(): void
     {
-        container()->get('pdo')->prepare('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([
+        container()->get('dbal')->prepare('UPDATE `sessions` SET `expired` = 1 WHERE `uid` = :uid AND `session` = :sid')->bindParams([
             'uid' => $this->getUserId(), 'sid' => $this->getInput('id')
         ])->execute();
         container()->get('redis')->zRem(container()->get('auth')->getCurUser()->sessionSaveKey, $this->getInput('id'));

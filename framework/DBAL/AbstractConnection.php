@@ -1,13 +1,13 @@
-<?php /** @noinspection PhpFullyQualifiedNameUsageInspection */
+<?php
 
-namespace Rid\Database;
+namespace Rid\DBAL;
 
 use League\Event\Emitter;
 
 /**
  * BasePdo组件
  */
-class BasePDOConnection
+class AbstractConnection
 {
     protected string $dsn = '';  // 数据源格式
     protected string $username = 'root';  // 数据库用户名
@@ -76,21 +76,16 @@ class BasePDOConnection
     public function prepare($sql = null)
     {
         // 清扫数据
-        $this->_sql = '';
-        $this->_params = [];
-        $this->_values = [];
-        // 字符串构建
-        if (is_string($sql)) {
+        $this->clearPrepare();
+
+        if (is_string($sql)) {  // 字符串构建
             $this->_sql = $sql;
-        }
-        // 数组构建
-        if (is_array($sql)) {
+        } elseif (is_array($sql)) {  // 数组构建
             foreach ($sql as $item) {
                 $this->queryBuilder($item);
             }
             $this->_sql = implode(' ', $this->_sqlFragments);
-        }
-        if (is_null($sql)) {
+        } elseif (is_null($sql)) {
             $this->_sql = implode(' ', $this->_sqlFragments);
         }
         // 清扫数据
@@ -131,7 +126,6 @@ class BasePDOConnection
     // 清扫预处理数据
     protected function clearPrepare()
     {
-        $this->emitter->emit('database.commit', $this->getRawSql());
         $this->_sql = '';
         $this->_params = [];
         $this->_values = [];
@@ -152,6 +146,15 @@ class BasePDOConnection
         $this->autoConnect();
         // 准备与参数绑定
         if (!empty($this->_params)) {
+            // 替换原始SQL语句/方法
+            foreach ($this->_params as $key => $item) {
+                if ($item instanceof Raw) {
+                    unset($this->_params[$key]);
+                    $key = substr($key, 0, 1) == ':' ? $key : ":{$key}";
+                    $this->_sql = str_replace($key, $item->getValue(), $this->_sql);
+                }
+            }
+
             // 有参数
             list($sql, $params) = self::bindArrayParams($this->_sql, $this->_params);
             $this->_pdoStatement = $this->_pdo->prepare($sql);
@@ -173,32 +176,42 @@ class BasePDOConnection
         }
     }
 
+    // 执行SQL语句
+    public function execute()
+    {
+        $this->build();
+        $success = $this->_pdoStatement->execute();
+        $this->emitter->emit('dbal.execute', $this->getRawSql());
+        $this->clearPrepare();
+        return $success;
+    }
+
     /**
      * 返回结果集
      * @return \PDOStatement
      */
-    public function query()
+    public function fetch()
     {
         $this->execute();
         return $this->_pdoStatement;
     }
 
     // 返回一行
-    public function queryOne()
+    public function fetchOne()
     {
         $this->execute();
         return $this->_pdoStatement->fetch($this->options[\PDO::ATTR_DEFAULT_FETCH_MODE]);
     }
 
     // 返回多行
-    public function queryAll()
+    public function fetchAll()
     {
         $this->execute();
         return $this->_pdoStatement->fetchAll();
     }
 
     // 返回一列 (第一列)
-    public function queryColumn($columnNumber = 0)
+    public function fetchColumn($columnNumber = 0)
     {
         $this->execute();
         $column = [];
@@ -209,19 +222,10 @@ class BasePDOConnection
     }
 
     // 返回一个标量值
-    public function queryScalar()
+    public function fetchScalar()
     {
         $this->execute();
         return $this->_pdoStatement->fetchColumn();
-    }
-
-    // 执行SQL语句
-    public function execute()
-    {
-        $this->build();
-        $success = $this->_pdoStatement->execute();
-        $this->clearPrepare();
-        return $success;
     }
 
     // 返回最后插入行的ID或序列值

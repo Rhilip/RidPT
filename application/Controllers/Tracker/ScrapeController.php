@@ -13,10 +13,8 @@ namespace App\Controllers\Tracker;
 use App\Exceptions\TrackerException;
 use App\Libraries\Constant;
 
-use Rid\Database\Persistent\PDOConnection;
-use Rid\Http\Message\Request;
-use Rid\Redis\BaseRedisConnection;
 use Rid\Utils\Arr;
+use Rid\Http\Message\Request;
 
 use Rhilip\Bencode\Bencode;
 
@@ -27,14 +25,6 @@ use Rhilip\Bencode\Bencode;
  */
 class ScrapeController
 {
-    protected PDOConnection $pdo;
-    protected BaseRedisConnection $redis;
-
-    public function __construct(PDOConnection $pdo, BaseRedisConnection $redis)
-    {
-        $this->pdo = $pdo;
-        $this->redis = $redis;
-    }
 
     public function index(Request $request)
     {
@@ -181,14 +171,14 @@ class ScrapeController
         $client_identity = $userAgent . ($onlyCheckUA ? '' : ':' . $peer_id);
 
         // if this user-agent and peer_id already checked valid or not ?
-        if ($this->redis->zScore(Constant::trackerValidClientZset, $client_identity) > 0) {
+        if (container()->get('redis')->zScore(Constant::trackerValidClientZset, $client_identity) > 0) {
             return;
         }
 
         // Get Client White List From Database and cache it
-        if (false === $allowedFamily = $this->redis->get(Constant::trackerAllowedClientList)) {
-            $allowedFamily = $this->pdo->prepare("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->queryAll();
-            $this->redis->set(Constant::trackerAllowedClientList, $allowedFamily, 86400);
+        if (false === $allowedFamily = container()->get('redis')->get(Constant::trackerAllowedClientList)) {
+            $allowedFamily = container()->get('dbal')->prepare("SELECT * FROM `agent_allowed_family` WHERE `enabled` = 'yes' ORDER BY `hits` DESC")->fetchAll();
+            container()->get('redis')->set(Constant::trackerAllowedClientList, $allowedFamily, 86400);
         }
 
         $agentAccepted = null;
@@ -295,16 +285,16 @@ class ScrapeController
             if (!$agentAccepted) {
                 throw new TrackerException(126, [':ua' => $userAgent]);
             }
-            $this->redis->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
+            container()->get('redis')->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
             return;
         }
 
         if ($agentAccepted && $peerIdAccepted) {
             if ($acceptedAgentFamilyException) {
                 // Get Client Exception List From Database and cache it since we need to check it
-                if (false === $allowedFamilyException = $this->redis->get(Constant::trackerAllowedClientExceptionList)) {
-                    $allowedFamilyException = $this->pdo->prepare('SELECT * FROM `agent_allowed_exception`')->queryAll();
-                    $this->redis->set(Constant::trackerAllowedClientExceptionList, $allowedFamilyException, 86400);
+                if (false === $allowedFamilyException = container()->get('redis')->get(Constant::trackerAllowedClientExceptionList)) {
+                    $allowedFamilyException = container()->get('dbal')->prepare('SELECT * FROM `agent_allowed_exception`')->fetchAll();
+                    container()->get('redis')->set(Constant::trackerAllowedClientExceptionList, $allowedFamilyException, 86400);
                 }
 
                 foreach ($allowedFamilyException as $exceptionItem) {
@@ -316,8 +306,8 @@ class ScrapeController
                         throw new TrackerException(127, [':ua' => $userAgent, ':comment' => $exceptionItem['comment']]);
                     }
                 }
-                $this->redis->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
-                // $this->redis->rawCommand('bf.add', [Constant::trackerValidClientZset, $client_identity]);
+                container()->get('redis')->zAdd(Constant::trackerValidClientZset, time() + rand(7200, 18000), $client_identity);
+                // container()->get('redis')->rawCommand('bf.add', [Constant::trackerValidClientZset, $client_identity]);
             }
         } else {
             throw new TrackerException(126, [':ua' => $userAgent]);
@@ -345,12 +335,12 @@ class ScrapeController
         }
 
         // Get userInfo from RedisConnection Cache and then Database
-        if (false === $userInfo = $this->redis->get(Constant::userBaseContentByPasskey($passkey))) {
-            $userInfo = $this->pdo->prepare('SELECT `id`, `status`, `passkey`, `downloadpos`, `class`, `uploaded`, `downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1')
-                ->bindParams(['passkey' => $passkey])->queryOne() ?: [];
+        if (false === $userInfo = container()->get('redis')->get(Constant::userBaseContentByPasskey($passkey))) {
+            $userInfo = container()->get('dbal')->prepare('SELECT `id`, `status`, `passkey`, `downloadpos`, `class`, `uploaded`, `downloaded` FROM `users` WHERE `passkey` = :passkey LIMIT 1')
+                ->bindParams(['passkey' => $passkey])->fetchOne() ?: [];
 
             // Notice: We log empty array in Redis Cache if userInfo not find in our Database
-            $this->redis->set(Constant::userBaseContentByPasskey($passkey), $userInfo, 3600 + rand(0, 300));
+            container()->get('redis')->set(Constant::userBaseContentByPasskey($passkey), $userInfo, 3600 + rand(0, 300));
         }
 
         /**
@@ -383,15 +373,15 @@ class ScrapeController
         $bin2hex_hash = bin2hex($hash);
 
         // If Cache is not exist , We will get User info from Database
-        if (false === $torrentInfo = $this->redis->get(Constant::trackerTorrentContentByInfoHash($bin2hex_hash))) {
-            $torrentInfo = $this->pdo->prepare('SELECT `id`, `info_hash`, `owner_id`, `status`, `incomplete`, `complete`, `downloaded`, `added_at` FROM `torrents` WHERE `info_hash` = :info LIMIT 1')
-                ->bindParams(['info' => $hash])->queryOne();
+        if (false === $torrentInfo = container()->get('redis')->get(Constant::trackerTorrentContentByInfoHash($bin2hex_hash))) {
+            $torrentInfo = container()->get('dbal')->prepare('SELECT `id`, `info_hash`, `owner_id`, `status`, `incomplete`, `complete`, `downloaded`, `added_at` FROM `torrents` WHERE `info_hash` = :info LIMIT 1')
+                ->bindParams(['info' => $hash])->fetchOne();
             if ($torrentInfo === false || $torrentInfo['status'] == 'deleted') {  // No-exist or deleted torrent
                 $torrentInfo = [];
             }
 
             // Notice: We log empty array in Redis Cache if torrentInfo not find in our Database or in deleted status
-            $this->redis->set(Constant::trackerTorrentContentByInfoHash($bin2hex_hash), $torrentInfo, 600 + rand(0, 50));
+            container()->get('redis')->set(Constant::trackerTorrentContentByInfoHash($bin2hex_hash), $torrentInfo, 600 + rand(0, 50));
         }
 
         // Return false when this info_hash is invalid (Not exist in our database or this status is 'deleted'

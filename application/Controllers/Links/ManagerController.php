@@ -17,7 +17,7 @@ class ManagerController extends AbstractController
 {
     public function index()
     {
-        $all_links = container()->get('pdo')->prepare("SELECT * FROM `links`")->queryAll();
+        $all_links = container()->get('dbal')->prepare("SELECT * FROM `links`")->fetchAll();
         return $this->render('links/manage', ['links' => $all_links]);
     }
 

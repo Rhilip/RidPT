@@ -16,14 +16,14 @@ class Site
 {
     public function writeLog($msg, $level = LogLevel::NORMAL)
     {
-        container()->get('pdo')->prepare('INSERT INTO `site_log`(`create_at`,`msg`, `level`) VALUES (CURRENT_TIMESTAMP, :msg, :level)')->bindParams([
+        container()->get('dbal')->prepare('INSERT INTO `site_log`(`create_at`, `msg`, `level`) VALUES (CURRENT_TIMESTAMP, :msg, :level)')->bindParams([
             'msg' => $msg, 'level' => $level
         ])->execute();
     }
 
     public function sendPM($sender, $receiver, $subject, $msg, $save = 'no', $location = 1)
     {
-        container()->get('pdo')->prepare('INSERT INTO `messages` (`sender`,`receiver`,`add_at`, `subject`, `msg`, `saved`, `location`) VALUES (:sender,:receiver,CURRENT_TIMESTAMP,:subject,:msg,:save,:location)')->bindParams([
+        container()->get('dbal')->prepare('INSERT INTO `messages` (`sender`, `receiver`, `add_at`, `subject`, `msg`, `saved`, `location`) VALUES (:sender,:receiver,CURRENT_TIMESTAMP,:subject,:msg,:save,:location)')->bindParams([
             'sender' => $sender, 'receiver' => $receiver,
             'subject' => $subject, 'msg' => $msg,
             'save' => $save, 'location' => $location
@@ -46,7 +46,7 @@ class Site
         if ($point > 0 && in_array($operators, ['+', '-']) /* Limit operator */) {
             $col = ($type == 'seeding') ? 'bonus_seeding' : 'bonus_other';
 
-            container()->get('pdo')->prepare("UPDATE users SET $col = $col $operators :bonus WHERE id = :uid")->bindParams([
+            container()->get('dbal')->prepare("UPDATE users SET $col = $col $operators :bonus WHERE id = :uid")->bindParams([
                 'bonus' => $point, 'uid' => $user_id
             ])->execute();
         }
@@ -66,7 +66,7 @@ class Site
     {
         if (false === $cats = config('runtime.enabled_torrent_category')) {
             $cats = [];
-            $cats_raw = container()->get('pdo')->prepare('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `sort_index`')->queryAll();
+            $cats_raw = container()->get('dbal')->prepare('SELECT * FROM `categories` WHERE `id` > 0 ORDER BY `sort_index`')->fetchAll();
 
             foreach ($cats_raw as $cat_raw) {
                 $cats[$cat_raw['id']] = $cat_raw;
@@ -98,7 +98,7 @@ class Site
             $data = [];
 
             /** @noinspection SqlResolve */
-            $data_raws = container()->get('pdo')->prepare("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`")->queryAll();
+            $data_raws = container()->get('dbal')->prepare("SELECT * FROM `quality_$quality` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`, `id`")->fetchAll();
             foreach ($data_raws as $data_raw) {
                 $data[$data_raw['id']] = $data_raw;
             }
@@ -111,7 +111,7 @@ class Site
     {
         if (false === $data = config('runtime.enabled_teams')) {
             $data = [];
-            $data_raws = container()->get('pdo')->prepare('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`,`id`')->queryAll();
+            $data_raws = container()->get('dbal')->prepare('SELECT * FROM `teams` WHERE `id` > 0 AND `enabled` = 1 ORDER BY `sort_index`, `id`')->fetchAll();
             foreach ($data_raws as $data_raw) {
                 $data[$data_raw['id']] = $data_raw;
             }
@@ -127,7 +127,7 @@ class Site
     public function rulePinnedTags(): array
     {
         if (false === $data = config('runtime.pinned_tags')) {
-            $raw = container()->get('pdo')->prepare('SELECT `tag`, `class_name` FROM `tags` WHERE `pinned` = 1;')->queryAll();
+            $raw = container()->get('dbal')->prepare('SELECT `tag`, `class_name` FROM `tags` WHERE `pinned` = 1;')->fetchAll();
             $data = array_column($raw, 'class_name', 'tag');
             container()->get('config')->set('runtime.pinned_tags', $data, 'json');
         }
@@ -138,7 +138,7 @@ class Site
     public function getBanIpsList(): array
     {
         if (false === $ban_ips = config('runtime.ban_ips_list')) {
-            $ban_ips = container()->get('pdo')->prepare('SELECT `ip` FROM `ban_ips`')->queryColumn() ?: [];
+            $ban_ips = container()->get('dbal')->prepare('SELECT `ip` FROM `ban_ips`')->fetchColumn() ?: [];
             container()->get('config')->set('runtime.ban_ips_list', $ban_ips, 'json');
         }
 
@@ -162,7 +162,7 @@ class Site
         if ($persistence === true) {  // Save it in table `ban_ips`
             $add_by = container()->get('auth')->getCurUser() ? container()->get('auth')->getCurUser()->getId() : 0;  // 0 - system
             $commit = $commit ?? ($add_by == 0 ? 'Banned By System automatically' : '');
-            container()->get('pdo')->prepare('INSERT INTO `ban_ips`(`ip`, `add_by`, `add_at`, `commit`) VALUES (:ip, :add_by, NOW(), :commit)')->bindParams([
+            container()->get('dbal')->prepare('INSERT INTO `ban_ips`(`ip`, `add_by`, `add_at`, `commit`) VALUES (:ip, :add_by, NOW(), :commit)')->bindParams([
                 'ip' => $ip, 'add_by' => $add_by, 'commit' => $commit
             ])->execute();
         }
@@ -179,13 +179,13 @@ class Site
             container()->get('config')->set('runtime.ban_ips_list', $banips, 'json');
 
             if ($persistence === true) {  // delete it from table `ban_ips`
-                container()->get('pdo')->prepare('DELETE FROM `ban_ips` WHERE `ip` = :ip')->bindParams(['ip' => $ip])->execute();
+                container()->get('dbal')->prepare('DELETE FROM `ban_ips` WHERE `ip` = :ip')->bindParams(['ip' => $ip])->execute();
             }
         }
     }
 
     public function fetchUserCount(): int
     {
-        return container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users`')->queryScalar();
+        return container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `users`')->fetchScalar();
     }
 }

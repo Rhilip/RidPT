@@ -10,7 +10,7 @@ class Application
     public array $config = [];
 
     protected Context $context;
-    protected ?Container $container;
+    protected Container $container;
 
     public function __construct(array $config)
     {
@@ -32,9 +32,9 @@ class Application
     }
 
     /**
-     * @return Container|null
+     * @return Container
      */
-    public function getContainer(): ?Container
+    public function getContainer(): Container
     {
         return $this->container;
     }

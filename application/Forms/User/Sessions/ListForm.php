@@ -55,21 +55,21 @@ class ListForm extends AbstractValidator
         ];
 
 
-        $total = container()->get('pdo')->prepare([
+        $total = container()->get('dbal')->prepare([
             ['SELECT COUNT(`id`) FROM sessions WHERE 1=1 '],
             ...$where_pdo
-        ])->queryScalar();
+        ])->fetchScalar();
         $this->setPaginationTotal($total);
 
         $this->setPaginationLimit($this->getInput('limit'));
         $this->setPaginationPage($this->getInput('page'));
 
-        $data = container()->get('pdo')->prepare([
+        $data = container()->get('dbal')->prepare([
             ['SELECT `id`, session, `login_at`, `login_ip`, `expired` FROM sessions WHERE 1=1 '],
             ...$where_pdo,
             ['ORDER BY `expired`, `id` DESC'],
             ['LIMIT :o, :l', 'params' => ['o' => $this->getPaginationOffset(), 'l' => $this->getPaginationLimit()]]
-        ])->queryAll();
+        ])->fetchAll();
         $this->setPaginationData($data);
     }
 

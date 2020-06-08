@@ -35,9 +35,9 @@ class UserFactory
     {
         // session is not see in Zset Cache (may lost or first time init), load from database ( Lazy load... )
         if (false === $uid = container()->get('redis')->zScore(self::mapUserSessionToId, $session)) {
-            $uid = container()->get('pdo')->prepare('SELECT `uid` FROM sessions WHERE session = :sid AND `expired` != 1 LIMIT 1')->bindParams([
+            $uid = container()->get('dbal')->prepare('SELECT `uid` FROM sessions WHERE session = :sid AND `expired` != 1 LIMIT 1')->bindParams([
                 'sid' => $session
-            ])->queryScalar() ?: 0;   // this session is not exist or marked as expired
+            ])->fetchScalar() ?: 0;   // this session is not exist or marked as expired
             container()->get('redis')->zAdd(self::mapUserSessionToId, $uid, $session);
         }
         return (int)$uid;
@@ -46,9 +46,9 @@ class UserFactory
     public function getUserIdByPasskey($passkey): int
     {
         if (false === $uid = container()->get('redis')->zScore(self::mapUserPasskeyToId, $passkey)) {
-            $uid = container()->get('pdo')->prepare('SELECT id FROM `users` WHERE `passkey` = :passkey')->bindParams([
+            $uid = container()->get('dbal')->prepare('SELECT id FROM `users` WHERE `passkey` = :passkey')->bindParams([
                 'passkey' => $passkey
-            ])->queryScalar() ?: 0;
+            ])->fetchScalar() ?: 0;
             container()->get('redis')->zAdd(self::mapUserPasskeyToId, $uid, $passkey);
         }
         return (int)$uid;
@@ -63,9 +63,9 @@ class UserFactory
     public function getUserByUsername($username)
     {
         if (false === $uid = container()->get('redis')->hGet(self::mapUsernameToId, $username)) {
-            $uid = container()->get('pdo')->prepare('SELECT id FROM `users` WHERE LOWER(`username`) = LOWER(:uname) LIMIT 1;')->bindParams([
+            $uid = container()->get('dbal')->prepare('SELECT id FROM `users` WHERE LOWER(`username`) = LOWER(:uname) LIMIT 1;')->bindParams([
                 'uname' => $username
-            ])->queryScalar() ?: 0;  // 0 means this username is not exist ???
+            ])->fetchScalar() ?: 0;  // 0 means this username is not exist ???
             container()->get('redis')->hSet(self::mapUsernameToId, $username, $uid);
         }
         return $this->getUserById($uid);

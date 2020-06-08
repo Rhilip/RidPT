@@ -32,12 +32,12 @@ class DeleteForm extends AbstractValidator
     public function flush(): void
     {
         // Move Category's torrent from this to it's parent
-        container()->get('pdo')->prepare('UPDATE `torrents` SET `category` = :new WHERE `category` = :old ')->bindParams([
+        container()->get('dbal')->prepare('UPDATE `torrents` SET `category` = :new WHERE `category` = :old ')->bindParams([
             'new' => $this->getInput('move_to'), 'old' => $this->getInput('id')
         ])->execute();
 
         // Delete it~
-        container()->get('pdo')->prepare('DELETE FROM `categories` WHERE id = :id')->bindParams([
+        container()->get('dbal')->prepare('DELETE FROM `categories` WHERE id = :id')->bindParams([
             'id' => $this->getInput('id')
         ])->execute();
 
@@ -48,9 +48,9 @@ class DeleteForm extends AbstractValidator
     protected function isExistCategoryId()
     {
         foreach (['id', 'move_to'] as $value) {
-            $exist = container()->get('pdo')->prepare('SELECT id FROM categories WHERE id = :id')->bindParams([
+            $exist = container()->get('dbal')->prepare('SELECT id FROM categories WHERE id = :id')->bindParams([
                 'id' => $this->getInput($value)
-            ])->queryScalar();
+            ])->fetchScalar();
             if ($exist === false) {
                 $this->buildCallbackFailMsg($value, 'The category is not exist');
             }

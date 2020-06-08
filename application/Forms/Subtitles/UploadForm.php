@@ -47,25 +47,25 @@ class UploadForm extends AbstractValidator
         $file = $this->getInput('file');
         $title = $this->getInput('title') ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
-        container()->get('pdo')->beginTransaction();
+        container()->get('dbal')->beginTransaction();
         try {
             $ext = $file->getClientOriginalExtension();
-            container()->get('pdo')->prepare('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`)
+            container()->get('dbal')->prepare('INSERT INTO `subtitles`(`torrent_id`, `hashs` ,`title`, `filename`, `added_at`, `size`, `uppd_by`, `anonymous`, `ext`)
 VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)')->bindParams([
                 'tid' => $this->getTorrentId(), 'hashs' => $this->hashs,
                 'title' => $title, 'filename' => $file->getClientOriginalName(),
                 'size' => $file->getSize(), 'upper' => container()->get('auth')->getCurUser()->getId(),
                 'anonymous' => $this->getInput('anonymous', 0), 'ext' => $ext
             ])->execute();
-            $id = container()->get('pdo')->getLastInsertId();
+            $id = container()->get('dbal')->getLastInsertId();
             $file_log = container()->get('path.storage.subs') . DIRECTORY_SEPARATOR . $id . '.' . $ext;
             $file->move($file_log);
-            container()->get('pdo')->commit();
+            container()->get('dbal')->commit();
         } catch (\Exception $e) {
             if (isset($file_loc)) {
                 unlink($file_loc);
             }
-            container()->get('pdo')->rollback();
+            container()->get('dbal')->rollback();
             throw $e;
         }
         container()->get('redis')->del(Constant::siteSubtitleSize);
@@ -78,9 +78,9 @@ VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)
         $file = $this->getInput('file');
         $this->hashs = $file_md5 = md5_file($file->getPathname());
 
-        $exist_id = container()->get('pdo')->prepare('SELECT id FROM `subtitles` WHERE `hashs` = :hashs LIMIT 1;')->bindParams([
+        $exist_id = container()->get('dbal')->prepare('SELECT id FROM `subtitles` WHERE `hashs` = :hashs LIMIT 1;')->bindParams([
             'hashs' => $file_md5
-        ])->queryOne();
+        ])->fetchOne();
 
         if ($exist_id !== false) {
             $this->buildCallbackFailMsg('file', 'This Subtitle has been upload before.');
@@ -90,6 +90,6 @@ VALUES (:tid, :hashs, :title, :filename, NOW(), :size, :upper, :anonymous, :ext)
 
     public function getTorrentId(): int
     {
-        return $this->getInput('tid');
+        return (int)$this->getInput('tid');
     }
 }

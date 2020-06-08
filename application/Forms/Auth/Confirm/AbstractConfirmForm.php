@@ -39,13 +39,13 @@ abstract class AbstractConfirmForm extends AbstractValidator
      */
     protected function validConfirmSecret()
     {
-        $record = container()->get('pdo')->prepare(
-            'SELECT `user_confirm`.`id`,`user_confirm`.`uid`,`users`.`status` as `user_status`,`users`.`username`,`users`.`email` FROM `user_confirm`
+        $record = container()->get('dbal')->prepare(
+            'SELECT `user_confirm`.`id`, `user_confirm`.`uid`, `users`.`status` as `user_status`, `users`.`username`, `users`.`email` FROM `user_confirm`
                   LEFT JOIN `users` ON `users`.`id` = `user_confirm`.`uid`
                   WHERE `secret` = :secret AND `action` = :action AND used = 0 LIMIT 1;'
         )->bindParams([
             'secret' => $this->getInput('secret'), 'action' => $this->action
-        ])->queryOne();
+        ])->fetchOne();
 
         if ($record == false) {  // It means this confirm key is not exist
             $this->buildCallbackFailMsg('confirm key', 'This confirm key is not exist');  // FIXME msg
@@ -57,7 +57,7 @@ abstract class AbstractConfirmForm extends AbstractValidator
 
     protected function update_confirm_status()
     {
-        container()->get('pdo')->prepare('UPDATE `user_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
+        container()->get('dbal')->prepare('UPDATE `user_confirm` SET `used` = 1 WHERE id = :id')->bindParams([
             'id' => $this->record['id']
         ])->execute();
     }

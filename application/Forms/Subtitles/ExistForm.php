@@ -21,9 +21,9 @@ abstract class ExistForm extends AbstractValidator
     /** @noinspection PhpUnused */
     protected function isValidSubtitle()
     {
-        $this->subtitle = container()->get('pdo')->prepare('SELECT * FROM `subtitles` WHERE id = :sid LIMIT 1;')->bindParams([
+        $this->subtitle = container()->get('dbal')->prepare('SELECT * FROM `subtitles` WHERE id = :sid LIMIT 1;')->bindParams([
             'sid' => $this->getSubtitleId()
-        ])->queryOne();
+        ])->fetchOne();
 
         if ($this->subtitle === false) {
             $this->buildCallbackFailMsg('file', 'File not found');

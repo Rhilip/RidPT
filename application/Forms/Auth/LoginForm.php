@@ -51,9 +51,9 @@ class LoginForm extends AbstractValidator
     /** @noinspection PhpUnused */
     protected function loadUserFromPdo()
     {
-        $user_record = container()->get('pdo')->prepare('SELECT `id`, `username`, `password`, `status`, `opt`, `class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1')->bindParams([
+        $user_record = container()->get('dbal')->prepare('SELECT `id`, `username`, `password`, `status`, `opt`, `class` from users WHERE `username` = :uname OR `email` = :email LIMIT 1')->bindParams([
             'uname' => $this->getInput('username'), 'email' => $this->getInput('username'),
-        ])->queryOne();
+        ])->fetchOne();
 
         if (false === $user_record) {  // User is not exist
             /** Notice: We shouldn't tell `This User is not exist in this site.` for user information security. */
@@ -94,9 +94,9 @@ class LoginForm extends AbstractValidator
     protected function isMaxUserSessionsReached()
     {
         if (config('base.max_per_user_session') > 0) {
-            $exist_session_count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM sessions WHERE uid = :uid AND expired != 1')->bindParams([
+            $exist_session_count = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM sessions WHERE uid = :uid AND expired != 1')->bindParams([
                 'uid' => $this->self['id']
-            ])->queryScalar();
+            ])->fetchScalar();
 
             if ($exist_session_count >= config('base.max_per_user_session')) {
                 $this->buildCallbackFailMsg('Session', 'Reach the limit of Max User Session.');
@@ -120,9 +120,9 @@ class LoginForm extends AbstractValidator
 
         do { // Generate unique JWT ID
             $jti = Random::alnum(64);
-            $count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM sessions WHERE session = :sid;')->bindParams([
+            $count = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM sessions WHERE session = :sid;')->bindParams([
                 'sid' => $jti
-            ])->queryScalar();
+            ])->fetchScalar();
         } while ($count != 0);
 
         /** Official Payload key */
@@ -158,7 +158,7 @@ class LoginForm extends AbstractValidator
         container()->get('response')->headers->setCookie(new Cookie(Constant::cookie_name, $jwt, $cookieExpire, '/', '', false, true));
 
         // Store User Login Session Information in database
-        container()->get('pdo')->prepare('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
+        container()->get('dbal')->prepare('INSERT INTO sessions (`uid`, `session`, `login_ip`, `login_at`, `expired`) ' .
             'VALUES (:uid, :sid, INET6_ATON(:login_ip), NOW(), :expired)')->bindParams([
             'uid' => $payload['aud'], 'sid' => $payload['jti'], 'login_ip' => $login_ip,
             'expired' => (bool)$this->getInput('logout') ? 0 : -1,  // -1 -> never expired , 0 -> auto_expire after 15 minutes, 1 -> expired
@@ -170,7 +170,7 @@ class LoginForm extends AbstractValidator
         $ip = container()->get('request')->getClientIp();
 
         // Update User Tables
-        container()->get('pdo')->prepare('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([
+        container()->get('dbal')->prepare('UPDATE `users` SET `last_login_at` = NOW() , `last_login_ip` = INET6_ATON(:ip) WHERE `id` = :id')->bindParams([
             'ip' => $ip, 'id' => $this->self['id']
         ])->execute();
     }

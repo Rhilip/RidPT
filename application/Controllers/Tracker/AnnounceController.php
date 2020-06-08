@@ -34,13 +34,13 @@ class AnnounceController extends ScrapeController
         53,  // DNS queries
         80, 81, 8080, 8081,  // Hyper Text Transfer Protocol (HTTP) - port used for web traffic
         411, 412, 413,  // 	Direct Connect Hub (unofficial)
-        443,  // HTTPS / SSL - encrypted web traffic, also used for VPN tunnels over HTTPS.
+        443, 8443,  // HTTPS / SSL - encrypted web traffic, also used for VPN tunnels over HTTPS.
         1214,  // Kazaa - peer-to-peer file sharing, some known vulnerabilities, and at least one worm (Benjamin) targeting it.
         3389,  // IANA registered for Microsoft WBT Server, used for Windows Remote Desktop and Remote Assistance connections
         4662,  // eDonkey 2000 P2P file sharing service. http://www.edonkey2000.com/
         6346, 6347,  // Gnutella (FrostWire, Limewire, Shareaza, etc.), BearShare file sharing app
         6699,  // Port used by p2p software, such as WinMX, Napster.
-        6881, 6882, 6883, 6884, 6885, 6886, 6887, // BitTorrent part of full range of ports used most often (unofficial)
+        6881, 6882, 6883, 6884, 6885, 6886, 6887, 6888, 6889, 6890 // BitTorrent part of full range of ports used most often (unofficial)
         //65000, 65001, 65002, 65003, 65004, 65005, 65006, 65007, 65008, 65009, 65010   // For unknown Reason 2333~
     ];
 
@@ -119,7 +119,7 @@ class AnnounceController extends ScrapeController
         $req_info = $request->getQueryString() . "\n\n";
         $req_info .= (string)$request->headers;
 
-        $this->pdo->prepare('INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`,`create_at`, `msg`)
+        container()->get('dbal')->prepare('INSERT INTO `agent_deny_log`(`tid`, `uid`, `user_agent`, `peer_id`, `req_info`, `create_at`, `msg`)
                 VALUES (:tid,:uid,:ua,:peer_id,:req_info,CURRENT_TIMESTAMP,:msg)
                 ON DUPLICATE KEY UPDATE `user_agent` = VALUES(`user_agent`),`peer_id` = VALUES(`peer_id`),
                                         `req_info` = VALUES(`req_info`),`msg` = VALUES(`msg`),
@@ -305,9 +305,9 @@ class AnnounceController extends ScrapeController
         $query_string = urldecode($request->getQueryString());
         $identity = md5(str_replace($queries['key'], '', $query_string));
 
-        $prev_lock_expire_at = $this->redis->zScore(Constant::trackerAnnounceLockZset, $identity) ?: $queries['timestamp'];
+        $prev_lock_expire_at = container()->get('redis')->zScore(Constant::trackerAnnounceLockZset, $identity) ?: $queries['timestamp'];
         if ($queries['timestamp'] >= $prev_lock_expire_at) {  // this identity is not lock
-            $this->redis->zAdd(Constant::trackerAnnounceLockZset, $queries['timestamp'] + 30, $identity);
+            container()->get('redis')->zAdd(Constant::trackerAnnounceLockZset, $queries['timestamp'] + 30, $identity);
             return false;
         }
 
@@ -329,13 +329,13 @@ class AnnounceController extends ScrapeController
             $queries['event']
         ]));
 
-        $prev_lock_expire = $this->redis->zScore(Constant::trackerAnnounceMinIntervalLockZset, $identity) ?: $queries['timestamp'];
+        $prev_lock_expire = container()->get('redis')->zScore(Constant::trackerAnnounceMinIntervalLockZset, $identity) ?: $queries['timestamp'];
         if ($prev_lock_expire > $queries['timestamp']) {
             throw new TrackerException(162, [':min' => config('tracker.min_interval')]);
         }
 
         $min_interval = (int)(config('tracker.min_interval') * (3 / 4));
-        $this->redis->zAdd(Constant::trackerAnnounceMinIntervalLockZset, $queries['timestamp'] + $min_interval, $identity);
+        container()->get('redis')->zAdd(Constant::trackerAnnounceMinIntervalLockZset, $queries['timestamp'] + $min_interval, $identity);
     }
 
     /**
@@ -349,24 +349,24 @@ class AnnounceController extends ScrapeController
     {
         // Check if exist peer or not
         $identity = implode(':', [$torrentInfo['id'], $userInfo['id'], $queries['peer_id']]);
-        if ($this->redis->zScore(Constant::trackerValidPeerZset, $identity)) {
+        if (container()->get('redis')->zScore(Constant::trackerValidPeerZset, $identity)) {
             // this peer is already announce before , just expire cache key lifetime and return.
-            $this->redis->zIncrBy(Constant::trackerValidPeerZset, config('tracker.interval') * 2, $identity);
+            container()->get('redis')->zIncrBy(Constant::trackerValidPeerZset, config('tracker.interval') * 2, $identity);
             return;
         } elseif ($queries['event'] != 'stopped') {
             // If session is not exist and &event!=stopped, a new session should start
 
             // Cache may miss
-            $self = $this->pdo->prepare('SELECT COUNT(`id`) FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid;')->bindParams([
+            $self = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid;')->bindParams([
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
             ])->queryScalar();
             if ($self !== 0) {  // True MISS
-                $this->redis->zAdd(Constant::trackerValidPeerZset, $queries['timestamp'] + config('tracker.interval') * 2, $identity);
+                container()->get('redis')->zAdd(Constant::trackerValidPeerZset, $queries['timestamp'] + config('tracker.interval') * 2, $identity);
                 return;
             }
 
             // First check if this peer can open this NEW session then create it
-            $selfCount = $this->pdo->prepare('SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;')->bindParams([
+            $selfCount = container()->get('dbal')->prepare('SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;')->bindParams([
                 'uid' => $userInfo['id'],
                 'tid' => $torrentInfo['id']
             ])->queryScalar();
@@ -399,7 +399,7 @@ class AnnounceController extends ScrapeController
                     if (config('tracker.enable_maxdlsystem')) {
                         $max = SwitchHelper::selectRoundOneFromMap($ratio, ['0.5' => 1, '0.65' => 2, '0.8' => 3, '0.95' => 4], 0);
                         if ($max > 0) {
-                            $count = $this->pdo->prepare("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
+                            $count = container()->get('dbal')->prepare("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
                                 'uid' => $userInfo['id']
                             ])->queryScalar();
                             if ($count >= $max) {
@@ -411,7 +411,7 @@ class AnnounceController extends ScrapeController
             }
 
             // All Check Passed
-            $this->redis->zAdd(Constant::trackerValidPeerZset, $queries['timestamp'] + config('tracker.interval') * 2, $identity);
+            container()->get('redis')->zAdd(Constant::trackerValidPeerZset, $queries['timestamp'] + config('tracker.interval') * 2, $identity);
         }
     }
 
@@ -454,7 +454,7 @@ class AnnounceController extends ScrapeController
             $limit = (int)($queries['numwant'] <= config('tracker.max_numwant')) ? $queries['numwant'] : config('tracker.max_numwant');
 
             // Query Peers in database
-            $peers = $this->pdo->prepare([
+            $peers = container()->get('dbal')->prepare([
                 ['SELECT `endpoints`'],
                 [', `peer_id` ', 'if' => !$no_peer_id],
                 ['FROM `peers` WHERE torrent_id = :tid ', 'params' => ['tid' => $torrentInfo['id']]],
@@ -464,7 +464,7 @@ class AnnounceController extends ScrapeController
                     'if' => ($torrentInfo['complete'] + $torrentInfo['incomplete']) > $limit,  // LIMIT AND SORT only total peer plus numwant
                     'params' => ['limit' => $limit]
                 ]  // Random select so that everyone will return
-            ])->queryAll();
+            ])->fetchAll();
 
             foreach ($peers as $peer) {
                 $exchange_peer = [];

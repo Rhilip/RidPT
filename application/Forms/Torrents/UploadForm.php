@@ -60,7 +60,7 @@ class UploadForm extends EditForm
 
     public function flush(): void
     {
-        container()->get('pdo')->beginTransaction();
+        container()->get('dbal')->beginTransaction();
         try {
             /** @var UploadedFile $ori_file */
             $ori_file = $this->getInput('file');
@@ -68,7 +68,7 @@ class UploadForm extends EditForm
             $tags = $this->getTags();
 
             // Insert then get id
-            container()->get('pdo')->prepare('
+            container()->get('dbal')->prepare('
                 INSERT INTO `torrents` (`owner_id`, `info_hash`, `status`, `added_at`, `title`, `subtitle`, `category`,
                                         `filename`, `torrent_name`, `torrent_type`, `torrent_size`,
                                         `team`, `quality_audio`, `quality_codec`, `quality_medium`, `quality_resolution`,
@@ -91,7 +91,7 @@ class UploadForm extends EditForm
                     'descr',
                     'anonymous', 'hr'
                 ]))->execute();
-            $id = (int)container()->get('pdo')->getLastInsertId();
+            $id = (int)container()->get('dbal')->getLastInsertId();
 
             // Save this torrent
             $save_to = container()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $id . '.torrent';
@@ -108,7 +108,7 @@ class UploadForm extends EditForm
 
             $this->updateTagsTable($tags);
 
-            container()->get('pdo')->commit();
+            container()->get('dbal')->commit();
             $this->id = $id;
         } catch (\Exception $exception) {
             // Delete the saved torrent file when torrent save success but still get Exception on other side
@@ -116,7 +116,7 @@ class UploadForm extends EditForm
                 unlink(container()->get('path.storage.torrents') . DIRECTORY_SEPARATOR . $this->id . '.torrent');
             }
 
-            container()->get('pdo')->rollback();
+            container()->get('dbal')->rollback();
 
             throw $exception;
         } finally {
@@ -130,7 +130,7 @@ class UploadForm extends EditForm
 
     protected function insertStructure($tid)
     {
-        container()->get('pdo')->prepare('INSERT INTO `torrent_structures` (tid, structure) VALUES (:tid, :structure)')->bindParams([
+        container()->get('dbal')->prepare('INSERT INTO `torrent_structures` (tid, structure) VALUES (:tid, :structure)')->bindParams([
             'tid' => $tid, 'structure' => json_encode($this->torrent_structure)
         ])->execute();
     }
@@ -270,9 +270,9 @@ class UploadForm extends EditForm
         $info_hash = pack('H*', sha1(Bencode::encode($this->torrent_dict['info'])));
 
         // Check if this torrent is exist or not before insert.
-        $id = container()->get('pdo')->prepare('SELECT id FROM torrents WHERE info_hash = :info_hash')->bindParams([
+        $id = container()->get('dbal')->prepare('SELECT id FROM torrents WHERE info_hash = :info_hash')->bindParams([
             'info_hash' => $info_hash
-        ])->queryScalar();
+        ])->fetchScalar();
 
         // TODO redirect user to exist torrent details page when this torrent exist.
         if ($id !== false) {

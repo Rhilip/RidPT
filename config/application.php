@@ -11,6 +11,11 @@ declare(strict_types=1);
 return [
     // 初始化回调
     'initialize' => [
+        /**
+         * function (\Rid\Base\Application $application) {
+         *    // Do somethings
+         * }
+         */
     ],
 
     // 组件

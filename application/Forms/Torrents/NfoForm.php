@@ -43,9 +43,9 @@ class NfoForm extends AbstractValidator
 
     public function flush(): void
     {
-        $this->nfo = container()->get('pdo')->prepare('SELECT nfo FROM `torrent_nfos` WHERE tid = :id')->bindParams([
+        $this->nfo = container()->get('dbal')->prepare('SELECT nfo FROM `torrent_nfos` WHERE tid = :id')->bindParams([
             'id' => $this->getTorrentId()
-        ])->queryScalar();
+        ])->fetchScalar();
     }
 
     protected function torrentHasNfo()

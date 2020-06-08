@@ -42,19 +42,19 @@ class EditForm extends AbstractValidator
     public function flush(): void
     {
         if ($this->getInput('id') > 0) {
-            $exist = container()->get('pdo')->prepare('SELECT COUNT(id) FROM categories WHERE id = :id')->bindParams([
+            $exist = container()->get('dbal')->prepare('SELECT COUNT(id) FROM categories WHERE id = :id')->bindParams([
                 'id' => $this->getInput('id')
-            ])->queryScalar();
+            ])->fetchScalar();
         } else {
             $exist = false;
         }
 
         if ($exist) {  // UPDATE
-            container()->get('pdo')->prepare('UPDATE `categories` SET name = :name, enabled = :enabled, image = :image, class_name = :class_name, sort_index = :sort_index WHERE id = :id')->bindParams(
+            container()->get('dbal')->prepare('UPDATE `categories` SET name = :name, enabled = :enabled, image = :image, class_name = :class_name, sort_index = :sort_index WHERE id = :id')->bindParams(
                 Arr::only($this->getInput(), ['id', 'name', 'enabled', 'image', 'class_name', 'sort_index'])
             )->execute();
         } else {  // INSERT
-            container()->get('pdo')->prepare('INSERT INTO `categories` (name, enabled, image, class_name, sort_index) VALUES (:name,:enabled,:image,:class_name,:sort_index)')->bindParams(
+            container()->get('dbal')->prepare('INSERT INTO `categories` (name, enabled, image, class_name, sort_index) VALUES (:name,:enabled,:image,:class_name,:sort_index)')->bindParams(
                 Arr::only($this->getInput(), ['name', 'enabled', 'image', 'class_name', 'sort_index'])
             )->execute();
         }

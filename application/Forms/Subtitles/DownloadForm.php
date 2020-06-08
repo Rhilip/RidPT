@@ -38,7 +38,7 @@ class DownloadForm extends ExistForm
 
     private function addDownloadHit()
     {
-        container()->get('pdo')->prepare('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
+        container()->get('dbal')->prepare('UPDATE `subtitles` SET `hits` = `hits` + 1 WHERE id = :sid')->bindParams([
             'sid' => $this->getInput('id')
         ])->execute();
     }

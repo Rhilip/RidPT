@@ -29,7 +29,7 @@ class IndexForm extends AbstractValidator
 
     public function flush(): void
     {
-        $this->categories = container()->get('pdo')->prepare('SELECT * FROM categories ORDER BY `sort_index`,`id`')->queryAll();
+        $this->categories = container()->get('dbal')->prepare('SELECT * FROM categories ORDER BY `sort_index`, `id`')->fetchAll();
     }
 
     /**

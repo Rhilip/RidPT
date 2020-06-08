@@ -37,6 +37,7 @@
 ### Fix
 - **Captcha:** the captcha library's status not clean when re-generate (021212c)
 - **Config:** Table `config` not init value since construct may not in `worker [#0](https://github.com/Rhilip/ridpt/issues/0)` (ce87a51)
+- **Cron:** fix CrontabProcess not work (e5ecfb0)
 - **DI:** parameters of controller resolve not work (538afe4)
 - **Debug:** Add back debug info of Redis and PDO (ee28676)
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)
@@ -66,6 +67,7 @@
 - **Subtitle:** Finish Subtitle part refactor (07e9987)
 - **TorrentController:** separate TorrentController (b21763d)
 - **Tracker:** Separate TrackerController (c64688b)
+- **Validator:** Finish Validator part refactor (85a26eb)
 
 ### Style
 - **Framework:** Don't construct container inside AbstractObject (a194264)

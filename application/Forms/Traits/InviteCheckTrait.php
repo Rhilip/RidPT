@@ -36,10 +36,10 @@ trait InviteCheckTrait
     protected function checkInviteInterval()
     {
         if (!container()->get('auth')->getCurUser()->isPrivilege('pass_invite_interval_check')) {
-            $count = container()->get('pdo')->prepare([
+            $count = container()->get('dbal')->prepare([
                 ['SELECT COUNT(`id`) FROM `invite` WHERE `create_at` > DATE_SUB(NOW(),INTERVAL :wait_second SECOND) ', 'params' => ['wait_second' => config('invite.interval')]],
                 ['AND `used` = 0', 'if' => !config('invite.force_interval')]
-            ])->queryScalar();
+            ])->fetchScalar();
             if ($count > 0) {
                 $this->buildCallbackFailMsg('Invitation interval', 'Hit invitation interval, please wait');
             }

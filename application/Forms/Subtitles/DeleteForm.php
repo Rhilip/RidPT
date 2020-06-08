@@ -44,7 +44,7 @@ class DeleteForm extends ExistForm
     {
         $subtitle = $this->getSubtitle();
 
-        container()->get('pdo')->prepare('DELETE FROM subtitles WHERE id = :sid')->bindParams([
+        container()->get('dbal')->prepare('DELETE FROM subtitles WHERE id = :sid')->bindParams([
             'sid' => $subtitle['id']
         ])->execute();
         unlink($this->getSubtitleLoc());

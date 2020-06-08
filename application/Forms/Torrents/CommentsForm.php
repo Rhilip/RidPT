@@ -48,10 +48,10 @@ class CommentsForm extends AbstractValidator
         $this->setPaginationLimit($this->getInput('limit'));
         $this->setPaginationPage($this->getInput('page'));
 
-        $data = container()->get('pdo')->prepare([
+        $data = container()->get('dbal')->prepare([
             ['SELECT * FROM `torrent_comments` WHERE torrent_id = :tid', 'params' => ['tid' => $this->getTorrentId()]],
             ['LIMIT :offset, :limit', 'params' => ['offset' => $this->getPaginationOffset(), 'limit' => $this->getPaginationLimit()]]
-        ])->queryAll();
+        ])->fetchAll();
         $this->setPaginationData($data);
     }
 

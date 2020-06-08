@@ -201,7 +201,7 @@ use League\Event\Emitter;
  * @method int xTrim(string $stream, int $maxLen, bool $isApproximate)
  * @method int|bool sAddArray(string $key, array $values)
  */
-class BaseRedisConnection
+class Connection
 {
     /**
      * Config of \Redis Service
@@ -242,7 +242,7 @@ class BaseRedisConnection
     // 执行命令
     public function __call($name, $arguments)
     {
-        $this->_emitter->emit('redis.command.call', [$name, $arguments]);
+        $this->_emitter->emit('redis.call', [$name, $arguments]);
         try {
             return $this->_redis->$name(...$arguments);  // 执行命令
         } catch (\RedisException $e) {

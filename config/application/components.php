@@ -17,9 +17,12 @@ return [
 
     // 定义 路径
     'path.root' => RIDPT_ROOT,
-    'path.public' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'public'),
     'path.templates' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'templates'),
     'path.translations' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'translations'),
+
+    'path.public' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'public'),
+    'path.public.lib' => \DI\string('{path.public}' . DIRECTORY_SEPARATOR . 'lib'),
+    'path.public.static' => \DI\string('{path.public}' . DIRECTORY_SEPARATOR . 'static'),
 
     'path.config' => \DI\string('{path.root}' . DIRECTORY_SEPARATOR . 'config'),
     'path.config.application' => \DI\string('{path.config}' . DIRECTORY_SEPARATOR . 'application'),
@@ -37,8 +40,8 @@ return [
     'response' => \DI\get(\Rid\Http\Message\Response::class),
     'logger' => \DI\get(Monolog\Logger::class),
     'mailer' => \DI\get(\App\Components\Mailer::class),
-    'pdo' => \DI\get(\Rid\Database\BasePDOConnection::class),
-    'redis' => \DI\get(\Rid\Redis\BaseRedisConnection::class),
+    'dbal' => \DI\get(\Rid\DBAL\AbstractConnection::class),
+    'redis' => \DI\get(\Rid\Redis\Connection::class),
     'session' => \DI\get(\Rid\Http\Session::class),
     'i18n' => \DI\get(\Rid\Component\I18n::class),
     'config' => \DI\get(\Rid\Component\Config::class),
@@ -63,7 +66,7 @@ return [
         ->property('from', \DI\env('MAILER_FROM'))
         ->property('fromname', \DI\env('MAILER_FROMNAME')),
 
-    \Rid\Redis\BaseRedisConnection::class => \DI\autowire()
+    \Rid\Redis\Connection::class => \DI\autowire()
         ->property('host', \DI\env('REDIS_HOST'))
         ->property('port', \DI\env('REDIS_PORT'))
         ->property('password', \DI\env('REDIS_PASSWORD'))
@@ -74,7 +77,7 @@ return [
         ])
         ->method('connectRedis'),
 
-    \Rid\Database\BasePDOConnection::class => \DI\autowire(\Rid\Database\Persistent\PDOConnection::class)
+    \Rid\DBAL\AbstractConnection::class => \DI\autowire(\Rid\DBAL\Connection::class)
         ->property('dsn', \DI\env('DATABASE_DSN'))
         ->property('username', \DI\env('DATABASE_USERNAME'))
         ->property('password', \DI\env('DATABASE_PASSWORD'))
@@ -121,7 +124,8 @@ return [
 
     // 定义组件依赖
     \League\Event\Emitter::class => \DI\create()
-        ->method('useListenerProvider', \DI\autowire(App\Event\Provider\RuntimeProvider::class)),
+        ->method('useListenerProvider', \DI\autowire(\Rid\DBAL\Event\Provider::class))
+        ->method('useListenerProvider', \DI\autowire(\Rid\Redis\Event\Provider::class)),
 
     \League\Plates\Engine::class => \DI\create()
         ->constructor(DI\get('path.templates'))
@@ -162,7 +166,7 @@ return [
         ->property('width', 150)
         ->property('height', 40)
         ->property('wordSet', 'abcdefghjkmnpqrtuvwxy346789ABCDEFJHKMNPQRTUVWX')
-        ->property('fontFile', DI\string('{path.public}' . DIRECTORY_SEPARATOR . 'static/fonts/Times New Roman.ttf'))
+        ->property('fontFile', DI\string('{path.public.static}' . DIRECTORY_SEPARATOR . 'fonts/Times New Roman.ttf'))
         ->property('fontSize', 20)
         ->property('wordNumber', 6)
         ->property('angleRand', [-20, 20])

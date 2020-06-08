@@ -38,7 +38,7 @@ class ApplyForm extends AbstractValidator
 
     public function flush(): void
     {
-        container()->get('pdo')->prepare('INSERT INTO `links`(`name`, `url`, `title`, `status`, `administrator`, `email`, `reason`) VALUES (:name,:url,:title,:status,:admin,:email,:reason)')->bindParams([
+        container()->get('dbal')->prepare('INSERT INTO `links`(`name`, `url`, `title`, `status`, `administrator`, `email`, `reason`) VALUES (:name,:url,:title,:status,:admin,:email,:reason)')->bindParams([
             'name' => $this->getInput('name'), 'url' => $this->getInput('url'), 'title' => $this->getInput('title'),
             'status' => Status::PENDING, 'admin' => $this->getInput('admin'), 'email' => $this->getInput('email'),
             'reason' => $this->getInput('reason')
@@ -50,9 +50,9 @@ class ApplyForm extends AbstractValidator
     /** @noinspection PhpUnused */
     protected function checkExistLinksByUrl()
     {
-        $count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `links` WHERE url = :url')->bindParams([
+        $count = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `links` WHERE url = :url')->bindParams([
             'url' => $this->getInput('url')
-        ])->queryScalar();
+        ])->fetchScalar();
         if ($count > 0) {
             $this->buildCallbackFailMsg('Link:exist', 'This link is exist in our site, Please don\'t report it again and again');
         }

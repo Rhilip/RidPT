@@ -2,7 +2,7 @@
 
 namespace Rid\Http;
 
-use Rid\Redis\BaseRedisConnection;
+use Rid\Redis\Connection;
 use Rid\Utils\Random;
 use Symfony\Component\HttpFoundation\Cookie;
 
@@ -26,9 +26,9 @@ class Session
     protected bool $cookieSecure = false;      // 仅通过安全的 HTTPS 连接传给客户端
     protected bool $cookieHttpOnly = false;      // 仅可通过 HTTP 协议访问
 
-    protected BaseRedisConnection $redis;
+    protected Connection $redis;
 
-    public function __construct(BaseRedisConnection $redisConnection)
+    public function __construct(Connection $redisConnection)
     {
         $this->redis = $redisConnection;
     }

@@ -14,7 +14,7 @@ class DeleteForm extends ExistForm
 {
     public function flush(): void
     {
-        container()->get('pdo')->prepare('DELETE FROM blogs WHERE id = :id')->bindParams([
+        container()->get('dbal')->prepare('DELETE FROM blogs WHERE id = :id')->bindParams([
             'id' => $this->getInput('id')
         ])->execute();
     }

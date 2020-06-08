@@ -61,21 +61,21 @@ class SearchForm extends AbstractValidator
             $pdo_where[] = ['AND title LIKE :search ', 'params' => ['search' => "%{$this->getInput('search')}%"]];
         }
 
-        $count = container()->get('pdo')->prepare([
+        $count = container()->get('dbal')->prepare([
             ['SELECT COUNT(`id`) FROM `subtitles` WHERE 1=1 '],
             ...$pdo_where
-        ])->queryScalar();
+        ])->fetchScalar();
         $this->setPaginationTotal($count);
 
         $this->setPaginationLimit($this->getInput('limit'));
         $this->setPaginationPage($this->getInput('page'));
 
-        $data = container()->get('pdo')->prepare([
+        $data = container()->get('dbal')->prepare([
             ['SELECT * FROM `subtitles` WHERE 1=1 '],
             ...$pdo_where,
             ['ORDER BY id DESC '],
             ['LIMIT :offset, :rows', 'params' => ['offset' => $this->getPaginationOffset(), 'rows' => $this->getPaginationLimit()]],
-        ])->queryAll();
+        ])->fetchAll();
         $this->setPaginationData($data);
     }
 
@@ -83,7 +83,7 @@ class SearchForm extends AbstractValidator
     public function getSubsSizeSum()
     {
         if (false === $size = container()->get('redis')->get(Constant::siteSubtitleSize)) {
-            $size = container()->get('pdo')->prepare('SELECT SUM(`size`) FROM `subtitles`')->queryScalar();
+            $size = container()->get('dbal')->prepare('SELECT SUM(`size`) FROM `subtitles`')->fetchScalar();
             container()->get('redis')->set(Constant::siteSubtitleSize, $size);
         }
         return $size;

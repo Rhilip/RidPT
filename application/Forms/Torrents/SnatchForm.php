@@ -48,21 +48,21 @@ class SnatchForm extends AbstractValidator
             ['AND `torrent_id` = :tid ', 'params' => ['tid' => $this->getTorrentId()]]
         ];
 
-        $count = container()->get('pdo')->prepare([
+        $count = container()->get('dbal')->prepare([
             ['SELECT COUNT(`id`) FROM `snatched` WHERE 1=1'],
             ...$pdo_where
-        ])->queryScalar();
+        ])->fetchScalar();
         $this->setPaginationTotal($count);
 
         $this->setPaginationLimit($this->getInput('limit'));
         $this->setPaginationPage($this->getInput('page'));
 
-        $data = container()->get('pdo')->prepare([
+        $data = container()->get('dbal')->prepare([
             ['SELECT * FROM `snatched` WHERE 1=1'],
             ...$pdo_where,
             ['ORDER BY finish_at, create_at DESC '],
             ['LIMIT :offset, :limit', 'params' => ['offset' => $this->getPaginationOffset(), 'limit' => $this->getPaginationLimit()]]
-        ])->queryAll();
+        ])->fetchAll();
         $this->setPaginationData($data);
     }
 

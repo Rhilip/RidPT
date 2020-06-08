@@ -46,7 +46,7 @@ class LogoutForm extends AbstractValidator
             container()->get('redis')->zAdd(UserFactory::mapUserSessionToId, 0, $session_id);   // Quick Mark this invalid in cache
 
             // Set this session expired
-            container()->get('pdo')->prepare('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
+            container()->get('dbal')->prepare('UPDATE sessions SET `expired` = 1 WHERE session = :sid')->bindParams([
                 'sid' => $session_id
             ])->execute();
         }

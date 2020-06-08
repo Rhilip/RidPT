@@ -31,7 +31,7 @@ class ConfirmForm extends AbstractValidator
 
     public function flush(): void
     {
-        container()->get('pdo')->prepare('UPDATE `users` SET `status` = :new_status WHERE `id` = :invitee_id')->bindParams([
+        container()->get('dbal')->prepare('UPDATE `users` SET `status` = :new_status WHERE `id` = :invitee_id')->bindParams([
             'new_status' => UserStatus::CONFIRMED, 'invitee_id' => $this->getInput('user_id')
         ])->execute();
     }
@@ -47,9 +47,9 @@ class ConfirmForm extends AbstractValidator
     /** @noinspection PhpUnused */
     protected function checkConfirmInfo()
     {
-        $confirm_info = container()->get('pdo')->prepare('SELECT `status` FROM users WHERE id = :id')->bindParams([
+        $confirm_info = container()->get('dbal')->prepare('SELECT `status` FROM users WHERE id = :id')->bindParams([
             'id' => $this->getInput('user_id')
-        ])->queryScalar();
+        ])->fetchScalar();
         if ($confirm_info === false || $confirm_info !== UserStatus::PENDING) {
             $this->buildCallbackFailMsg('user:confirm', 'The user to confirm is not exist or already confirmed');
         }

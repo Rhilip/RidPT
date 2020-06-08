@@ -103,7 +103,7 @@ class RegisterForm extends AbstractValidator
         $passhash = password_hash($this->getInput('password'), PASSWORD_DEFAULT);
         $invite_by = $this->invite_info['inviter_id'] ?? 0;
 
-        container()->get('pdo')->prepare("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`,`invites`)
+        container()->get('dbal')->prepare("INSERT INTO `users` (`username`, `password`, `email`, `status`, `class`, `passkey`, `invite_by`, `create_at`, `register_ip`, `uploadpos`, `downloadpos`, `uploaded`, `downloaded`, `seedtime`, `leechtime`, `bonus_other`, `invites`)
                                  VALUES (:name, :passhash, :email, :status, :class, :passkey, :invite_by, CURRENT_TIMESTAMP, INET6_ATON(:ip), :uploadpos, :downloadpos, :uploaded, :downloaded, :seedtime, :leechtime, :bonus, :invites)")->bindParams(array(
             'name' => $this->getInput('username'), 'passhash' => $passhash, 'email' => $this->getInput('email'),
             'status' => $status, 'class' => $class, 'passkey' => $passkey,
@@ -113,7 +113,7 @@ class RegisterForm extends AbstractValidator
             'seedtime' => $seedtime, 'leechtime' => $leechtime,
             'bonus' => $bonus, 'invites' => $invites
         ))->execute();
-        $user_id = container()->get('pdo')->getLastInsertId();
+        $user_id = container()->get('dbal')->getLastInsertId();
 
         // TODO Newcomer exams
 
@@ -157,7 +157,7 @@ class RegisterForm extends AbstractValidator
 
     private function sendInviteePM($invitee_id, &$log_text)
     {
-        container()->get('pdo')->prepare("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
+        container()->get('dbal')->prepare("UPDATE `invite` SET `used` = 1 WHERE `hash` = :invite_hash")->bindParams([
             "invite_hash" => $this->getInput('invite_hash'),
         ])->execute();
 
@@ -185,7 +185,7 @@ class RegisterForm extends AbstractValidator
     private function sendConfirmEmail($newer_id)
     {
         $confirm_key = Random::alnum(32);
-        container()->get('pdo')->prepare('INSERT INTO `user_confirm` (`uid`,`secret`,`create_at`,`action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
+        container()->get('dbal')->prepare('INSERT INTO `user_confirm` (`uid`, `secret`, `create_at`, `action`) VALUES (:uid,:secret,CURRENT_TIMESTAMP,:action)')->bindParams([
             'uid' => $newer_id, 'secret' => $confirm_key, 'action' => 'register'
         ])->execute();
         $confirm_url = container()->get('request')->getSchemeAndHttpHost() . '/auth/confirm/register?secret=' . $confirm_key;
@@ -208,9 +208,9 @@ class RegisterForm extends AbstractValidator
             $client_ip = container()->get('request')->getClientIp();
 
             $max_user_per_ip = config('register.per_ip_user') ?: 5;
-            $user_ip_count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
+            $user_ip_count = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `register_ip` = INET6_ATON(:ip)')->bindParams([
                 "ip" => $client_ip
-            ])->queryScalar();
+            ])->fetchScalar();
 
             if ($user_ip_count > $max_user_per_ip) {
                 $this->buildCallbackFailMsg('MaxRegisterIpReached', "The register member count in this ip `$client_ip` is reached");
@@ -223,9 +223,9 @@ class RegisterForm extends AbstractValidator
     {
         $type = $this->getInput('type');
         if ($type == 'invite') {
-            $inviteInfo = container()->get('pdo')->prepare('SELECT * FROM `invite` WHERE `hash`= :invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
+            $inviteInfo = container()->get('dbal')->prepare('SELECT * FROM `invite` WHERE `hash`= :invite_hash AND `used` = 0 AND `expire_at` > NOW() LIMIT 1;')->bindParams([
                 'invite_hash' => $this->getInput('invite_hash')
-            ])->queryOne();
+            ])->fetchOne();
             if (false === $inviteInfo) {
                 $this->buildCallbackFailMsg('Invite', "This invite hash is not exist or may already used or expired.");
                 return;

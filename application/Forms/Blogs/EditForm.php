@@ -29,7 +29,7 @@ class EditForm extends ExistForm
     public function flush(): void
     {
         $userid = container()->get('auth')->getCurUser()->getId();
-        container()->get('pdo')->prepare('UPDATE blogs SET user_id = :uid, title = :title, body = :body, notify = :notify, force_read = :fread WHERE id=:id')->bindParams([
+        container()->get('dbal')->prepare('UPDATE blogs SET user_id = :uid, title = :title, body = :body, notify = :notify, force_read = :fread WHERE id=:id')->bindParams([
             'id' => $this->getInput('id'), 'uid' => $userid,
             'title' => $this->getInput('title'), 'body' => $this->getInput('body'),
             'notify' => $this->getInput('notify'), 'fread' => $this->getInput('force_read')

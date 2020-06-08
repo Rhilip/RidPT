@@ -75,9 +75,9 @@ class User
         $this->cache_key_extended = 'user:' . $id . ':extended_content';
         $this->cache_key_extra = 'user:' . $id . ':extra_content';
 
-        $self = container()->get('pdo')->prepare('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_other, lang, invites, temp_invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
+        $self = container()->get('dbal')->prepare('SELECT id, username, email, status, class, passkey, uploadpos, downloadpos, uploaded, downloaded, seedtime, leechtime, avatar, bonus_seeding, bonus_other, lang, invites, temp_invites FROM `users` WHERE id = :id LIMIT 1;')->bindParams([
             'id' => $id
-        ])->queryOne();
+        ])->fetchOne();
 
         if (false === $self) {
             throw new NotExistException('User not exist');  // It means this user id is invalid
@@ -225,9 +225,9 @@ class User
     {
         if (false === $this->extended_info_hit) {
             if (false === $self = container()->get('redis')->get($this->cache_key_extended)) {
-                $self = container()->get('pdo')->prepare('SELECT `create_at`,`register_ip`,`last_login_at`,`last_access_at`,`last_upload_at`,`last_download_at`,`last_connect_at`,`last_login_ip`,`last_access_ip`,`last_tracker_ip` FROM `users` WHERE id = :uid')->bindParams([
+                $self = container()->get('dbal')->prepare('SELECT `create_at`, `register_ip`, `last_login_at`, `last_access_at`, `last_upload_at`, `last_download_at`, `last_connect_at`, `last_login_ip`, `last_access_ip`, `last_tracker_ip` FROM `users` WHERE id = :uid')->bindParams([
                     'uid' => $this->id
-                ])->queryOne() ?: [];
+                ])->fetchOne() ?: [];
                 container()->get('redis')->set($this->cache_key_extended, $self, 15 * 60);  // Cache This User Extend Detail for 15 minutes
             }
 
@@ -330,9 +330,9 @@ class User
     private function getRealTransfer(): array
     {
         return $this->getCacheValue('true_transfer', function () {
-            return container()->get('pdo')->prepare('SELECT SUM(`true_uploaded`) as `uploaded`, SUM(`true_downloaded`) as `download` FROM `snatched` WHERE `user_id` = :uid')->bindParams([
+            return container()->get('dbal')->prepare('SELECT SUM(`true_uploaded`) as `uploaded`, SUM(`true_downloaded`) as `download` FROM `snatched` WHERE `user_id` = :uid')->bindParams([
                     "uid" => $this->id
-                ])->queryOne() ?? ['uploaded' => 0, 'download' => 0];
+                ])->fetchOne() ?? ['uploaded' => 0, 'download' => 0];
         });
     }
 
@@ -354,9 +354,9 @@ class User
     private function getPeerStatus($seeder = null)
     {
         $peer_status = $this->getCacheValue('peer_count', function () {
-            $peer_count = container()->get('pdo')->prepare("SELECT `seeder`, COUNT(id) FROM `peers` WHERE `user_id` = :uid GROUP BY seeder")->bindParams([
+            $peer_count = container()->get('dbal')->prepare("SELECT `seeder`, COUNT(id) FROM `peers` WHERE `user_id` = :uid GROUP BY seeder")->bindParams([
                 'uid' => $this->id
-            ])->queryAll() ?: [];
+            ])->fetchAll() ?: [];
             return array_merge(['yes' => 0, 'no' => 0, 'partial' => 0], $peer_count);
         });
 
@@ -392,36 +392,36 @@ class User
     public function getBookmarkList()
     {
         return $this->getCacheValue('bookmark_list', function () {
-            return container()->get('pdo')->prepare('SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid')->bindParams([
+            return container()->get('dbal')->prepare('SELECT `tid` FROM `bookmarks` WHERE `uid` = :uid')->bindParams([
                 'uid' => $this->id
-            ])->queryColumn() ?: [];
+            ])->fetchColumn() ?: [];
         });
     }
 
     public function getUnreadMessageCount()
     {
         return $this->getCacheValue('unread_message_count', function () {
-            return container()->get('pdo')->prepare("SELECT COUNT(`id`) FROM `messages` WHERE receiver = :uid AND unread = 'no'")->bindParams([
+            return container()->get('dbal')->prepare("SELECT COUNT(`id`) FROM `messages` WHERE receiver = :uid AND unread = 'no'")->bindParams([
                 'uid' => $this->id
-            ])->queryScalar();
+            ])->fetchScalar();
         });
     }
 
     public function getInboxMessageCount()
     {
         return $this->getCacheValue('inbox_count', function () {
-            return container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `messages` WHERE `receiver` = :uid')->bindParams([
+            return container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `messages` WHERE `receiver` = :uid')->bindParams([
                 'uid' => $this->id
-            ])->queryScalar();
+            ])->fetchScalar();
         });
     }
 
     public function getOutboxMessageCount()
     {
         return $this->getCacheValue('outbox_count', function () {
-            return container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `messages` WHERE `sender` = :uid')->bindParams([
+            return container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `messages` WHERE `sender` = :uid')->bindParams([
                 'uid' => $this->id
-            ])->queryScalar();
+            ])->fetchScalar();
         });
     }
 

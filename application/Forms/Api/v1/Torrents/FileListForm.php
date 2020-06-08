@@ -36,15 +36,15 @@ class FileListForm extends AbstractValidator
 
     public function flush(): void
     {
-        $structure = container()->get('pdo')->prepare('SELECT structure FROM torrent_structures WHERE tid = :tid')->bindParams([
+        $structure = container()->get('dbal')->prepare('SELECT structure FROM torrent_structures WHERE tid = :tid')->bindParams([
             'tid' => $this->getTorrentId()
-        ])->queryScalar();
+        ])->fetchScalar();
         $this->structure = json_decode($structure, true);
     }
 
     public function getTorrentId(): int
     {
-        return $this->getInput('id');
+        return (int)$this->getInput('id');
     }
 
     /**

@@ -2,18 +2,19 @@
 /**
  * Created by PhpStorm.
  * User: Rhilip
- * Date: 5/10/2020
- * Time: 2020
+ * Date: 6/8/2020
+ * Time: 9:04 PM
  */
 
 declare(strict_types=1);
 
-namespace App\Event\Listener;
+namespace Rid\Redis\Event\Listener;
+
 
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
 
-class RedisListener extends AbstractListener
+class CallListener extends AbstractListener
 {
     public function handle(EventInterface $event, $params = null)
     {

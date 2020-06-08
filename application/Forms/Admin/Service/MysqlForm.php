@@ -19,11 +19,11 @@ class MysqlForm
 
     public function __construct()
     {
-        $res = container()->get('pdo')->prepare('SHOW GLOBAL STATUS')->queryAll();
+        $res = container()->get('dbal')->prepare('SHOW GLOBAL STATUS')->fetchAll();
         $serverStatus = array_column($res, 'Value', 'Variable_name');
-        $startAt = container()->get('pdo')->prepare('SELECT UNIX_TIMESTAMP() - :uptime')->bindParams([
+        $startAt = container()->get('dbal')->prepare('SELECT UNIX_TIMESTAMP() - :uptime')->bindParams([
             'uptime' => $serverStatus['Uptime']
-        ])->queryScalar();
+        ])->fetchScalar();
         $queryStats = [];
         $tmp_array = $serverStatus;
         foreach ($tmp_array as $name => $value) {

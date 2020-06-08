@@ -45,7 +45,7 @@ class EditForm extends ApplyForm
         if ($this->getInput('id') == 0) {  // Create new links by edit method
             parent::flush();
         } else {
-            container()->get('pdo')->prepare('UPDATE `links` SET name = :name, url = :url, title = :title, status = :status, administrator = :admin, email = :email, reason = :reason WHERE id = :id')->bindParams([
+            container()->get('dbal')->prepare('UPDATE `links` SET name = :name, url = :url, title = :title, status = :status, administrator = :admin, email = :email, reason = :reason WHERE id = :id')->bindParams([
                 'name' => $this->getInput('name'), 'url' => $this->getInput('url'), 'title' => $this->getInput('title'),
                 'status' => $this->getInput('status'), 'admin' => $this->getInput('admin'), 'email' => $this->getInput('email'),
                 'reason' => $this->getInput('reason'), 'id' => $this->getInput('id')
@@ -61,9 +61,9 @@ class EditForm extends ApplyForm
     /** @noinspection PhpUnused */
     protected function isExistLinkId()
     {
-        $link = container()->get('pdo')->prepare('SELECT `id` FROM `links` WHERE id = :id')->bindParams([
+        $link = container()->get('dbal')->prepare('SELECT `id` FROM `links` WHERE id = :id')->bindParams([
             'id' => $this->getInput('id')
-        ])->queryScalar();
+        ])->fetchScalar();
         if ($link === false) {
             $this->buildCallbackFailMsg('links', 'the link data not found in our database');
             return;

@@ -23,7 +23,7 @@ class RegisterForm extends AbstractConfirmForm
             return;
         }
 
-        container()->get('pdo')->prepare('UPDATE `users` SET `status` = :s WHERE `id` = :uid')->bindParams([
+        container()->get('dbal')->prepare('UPDATE `users` SET `status` = :s WHERE `id` = :uid')->bindParams([
             's' => UserStatus::CONFIRMED, 'uid' => $this->record['uid']
         ])->execute();
         $this->update_confirm_status();

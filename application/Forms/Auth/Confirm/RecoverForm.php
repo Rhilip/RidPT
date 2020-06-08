@@ -26,7 +26,7 @@ class RecoverForm extends AbstractConfirmForm
 
         // generate new password
         $new_password = Random::alnum(10);
-        container()->get('pdo')->prepare('UPDATE `users` SET `password` = :new_password WHERE `id` = :uid')->bindParams([
+        container()->get('dbal')->prepare('UPDATE `users` SET `password` = :new_password WHERE `id` = :uid')->bindParams([
             'new_password' => password_hash($new_password, PASSWORD_DEFAULT), 'uid' => $this->record['uid']
         ])->execute();
         $this->update_confirm_status();

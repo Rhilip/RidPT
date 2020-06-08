@@ -29,7 +29,7 @@ class DeleteForm extends EditForm
 
     public function flush(): void
     {
-        container()->get('pdo')->prepare('DELETE FROM `links` WHERE id = :id')->bindParams([
+        container()->get('dbal')->prepare('DELETE FROM `links` WHERE id = :id')->bindParams([
             'id' => $this->getInput('id')
         ])->execute();
         container()->get('redis')->del('Site:links');

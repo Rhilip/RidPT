@@ -62,9 +62,9 @@ trait UserRegisterCheckTrait
         }
 
         // Check this username is exist in Table `users` or not
-        $count = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
+        $count = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `username` = :username')->bindParams([
             'username' => $username
-        ])->queryScalar();
+        ])->fetchScalar();
         if ($count > 0) {
             $this->buildCallbackFailMsg('ValidUsername', "The user name `$username` is already used.");
             return;
@@ -95,9 +95,9 @@ trait UserRegisterCheckTrait
             return;
         }
 
-        $email_check = container()->get('pdo')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
+        $email_check = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `users` WHERE `email` = :email')->bindParams([
             "email" => $email
-        ])->queryScalar();
+        ])->fetchScalar();
         if ($email_check > 0) {
             $this->buildCallbackFailMsg('ValidEmail', "Email Address '$email' is already used.");
             return;

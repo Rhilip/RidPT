@@ -44,18 +44,18 @@ class BookmarkForm extends AbstractValidator
 
     public function flush(): void
     {
-        $bookmark_exist = container()->get('pdo')->prepare('SELECT `id` FROM `bookmarks` WHERE `uid` = :uid AND `tid` = :tid ')->bindParams([
+        $bookmark_exist = container()->get('dbal')->prepare('SELECT `id` FROM `bookmarks` WHERE `uid` = :uid AND `tid` = :tid ')->bindParams([
             'uid' => container()->get('auth')->getCurUser()->getId(),
             'tid' => $this->getTorrentId()
-        ])->queryScalar() ?: 0;
+        ])->fetchScalar() ?: 0;
         if ($bookmark_exist > 0) {  // Delete the exist record
-            container()->get('pdo')->prepare('DELETE FROM `bookmarks` WHERE `id` = :bid')->bindParams([
+            container()->get('dbal')->prepare('DELETE FROM `bookmarks` WHERE `id` = :bid')->bindParams([
                 'bid' => $bookmark_exist
             ])->execute();
 
             $this->status = self::DELETE;
         } else {  // Add new record
-            container()->get('pdo')->prepare('INSERT INTO `bookmarks` (`uid`, `tid`) VALUES (:uid, :tid)')->bindParams([
+            container()->get('dbal')->prepare('INSERT INTO `bookmarks` (`uid`, `tid`) VALUES (:uid, :tid)')->bindParams([
                 'uid' => container()->get('auth')->getCurUser()->getId(),
                 'tid' => $this->getInput('id')
             ])->execute();
@@ -69,7 +69,7 @@ class BookmarkForm extends AbstractValidator
 
     public function getTorrentId(): int
     {
-        return $this->getInput('id');
+        return (int)$this->getInput('id');
     }
 
     /**

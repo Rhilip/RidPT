@@ -24,7 +24,7 @@ class Config
         $this->cacheTable = TableManager::get('config');
 
         if ($this->cacheTable->count() == 0) {
-            $configs = container()->get('pdo')->prepare('SELECT `name`, `value`, `type` FROM `site_config`')->queryAll();
+            $configs = container()->get('dbal')->prepare('SELECT `name`, `value`, `type` FROM `site_config`')->fetchAll();
             foreach ($configs as $config) {
                 $this->load($config);
             }
@@ -49,8 +49,8 @@ class Config
             }       // Deal with config with prefix `route.`
 
             // Get config From Database
-            $setting_row = container()->get('pdo')->prepare('SELECT `name`, `value`, `type` from `site_config` WHERE `name` = :name')
-                ->bindParams(['name' => $name])->queryOne();
+            $setting_row = container()->get('dbal')->prepare('SELECT `name`, `value`, `type` from `site_config` WHERE `name` = :name')
+                ->bindParams(['name' => $name])->fetchOne();
 
             // In this case (Load config From Database Failed) , A Exception should throw
             if ($setting_row === false) {
@@ -94,7 +94,7 @@ class Config
 
         // Update site_config if not a runtime setting
         if (strpos($name, 'runtime.') === false) {
-            container()->get('pdo')->prepare('UPDATE `site_config` SET `value` = :val WHERE `name` = :name')->bindParams([
+            container()->get('dbal')->prepare('UPDATE `site_config` SET `value` = :val WHERE `name` = :name')->bindParams([
                 'val' => $value, 'name' => $name
             ])->execute();
         }

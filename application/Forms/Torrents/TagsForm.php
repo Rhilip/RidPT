@@ -48,21 +48,21 @@ class TagsForm extends AbstractValidator
             $pdo_where[] = ['AND `tag` LIKE :tag', 'params' => ['tag' => '%' . $this->getInput('search') . '%']];
         }
 
-        $count = container()->get('pdo')->prepare([
+        $count = container()->get('dbal')->prepare([
             ['SELECT COUNT(`id`) FROM tags WHERE 1=1 '],
             ...$pdo_where
-        ])->queryScalar();
+        ])->fetchScalar();
         $this->setPaginationTotal($count);
 
         $this->setPaginationLimit($this->getInput('limit'));
         $this->setPaginationPage($this->getInput('page'));
 
-        $data = container()->get('pdo')->prepare([
+        $data = container()->get('dbal')->prepare([
             ['SELECT * FROM tags WHERE 1=1 '],
             ...$pdo_where,
             ['ORDER BY `pinned`, `count` DESC, `id` '],
             ['LIMIT :offset, :rows', 'params' => ['offset' => $this->getPaginationOffset(), 'rows' => $this->getPaginationLimit()]],
-        ])->queryAll();
+        ])->fetchAll();
         $this->setPaginationData($data);
     }
 }

@@ -73,7 +73,7 @@ class EditForm extends AbstractValidator
 
         $tags = $this->getTags();
 
-        container()->get('pdo')->prepare('
+        container()->get('dbal')->prepare('
             UPDATE `torrents` SET title = :title, subtitle = :subtitle,
                                   category = :category, team = :team,
                                   quality_audio = :audio, quality_codec = :codec,
@@ -112,7 +112,7 @@ class EditForm extends AbstractValidator
         if ($this->getInput('nfo') instanceof UploadedFile) {
             /** @var UploadedFile $nfo */
             $nfo = $this->getInput('nfo');
-            container()->get('pdo')->prepare('INSERT INTO `torrent_nfos` (tid, nfo) VALUES (:tid, :nfo) ON DUPLICATE KEY UPDATE nfo = VALUES(`nfo`)')->bindParams([
+            container()->get('dbal')->prepare('INSERT INTO `torrent_nfos` (tid, nfo) VALUES (:tid, :nfo) ON DUPLICATE KEY UPDATE nfo = VALUES(`nfo`)')->bindParams([
                 'tid' => $tid, 'nfo' => file_get_contents($nfo->getPathname())
             ])->execute();
         }
@@ -202,7 +202,7 @@ class EditForm extends AbstractValidator
     protected function updateTagsTable(array $tags)
     {
         foreach ($tags as $tag) {
-            container()->get('pdo')->prepare('INSERT INTO tags (tag) VALUES (:tag) ON DUPLICATE KEY UPDATE `count` = `count` + 1;')->bindParams([
+            container()->get('dbal')->prepare('INSERT INTO tags (tag) VALUES (:tag) ON DUPLICATE KEY UPDATE `count` = `count` + 1;')->bindParams([
                 'tag' => $tag
             ])->execute();
         }

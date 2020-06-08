@@ -37,9 +37,9 @@ class ExistForm extends AbstractValidator
     /** @noinspection PhpUnused */
     protected function isExistBlog()
     {
-        $record = container()->get('pdo')->prepare('SELECT * FROM blogs WHERE id = :id LIMIT 1')->bindParams([
+        $record = container()->get('dbal')->prepare('SELECT * FROM blogs WHERE id = :id LIMIT 1')->bindParams([
             'id' => $this->getInput('id')
-        ])->queryOne();
+        ])->fetchOne();
         if (false === $record) {
             $this->buildCallbackFailMsg('Exist', 'The blog id ' . $this->getInput('id') . 'is not exist');
         }
