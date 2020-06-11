@@ -51,7 +51,8 @@
     "symfony/validator": "^5.1"
   },
   "require-dev": {
-    "swoole/ide-helper": "@dev"
+    "swoole/ide-helper": "@dev",
+    "symfony/var-dumper": "^5.1"
   },
   "config": {
     "preferred-install": "dist",
