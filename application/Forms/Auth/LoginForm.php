@@ -34,9 +34,10 @@ class LoginForm extends AbstractValidator
         return new Assert\Collection([
             'username' => new Assert\NotBlank(),
             'password' => new Assert\Length(['min' => 6, 'max' => 40]),
-            'opt' => new Assert\Optional(
-                new Assert\Length(['value' => 6, 'allowEmptyString' => true])
-            ),  // 2FA code
+            'opt' => new Assert\Optional(new Assert\AtLeastOneOf([
+                new Assert\Blank(),
+                new Assert\Length(6)
+            ])),  // 2FA code
             'securelogin' => new Assert\Optional(new Assert\IsTrue()),
             'logout' => new Assert\Optional(new Assert\IsTrue()),
             'ssl' => new Assert\Optional(new Assert\IsTrue())

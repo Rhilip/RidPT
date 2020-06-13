@@ -122,7 +122,10 @@ class EditForm extends AbstractValidator
     {
         $rules = [
             'title' => new Assert\NotBlank(),
-            'subtitle' => new Assert\Length(['allowEmptyString' => true, 'max' => 255]),
+            'subtitle' => new Assert\AtLeastOneOf([
+                new Assert\Blank(),
+                new Assert\Length(['max' => 255])
+            ]),
             'category' => new Assert\Choice(array_map(
                 function ($cat) {
                     return (string)$cat['id'];
