@@ -57,10 +57,11 @@
 - **PDO:** fix Persistent\PDOConnection::queryColumn() not work (9056424)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
 - **Response:** The Response component not clean sent file when set (ca4e83b)
-- **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
 - **Route:** Middleware restore wrong when multi-add at same time (787893a)
+- **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
 - **Server:** Fix Server runtime config not work (70b1d79)
 - **Subtitles:** fix last commit which content function is not public (177a599)
+- **Validator:** Update `Length` constraint since symfony/validator change (3558dd3)
 
 ### Perf
 - **Console:** Move HttpServer init to AbstractServerCommand (ce50f2d)

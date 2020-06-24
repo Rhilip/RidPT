@@ -359,7 +359,7 @@ class AnnounceController extends ScrapeController
             // Cache may miss
             $self = container()->get('dbal')->prepare('SELECT COUNT(`id`) FROM `peers` WHERE `user_id`=:uid AND `torrent_id`=:tid AND `peer_id`=:pid;')->bindParams([
                 'uid' => $userInfo['id'], 'tid' => $torrentInfo['id'], 'pid' => $queries['peer_id']
-            ])->queryScalar();
+            ])->fetchScalar();
             if ($self !== 0) {  // True MISS
                 container()->get('redis')->zAdd(Constant::trackerValidPeerZset, $queries['timestamp'] + config('tracker.interval') * 2, $identity);
                 return;
@@ -369,7 +369,7 @@ class AnnounceController extends ScrapeController
             $selfCount = container()->get('dbal')->prepare('SELECT COUNT(*) AS `count` FROM `peers` WHERE `user_id` = :uid AND `torrent_id` = :tid;')->bindParams([
                 'uid' => $userInfo['id'],
                 'tid' => $torrentInfo['id']
-            ])->queryScalar();
+            ])->fetchScalar();
 
             // Ban one torrent seeding/leech at multi-location due to your site config
             if ($seeder == 'yes') { // if this peer's role is seeder
@@ -401,7 +401,7 @@ class AnnounceController extends ScrapeController
                         if ($max > 0) {
                             $count = container()->get('dbal')->prepare("SELECT COUNT(`id`) FROM `peers` WHERE `user_id` = :uid AND `seeder` = 'no';")->bindParams([
                                 'uid' => $userInfo['id']
-                            ])->queryScalar();
+                            ])->fetchScalar();
                             if ($count >= $max) {
                                 throw new TrackerException(164, [':max' => $max]);
                             }
