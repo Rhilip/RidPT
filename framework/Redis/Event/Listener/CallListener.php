@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Rid\Redis\Event\Listener;
 
-
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
 

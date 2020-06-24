@@ -25,7 +25,6 @@ use Rhilip\Bencode\Bencode;
  */
 class ScrapeController
 {
-
     public function index(Request $request)
     {
         try {

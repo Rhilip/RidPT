@@ -17,7 +17,6 @@ use Rid\Swoole\Task\Interfaces\TaskHandlerInterface;
 
 class Announce implements TaskHandlerInterface
 {
-
     public function handle(array $param, \Swoole\Server $server, int $taskId, int $workerId)
     {
         container()->get('dbal')->beginTransaction();

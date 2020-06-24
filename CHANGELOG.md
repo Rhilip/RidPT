@@ -2,11 +2,22 @@
 ## [Unreleased]
 
 ### Build
-- **Composer:** Upgrade dependencies (69f4f61)
 - **Composer:** Switch dotenv library from `adhocore/cli` to `symfony/console` (bd1949a)
+- **Composer:** Upgrade dependencies (69f4f61)
 - **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
 - **Swoole:** Change swoole-ide-helper library (430e41c)
+- **deps:** bump symfony/console from 5.1.0 to 5.1.1 (0cae006)
+- **deps:** bump symfony/translation from 5.1.0 to 5.1.1 (d16bc42)
+- **deps:** bump symfony/dotenv from 5.1.0 to 5.1.1 (68b8e16)
+- **deps:** bump symfony/mime from 5.1.0 to 5.1.1 (8b9ddeb)
+- **deps:** bump symfony/stopwatch from 5.1.0 to 5.1.1 (bfcaa02)
+- **deps:** add symfony/var-dumper as dev require (3f65aee)
+- **deps:** bump php-di/php-di from 6.1.0 to 6.2.0 (fae8460)
+- **deps:** bump symfony/http-foundation from 5.1.0 to 5.1.1 (52dc782)
+- **deps:** bump symfony/config from 5.1.0 to 5.1.1 (a029600)
 - **deps:** bump phpmailer/phpmailer from 6.1.5 to 6.1.6 (fc4c5bb)
+- **deps:** bump symfony/validator from 5.1.0 to 5.1.1 (c0b34f9)
+- **deps-dev:** bump symfony/var-dumper from 5.1.0 to 5.1.1 (91cebf8)
 - **validator:** Prepare new validator from `symfony/validator` (3d97551)
 
 ### Feat
@@ -38,6 +49,7 @@
 - **Captcha:** the captcha library's status not clean when re-generate (021212c)
 - **Config:** Table `config` not init value since construct may not in `worker [#0](https://github.com/Rhilip/ridpt/issues/0)` (ce87a51)
 - **Cron:** fix CrontabProcess not work (e5ecfb0)
+- **DBAL:** rename Database to DBAL, and Add class `DBAL\Raw` to prepare raw sql (01096a0)
 - **DI:** parameters of controller resolve not work (538afe4)
 - **Debug:** Add back debug info of Redis and PDO (ee28676)
 - **Logo:** Fix ASCII LOGO broken by using Heredoc (020d0fa)

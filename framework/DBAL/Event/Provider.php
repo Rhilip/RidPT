@@ -18,7 +18,6 @@ use League\Event\ListenerProviderInterface;
 
 class Provider implements ListenerProviderInterface
 {
-
     protected ExecuteListener $executeListener;
 
     public function __construct(ExecuteListener $executeListener)

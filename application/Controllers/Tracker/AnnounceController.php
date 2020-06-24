@@ -442,10 +442,20 @@ class AnnounceController extends ScrapeController
          * We query peer from database and send peerlist, otherwise just quick return
          */
         if ($queries['event'] != 'stopped' || $role != '') {
-            // Fix rep_dict format based on params `&compact=`, `&np_peer_id=`, `&numwant=` and our tracker config
+            /**
+             * Fix rep_dict format based on params `&compact=`, `&np_peer_id=`, `&numwant=` and our tracker config
+             *
+             * Notice: `peers6` only used in compact model, since
+             *   - BEP 0007 Section Announce Response
+             *   - Libtransmission, arvidn/libtorrent don't support the `peers6` in list format
+             *
+             * @see http://www.bittorrent.org/beps/bep_0007.html
+             * @see https://github.com/transmission/transmission/blob/2ef07517b65e98c0c68bbff0ca2467434a1835d2/libtransmission/announcer-http.c#L300-L315
+             * @see https://github.com/arvidn/libtorrent/blob/db85195c8c5a7eb3cf1d484f68048aaec4c4f22d/src/http_tracker_connection.cpp#L511-L588
+             */
             $compact = (bool)($queries['compact'] == 1 || config('tracker.force_compact_model'));
             if ($compact) {
-                $queries['no_peer_id'] = 1;  // force `no_peer_id` when `compact` mode is enable
+                $queries['no_peer_id'] = 1;  // force enable `no_peer_id` when `compact` mode is enable
                 $rep_dict['peers'] = '';  // Change `peers` from array to string
                 $rep_dict['peers6'] = ''; // we should add Packed IPv6:port in `peers6`
             }
@@ -475,7 +485,7 @@ class AnnounceController extends ScrapeController
 
                 $endpoints = json_decode($peer['endpoints']);
                 foreach ($endpoints as $ip => $port) {
-                    if ($compact == 1) {
+                    if ($compact) {
                         $peer_insert_field = Utils\Ip::isValidIPv6($ip) ? 'peers6' : 'peers';
                         $rep_dict[$peer_insert_field] .= inet_pton($ip) . pack('n', $port);
                     } else {
