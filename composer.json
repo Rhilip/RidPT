@@ -30,7 +30,7 @@
     "ext-swoole": "*",
     "adhocore/cron-expr": "^1.1",
     "firebase/php-jwt": "^5.0",
-    "league/event": "^2.2",
+    "league/event": "^3.0",
     "league/plates": "^3.3",
     "mjohnson/decoda": "^6.12",
     "monolog/monolog": "^2.0",
