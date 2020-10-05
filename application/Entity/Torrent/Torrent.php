@@ -34,8 +34,8 @@ class Torrent
     protected string $subtitle = '';
     protected int $category = 0;
     protected string $descr = '';
-    protected bool $uplver = false;
-    protected bool $hr = false;
+    protected $uplver = false;
+    protected $hr = false;
     protected $tags;
 
     protected int $team = 0;

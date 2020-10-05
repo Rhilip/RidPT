@@ -7,18 +7,22 @@
 - **Composer:** Update library version of `symfony/config`, `symfony/translation` (6003b7b)
 - **Swoole:** Change swoole-ide-helper library (430e41c)
 - **deps:** bump symfony/console from 5.1.0 to 5.1.1 (0cae006)
+- **deps:** bump symfony/stopwatch from 5.1.0 to 5.1.1 (bfcaa02)
 - **deps:** bump symfony/translation from 5.1.0 to 5.1.1 (d16bc42)
 - **deps:** bump symfony/dotenv from 5.1.0 to 5.1.1 (68b8e16)
 - **deps:** bump symfony/mime from 5.1.0 to 5.1.1 (8b9ddeb)
-- **deps:** bump symfony/stopwatch from 5.1.0 to 5.1.1 (bfcaa02)
+- **deps:** bump symfony/http-foundation from 5.1.0 to 5.1.1 (52dc782)
 - **deps:** add symfony/var-dumper as dev require (3f65aee)
 - **deps:** bump php-di/php-di from 6.1.0 to 6.2.0 (fae8460)
-- **deps:** bump symfony/http-foundation from 5.1.0 to 5.1.1 (52dc782)
 - **deps:** bump symfony/config from 5.1.0 to 5.1.1 (a029600)
-- **deps:** bump phpmailer/phpmailer from 6.1.5 to 6.1.6 (fc4c5bb)
 - **deps:** bump symfony/validator from 5.1.0 to 5.1.1 (c0b34f9)
+- **deps:** bump phpmailer/phpmailer from 6.1.5 to 6.1.6 (fc4c5bb)
+- **deps:** bump php-di/php-di from 6.2.0 to 6.2.1 (75e4372)
 - **deps-dev:** bump symfony/var-dumper from 5.1.0 to 5.1.1 (91cebf8)
 - **validator:** Prepare new validator from `symfony/validator` (3d97551)
+
+### Docs
+- **Tracker:** Enrich the document of Announce `&compact` mode (8bc1d20)
 
 ### Feat
 - **2FA:** use `pragmarx/google2fa-qrcode` as 2fa library (e029707)
@@ -57,10 +61,11 @@
 - **PDO:** fix Persistent\PDOConnection::queryColumn() not work (9056424)
 - **Pager:** incorrect parseint may cause $offset negative (4fddce2)
 - **Response:** The Response component not clean sent file when set (ca4e83b)
-- **Route:** Middleware restore wrong when multi-add at same time (787893a)
 - **Route:** http code 405 METHOD NOT ALLOWED not used (a6e3200)
+- **Route:** Middleware restore wrong when multi-add at same time (787893a)
 - **Server:** Fix Server runtime config not work (70b1d79)
 - **Subtitles:** fix last commit which content function is not public (177a599)
+- **Tracker:** Last Database function name change not work (953916b)
 - **Validator:** Update `Length` constraint since symfony/validator change (3558dd3)
 
 ### Perf
