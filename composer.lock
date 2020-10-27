@@ -1307,12 +1307,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "04c3a31fe8ea94b42c9e2d1acc93d19782133b00"
+                "reference": "ae789a8a2ad189ce7e8216942cdb9b77319f5eb8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/04c3a31fe8ea94b42c9e2d1acc93d19782133b00",
-                "reference": "04c3a31fe8ea94b42c9e2d1acc93d19782133b00",
+                "url": "https://api.github.com/repos/symfony/console/zipball/ae789a8a2ad189ce7e8216942cdb9b77319f5eb8",
+                "reference": "ae789a8a2ad189ce7e8216942cdb9b77319f5eb8",
                 "shasum": ""
             },
             "require": {
@@ -1392,7 +1392,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-09-18T14:27:32+00:00"
+            "time": "2020-10-07T15:23:00+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -2577,16 +2577,16 @@
     "packages-dev": [
         {
             "name": "swoole/ide-helper",
-            "version": "4.5.4",
+            "version": "4.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swoole/ide-helper.git",
-                "reference": "3382a1844afb206cac064252f6b8b50115bf72bb"
+                "reference": "ab23c2c35880144a6060a3f178a68af0d0c6fc93"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swoole/ide-helper/zipball/3382a1844afb206cac064252f6b8b50115bf72bb",
-                "reference": "3382a1844afb206cac064252f6b8b50115bf72bb",
+                "url": "https://api.github.com/repos/swoole/ide-helper/zipball/ab23c2c35880144a6060a3f178a68af0d0c6fc93",
+                "reference": "ab23c2c35880144a6060a3f178a68af0d0c6fc93",
                 "shasum": ""
             },
             "require-dev": {
@@ -2607,7 +2607,7 @@
                 }
             ],
             "description": "IDE help files for Swoole.",
-            "time": "2020-09-16T00:12:52+00:00"
+            "time": "2020-10-27T16:11:26+00:00"
         },
         {
             "name": "symfony/var-dumper",
@@ -2702,9 +2702,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "swoole/ide-helper": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
